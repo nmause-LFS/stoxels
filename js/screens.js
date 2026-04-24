@@ -102,7 +102,10 @@ function buildLS() {
 
             // Unlock rule: first level of each world is always open;
             // all others require the previous level (gi-1) to be completed
-            const isUnlocked = li === 0 || STATE.done.includes(gi - 1);
+            // Tutorial gate: the first level of every world additionally requires
+            // the tutorial to be completed. Subsequent levels only need the prior level.
+            const tutDone = STATE.tutorialDone;
+            const isUnlocked = (li === 0 ? tutDone : STATE.done.includes(gi - 1));
             const isDone = STATE.done.includes(gi);
             const hs = STATE.levelHS[gi]; // best score object or undefined
 

@@ -1581,3 +1581,412 @@
             ::-webkit-scrollbar-thumb:hover {
                 background: var(--scrollbar-thumb-hover);
             }
+
+
+/* ═══════════════════════════════════════════════
+   TUTORIAL SCREEN
+   ═══════════════════════════════════════════════ */
+
+#screen-tutorial {
+    display: none;
+    flex-direction: column;
+    background: var(--bg);
+    height: 100vh;
+    overflow: hidden;
+}
+
+    #screen-tutorial.active {
+        display: flex;
+    }
+
+.tut-screen-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+}
+
+/* Top bar */
+.tut-topbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+}
+
+.tut-topbar-title {
+    font-family: var(--PX);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 2px;
+}
+
+.tut-step-counter {
+    font-family: var(--PX);
+    font-size: 9px;
+    color: var(--purple);
+    margin-left: auto;
+}
+
+.tut-skip-btn {
+    font-family: var(--PX);
+    font-size: 9px;
+    background: none;
+    border: 1px solid var(--border2);
+    color: var(--accent2);
+    padding: 4px 10px;
+    cursor: pointer;
+    letter-spacing: 1px;
+}
+
+    .tut-skip-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+    }
+
+/* Demo area — fills the middle and acts as the positioning context */
+.tut-demo-area {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Highlight overlay box */
+.tut-highlight {
+    position: absolute;
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 0 4px rgba(0, 220, 220, 0.18), 0 0 16px rgba(0,220,220,0.25);
+    border-radius: 4px;
+    pointer-events: none;
+    animation: tutPulse 1.4s ease-in-out infinite;
+    z-index: 10;
+}
+
+@keyframes tutPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 4px rgba(0,220,220,0.18), 0 0 16px rgba(0,220,220,0.25);
+    }
+
+    50% {
+        box-shadow: 0 0 0 6px rgba(0,220,220,0.30), 0 0 28px rgba(0,220,220,0.40);
+    }
+}
+
+/* Floating text bubble */
+.tut-bubble {
+    position: absolute;
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-left: 3px solid var(--purple);
+    padding: 14px 18px;
+    max-width: 300px;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.tut-bubble-center {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    top: auto;
+    margin: 0 auto;
+    max-width: 460px;
+    pointer-events: auto;
+}
+/* Directional bubble positions — offset from demo centre */
+.tut-bubble-top {
+    bottom: calc(50% + 60px);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.tut-bubble-bottom {
+    top: calc(50% + 60px);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.tut-bubble-left {
+    right: calc(50% + 60px);
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.tut-bubble-right {
+    left: calc(50% + 60px);
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.tut-bubble-none {
+    position: relative;
+    margin: 0 auto;
+    max-width: 460px;
+    pointer-events: auto;
+}
+
+.tut-bubble-title {
+    font-family: var(--PX);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.tut-bubble-text {
+    font-size: 12px;
+    color: var(--accent2);
+    line-height: 1.8;
+}
+
+/* Bottom nav */
+.tut-nav {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    padding: 12px 18px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+}
+
+.tut-nav-btn {
+    font-family: var(--PX);
+    font-size: 11px;
+    padding: 8px 22px;
+    border: 1px solid var(--accent);
+    background: none;
+    color: var(--accent);
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: background .15s;
+}
+
+    .tut-nav-btn:hover {
+        background: rgba(0,220,220,.08);
+    }
+
+    .tut-nav-btn.sec {
+        border-color: var(--border2);
+        color: var(--accent2);
+    }
+
+        .tut-nav-btn.sec:hover {
+            border-color: var(--accent2);
+            background: rgba(0,220,220,.04);
+        }
+
+/* ── Demo game mock ── */
+.tut-game-mock {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 10px;
+    width: 100%;
+    max-width: 780px;
+}
+
+.tut-meta-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-family: var(--PX);
+    font-size: 9px;
+}
+
+.tut-lvl-label {
+    color: var(--accent);
+    font-size: 10px;
+}
+
+.tut-pen-area {
+    color: var(--red);
+    font-size: 9px;
+}
+
+.tut-score-val {
+    color: var(--accent2);
+    font-size: 12px;
+}
+
+.tut-back-btn {
+    background: none;
+    border: 1px solid var(--border2);
+    color: var(--accent2);
+    font-family: var(--PX);
+    font-size: 8px;
+    padding: 3px 8px;
+    cursor: default;
+}
+
+.tut-puzzle-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.tut-puzzle-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 8px;
+}
+
+.tut-puzzle-hud {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.tut-timer-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--PX);
+    font-size: 9px;
+}
+
+.tut-timer-val {
+    font-size: 16px;
+    color: var(--accent);
+    font-family: var(--PX);
+}
+
+.tut-hint-text {
+    font-size: 10px;
+    color: var(--accent2);
+    font-family: var(--PX);
+}
+
+.tut-mod-tags {
+    display: flex;
+    gap: 6px;
+}
+
+.tut-nonogram {
+    display: flex;
+    justify-content: center;
+}
+
+.tut-ptable {
+    border-collapse: collapse;
+}
+
+    .tut-ptable td {
+        padding: 0;
+    }
+
+    .tut-ptable .gc {
+        background: var(--surface2, #12121c);
+        border: 1px solid var(--border);
+        box-sizing: border-box;
+    }
+
+        .tut-ptable .gc.filled {
+            background: var(--accent);
+        }
+
+    .tut-ptable .corner {
+        width: 20px;
+        height: 20px;
+    }
+
+    .tut-ptable .cch {
+        text-align: center;
+        font-family: var(--PX);
+        font-size: 11px;
+        color: var(--accent2);
+        padding: 2px 4px;
+    }
+
+    .tut-ptable .ccinner {
+        display: flex;
+        justify-content: center;
+    }
+
+    .tut-ptable .rct {
+        text-align: right;
+        font-family: var(--PX);
+        font-size: 11px;
+        color: var(--accent2);
+        padding: 2px 4px;
+        min-width: 20px;
+    }
+
+    .tut-ptable .rcinner {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+.tut-bonus-sidebar {
+    width: 110px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--orange);
+    padding: 8px;
+    font-size: 9px;
+    font-family: var(--PX);
+}
+
+.tut-bonus-label {
+    color: var(--orange);
+    margin-bottom: 6px;
+}
+
+.tut-bonus-hint {
+    color: var(--accent2);
+    line-height: 1.6;
+}
+
+.tut-inv-strip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--purple);
+    padding: 8px 10px;
+}
+
+.tut-inv-header {
+    font-family: var(--PX);
+    font-size: 8px;
+    color: var(--purple);
+    margin-bottom: 6px;
+}
+
+.tut-inv-items {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.tut-inv-item {
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    padding: 5px 10px;
+    font-size: 10px;
+    color: var(--accent2);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+    .tut-inv-item small {
+        color: #555;
+        font-size: 9px;
+    }

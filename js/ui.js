@@ -72,6 +72,22 @@ function showCodes() {
     ss('screen-codes');
 }
 
+
+// showTutorial — opens the tutorial screen.
+//   If the tutorial was already completed, goes straight to setup instead.
+function showTutorial() {
+    if (STATE.tutorialDone) {
+        showSetup();
+        return;
+    }
+    screenHistory.push('screen-title');
+    showTutorialScreen(); // defined in tutorial.js
+}
+
+
+
+
+
 // goLevels — navigates from the game screen to the level-select screen.
 //   Also hides the win/lose overlays and closes any open quiz, since
 //   this can be called mid-overlay via the "LEVELS" button.

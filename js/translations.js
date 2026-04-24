@@ -243,6 +243,42 @@ const T = {
 
         // Inventory strip header
         inv_strip_header: '🎒 INVENTORY — click an item to use it',
+
+        // Tutorial steps
+        tut2_s0_title: 'Welcome to STOXELS!',
+        tut2_s0_text: 'This quick tutorial walks you through the game interface. Use <strong>NEXT ▶</strong> to advance or skip straight to playing.<br><br>STOXELS is a nonogram puzzle game themed around <strong>probability theory & statistics</strong>. Solve puzzles, earn items, and unlock Moodle achievement codes!',
+
+        tut2_s1_title: 'The Game Screen',
+        tut2_s1_text: 'Here is what a typical game session looks like. You will see:<br>• A <strong>puzzle grid</strong> in the centre<br>• <strong>Clue numbers</strong> on the rows and columns<br>• A <strong>timer</strong> counting down<br>• Your <strong>inventory</strong> of items below<br><br>Let\'s go through each part.',
+
+        tut2_s2_title: 'The Puzzle Grid',
+        tut2_s2_text: '<strong>Left-click</strong> a cell to fill it.<br><strong>Right-click</strong> to mark it empty (✕) — safe, no penalty.<br><strong>Drag</strong> to paint multiple cells at once.<br><br>Filling a cell that should be <em>empty</em> costs you time — so think before you click!',
+
+        tut2_s3_title: 'Row Clues',
+        tut2_s3_text: 'The numbers on the <strong>left of each row</strong> tell you how many consecutive filled cells exist in that row, and in what order.<br><br>Example: <strong>3 1</strong> means there is a run of 3 filled cells, then a gap, then 1 filled cell.',
+
+        tut2_s4_title: 'Column Clues',
+        tut2_s4_text: 'The numbers <strong>above each column</strong> work the same way — they describe runs of filled cells from top to bottom.<br><br>Use both the row and column clues together to deduce which cells must be filled.',
+
+        tut2_s5_title: 'The Timer',
+        tut2_s5_text: 'You have a limited amount of time to complete each puzzle. The clock starts as soon as the level loads.<br><br>⚠️ <strong>Wrong fills cost time!</strong> Each mistake subtracts seconds from the clock. The harsher the difficulty, the bigger the penalty.<br><br>The timer turns orange at 3 minutes remaining and red at 1 minute.',
+
+        tut2_s6_title: 'Penalties',
+        tut2_s6_text: 'When you fill a wrong cell:<br>• The cell turns <strong>red ✕</strong><br>• Seconds are subtracted from your timer<br>• The penalty amount is shown here briefly<br><br>On <strong>Easy</strong> difficulty penalties are small. On <strong>Hard</strong> they are brutal. <strong>Hardcore</strong> mode ends the level on the very first mistake!',
+
+        tut2_s7_title: 'Bonus Objective',
+        tut2_s7_text: 'Every level has a <strong>bonus objective</strong> shown here — for example: finish in under 20 seconds, or make no mistakes.<br><br>Meet the objective ➜ earn a random item when you finish.<br>If the bonus type is <strong>Quiz</strong>, answering a statistics question correctly gives +50 points and an extra item.',
+
+        tut2_s8_title: 'Inventory',
+        tut2_s8_text: 'Items you have earned are shown here. <strong>Click an item to use it</strong> during a level.<br><br>Items include:<br>• 🔦 <em>Reveal</em> — shows correct tiles in green<br>• 🛡️ <em>Shield</em> — absorbs your next mistake<br>• ⏳ <em>+Time</em> — adds seconds to the clock<br>• ☠️ <em>Cursed</em> — powerful but risky, locked for 3 min<br><br><strong>Ironman</strong> mode disables all items for a score bonus.',
+
+        tut2_s9_title: 'Difficulty & Modifiers',
+        tut2_s9_text: 'Before starting, choose your <strong>difficulty</strong>:<br>• 🟢 Easy — small penalties, ×0.5 score<br>• 🟡 Normal — standard, ×1 score<br>• 🔴 Hard — heavy penalties, ×1.5 score<br><br>Add optional <strong>modifiers</strong> for a score bonus:<br>• ⏱ Time Trial — only 5 minutes (+20%)<br>• 💀 Hardcore — one mistake = instant fail (+30%)<br>• 🔒 Ironman — no items (+15%)',
+
+        tut2_s10_title: 'You\'re Ready!',
+        tut2_s10_text: 'That covers everything! A few last tips:<br><br>• Use <strong>Ctrl + Scroll</strong> to zoom the puzzle<br>• Press <strong>Escape</strong> to go back at any time<br>• Earn enough total score to unlock <strong>Moodle achievement codes</strong><br>• Check the <strong>Highscores</strong> screen to track your progress<br><br>Good luck solving the puzzles! 🎉',
+
+
     },
 
     de: {
@@ -400,5 +436,41 @@ const T = {
 
         // Inventory strip header
         inv_strip_header: '🎒 INVENTAR — Item anklicken zum Benutzen',
+
+        // Tutorial steps
+        tut2_s0_title: 'Willkommen bei STOXELS!',
+        tut2_s0_text: 'Dieses kurze Tutorial führt dich durch die Spieloberfläche. Nutze <strong>WEITER ▶</strong> oder überspringe es gleich.<br><br>STOXELS ist ein Nonogramm-Puzzle-Spiel zum Thema <strong>Wahrscheinlichkeitstheorie & Statistik</strong>. Löse Puzzles, sammle Items und schalte Moodle-Codes frei!',
+
+        tut2_s1_title: 'Der Spielbildschirm',
+        tut2_s1_text: 'So sieht eine typische Spielsitzung aus:<br>• Ein <strong>Puzzlegitter</strong> in der Mitte<br>• <strong>Hinweiszahlen</strong> an Zeilen und Spalten<br>• Ein <strong>Timer</strong>, der herunterläuft<br>• Dein <strong>Inventar</strong> unten<br><br>Gehen wir jeden Bereich durch.',
+
+        tut2_s2_title: 'Das Puzzlegitter',
+        tut2_s2_text: '<strong>Linksklick</strong> füllt ein Feld.<br><strong>Rechtsklick</strong> markiert es als leer (✕) — sicher, kein Zeitabzug.<br><strong>Ziehen</strong> malt mehrere Felder auf einmal.<br><br>Ein falsch gefülltes Feld kostet Zeit — also erst denken, dann klicken!',
+
+        tut2_s3_title: 'Zeilenhinweise',
+        tut2_s3_text: 'Die Zahlen <strong>links jeder Zeile</strong> zeigen, wie viele aufeinanderfolgende gefüllte Felder in dieser Zeile existieren und in welcher Reihenfolge.<br><br>Beispiel: <strong>3 1</strong> bedeutet ein Block von 3 Feldern, dann eine Lücke, dann 1 Feld.',
+
+        tut2_s4_title: 'Spaltenhinweise',
+        tut2_s4_text: 'Die Zahlen <strong>über jeder Spalte</strong> funktionieren genauso — sie beschreiben Blöcke von oben nach unten.<br><br>Nutze Zeilen- und Spaltenhinweise zusammen, um die richtigen Felder zu bestimmen.',
+
+        tut2_s5_title: 'Der Timer',
+        tut2_s5_text: 'Du hast begrenzte Zeit für jedes Puzzle. Die Uhr startet sofort mit dem Level.<br><br>⚠️ <strong>Falsche Felder kosten Zeit!</strong> Jeder Fehler zieht Sekunden ab. Je schwerer der Schwierigkeitsgrad, desto größer die Strafe.<br><br>Der Timer wird bei 3 Minuten orange und bei 1 Minute rot.',
+
+        tut2_s6_title: 'Strafen',
+        tut2_s6_text: 'Bei einem falschen Feld:<br>• Das Feld wird <strong>rot ✕</strong><br>• Sekunden werden abgezogen<br>• Die Strafe wird kurz hier angezeigt<br><br>Bei <strong>Leicht</strong> sind Strafen klein. Bei <strong>Schwer</strong> brutal. <strong>Hardcore</strong> beendet das Level beim ersten Fehler!',
+
+        tut2_s7_title: 'Bonusziel',
+        tut2_s7_text: 'Jedes Level hat ein <strong>Bonusziel</strong> — z.B. unter 20 Sekunden fertig werden oder keine Fehler machen.<br><br>Ziel erreicht ➜ zufälliges Item als Belohnung.<br>Beim Typ <strong>Quiz</strong> gibt eine korrekte Antwort +50 Punkte und ein Extra-Item.',
+
+        tut2_s8_title: 'Inventar',
+        tut2_s8_text: 'Hier werden deine Items angezeigt. <strong>Klicke ein Item um es zu benutzen</strong>.<br><br>Items umfassen:<br>• 🔦 <em>Enthüllen</em> — zeigt richtige Felder grün<br>• 🛡️ <em>Schild</em> — absorbiert den nächsten Fehler<br>• ⏳ <em>+Zeit</em> — fügt Sekunden hinzu<br>• ☠️ <em>Verflucht</em> — mächtig, aber riskant, 3 Min. gesperrt<br><br><strong>Ironman</strong> deaktiviert alle Items für Bonuspunkte.',
+
+        tut2_s9_title: 'Schwierigkeit & Modifikatoren',
+        tut2_s9_text: 'Wähle vor dem Start die <strong>Schwierigkeit</strong>:<br>• 🟢 Leicht — kleine Strafen, ×0,5 Punkte<br>• 🟡 Normal — Standard, ×1 Punkte<br>• 🔴 Schwer — große Strafen, ×1,5 Punkte<br><br>Optionale <strong>Modifikatoren</strong> für Bonuspunkte:<br>• ⏱ Time Trial — nur 5 Min. (+20%)<br>• 💀 Hardcore — ein Fehler = sofort verloren (+30%)<br>• 🔒 Ironman — keine Items (+15%)',
+
+        tut2_s10_title: 'Du bist bereit!',
+        tut2_s10_text: 'Das war alles! Noch ein paar letzte Tipps:<br><br>• <strong>Strg + Scrollen</strong> zum Zoomen<br>• <strong>Escape</strong> um jederzeit zurückzugehen<br>• Genug Punkte sammeln für <strong>Moodle-Codes</strong><br>• In der <strong>Bestenliste</strong> deinen Fortschritt verfolgen<br><br>Viel Erfolg beim Rätsellösen! 🎉',
+
+
     }
 };

@@ -15,7 +15,7 @@
             <button class="lang-btn" onclick="setLang('de')">DE</button>
         </div>
         <div class="title-btns">
-            <button class="title-btn" onclick="showSetup()" data-t="btn_play">▶ PLAY</button>
+            <button class="title-btn" onclick="showTutorial()" data-t="btn_play">▶ PLAY</button>
             <button class="title-btn sec" onclick="showModal('tut-modal')" data-t="btn_howtoplay">? HOW TO PLAY</button>
             <button class="title-btn sec" onclick="showHS()" data-t="btn_highscores">🏆 HIGHSCORES</button>
             <button class="title-btn sec" onclick="showCodes()" data-t="btn_codes">🔑 MY CODES</button>
@@ -226,6 +226,39 @@
 
     <div class="penalty-flash" id="pen-flash"></div>
 
+    <!-- ═══ TUTORIAL SCREEN ═══ -->
+    <div id="screen-tutorial" class="screen">
+        <div class="tut-screen-layout">
+
+            <!-- Top bar -->
+            <div class="tut-topbar">
+                <span class="tut-topbar-title">📖 INTERACTIVE TUTORIAL</span>
+                <span class="tut-step-counter" id="tut-step-counter">1 / 11</span>
+                <button class="tut-skip-btn" onclick="finishTutorial()">SKIP TUTORIAL ▶</button>
+            </div>
+
+            <!-- Demo area (the annotated game mock) -->
+            <div class="tut-demo-area" id="tut-demo-area"></div>
+
+            <!-- Floating bubble (title + text) -->
+            <div class="tut-bubble tut-bubble-center" id="tut-bubble">
+                <div class="tut-bubble-title" id="tut-bubble-title">Welcome!</div>
+                <div class="tut-bubble-text" id="tut-bubble-text"></div>
+            </div>
+
+            <!-- Bottom navigation -->
+            <div class="tut-nav">
+                <button class="tut-nav-btn sec" onclick="prevTutStep()" id="tut-prev-btn">◀ PREV</button>
+                <button class="tut-nav-btn" id="tut-next-btn" onclick="advanceTutStep()">NEXT ▶</button>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+
 
     <script src="js/translations.js"></script>
     <script src="js/state.js"></script>
@@ -241,6 +274,7 @@
     <script src="js/codes.js"></script>
     <script src="js/screens.js"></script>
     <script src="js/ui.js"></script>
+    <script src="js/tutorial.js"></script>
     <script src="main.js"></script>
 </body>
 </html>

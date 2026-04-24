@@ -58,6 +58,7 @@ function initState() {
     if (s) {
         // Migration guard: older saves won't have bonusDone
         if (!s.bonusDone) s.bonusDone = [];
+        if (s.tutorialDone === undefined) s.tutorialDone = false;
         return s;
     }
     // Fresh save structure — add new persistent fields here in the future
@@ -67,7 +68,8 @@ function initState() {
         inventory: [],       // items the player currently owns  [ { defId, uid } ]
         unlockedCodes: [],   // Moodle codes already shown to the player
         done: [],            // gIdx values of completed levels
-        bonusDone: []        // gIdx values where the bonus reward was already claimed
+        bonusDone: [],        // gIdx values where the bonus reward was already claimed
+        tutorialDone: false
     };
 }
 
