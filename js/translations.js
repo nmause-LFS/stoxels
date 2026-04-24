@@ -1,0 +1,404 @@
+// ═══════════════════════════════════════════════
+//  TRANSLATIONS  (translations.js)
+//  Provides a simple two-language (EN / DE) string
+//  lookup system. Every piece of visible text that
+//  needs to switch language is stored here.
+//
+//  HOW TO ADD A NEW LANGUAGE:
+//    1. Add a new key to the T object (e.g. T.fr = { ... })
+//       and copy every key from T.en, translating the values.
+//    2. Add a new <button class="lang-btn"> in index.html.
+//    3. That's it — setLang() handles the rest automatically.
+//
+//  HOW TO ADD A NEW STRING:
+//    1. Add the key/value pair to BOTH T.en and T.de.
+//    2. Either call t('your_key') in JS, or add data-t="your_key"
+//       to an HTML element and it will be filled on language switch.
+// ═══════════════════════════════════════════════
+
+// LANG — the currently active language code ('en' or 'de').
+//        Read by t() and by any code that needs to choose between
+//        language-specific data (e.g. item names, world code titles).
+let LANG = 'en';
+
+// t(k) — translation helper. Returns the string for key k in the
+//   active language. Falls back to T.en if the active language is
+//   missing a key, and falls back to the key itself as a last resort
+//   so missing translations are visible rather than silently blank.
+//   Usage example:  t('btn_play')  →  '▶ PLAY'  (in English)
+function t(k) {
+    return (T[LANG] || T.en)[k] || k;
+}
+
+// setLang(l) — switches the active language and refreshes all UI text.
+//   Steps:
+//   1. Updates the LANG variable.
+//   2. Toggles the 'active' CSS class on the EN/DE buttons in the header
+//      so the currently selected one is highlighted.
+//   3. Finds every HTML element with a [data-t] attribute and sets its
+//      innerHTML to the translated string. This covers all static labels
+//      that exist in the HTML from the start (buttons, headings, etc.).
+//      Dynamic content (level cards, inventory items) is re-built by their
+//      own functions when they render, so they always use the current LANG.
+//   4. Re-renders the difficulty description and modifier description on
+//      the Setup screen, since those are built from translated strings.
+//   Called from: the EN/DE buttons in index.html, and once from main.js
+//   on startup to initialise all [data-t] elements.
+function setLang(l) {
+    LANG = l;
+
+    // Highlight the matching language button
+    document.querySelectorAll('.lang-btn').forEach(b =>
+        b.classList.toggle('active', b.textContent === l.toUpperCase())
+    );
+
+    // Fill every element that has a data-t attribute
+    document.querySelectorAll('[data-t]').forEach(el => {
+        const k = el.getAttribute('data-t');
+        const v = t(k);
+        // Only write if the translation exists (v !== k guards against missing keys
+        // accidentally overwriting useful fallback content)
+        if (v && v !== k) el.innerHTML = v;
+    });
+
+    // Refresh the Setup screen's description texts (they are built dynamically,
+    // not via data-t, so they need an explicit refresh call)
+    updDiffDesc();
+    updModDesc();
+}
+
+
+// ═══════════════════════════════════════════════
+//  TRANSLATIONS TABLE
+//  T.en — English strings (primary / fallback)
+//  T.de — German strings
+//
+//  KEY NAMING CONVENTIONS:
+//    btn_*      — button labels
+//    tut_*      — tutorial modal content (h = heading, p = paragraph)
+//    setup_*    — Setup screen labels
+//    diff_*     — difficulty names and descriptions
+//    mod_*      — modifier names and descriptions
+//    ls_*       — level-select screen
+//    ov_*       — overlay (win/lose) titles
+//    hs_*       — highscore screen
+//    pw_*       — password/code modal
+//    inv_*      — inventory panel
+//    bonus_*    — bonus objective labels
+//    no_*       — empty-state messages
+// ═══════════════════════════════════════════════
+const T = {
+    en: {
+        // Title screen
+        tagline: 'PROBABILITY THEORY & STATISTICS NONOGRAMS',
+
+        // Navigation buttons (used across multiple screens)
+        btn_play: '▶ PLAY', btn_howtoplay: '? HOW TO PLAY',
+        btn_highscores: '🏆 HIGHSCORES', btn_codes: '🔑 MY CODES',
+        btn_confirm: '▶ SELECT LEVEL', btn_back: '◀ BACK',
+        btn_setup: 'SETUP', btn_menu: 'MENU', btn_levels: '◀ LEVELS',
+        btn_next: 'NEXT ▶', btn_retry: 'RETRY', btn_retry2: 'TRY AGAIN',
+
+        // Reset
+        toast_reset: '🗑 Progress reset. Fresh start!',
+
+        // Tutorial modal — section headings (h) and paragraphs (p)
+        tut_title: '▸ HOW TO PLAY STOXELS',
+        tut_s1h: 'WHAT IS A NONOGRAM?',
+        tut_s1p: 'A nonogram is a grid puzzle. Numbers tell you how many consecutive filled cells exist. Reveal the statistics symbol to win!',
+        tut_s2h: 'CONTROLS',
+        tut_s2p: '<strong>Left click</strong> — fill a cell<br><strong>Right click</strong> — mark as empty (safe)<br><strong>Drag</strong> — paint multiple cells<br><strong>Escape</strong> — go back',
+        tut_s3h: 'DIFFICULTY',
+        tut_s3p: '<strong style="color:var(--green)">Easy</strong> — small penalties, ×1.0 score<br><strong style="color:var(--yellow)">Normal</strong> — standard, ×1.5 score<br><strong style="color:var(--red)">Hard</strong> — heavy penalties, ×2.5 score',
+        tut_s4h: 'MODIFIERS',
+        tut_s4p: '<strong style="color:var(--orange)">Time Trial</strong> — 5 min max<br><strong style="color:var(--red)">Hardcore</strong> — one mistake = instant fail<br><strong style="color:var(--purple)">Ironman</strong> — no items allowed, +15% score',
+        tut_s5h: 'ITEMS & INVENTORY',
+        tut_s5p: 'Complete a level\'s bonus objective to earn one random item. Corrupted items are powerful but <strong>locked for the first 3 minutes</strong> — no cheap early use!',
+        tut_s6h: 'BONUS OBJECTIVE & QUIZ',
+        tut_s6p: 'Meet the level\'s bonus objective and a stats quiz appears (after a brief pause). Answer correctly: +50 pts + bonus item. Miss the objective: no quiz.',
+        tut_s7h: 'ACHIEVEMENT CODES',
+        tut_s7p: 'Reach score milestones to unlock Moodle codes. The final Master code requires 24,000+ points (95% of maximum) — only the best players will earn it!',
+
+        // Setup screen
+        setup_title: '▸ GAME SETUP',
+        setup_diff: 'DIFFICULTY',
+        setup_mod: 'GAME MODIFIERS (OPTIONAL)',
+
+        // Difficulty button labels and one-line descriptions (shown below the buttons)
+        diff_easy: 'EASY', diff_normal: 'NORMAL', diff_hard: 'HARD',
+        diff_desc_easy: 'Penalties ×1 · Score multiplier ×0.5',
+        diff_desc_normal: 'Penalties ×2 · Score multiplier ×1',
+        diff_desc_hard: 'Penalties ×4 · Score multiplier ×1.5',
+
+        // Modifier button labels and descriptions
+        mod_tt: '⏱ TIME TRIAL', mod_hc: '💀 HARDCORE', mod_im: '🔒 IRONMAN',
+        mod_desc_none: 'No modifiers. Pure puzzle mode.',
+        mod_desc_tt: '5 minutes total (+20% score)',
+        mod_desc_hc: 'one wrong tile = instant fail! (+30% score)',
+        mod_desc_im: 'no items allowed (+15% score)',
+
+        // In-game HUD
+        score_lbl: 'SCORE',
+        ls_title: 'SELECT LEVEL',
+
+        // Inventory panel
+        inv_title: '🎒 INVENTORY',
+        item_cost: 'Use: −',   // prefix before the score cost of using an item
+        item_sell: 'Sell +',   // prefix before the sell value of an item
+        inv_empty: 'No items yet.\nComplete bonus objectives\nto earn items!',
+
+        // Win / lose overlays
+        ov_win: 'PUZZLE SOLVED!',
+        ov_lose: "TIME'S UP!",
+
+        // Bonus objective type labels (used on level cards)
+        bonus_nomiss: '✨ No mistakes',
+        bonus_fast: '⚡ Speed bonus',
+        bonus_quiz: '🧠 Correct answer',
+
+        // Highscore screen
+        hs_title: 'HIGHSCORES',
+        hs_total: 'TOTAL SCORE', hs_level: 'Level',
+        hs_best: 'Best Score', hs_diff: 'Difficulty',
+        no_hs: 'No highscores yet.',
+        hs_mods: 'Mods',
+        hs_code_unlocked: 'CODE UNLOCKED',
+
+        // Codes screen
+        codes_title: 'MY CODES',
+        no_codes: 'No codes unlocked yet.\nEarn points to unlock achievement codes!',
+
+        // Password / Moodle code modal
+        pw_title: '🔑 NEW CODE UNLOCKED!',
+        pw_intro: 'You unlocked a Moodle code. Enter it to claim your badge:',
+        pw_hint: 'Enter this code in Moodle to receive your badge.',
+
+        // Level select — dynamic strings
+        ls_total: 'TOTAL',
+        ls_bonus_claimed: 'Bonus claimed — reward received!',
+        ls_complete_level: 'Complete level',
+        ls_locked_hint: '🔓 Beat this level to unlock improvement hints!',
+        ls_no_score: 'Complete this level to set a score!',
+        ls_max_score: '🏆 Maximum score reached!',
+        ls_tip_harder: 'Try {diff} difficulty for a higher score multiplier',
+        ls_tip_mods: 'Add {mods} modifier for bonus score',
+        ls_tip_mods_plural: 'Add {mods} modifiers for bonus score',
+        ls_hs_best: 'BEST',
+
+        // In-game HUD
+        lvl_prefix: 'LVL',
+        zoom_hint: 'Ctrl + scroll to zoom',
+
+        // Penalty / mistake feedback
+        pen_shield: '🛡️ Shield absorbed the mistake!',
+        pen_display: '−{n}s (#{m})',
+
+        // Hardcore fail overlay
+        hc_fail_title: 'HARDCORE FAIL!',
+        hc_fail_sub: 'One mistake = game over in Hardcore mode!',
+
+        // Item use toasts
+        item_revealed: 'Revealed {n} tile',
+        item_revealed_pl: 'Revealed {n} tiles',
+        item_cursed_reset: '☠️ CURSED! Board was reset!',
+        item_cursed_lucky: '☠️ Lucky! Revealed 6 tiles!',
+        item_marked: 'Marked {n} empty tiles!',
+        item_demon_title: '👁️ DEMON EYE TRIGGERED!',
+        item_demon_sub: 'The cursed item sealed your fate!',
+        item_demon_shield: '👁️ Risky shield activated!',
+        item_cursed_time_bad: '💀 CURSED! −4 minutes!',
+        item_cursed_time_good: '💀 Lucky! +5 minutes!',
+        item_time_added: '+{n}s added!',
+        item_freeze_msg: 'Timer frozen 30s!',
+        item_shield_msg: 'Shield active!',
+        item_cursed_locked: '☠️ Cursed items unlock after {n} more min',
+        item_discarded: 'Item discarded',
+        item_sell_btn: '🗑 Discard',
+        inv_cursed_locked_label: '🔒 LOCKED {n}min+',
+
+        // Inventory rarity labels
+        rar_common: 'COMMON', rar_uncommon: 'UNCOMMON', rar_rare: 'RARE',
+        rar_legendary: 'LEGENDARY', rar_cursed: 'CURSED',
+
+        // Win overlay
+        ov_win_pts: 'pts',
+        ov_win_left: 'left',
+        ov_win_mistake: 'mistake',
+        ov_win_mistakes: 'mistakes',
+        ov_win_new: 'new',
+        ov_win_best_was: 'best was',
+        ov_bonus_met: '🎯 BONUS MET!',
+        ov_item_earned: '🎁 Item earned',
+        ov_bonus_claimed_note: '✓ Bonus objective already claimed — no duplicate reward.',
+        ov_lucky_drop: '🍀 Lucky drop!',
+        ov_quiz_reward: '🧠 Quiz reward',
+
+        // Quiz overlay
+        quiz_title: '⭐ BONUS QUESTION',
+        quiz_correct: '✓ CORRECT! +50 bonus pts & item!',
+        quiz_correct_claimed: '✓ Correct! (Bonus already claimed — no duplicate reward.)',
+        quiz_wrong: '✗ Wrong answer. No bonus.',
+        quiz_continue: 'CONTINUE ▶',
+        quiz_skip: 'SKIP (no bonus)',
+
+        // Inventory strip header
+        inv_strip_header: '🎒 INVENTORY — click an item to use it',
+    },
+
+    de: {
+        // Title screen
+        tagline: 'WAHRSCHEINLICHKEITSTHEORIE & STATISTIK NONOGRAMME',
+
+        // Navigation buttons
+        btn_play: '▶ SPIELEN', btn_howtoplay: '? ANLEITUNG',
+        btn_highscores: '🏆 BESTENLISTE', btn_codes: '🔑 MEINE CODES',
+        btn_confirm: '▶ LEVEL WÄHLEN', btn_back: '◀ ZURÜCK',
+        btn_setup: 'EINR.', btn_menu: 'MENÜ', btn_levels: '◀ LEVELS',
+        btn_next: 'WEITER ▶', btn_retry: 'NOCHMAL', btn_retry2: 'NOCHMAL',
+
+        // Reset:
+        toast_reset: '🗑 Fortschritt zurückgesetzt. Neuer Start!',
+
+        // Tutorial modal
+        tut_title: '▸ SO SPIELST DU STOXELS',
+        tut_s1h: 'WAS IST EIN NONOGRAMM?',
+        tut_s1p: 'Ein Nonogramm ist ein Gitterpuzzle. Zahlen zeigen aufeinanderfolgende gefüllte Felder. Enthülle das Statistiksymbol!',
+        tut_s2h: 'STEUERUNG',
+        tut_s2p: '<strong>Linksklick</strong> — Feld füllen<br><strong>Rechtsklick</strong> — Als leer markieren (sicher)<br><strong>Ziehen</strong> — Mehrere Felder<br><strong>Escape</strong> — Zurück',
+        tut_s3h: 'SCHWIERIGKEIT',
+        tut_s3p: '<strong style="color:var(--green)">Leicht</strong> — ×1 Strafen, ×0.5 Punkte<br><strong style="color:var(--yellow)">Normal</strong> — ×2 Strafen, ×1 Punkte<br><strong style="color:var(--red)">Schwer</strong> — ×4 Strafen, ×1.5 Punkte',
+        tut_s4h: 'MODIFIKATOREN',
+        tut_s4p: '<strong style="color:var(--orange)">Zeitrennen</strong> — Max. 5 Minuten<br><strong style="color:var(--red)">Hardcore</strong> — Ein Fehler = verloren!<br><strong style="color:var(--purple)">Eisenmann</strong> — Keine Items, +15% Punkte',
+        tut_s5h: 'ITEMS & INVENTAR',
+        tut_s5p: 'Erfülle das Bonusziel für ein zufälliges Item. Verfluchte Items sind 3 Minuten lang gesperrt — kein billiger Früheinsatz!',
+        tut_s6h: 'BONUSZIEL & QUIZ',
+        tut_s6p: 'Bonusziel erfüllt? Dann erscheint ein Statistikquiz (kurze Pause). Richtig: +50 Pkt. + Bonusitem. Verfehlt: kein Quiz.',
+        tut_s7h: 'ACHIEVEMENT CODES',
+        tut_s7p: 'Erreiche eine gewisse Punktzahl für Moodle-Codes. Der Meister-Code erfordert 24.000+ Punkte (95% vom Maximum) — nur die Besten schaffen es!',
+
+        // Setup screen
+        setup_title: '▸ SPIELEINRICHTUNG',
+        setup_diff: 'SCHWIERIGKEIT',
+        setup_mod: 'MODIFIKATOREN (OPTIONAL)',
+
+        // Difficulty
+        diff_easy: 'LEICHT', diff_normal: 'NORMAL', diff_hard: 'SCHWER',
+        diff_desc_easy: 'Strafen ×1 · Multiplikator ×0.5',
+        diff_desc_normal: 'Strafen ×2 · Multiplikator ×1',
+        diff_desc_hard: 'Strafen ×4 · Multiplikator ×1.5',
+
+        // Modifiers
+        mod_tt: '⏱ TIME TRIAL', mod_hc: '💀 HARDCORE', mod_im: '🔒 IRONMAN',
+        mod_desc_none: 'Keine Modifikatoren. Normaler Puzzlemodus.',
+        mod_desc_tt: 'Max. 5 Minuten (+20% Punkte)',
+        mod_desc_hc: 'Ein Fehler = sofort verloren! (+30% Punkte)',
+        mod_desc_im: 'Keine Items (+15% Punkte)',
+
+        // In-game HUD
+        score_lbl: 'PUNKTE',
+        ls_title: 'LEVEL WÄHLEN',
+
+        // Inventory panel
+        inv_title: '🎒 INVENTAR',
+        item_cost: 'Nutzung: −',
+        item_sell: 'Verkauf +',
+        inv_empty: 'Noch keine Items.\nErfülle Bonusziele!',
+
+        // Win / lose overlays
+        ov_win: 'PUZZLE GELÖST!',
+        ov_lose: 'ZEIT UM!',
+
+        // Bonus objective type labels
+        bonus_nomiss: '✨ Keine Fehler',
+        bonus_fast: '⚡ Schnell',
+        bonus_quiz: '🧠 Richtige Antwort',
+
+        // Highscore screen
+        hs_title: 'BESTENLISTE',
+        hs_total: 'GESAMTPUNKTE', hs_level: 'Level',
+        hs_best: 'Bestes Ergebnis', hs_diff: 'Schwierigkeit',
+        no_hs: 'Noch keine Einträge.',
+        hs_mods: 'Mods',
+        hs_code_unlocked: 'CODE FREIGESCHALTET',
+
+        // Codes screen
+        codes_title: 'MEINE CODES',
+        no_codes: 'Noch keine Codes.\nSammle Punkte für Codes!',
+
+        // Password / Moodle code modal
+        pw_title: '🔑 NEUER CODE FREIGESCHALTET!',
+        pw_intro: 'Du hast einen Moodle-Code freigeschaltet:',
+        pw_hint: 'Gib diesen Code in Moodle ein.',
+
+        // Level select — dynamic strings
+        ls_total: 'GESAMT',
+        ls_bonus_claimed: 'Bonus erhalten — Belohnung eingelöst!',
+        ls_complete_level: 'Level abschließen',
+        ls_locked_hint: '🔓 Schließe dieses Level ab für Verbesserungshinweise!',
+        ls_no_score: 'Schließe dieses Level ab, um eine Punktzahl zu setzen!',
+        ls_max_score: '🏆 Maximale Punktzahl erreicht!',
+        ls_tip_harder: '{diff} Schwierigkeit für höheren Multiplikator',
+        ls_tip_mods: 'Füge {mods} Modifikator für Bonuspunkte hinzu',
+        ls_tip_mods_plural: 'Füge {mods} Modifikatoren für Bonuspunkte hinzu',
+        ls_hs_best: 'BEST',
+
+        // In-game HUD
+        lvl_prefix: 'LVL',
+        zoom_hint: 'Strg + Scrollen zum Zoomen',
+
+        // Penalty / mistake feedback
+        pen_shield: '🛡️ Schild hat den Fehler absorbiert!',
+        pen_display: '−{n}s (#{m})',
+
+        // Hardcore fail overlay
+        hc_fail_title: 'HARDCORE GESCHEITERT!',
+        hc_fail_sub: 'Ein Fehler = Spielende im Hardcore-Modus!',
+
+        // Item use toasts
+        item_revealed: '{n} Feld enthüllt!',
+        item_revealed_pl: '{n} Felder enthüllt!',
+        item_cursed_reset: '☠️ VERFLUCHT! Das Brett wurde zurückgesetzt!',
+        item_cursed_lucky: '☠️ Glück! 6 Felder enthüllt!',
+        item_marked: '{n} leere Felder markiert!',
+        item_demon_title: '👁️ DÄMONENAUGE AUSGELÖST!',
+        item_demon_sub: 'Das verfluchte Item hat dein Schicksal besiegelt!',
+        item_demon_shield: '👁️ Riskanter Schild aktiviert!',
+        item_cursed_time_bad: '💀 VERFLUCHT! −4 Minuten!',
+        item_cursed_time_good: '💀 Glück! +5 Minuten!',
+        item_time_added: '+{n}s hinzugefügt!',
+        item_freeze_msg: 'Timer eingefroren 30s!',
+        item_shield_msg: 'Schild aktiv!',
+        item_cursed_locked: '☠️ Verfluchte Items entsperren nach {n} weiteren Min.',
+        item_discarded: 'Item verworfen',
+        item_sell_btn: '🗑 Verwerfen',
+        inv_cursed_locked_label: '🔒 GESPERRT {n}min+',
+
+        // Inventory rarity labels
+        rar_common: 'GEWÖHNLICH', rar_uncommon: 'UNGEWÖHNLICH', rar_rare: 'SELTEN',
+        rar_legendary: 'LEGENDÄR', rar_cursed: 'VERFLUCHT',
+
+        // Win overlay
+        ov_win_pts: 'Pkt.',
+        ov_win_left: 'übrig',
+        ov_win_mistake: 'Fehler',
+        ov_win_mistakes: 'Fehler',
+        ov_win_new: 'neu',
+        ov_win_best_was: 'Best war',
+        ov_bonus_met: '🎯 BONUS ERFÜLLT!',
+        ov_item_earned: '🎁 Item erhalten',
+        ov_bonus_claimed_note: '✓ Bonusziel bereits eingelöst — keine doppelte Belohnung.',
+        ov_lucky_drop: '🍀 Glücksfund!',
+        ov_quiz_reward: '🧠 Quiz-Belohnung',
+
+        // Quiz overlay
+        quiz_title: '⭐ BONUSFRAGE',
+        quiz_correct: '✓ RICHTIG! +50 Bonuspunkte & Item!',
+        quiz_correct_claimed: '✓ Richtig! (Bonus bereits eingelöst — keine doppelte Belohnung.)',
+        quiz_wrong: '✗ Falsche Antwort. Kein Bonus.',
+        quiz_continue: 'WEITER ▶',
+        quiz_skip: 'ÜBERSPRINGEN (kein Bonus)',
+
+        // Inventory strip header
+        inv_strip_header: '🎒 INVENTAR — Item anklicken zum Benutzen',
+    }
+};
