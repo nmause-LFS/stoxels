@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stoxels</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="screen-title" class="screen active">
+        <h1 class="title-glow">STOXELS</h1>
+        <p class="title-tag" data-t="tagline">PROBABILITY THEORY &amp; STATISTICS NONOGRAMS</p>
+        <div class="lang-switch">
+            <button class="lang-btn active" onclick="setLang('en')">EN</button>
+            <button class="lang-btn" onclick="setLang('de')">DE</button>
+        </div>
+        <div class="title-btns">
+            <button class="title-btn" onclick="showSetup()" data-t="btn_play">▶ PLAY</button>
+            <button class="title-btn sec" onclick="showModal('tut-modal')" data-t="btn_howtoplay">? HOW TO PLAY</button>
+            <button class="title-btn sec" onclick="showHS()" data-t="btn_highscores">🏆 HIGHSCORES</button>
+            <button class="title-btn sec" onclick="showCodes()" data-t="btn_codes">🔑 MY CODES</button>
+            <button class="title-btn sec" onclick="showModal('reset-modal')" style="border-color:var(--red);color:var(--red); font-family:var(--PX)">🗑 RESET</button>
+        </div>
+        <div class="title-deco" id="tdeco"></div>
+    </div>
+
+    <div id="tut-modal" class="modal-bg">
+        <div class="modal-box">
+            <button class="modal-close" onclick="hideModal('tut-modal')">✕ CLOSE</button>
+            <div class="modal-title" data-t="tut_title">▸ HOW TO PLAY STOXELS</div>
+            <div class="modal-section">
+                <h3 data-t="tut_s1h">WHAT IS A NONOGRAM?</h3>
+                <p data-t="tut_s1p">A nonogram is a grid puzzle. Numbers along rows and columns tell you how many consecutive filled cells exist. Reveal the hidden symbol to win!</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s2h">CONTROLS</h3>
+                <p data-t="tut_s2p"><strong>Left click</strong> — fill a cell (wrong fills cost time!)<br><strong>Right click</strong> — mark a cell with ✕ (safe, no penalty)<br><strong>Drag</strong> — paint multiple cells<br><strong>Escape</strong> — go back to previous screen</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s3h">DIFFICULTY</h3>
+                <p data-t="tut_s3p"><strong style="color:var(--green)">Easy</strong> — small penalties (×1), ×0.5 score<br><strong style="color:var(--yellow)">Normal</strong> — standard (×2), ×1 score<br><strong style="color:var(--red)">Hard</strong> — heavy penalties (×4), ×1.5 score</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s4h">MODIFIERS</h3>
+                <p data-t="tut_s4p"><strong style="color:var(--orange)">Time Trial</strong> — only 5 minutes!<br><strong style="color:var(--red)">Hardcore</strong> — one wrong tile = instant fail<br><strong style="color:var(--purple)">Ironman</strong> — no items allowed, +15% score</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s5h">ITEMS &amp; INVENTORY</h3>
+                <p data-t="tut_s5p">Complete the level's bonus objective to earn ONE random item. Items range from Common to Legendary — rarer items are more powerful. Corrupted items are gambles! Items cost score to use, and can be sold. Ironman disables all item use.</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s6h">BONUS OBJECTIVE &amp; QUIZ</h3>
+                <p data-t="tut_s6p">Each level has a bonus objective (shown on the level card). If you <strong>meet</strong> the bonus objective, a stats multiple-choice quiz appears after a brief pause — answer correctly for +50 pts and a bonus item! If you miss the objective, no quiz appears.</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s7h">MOODLE CODES</h3>
+                <p data-t="tut_s7p">Complete all levels in a World to unlock a Moodle Code. Enter it in Moodle to earn a badge that is stored in your Moodle profile.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-setup" class="screen">
+        <div class="setup-box">
+            <div class="setup-title" data-t="setup_title">▸ GAME SETUP</div>
+            <div class="setup-group">
+                <div class="setup-group-label" data-t="setup_diff">DIFFICULTY</div>
+                <div class="setup-options" id="diff-opts">
+                    <button class="setup-opt" data-diff="easy" onclick="selDiff(this)" data-t="diff_easy">EASY</button>
+                    <button class="setup-opt sel" data-diff="normal" onclick="selDiff(this)" data-t="diff_normal">NORMAL</button>
+                    <button class="setup-opt" data-diff="hard" onclick="selDiff(this)" data-t="diff_hard">HARD</button>
+                </div>
+                <div class="setup-desc" id="diff-desc"></div>
+            </div>
+            <div class="setup-group">
+                <div class="setup-group-label" data-t="setup_mod">MODIFIERS <span style="font-size:8px;color:#555">(OPTIONAL)</span></div>
+                <div class="setup-options">
+                    <button class="setup-opt" data-mod="timetrial" onclick="togMod(this)">
+                        <span class="tag" style="background:var(--orange)">+SCORE</span>
+                        <span data-t="mod_tt">⏱ TIME TRIAL</span>
+                    </button>
+                    <button class="setup-opt" data-mod="hardcore" onclick="togMod(this)">
+                        <span class="tag" style="background:var(--red)">+SCORE</span>
+                        <span data-t="mod_hc">💀 HARDCORE</span>
+                    </button>
+                    <button class="setup-opt" data-mod="ironman" onclick="togMod(this)">
+                        <span class="tag" style="background:var(--purple)">+SCORE</span>
+                        <span data-t="mod_im">🔒 IRONMAN</span>
+                    </button>
+                </div>
+                <div class="setup-desc" id="mod-desc" data-t="mod_desc_none">No modifiers. Pure puzzle mode.</div>
+            </div>
+            <div class="setup-btns">
+                <button class="title-btn" onclick="startSetup()" data-t="btn_confirm">▶ SELECT LEVEL</button>
+                <button class="title-btn sec" onclick="showTitle()" data-t="btn_back">◀ BACK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="reset-modal" class="modal-bg">
+        <div class="modal-box" style="border-left-color:var(--red);max-width:440px;">
+            <button class="modal-close" onclick="hideModal('reset-modal')">✕ CLOSE</button>
+            <div class="modal-title" style="color:var(--red);">⚠ RESET ALL PROGRESS</div>
+            <div class="modal-section">
+                <p style="color:#c0a0a0;line-height:2;">
+                    This will permanently erase:<br>
+                    <strong style="color:var(--accent2)">All completed levels · All highscores · All bonus claims · All inventory items · All Moodle codes</strong><br><br>
+                    Your current playthrough will be gone. This cannot be undone.
+                </p>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;">
+                <button class="title-btn" style="border-color:var(--red);color:var(--red);" onclick="confirmReset()">🗑 YES, RESET EVERYTHING</button>
+                <button class="title-btn sec" onclick="hideModal('reset-modal')">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-levels" class="screen">
+        <div class="ls-topbar">
+            <button class="back-btn" onclick="showSetup()">◀ <span data-t="btn_setup">SETUP</span></button>
+            <span class="ls-title" data-t="ls_title">SELECT LEVEL</span>
+            <div style="margin-left:auto;display:flex;gap:14px;align-items:center;">
+                <span style="font-family:var(--PX);font-size:8px;" id="ls-mods"></span>
+                <span class="ls-score" id="ls-score">TOTAL: 0</span>
+            </div>
+        </div>
+        <div class="ls-body" id="ls-body"></div>
+    </div>
+
+    <div id="screen-game" class="screen">
+        <div class="game-main">
+            <div class="game-meta">
+                <span class="gtb-lvl" id="top-id">1-1</span>
+                <span class="gtb-pen" id="pen-info"></span>
+                <div class="gtb-spacer"></div>
+                <div class="gtb-score-wrap">
+                    <span class="gtb-score-val" id="sc-disp">0</span>
+                    <span class="gtb-score-lbl" data-t="score_lbl">SCORE</span>
+                </div>
+                <button class="gtb-btn" onclick="goLevels()" data-t="btn_levels">◀ LEVELS</button>
+            </div>
+            <div class="puzzle-and-sidebar">
+                <div class="puzzle-scaler-wrap" id="puzzle-scaler-wrap">
+                    <div class="puzzle-scaler" id="puzzle-scaler">
+                        <div class="puzzle-hud">
+                            <div class="timer-row">
+                                <span class="timer-icon">⏱</span>
+                                <span class="timer-val" id="timer-val">15:00</span>
+                            </div>
+                            <div class="puzzle-hint" id="top-hint"></div>
+                            <div class="mod-tags-row" id="mod-tags"></div>
+                            <div style="font-size:9px;color: #000000;font-family:var(--PX);margin-top:2px;" data-t="zoom_hint">Ctrl + scroll to zoom</div>
+                        </div>
+                        <div class="picross-wrap">
+                            <table class="ptable" id="ptable" oncontextmenu="return false;" onmouseleave="clearHover();hoverRow=-1;hoverCol=-1;"></table>
+                        </div>
+                    </div>
+                </div>
+                <div class="bonus-sidebar" id="bonus-sidebar">
+                    <div class="bonus-sidebar-label">🎯 BONUS</div>
+                    <div class="bonus-sidebar-hint" id="bonus-sidebar-hint"></div>
+                </div>
+            </div>
+            <div class="inv-strip">
+                <div class="inv-strip-header" data-t="inv_strip_header">🎒 INVENTORY — click an item to use it</div>
+                <div class="inv-strip-list" id="inv-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-hs" class="screen">
+        <div class="ls-topbar">
+            <button class="back-btn" onclick="showTitle()">◀ <span data-t="btn_menu">MENU</span></button>
+            <span class="ls-title" data-t="hs_title">HIGHSCORES</span>
+        </div>
+        <div class="hs-body" id="hs-body"></div>
+    </div>
+
+    <div id="screen-codes" class="screen">
+        <div class="ls-topbar">
+            <button class="back-btn" onclick="showTitle()">◀ <span data-t="btn_menu">MENU</span></button>
+            <span class="ls-title" data-t="codes_title">MY CODES</span>
+        </div>
+        <div class="ls-body" id="codes-body"></div>
+    </div>
+
+    <div class="overlay" id="ov-win">
+        <div class="ov-title win" data-t="ov_win">PUZZLE SOLVED!</div>
+        <div id="ov-reveal" class="ov-reveal"></div>
+        <div class="ov-sub" id="ov-sub"></div>
+        <div class="bonus-list" id="bonus-list"></div>
+        <div id="item-reward-zone"></div>
+        <div class="ov-btns">
+            <button class="ob p" onclick="nextLvl()" data-t="btn_next">NEXT ▶</button>
+            <button class="ob s" onclick="replayLvl()" data-t="btn_retry">RETRY</button>
+            <button class="ob s" onclick="goLevels()" data-t="btn_levels">LEVELS</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="ov-lose">
+        <div class="ov-title lose" id="lose-title" data-t="ov_lose">TIME'S UP!</div>
+        <div class="ov-sub" id="lose-sub"></div>
+        <div class="ov-btns">
+            <button class="ob p" onclick="replayLvl()" data-t="btn_retry2">TRY AGAIN</button>
+            <button class="ob s" onclick="goLevels()" data-t="btn_levels">LEVELS</button>
+        </div>
+    </div>
+
+    <div class="quiz-overlay" id="quiz-overlay">
+        <div class="quiz-title" data-t="quiz_title">⭐ BONUS QUESTION</div>
+        <div class="quiz-q" id="quiz-q"></div>
+        <div class="quiz-opts" id="quiz-opts"></div>
+        <div class="quiz-result" id="quiz-result"></div>
+        <button class="quiz-skip" id="quiz-continue" onclick="finishQuiz()" style="display:none" data-t="quiz_continue">CONTINUE ▶</button>
+        <button class="quiz-skip" onclick="skipQuiz()" data-t="quiz_skip">SKIP (no bonus)</button>
+    </div>
+
+    <div id="pw-modal" class="modal-bg">
+        <div class="modal-box pw-box">
+            <button class="modal-close" onclick="hideModal('pw-modal')">✕ CLOSE</button>
+            <div class="modal-title" data-t="pw_title">🔑 NEW CODE UNLOCKED!</div>
+            <div id="pw-content"></div>
+        </div>
+    </div>
+
+    <div class="item-use-toast" id="item-toast"></div>
+
+    <div class="penalty-flash" id="pen-flash"></div>
+
+
+    <script src="js/translations.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/levels.js"></script>
+    <script src="js/items.js"></script>
+    <script src="js/quiz.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/grid.js"></script>
+    <script src="js/input.js"></script>
+    <script src="js/scoring.js"></script>
+    <script src="js/inventory.js"></script>
+    <script src="js/codes.js"></script>
+    <script src="js/screens.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
