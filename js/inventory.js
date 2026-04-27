@@ -23,9 +23,9 @@
 //       cursed-locked  — cursed item and not enough time has elapsed yet
 //                        (3 min normally, 1 min in Time Trial)
 //   - Builds the card HTML with: icon, rarity badge, name, description,
-//     an optional lock warning, and the cost/sell footer.
+//     an optional lock warning, and the discard footer.
 //   - Attaches a click handler for useItem() only on unlocked items.
-//     The sell button has its own onclick that calls sellItem() and uses
+//     The discard button has its own onclick that calls sellItem() and uses
 //     stopPropagation() so clicking it doesn't also trigger useItem().
 function buildInventoryPanel() {
     const list = document.getElementById('inv-list');
@@ -38,7 +38,7 @@ function buildInventoryPanel() {
     }
 
     // How many seconds have elapsed since the level started
-    const elapsed = DIFF_CFG[curDiff].timerStart - timerSecs;
+    const elapsed = (cur ? (cur.timer || DIFF_CFG[curDiff].timerStart) : DIFF_CFG[curDiff].timerStart) - timerSecs;
     // Cursed items unlock after 3 min normally, 1 min in Time Trial
     const cursedMinElapsed = curMods.timetrial ? 60 : 180;
 
@@ -64,12 +64,9 @@ function buildInventoryPanel() {
             ? `<div class="inv-cursed-warning">${t('inv_cursed_locked_label').replace('{n}', Math.ceil((cursedMinElapsed - elapsed) / 60))}</div>`
             : '';
 
-            
-
         el.innerHTML = `
             <span class="inv-item-icon">${def.icon}</span>
-            <div class="inv-item-rarity ${def.rarity}">${rarityLabel(def.rarity)}</div>
-            <div class="inv-item-name">${itemName(def)}</div>
+            <div class="inv-item-name ${def.rarity}">${itemName(def)}</div>
             <div class="inv-item-desc">${itemDesc(def)}</div>
             ${cursedWarning}
             <div class="inv-item-val">
@@ -81,13 +78,86 @@ function buildInventoryPanel() {
         // Only attach the use-handler if the item is actually usable right now
         if (!isLocked && !cursedStillLocked) {
             el.onclick = (e) => {
-                // Guard: don't fire useItem if the sell button was clicked
+                // Guard: don't fire useItem if the discard button was clicked
                 if (!e.target.classList.contains('inv-sell-btn')) useItem(item.uid);
             };
         }
 
         list.appendChild(el);
     });
+}
+
+
+// ═══════════════════════════════════════════════
+//  CLUE BLACKOUT HELPERS
+//  Used by cursed items to hide clue numbers
+//  temporarily as a negative trade-off effect.
+// ═══════════════════════════════════════════════
+
+// applyCursedBlackout — blacks out a random half of rows AND columns for 30–60 s.
+function applyCursedBlackout() {
+    if (!cur) return;
+    const rows = cur.grid.length;
+    const cols = cur.grid[0].length;
+    const duration = (30 + Math.floor(Math.random() * 31)) * 1000; // 30–60s in ms
+
+    // Pick roughly half the rows and half the columns to black out
+    const affectedRows = [];
+    for (let r = 0; r < rows; r++) {
+        if (Math.random() < 0.5) affectedRows.push(r);
+    }
+    const affectedCols = [];
+    for (let c = 0; c < cols; c++) {
+        if (Math.random() < 0.5) affectedCols.push(c);
+    }
+
+    // Apply blackout class to row clue cells
+    affectedRows.forEach(r => {
+        document.querySelectorAll(`.rct-${r}`)
+            .forEach(el => el.classList.add('clue-blackout'));
+    });
+
+    // Apply blackout class to column clue cells
+    affectedCols.forEach(c => {
+        document.querySelectorAll(`.cch-${c}`)
+            .forEach(el => el.classList.add('clue-blackout'));
+    });
+
+    // Lift the blackout after the duration
+    setTimeout(() => {
+        document.querySelectorAll('.clue-blackout')
+            .forEach(el => el.classList.remove('clue-blackout'));
+    }, duration);
+}
+
+// applyCursedRowBlackout — blacks out ALL row clues for 30 s (fixed duration).
+//   Used as the negative effect for cursedShield.
+function applyCursedRowBlackout() {
+    if (!cur) return;
+    const rows = cur.grid.length;
+    for (let r = 0; r < rows; r++) {
+        document.querySelectorAll(`.rct-${r}`)
+            .forEach(el => el.classList.add('clue-blackout'));
+    }
+    setTimeout(() => {
+        document.querySelectorAll('.clue-blackout')
+            .forEach(el => el.classList.remove('clue-blackout'));
+    }, 30000);
+}
+
+// applyCursedColBlackout — blacks out ALL column clues for a given duration (ms).
+//   Used as the negative effect for cursedRowCol.
+function applyCursedColBlackout(durationMs) {
+    if (!cur) return;
+    const cols = cur.grid[0].length;
+    for (let c = 0; c < cols; c++) {
+        document.querySelectorAll(`.cch-${c}`)
+            .forEach(el => el.classList.add('clue-blackout'));
+    }
+    setTimeout(() => {
+        document.querySelectorAll('.clue-blackout')
+            .forEach(el => el.classList.remove('clue-blackout'));
+    }, durationMs);
 }
 
 
@@ -103,16 +173,27 @@ function buildInventoryPanel() {
 //     - the item is cursed and the unlock time hasn't been reached yet
 //
 //   Item dispatch uses prefix/exact matching on def.id:
-//     'reveal*'    / 'cursedReveal'  → revealTiles()
-//     'markWrong*' / 'cursedShield'  → markWrongTiles() or instant-fail gamble
-//     'addTime*'   / 'cursedTime'    → add/subtract seconds
-//     'freeze'                       → timerFrozen for 30 s
-//     'shield'                       → shieldActive = true
+//     'reveal*'        → revealTiles()
+//     'markWrong*'     → markWrongTiles()
+//     'addTime*'       → add seconds to timer
+//     'freeze'         → timerFrozen for 30 s
+//     'shield'         → shieldActive = true
+//     'rowSolve'       → solveRows(1)
+//     'colSolve'       → solveCols(1)
+//     'mistakeEraser'  → reduce mistakeCount by 2
+//     'artifactComplete' → solve entire puzzle
+//
+//   CURSED ITEMS — always trigger BOTH effects simultaneously:
+//     'cursedReveal'   → ✅ reveal 6 tiles  +  ⚠️ clear all ✕ marks
+//     'cursedTime'     → ✅ +5 min           +  ⚠️ −2 min immediately
+//     'cursedShield'   → ✅ shield + 2 tiles  +  ⚠️ row clue blackout 30s
+//     'cursedRowSolve' → ✅ reveal 2 rows     +  ⚠️ erase 1 row
+//     'cursedColSolve' → ✅ reveal 2 cols     +  ⚠️ erase 1 col
+//     'cursedRowCol'   → ✅ reveal 3 rows + 2 cols  +  ⚠️ col clue blackout 45s
 //
 //   After dispatching:
 //   - Removes the item from STATE.inventory (consumed on use).
 //   - Increments itemsUsedThisLevel (tracked for the 'noitem' bonus).
-//   - Deducts scoreCost from totalScore if the item has a cost > 0.
 //   - Saves state, shows a toast, and rebuilds the panel.
 function useItem(uid) {
     if (dead || curMods.ironman) return;
@@ -126,7 +207,8 @@ function useItem(uid) {
 
     // Enforce cursed-item time lock
     const isCursed = def.rarity === 'cursed';
-    const elapsed = DIFF_CFG[curDiff].timerStart - timerSecs;
+    const timerStart = cur ? (cur.timer || DIFF_CFG[curDiff].timerStart) : DIFF_CFG[curDiff].timerStart;
+    const elapsed = timerStart - timerSecs;
     const cursedMinElapsed = curMods.timetrial ? 60 : 180;
     if (isCursed && elapsed < cursedMinElapsed) {
         showToast(t('item_cursed_locked').replace('{n}', Math.ceil((cursedMinElapsed - elapsed) / 60)));
@@ -136,79 +218,25 @@ function useItem(uid) {
     let msg = ''; // toast message built per item type below
     const id = def.id;
 
-    // ── REVEAL items (reveal1–4) and cursedReveal ─────────────────────────
-    if (id.startsWith('reveal') || id === 'cursedReveal') {
+    // ── REVEAL items (reveal1–4) ──────────────────────────────────────────
+    if (id.startsWith('reveal') && id !== 'cursedReveal') {
         // Parse the tile count from the id suffix (e.g. 'reveal3' → 3)
         const count = parseInt(id.replace('reveal', '')) || 1;
+        revealTiles(count);
+        msg = `${def.icon} ${count > 1 ? t('item_revealed_pl').replace('{n}', count) : t('item_revealed').replace('{n}', count)}`;
 
-        if (id === 'cursedReveal') {
-            // 50 % chance: bad outcome resets all non-revealed cells
-            if (Math.random() < 0.5) {
-                const rows = cur.grid.length, cols = cur.grid[0].length;
-                for (let r = 0; r < rows; r++) {
-                    for (let c = 0; c < cols; c++) {
-                        if (!revealedGrid[r][c]) {
-                            userGrid[r][c] = 0;      // erase player progress
-                            wrongGrid[r][c] = false;  // clear wrong marks too
-                        }
-                        renderCell(r, c); // grid.js — redraw every cell
-                    }
-                }
-                msg = t('item_cursed_reset');
-            } else {
-                // 50 % chance: lucky outcome — reveal 6 tiles for free
-                revealTiles(6);
-                msg = t('item_cursed_lucky');
-            }
-        } else {
-            // Standard reveal: show 'count' randomly chosen correct tiles
-            revealTiles(count);
-            msg = `${def.icon} ${count > 1 ? t('item_revealed_pl').replace('{n}', count) : t('item_revealed').replace('{n}', count)}`;
-        }
-
-        // ── MARK-WRONG items (markWrong2–8) and cursedShield ─────────────────
-    } else if (id.startsWith('markWrong') || id === 'cursedShield') {
+        // ── MARK-WRONG items (markWrong2–8) ───────────────────────────────────
+    } else if (id.startsWith('markWrong')) {
         const count = parseInt(id.replace('markWrong', '')) || 2;
+        markWrongTiles(count);
+        msg = `${def.icon} ${t('item_marked').replace('{n}', count)}`;
 
-        if (id === 'cursedShield') {
-            // 30 % chance: instant game over (demon eye triggered)
-            if (Math.random() < 0.3) {
-                dead = true;
-                stopTimer();
-                document.getElementById('lose-title').textContent = t('item_demon_title');
-                document.getElementById('lose-sub').textContent = t('item_demon_sub');
-                document.getElementById('ov-lose').classList.add('show');
-            } else {
-                // 70 % chance: shield activates normally
-                shieldActive = true;
-                msg = t('item_demon_shield');
-            }
-        } else {
-            // Standard mark: place ✕ on 'count' empty cells that should stay empty
-            markWrongTiles(count);
-            msg = `${def.icon} ${t('item_marked').replace('{n}', count)}`;
-        }
-
-        // ── ADD-TIME items (addTime30–180) and cursedTime ─────────────────────
-    } else if (id.startsWith('addTime') || id === 'cursedTime') {
-        if (id === 'cursedTime') {
-            // 40 % chance: lose 4 minutes
-            if (Math.random() < 0.4) {
-                timerSecs = Math.max(0, timerSecs - 240);
-                msg = t('item_cursed_time_bad');
-            } else {
-                // 60 % chance: gain 5 minutes
-                timerSecs += 300;
-                msg = t('item_cursed_time_good');
-            }
-            updTimer(); // timer.js — refresh display immediately
-        } else {
-            // Standard time add: parse seconds from the id suffix
-            const secs = parseInt(id.replace('addTime', '')) || 30;
-            timerSecs += secs;
-            updTimer();
-            msg = `${def.icon} ${t('item_time_added').replace('{n}', secs)}`;
-        }
+        // ── ADD-TIME items (addTime30–180) ────────────────────────────────────
+    } else if (id.startsWith('addTime')) {
+        const secs = parseInt(id.replace('addTime', '')) || 30;
+        timerSecs += secs;
+        updTimer();
+        msg = `${def.icon} ${t('item_time_added').replace('{n}', secs)}`;
 
         // ── FREEZE ────────────────────────────────────────────────────────────
     } else if (id === 'freeze') {
@@ -221,7 +249,128 @@ function useItem(uid) {
     } else if (id === 'shield') {
         shieldActive = true; // consumed in input.js ac() on next wrong fill
         msg = `${def.icon} ${t('item_shield_msg')}`;
+
+        // ── ROW-SOLVE ─────────────────────────────────────────────────────────
+    } else if (id === 'rowSolve') {
+        const n = solveRows(1);
+        msg = n > 0 ? `${def.icon} ${t('item_row_solved')}` : `${def.icon} ${t('item_row_solved_none')}`;
+        if (n > 0) checkWin();
+
+        // ── COL-SOLVE ─────────────────────────────────────────────────────────
+    } else if (id === 'colSolve') {
+        const n = solveCols(1);
+        msg = n > 0 ? `${def.icon} ${t('item_col_solved')}` : `${def.icon} ${t('item_col_solved_none')}`;
+        if (n > 0) checkWin();
+
+        // ── MISTAKE-ERASER ────────────────────────────────────────────────────
+    } else if (id === 'mistakeEraser') {
+        const before = mistakeCount;
+        mistakeCount = Math.max(0, mistakeCount - 2);
+        const removed = before - mistakeCount;
+        msg = removed > 0
+            ? `${def.icon} ${t('item_mistake_erased').replace('{n}', removed)}`
+            : `${def.icon} ${t('item_mistake_erased_none')}`;
+
+        // ── ARTIFACT COMPLETE ─────────────────────────────────────────────────
+    } else if (id === 'artifactComplete') {
+        const sol = cur.grid, rows = sol.length, cols = sol[0].length;
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                if (sol[r][c] === 1 && userGrid[r][c] !== 1) {
+                    revealedGrid[r][c] = true;
+                    userGrid[r][c] = 1;
+                    renderCell(r, c);
+                    updClues(r, c);
+                }
+            }
+        }
+        msg = `🌟 ${t('item_artifact_complete')}`;
+        checkWin();
+
+        // ═══════════════════════════════════════════
+        //  CURSED ITEMS
+        //  Every cursed item ALWAYS triggers both its
+        //  positive effect AND its negative effect.
+        //  There is no randomness on whether each
+        //  effect fires — both are guaranteed.
+        //  This makes them a deliberate trade-off
+        //  rather than a gamble.
+        // ═══════════════════════════════════════════
+
+        // ── CURSED REVEAL ─────────────────────────────────────────────────────
+        //   ✅ Positive : reveals 6 correct tiles (green, permanent)
+        //   ⚠️ Negative : clears every right-click ✕ mark the player has placed
+    } else if (id === 'cursedReveal') {
+        // Positive effect first
+        revealTiles(6);
+        // Negative effect: wipe all player ✕ marks (userGrid === 2) back to 0
+        const rows = cur.grid.length, cols = cur.grid[0].length;
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                if (userGrid[r][c] === 2) {
+                    userGrid[r][c] = 0;
+                    renderCell(r, c);
+                }
+            }
+        }
+        msg = `☠️ ${t('item_cursed_reveal_both')}`;
+
+        // ── CURSED TIME ───────────────────────────────────────────────────────
+        //   ✅ Positive : +5 minutes added to the timer
+        //   ⚠️ Negative : −2 minutes deducted immediately (net gain: +3 min)
+    } else if (id === 'cursedTime') {
+        // Apply negative first so the display shows the net result
+        timerSecs = Math.max(0, timerSecs - 120); // −2 min
+        timerSecs += 300;                          // +5 min
+        updTimer();
+        msg = `💀 ${t('item_cursed_time_both')}`;
+
+        // ── CURSED SHIELD ─────────────────────────────────────────────────────
+        //   ✅ Positive : activates the shield AND reveals 2 correct tiles
+        //   ⚠️ Negative : blacks out all row clues for 30 seconds
+    } else if (id === 'cursedShield') {
+        // Positive effects
+        shieldActive = true;
+        revealTiles(2);
+        // Negative effect
+        applyCursedRowBlackout(); // 30s fixed duration (defined above)
+        msg = `👁️ ${t('item_cursed_shield_both')}`;
+
+        // ── CURSED ROW-SOLVE ──────────────────────────────────────────────────
+        //   ✅ Positive : fully reveals 2 random unsolved rows
+        //   ⚠️ Negative : erases progress in 1 random already-solved row
+    } else if (id === 'cursedRowSolve') {
+        // Positive effect
+        const revealed = solveRows(2);
+        // Negative effect — runs after so it cannot erase what was just revealed
+        const erased = unsolveRows(1);
+        msg = `🌊 ${t('item_cursed_row_both').replace('{r}', revealed).replace('{e}', erased)}`;
+        if (revealed > 0) checkWin();
+
+        // ── CURSED COL-SOLVE ──────────────────────────────────────────────────
+        //   ✅ Positive : fully reveals 2 random unsolved columns
+        //   ⚠️ Negative : erases progress in 1 random already-solved column
+    } else if (id === 'cursedColSolve') {
+        // Positive effect
+        const revealed = solveCols(2);
+        // Negative effect — runs after so it cannot erase what was just revealed
+        const erased = unsolveCols(1);
+        msg = `🌪️ ${t('item_cursed_col_both').replace('{r}', revealed).replace('{e}', erased)}`;
+        if (revealed > 0) checkWin();
+
+        // ── CURSED ROW+COL ────────────────────────────────────────────────────
+        //   ✅ Positive : fully reveals 3 random unsolved rows + 2 unsolved columns
+        //   ⚠️ Negative : blacks out ALL column clues for 45 seconds
+    } else if (id === 'cursedRowCol') {
+        // Positive effects
+        const r = solveRows(3);
+        const c = solveCols(2);
+        // Negative effect: blackout all column clues for 45s
+        applyCursedColBlackout(45000);
+        msg = `💥 ${t('item_cursed_rowcol_both').replace('{r}', r).replace('{c}', c)}`;
+        checkWin();
     }
+
 
     // ── Consume item ──────────────────────────────────────────────────────
     STATE.inventory.splice(idx, 1); // remove from inventory
@@ -237,7 +386,7 @@ function useItem(uid) {
 //  SELL ITEM
 // ═══════════════════════════════════════════════
 
-// sellItem(uid, e) — sells an item for its sellVal, adding points to the score.
+// sellItem(uid, e) — discards an item without using it.
 //   e.stopPropagation() prevents the click from bubbling up to the parent
 //   inv-item div and accidentally triggering useItem() at the same time.
 //   The item is removed from STATE.inventory and the panel is rebuilt.
@@ -283,7 +432,7 @@ function revealTiles(count) {
 
     shuffle(cands).slice(0, count).forEach(([r, c]) => {
         revealedGrid[r][c] = true; // mark as item-revealed (green, can't erase)
-        userGrid[r][c] = 1;    // count as filled for win-check purposes
+        userGrid[r][c] = 1;        // count as filled for win-check purposes
         renderCell(r, c);          // grid.js — redraw the cell
         updClues(r, c);            // grid.js — refresh clue colours
     });
@@ -344,4 +493,103 @@ function showToast(msg) {
     el.textContent = msg;
     el.classList.add('show');
     setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+
+// ═══════════════════════════════════════════════
+//  ROW / COLUMN SOLVE & UNSOLVE HELPERS
+//  Used by cursed items and row/col-solve items.
+// ═══════════════════════════════════════════════
+
+// unsolveRows(count) — erases 'count' random rows of player progress.
+//   Clears both player-filled and item-revealed correct cells in those rows,
+//   resetting them to empty. Wrong marks are left untouched.
+//   Returns the number of rows actually affected.
+function unsolveRows(count) {
+    const sol = cur.grid, rows = sol.length, cols = sol[0].length;
+    // Only target rows that have at least one filled correct cell to erase
+    const candidates = [];
+    for (let r = 0; r < rows; r++) {
+        const hasFilled = sol[r].some((v, c) => v === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c]));
+        if (hasFilled) candidates.push(r);
+    }
+    shuffle(candidates);
+    const targets = candidates.slice(0, count);
+    targets.forEach(r => {
+        for (let c = 0; c < cols; c++) {
+            if (sol[r][c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])) {
+                userGrid[r][c] = 0;
+                revealedGrid[r][c] = false;
+                renderCell(r, c);
+            }
+        }
+    });
+    return targets.length;
+}
+
+// unsolveCols(count) — same as unsolveRows but operates on columns.
+function unsolveCols(count) {
+    const sol = cur.grid, rows = sol.length, cols = sol[0].length;
+    const candidates = [];
+    for (let c = 0; c < cols; c++) {
+        const hasFilled = sol.some((row, r) => row[c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c]));
+        if (hasFilled) candidates.push(c);
+    }
+    shuffle(candidates);
+    const targets = candidates.slice(0, count);
+    targets.forEach(c => {
+        for (let r = 0; r < rows; r++) {
+            if (sol[r][c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])) {
+                userGrid[r][c] = 0;
+                revealedGrid[r][c] = false;
+                renderCell(r, c);
+            }
+        }
+    });
+    return targets.length;
+}
+
+// solveRows(count) — reveals 'count' random unsolved rows fully.
+//   Returns the number of rows actually revealed.
+function solveRows(count) {
+    const sol = cur.grid, rows = sol.length, cols = sol[0].length;
+    const unsolved = [];
+    for (let r = 0; r < rows; r++) {
+        const done = sol[r].every((v, c) => v === 0 || userGrid[r][c] === 1 || revealedGrid[r][c]);
+        if (!done) unsolved.push(r);
+    }
+    shuffle(unsolved);
+    unsolved.slice(0, count).forEach(r => {
+        for (let c = 0; c < cols; c++) {
+            if (sol[r][c] === 1 && userGrid[r][c] !== 1) {
+                revealedGrid[r][c] = true;
+                userGrid[r][c] = 1;
+                renderCell(r, c);
+                updClues(r, c);
+            }
+        }
+    });
+    return Math.min(count, unsolved.length);
+}
+
+// solveCols(count) — same as solveRows but for columns.
+function solveCols(count) {
+    const sol = cur.grid, rows = sol.length, cols = sol[0].length;
+    const unsolved = [];
+    for (let c = 0; c < cols; c++) {
+        const done = sol.every((row, r) => row[c] === 0 || userGrid[r][c] === 1 || revealedGrid[r][c]);
+        if (!done) unsolved.push(c);
+    }
+    shuffle(unsolved);
+    unsolved.slice(0, count).forEach(c => {
+        for (let r = 0; r < rows; r++) {
+            if (sol[r][c] === 1 && userGrid[r][c] !== 1) {
+                revealedGrid[r][c] = true;
+                userGrid[r][c] = 1;
+                renderCell(r, c);
+                updClues(r, c);
+            }
+        }
+    });
+    return Math.min(count, unsolved.length);
 }

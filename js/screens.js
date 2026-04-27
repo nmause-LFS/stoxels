@@ -56,7 +56,11 @@ function buildLS() {
         }).join(' ') +
         ` <span class="mod-tag diff">${t('diff_' + curDiff)}</span>`;
 
-    document.getElementById('ls-score').textContent = t('ls_total') + ': ' + STATE.totalScore;
+    const nextCode = WORLD_CODES.find(wc => STATE.totalScore < wc.threshold);
+    const nextCodeStr = nextCode
+        ? ` · ${nextCode.threshold - STATE.totalScore} ${t('ls_to_next')} (${LANG === 'de' ? nextCode.titleDE : nextCode.titleEn})`
+        : ` · 🏆 ${t('ls_all_codes')}`;
+    document.getElementById('ls-score').textContent = t('ls_total') + ': ' + STATE.totalScore + nextCodeStr;
 
     // ── World blocks ───────────────────────────────────────────────────────
     const body = document.getElementById('ls-body');
@@ -111,9 +115,12 @@ function buildLS() {
 
             // ── Card element ───────────────────────────────────────────────
             const card = document.createElement('div');
-            card.className = 'level-card' +
+
+            const isMathGated = isGatedLevel(gi) && !isMathGatePassed(gi);
+                card.className = 'level-card' +
                 (isUnlocked ? '' : ' locked') +
-                (isDone ? ' done' : '');
+                (isDone ? ' done' : '') +
+                (isMathGated && isUnlocked ? ' math-gated' : '');
 
             // Star rating (only shown if the level has been completed)
             const stars = isDone ? getStars(gi) : '';
@@ -389,7 +396,18 @@ function getTooltipHint(gi) {
 //   7.  Start the timer, build the grid, rebuild the inventory panel.
 //   8.  Push 'screen-levels' to screenHistory so Escape goes back to levels.
 //   9.  Switch to the game screen.
+
+
 function startLevel(gi) {
+    if (isGatedLevel(gi) && !isMathGatePassed(gi)) {
+        tryStartGatedLevel(gi, () => _doStartLevel(gi));
+        return;
+    }
+    _doStartLevel(gi);
+}
+
+
+function _doStartLevel(gi) {
     cur = ALL[gi]; // set the current puzzle (levels.js)
 
     const rows = cur.grid.length;
@@ -413,7 +431,7 @@ function startLevel(gi) {
 
     // Timer: Time Trial overrides the difficulty's timerStart with 5 minutes
     const cfg = DIFF_CFG[curDiff];
-    timerSecs = curMods.timetrial ? 5 * 60 : cfg.timerStart;
+    timerSecs = curMods.timetrial ? 5 * 60 : (cur.timer || cfg.timerStart);
 
     // Close any leftover overlays from a previous level
     hideOv();    // hides win and lose overlays (below)

@@ -215,6 +215,26 @@ const T = {
         item_discarded: 'Item discarded',
         item_sell_btn: '🗑 Discard',
         inv_cursed_locked_label: '🔒 LOCKED {n}min+',
+        item_row_solved: 'Row fully revealed!',
+        item_row_solved_none: 'All rows already solved!',
+        item_col_solved: 'Column fully revealed!',
+        item_col_solved_none: 'All columns already solved!',
+        item_mistake_erased: 'Erased {n} mistake(s) from your count!',
+        item_mistake_erased_none: 'No mistakes to erase!',
+        item_cursed_row_lucky: '🌊 Lucky! {n} row(s) revealed!',
+        item_cursed_row_bad: '🌊 CURSED! {n} row(s) erased!',
+        item_cursed_col_lucky: '🌪️ Lucky! {n} column(s) revealed!',
+        item_cursed_col_bad: '🌪️ CURSED! {n} column(s) erased!',
+        item_cursed_rowcol_lucky: '💥 JACKPOT! {r} rows + {c} cols revealed!',
+        item_cursed_rowcol_bad: '💥 CHAOS! {n} rows/cols erased!',
+        item_artifact_complete: '🌟 CODEX activated! Puzzle solved instantly!',
+
+        item_cursed_reveal_both: 'Revealed 6 tiles! But all ✕ marks were cleared.',
+        item_cursed_time_both: '+5 min added, −2 min penalty. Net: +3 min.',
+        item_cursed_shield_both: 'Shield active + 2 tiles revealed! Row clues hidden 30s.',
+        item_cursed_row_both: '🌊 {r} row(s) revealed · {e} row erased!',
+        item_cursed_col_both: '🌪️ {r} col(s) revealed · {e} col erased!',
+        item_cursed_rowcol_both: '💥 {r} rows + {c} cols revealed! Column clues hidden 45s.',
 
         // Inventory rarity labels
         rar_common: 'COMMON', rar_uncommon: 'UNCOMMON', rar_rare: 'RARE',
@@ -223,6 +243,7 @@ const T = {
         // Win overlay
         ov_win_pts: 'pts',
         ov_win_left: 'left',
+        ov_win_solved_in: 'solved in',
         ov_win_mistake: 'mistake',
         ov_win_mistakes: 'mistakes',
         ov_win_new: 'new',
@@ -278,6 +299,19 @@ const T = {
         tut2_s10_title: 'You\'re Ready!',
         tut2_s10_text: 'That covers everything! A few last tips:<br><br>• Use <strong>Ctrl + Scroll</strong> to zoom the puzzle<br>• Press <strong>Escape</strong> to go back at any time<br>• Earn enough total score to unlock <strong>Moodle achievement codes</strong><br>• Check the <strong>Highscores</strong> screen to track your progress<br><br>Good luck solving the puzzles! 🎉',
 
+
+        // Math gate modal
+        mg_gate_badge: 'PROBABILITY GATE',
+        mg_instruction: 'Solve this exercise to unlock the level:',
+        mg_submit: 'CHECK ▶',
+        mg_correct: '✓ Correct! Unlocking level…',
+        mg_wrong: '✗ Not quite. Attempt {n} — try again!',
+        mg_not_a_number: '⚠ Please enter a numeric value.',
+        mg_new_q: '🔄 TRY A DIFFERENT QUESTION',
+        mg_footer: 'Solve it once and this level stays unlocked permanently.',
+
+        ls_to_next: 'pts to next code',
+        ls_all_codes: 'All codes unlocked!',
 
     },
 
@@ -408,6 +442,26 @@ const T = {
         item_discarded: 'Item verworfen',
         item_sell_btn: '🗑 Verwerfen',
         inv_cursed_locked_label: '🔒 GESPERRT {n}min+',
+        item_row_solved: 'Zeile vollständig enthüllt!',
+        item_row_solved_none: 'Alle Zeilen bereits gelöst!',
+        item_col_solved: 'Spalte vollständig enthüllt!',
+        item_col_solved_none: 'Alle Spalten bereits gelöst!',
+        item_mistake_erased: '{n} Fehler aus deiner Zählung gelöscht!',
+        item_mistake_erased_none: 'Keine Fehler zum Löschen!',
+        item_cursed_row_lucky: '🌊 Glück! {n} Zeile(n) enthüllt!',
+        item_cursed_row_bad: '🌊 VERFLUCHT! {n} Zeile(n) gelöscht!',
+        item_cursed_col_lucky: '🌪️ Glück! {n} Spalte(n) enthüllt!',
+        item_cursed_col_bad: '🌪️ VERFLUCHT! {n} Spalte(n) gelöscht!',
+        item_cursed_rowcol_lucky: '💥 JACKPOT! {r} Zeilen + {c} Spalten enthüllt!',
+        item_cursed_rowcol_bad: '💥 CHAOS! {n} Zeilen/Spalten gelöscht!',
+        item_artifact_complete: '🌟 KODEX aktiviert! Puzzle sofort gelöst!',
+
+        item_cursed_reveal_both: '6 Felder enthüllt! Aber alle ✕-Markierungen gelöscht.',
+        item_cursed_time_both: '+5 Min. hinzugefügt, −2 Min. Strafe. Netto: +3 Min.',
+        item_cursed_shield_both: 'Schild aktiv + 2 Felder enthüllt! Zeilenhinweise 30s versteckt.',
+        item_cursed_row_both: '🌊 {r} Zeile(n) enthüllt · {e} Zeile gelöscht!',
+        item_cursed_col_both: '🌪️ {r} Spalte(n) enthüllt · {e} Spalte gelöscht!',
+        item_cursed_rowcol_both: '💥 {r} Zeilen + {c} Spalten enthüllt! Spaltenhinweise 45s ausgeblendet.',
 
         // Inventory rarity labels
         rar_common: 'GEWÖHNLICH', rar_uncommon: 'UNGEWÖHNLICH', rar_rare: 'SELTEN',
@@ -416,6 +470,7 @@ const T = {
         // Win overlay
         ov_win_pts: 'Pkt.',
         ov_win_left: 'übrig',
+        ov_win_solved_in: 'gelöst in',
         ov_win_mistake: 'Fehler',
         ov_win_mistakes: 'Fehler',
         ov_win_new: 'neu',
@@ -470,6 +525,21 @@ const T = {
 
         tut2_s10_title: 'Du bist bereit!',
         tut2_s10_text: 'Das war alles! Noch ein paar letzte Tipps:<br><br>• <strong>Strg + Scrollen</strong> zum Zoomen<br>• <strong>Escape</strong> um jederzeit zurückzugehen<br>• Genug Punkte sammeln für <strong>Moodle-Codes</strong><br>• In der <strong>Bestenliste</strong> deinen Fortschritt verfolgen<br><br>Viel Erfolg beim Rätsellösen! 🎉',
+
+
+
+        // Math gate modal
+        mg_gate_badge: 'WAHRSCHEINLICHKEITSTOR',
+        mg_instruction: 'Löse diese Aufgabe, um das Level freizuschalten:',
+        mg_submit: 'PRÜFEN ▶',
+        mg_correct: '✓ Richtig! Level wird geöffnet…',
+        mg_wrong: '✗ Nicht ganz. Versuch {n} — nochmals!',
+        mg_not_a_number: '⚠ Bitte gib einen numerischen Wert ein.',
+        mg_new_q: '🔄 ANDERE AUFGABE VERSUCHEN',
+        mg_footer: 'Löse es einmal und das Level bleibt dauerhaft freigeschaltet.',
+
+        ls_to_next: 'Pkt. bis nächster Code',
+        ls_all_codes: 'Alle Codes freigeschaltet!',
 
 
     }

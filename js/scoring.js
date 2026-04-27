@@ -119,13 +119,15 @@ function checkWin() {
 
     const mins = Math.floor(timerSecs / 60);
     const secs = timerSecs % 60;
+    const elapsedMins = Math.floor(elapsed / 60);
+    const elapsedSecs = elapsed % 60;
     const gainNote = ptsAwarded < pts
         ? ` (+${ptsAwarded} ${t('ov_win_new')} — ${t('ov_win_best_was')} ${prevBest})`
         : ` (+${ptsAwarded})`;
     document.getElementById('ov-sub').innerHTML =
         `<div class="ov-sub-line ov-sub-reveal">"${lvText(cur, 'reveal')}"</div>` +
         `<div class="ov-sub-line ov-sub-pts">${pts} ${t('ov_win_pts')} (×${mult.toFixed(2)})${gainNote}</div>` +
-        `<div class="ov-sub-line ov-sub-time">⏱ ${mins}:${String(secs).padStart(2, '0')} ${t('ov_win_left')}</div>` +
+        `<div class="ov-sub-line ov-sub-time">⏱ ${mins}:${String(secs).padStart(2, '0')} ${t('ov_win_left')} · ${t('ov_win_solved_in')} ${elapsedMins}:${String(elapsedSecs).padStart(2, '0')}</div>` +
         `<div class="ov-sub-line ${mistakeCount === 0 ? 'ov-sub-miss-ok' : 'ov-sub-miss'}">✗ ${mistakeCount} ${mistakeCount !== 1 ? t('ov_win_mistakes') : t('ov_win_mistake')}</div>`;
 
     // Bonus badge — green if met, grey if missed; shows the hint if missed
@@ -163,7 +165,7 @@ function checkWin() {
         </div>`;
 
         if (Math.random() < 0.15) {
-            const defId = pickRandomItem();
+            const defId = pickLuckyItem();
             const def = ITEM_DEFS[defId];
             if (def) {
                 STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
@@ -176,7 +178,7 @@ function checkWin() {
     } else if (!bonusMet && !curMods.ironman && !isQuizBonus) {
         // Bonus missed — small consolation lucky drop chance
         if (Math.random() < 0.15) {
-            const defId = pickRandomItem();
+            const defId = pickLuckyItem();
             const def = ITEM_DEFS[defId];
             if (def) {
                 STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });

@@ -810,6 +810,7 @@
             flex-shrink: 0;
             min-width: 150px;
             max-width: 180px;
+            min-height: 150px;
         }
 
             .inv-item:hover {
@@ -855,23 +856,38 @@
         }
 
             .inv-item-rarity.common {
-                color: var(--rarity-common);
+                color: #ffffff;
+                border-color: #ffffff;
             }
 
             .inv-item-rarity.uncommon {
-                color: var(--rarity-uncommon);
+                color: #1eff00;
+                border-color: #1eff00;
             }
 
             .inv-item-rarity.rare {
-                color: var(--rarity-rare);
+                color: #0070dd;
+                border-color: #0070dd;
+            }
+
+            .inv-item-rarity.epic {
+                color: #a335ee;
+                border-color: #a335ee;
             }
 
             .inv-item-rarity.legendary {
-                color: var(--purple);
+                color: #ff8000;
+                border-color: #ff8000;
             }
 
             .inv-item-rarity.cursed {
-                color: var(--red);
+                color: #ffff00;
+                border-color: #ffff00;
+            }
+
+            .inv-item-rarity.artifact {
+                color: #e6cc80;
+                border-color: #e6cc80;
             }
 
         .inv-item-val {
@@ -1990,3 +2006,230 @@
         color: #555;
         font-size: 9px;
     }
+
+
+
+
+
+
+
+
+/* ═══════════════════════════════════════════════
+   MATH GATE MODAL  (append to styles.css)
+   ═══════════════════════════════════════════════ */
+
+/* Override modal-box width for the gate modal */
+.mg-box {
+    max-width: 520px;
+    width: 94%;
+    border-left-color: var(--purple);
+}
+
+/* World / tier badge pill */
+.mg-world-badge {
+    font-family: var(--PX);
+    font-size: 9px;
+    color: var(--purple);
+    letter-spacing: 0.12em;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+/* Instruction line above the question */
+.mg-instruction {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 10px;
+    font-family: var(--PX);
+}
+
+/* Question text */
+.mg-question {
+    font-family: var(--PX);
+    font-size: 12px;
+    color: var(--accent2);
+    line-height: 1.7;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    white-space: pre-wrap;
+}
+
+/* Answer input row */
+.mg-answer-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.mg-input {
+    flex: 1;
+    min-width: 120px;
+    max-width: 200px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--accent2);
+    font-family: var(--PX);
+    font-size: 14px;
+    padding: 8px 12px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+    .mg-input:focus {
+        border-color: var(--accent);
+    }
+
+.mg-unit {
+    font-family: var(--PX);
+    font-size: 11px;
+    color: #777;
+    white-space: nowrap;
+}
+
+.mg-submit-btn {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: var(--PX);
+    font-size: 11px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    letter-spacing: 0.05em;
+}
+
+    .mg-submit-btn:hover:not(:disabled) {
+        background: var(--accent);
+        color: #000;
+    }
+
+    .mg-submit-btn:disabled {
+        opacity: 0.4;
+        cursor: default;
+    }
+
+/* Feedback line */
+.mg-feedback {
+    font-family: var(--PX);
+    font-size: 11px;
+    min-height: 18px;
+    margin-bottom: 8px;
+}
+
+    .mg-feedback.mg-ok {
+        color: var(--green);
+    }
+
+    .mg-feedback.mg-bad {
+        color: var(--red);
+    }
+
+/* Hint box */
+.mg-hint-box {
+    background: rgba(80, 40, 120, 0.18);
+    border: 1px solid var(--purple);
+    border-left: 3px solid var(--purple);
+    padding: 10px 14px;
+    margin-bottom: 10px;
+}
+
+.mg-hint-text {
+    font-family: var(--PX);
+    font-size: 11px;
+    color: #c8b0e8;
+    line-height: 1.6;
+}
+
+/* "Try a different question" button */
+.mg-new-q-btn {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: #888;
+    font-family: var(--PX);
+    font-size: 10px;
+    padding: 6px 12px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+    .mg-new-q-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+    }
+
+/* Footer note */
+.mg-footer {
+    font-size: 10px;
+    color: #555;
+    font-family: var(--PX);
+    margin-top: 10px;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+}
+
+/* Lock icon on gated level cards in level select */
+.level-card.math-gated:not(.done)::after {
+    content: '🔐';
+    position: absolute;
+    top: 5px;
+    right: 6px;
+    font-size: 12px;
+}
+
+.level-card {
+    position: relative; /* needed for the ::after pseudo-element above */
+}
+
+
+
+.clue-blackout {
+    position: relative;
+    pointer-events: none;
+}
+
+    .clue-blackout::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: #000;
+        z-index: 10;
+        border-radius: 2px;
+    }
+
+
+
+
+
+.inv-item-name.common {
+    color: #aaa;
+}
+
+.inv-item-name.uncommon {
+    color: #4fc;
+}
+
+.inv-item-name.rare {
+    color: #88f;
+}
+
+.inv-item-name.epic {
+    color: #c8f;
+}
+
+.inv-item-name.legendary {
+    color: #fd0;
+}
+
+.inv-item-name.cursed {
+    color: #f44;
+}
+
+.inv-item-name.artifact {
+    color: #ffd700;
+}

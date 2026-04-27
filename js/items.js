@@ -21,14 +21,16 @@
 // ═══════════════════════════════════════════════
 
 
-// pickRandomItem — draws one item id at random from ITEM_POOL.
-//   Because ITEM_POOL contains duplicate entries for common items and
-//   fewer entries for rare ones, the distribution is already weighted —
-//   no separate probability table is needed.
-//   Returns a defId string (e.g. 'reveal2') that can be looked up in ITEM_DEFS.
-//   Called from: checkWin() and answerQuiz() in scoring.js.
+// Weighted draw from all items that have weight > 0
 function pickRandomItem() {
-    return ITEM_POOL[Math.floor(Math.random() * ITEM_POOL.length)];
+    const pool = Object.values(ITEM_DEFS).filter(d => d.weight > 0);
+    const total = pool.reduce((sum, d) => sum + d.weight, 0);
+    let roll = Math.random() * total;
+    for (const d of pool) {
+        roll -= d.weight;
+        if (roll <= 0) return d.id;
+    }
+    return pool[pool.length - 1].id; // fallback
 }
 
 // itemName(def) — returns the item's display name in the active language.
@@ -50,10 +52,12 @@ function rarityLabel(r) {
         common: 'COMMON',
         uncommon: 'UNCOMMON',
         rare: 'RARE',
+        epic: 'EPIC',
         legendary: 'LEGENDARY',
-        cursed: 'CURSED'
+        cursed: 'CURSED',
+        artifact: 'ARTIFACT'
     };
-    return m[r] || r;
+    return m[r] || r.toUpperCase();
 }
 
 
@@ -81,25 +85,25 @@ const ITEM_DEFS = {
         id: 'reveal1', icon: '🔦',
         nameEn: 'Candle', nameDE: 'Kerze',
         descEn: 'Reveals 1 correct tile', descDE: 'Enthüllt 1 Feld',
-        scoreCost: 15, sellVal: 8, rarity: 'common'
+        scoreCost: 15, sellVal: 8, rarity: 'common', weight: 10
     },
     reveal2: {
         id: 'reveal2', icon: '🔍',
         nameEn: 'Magnifier', nameDE: 'Lupe',
         descEn: 'Reveals 2 correct tiles', descDE: 'Enthüllt 2 Felder',
-        scoreCost: 30, sellVal: 18, rarity: 'uncommon'
+        scoreCost: 30, sellVal: 18, rarity: 'uncommon', weight: 8
     },
     reveal3: {
         id: 'reveal3', icon: '🔭',
         nameEn: 'Spyglass', nameDE: 'Fernglas',
         descEn: 'Reveals 3 correct tiles', descDE: 'Enthüllt 3 Felder',
-        scoreCost: 55, sellVal: 35, rarity: 'rare'
+        scoreCost: 55, sellVal: 35, rarity: 'rare', weight: 5
     },
     reveal4: {
         id: 'reveal4', icon: '🛸',
         nameEn: 'Scanner', nameDE: 'Scanner',
         descEn: 'Reveals 4 correct tiles', descDE: 'Enthüllt 4 Felder',
-        scoreCost: 90, sellVal: 60, rarity: 'legendary'
+        scoreCost: 90, sellVal: 60, rarity: 'epic', weight: 3
     },
 
     // ── MARK-WRONG items — place a ✕ on N empty-but-wrong cells ──────────
@@ -108,25 +112,25 @@ const ITEM_DEFS = {
         id: 'markWrong2', icon: '🚫',
         nameEn: 'Eraser', nameDE: 'Radierer',
         descEn: 'Marks 2 wrong empty tiles', descDE: 'Markiert 2 leere Felder',
-        scoreCost: 20, sellVal: 12, rarity: 'common'
+        scoreCost: 20, sellVal: 12, rarity: 'common', weight: 10
     },
     markWrong4: {
         id: 'markWrong4', icon: '🧹',
         nameEn: 'Sweeper', nameDE: 'Besen',
         descEn: 'Marks 4 wrong empty tiles', descDE: 'Markiert 4 leere Felder',
-        scoreCost: 40, sellVal: 25, rarity: 'uncommon'
+        scoreCost: 40, sellVal: 25, rarity: 'uncommon', weight: 8
     },
     markWrong6: {
         id: 'markWrong6', icon: '🧲',
         nameEn: 'Error Magnet', nameDE: 'Fehlermagnet',
         descEn: 'Marks 6 wrong empty tiles', descDE: 'Markiert 6 leere Felder',
-        scoreCost: 65, sellVal: 42, rarity: 'rare'
+        scoreCost: 65, sellVal: 42, rarity: 'rare', weight: 5
     },
     markWrong8: {
         id: 'markWrong8', icon: '💎',
         nameEn: 'Perfect Filter', nameDE: 'Perfektfilter',
         descEn: 'Marks 8 wrong empty tiles', descDE: 'Markiert 8 leere Felder',
-        scoreCost: 100, sellVal: 70, rarity: 'legendary'
+        scoreCost: 100, sellVal: 70, rarity: 'epic', weight: 3
     },
 
     // ── ADD-TIME items — extend the countdown by N seconds ───────────────
@@ -134,25 +138,25 @@ const ITEM_DEFS = {
         id: 'addTime30', icon: '⏳',
         nameEn: '+30s Hourglass', nameDE: '+30s Sanduhr',
         descEn: 'Adds 30 seconds', descDE: 'Fügt 30 Sek. hinzu',
-        scoreCost: 25, sellVal: 15, rarity: 'common'
+        scoreCost: 25, sellVal: 15, rarity: 'common', weight: 10
     },
     addTime60: {
         id: 'addTime60', icon: '⌛',
         nameEn: '+60s Hourglass', nameDE: '+60s Sanduhr',
         descEn: 'Adds 60 seconds', descDE: 'Fügt 60 Sek. hinzu',
-        scoreCost: 45, sellVal: 28, rarity: 'uncommon'
+        scoreCost: 45, sellVal: 28, rarity: 'uncommon', weight: 8
     },
     addTime90: {
         id: 'addTime90', icon: '🕰️',
         nameEn: '+90s Clock', nameDE: '+90s Uhr',
         descEn: 'Adds 90 seconds', descDE: 'Fügt 90 Sek. hinzu',
-        scoreCost: 70, sellVal: 45, rarity: 'rare'
+        scoreCost: 70, sellVal: 45, rarity: 'rare', weight: 5
     },
     addTime180: {
         id: 'addTime180', icon: '⚡',
         nameEn: '+3min Turbo', nameDE: '+3min Turbo',
         descEn: 'Adds 3 minutes', descDE: 'Fügt 3 Min. hinzu',
-        scoreCost: 120, sellVal: 80, rarity: 'legendary'
+        scoreCost: 120, sellVal: 80, rarity: 'epic', weight: 3
     },
 
     // ── UTILITY items ─────────────────────────────────────────────────────
@@ -160,14 +164,49 @@ const ITEM_DEFS = {
         id: 'freeze', icon: '❄️',
         nameEn: 'Time Freeze', nameDE: 'Zeitfrieren',
         descEn: 'Pauses timer 30 sec', descDE: 'Stoppt Timer 30 Sek.',
-        scoreCost: 80, sellVal: 50, rarity: 'rare'
+        scoreCost: 80, sellVal: 50, rarity: 'epic', weight: 3
     },
     shield: {
         id: 'shield', icon: '🛡️',
         nameEn: 'Shield', nameDE: 'Schild',
         descEn: 'Negates next mistake', descDE: 'Negiert nächsten Fehler',
-        scoreCost: 70, sellVal: 45, rarity: 'uncommon'
+        scoreCost: 70, sellVal: 45, rarity: 'epic', weight: 3
     },
+    // ── ROW-SOLVE ─────────────────────────────────────────────────────────
+    rowSolve: {
+        id: 'rowSolve', icon: '📐',
+        nameEn: 'Ruler', nameDE: 'Lineal',
+        descEn: 'Reveals a full random unsolved row', descDE: 'Enthüllt eine zufällige ungelöste Zeile',
+        scoreCost: 110, sellVal: 70, rarity: 'legendary', weight: 2
+    },
+
+    // ── COL-SOLVE ─────────────────────────────────────────────────────────
+    colSolve: {
+        id: 'colSolve', icon: '📏',
+        nameEn: 'Set Square', nameDE: 'Winkel',
+        descEn: 'Reveals a full random unsolved column', descDE: 'Enthüllt eine zufällige ungelöste Spalte',
+        scoreCost: 110, sellVal: 70, rarity: 'legendary', weight: 2
+    },
+
+    // ── MISTAKE-ERASER ────────────────────────────────────────────────────
+    mistakeEraser: {
+        id: 'mistakeEraser', icon: '✏️',
+        nameEn: 'Eraser', nameDE: 'Radierer',
+        descEn: 'Reduces your mistake count by 2', descDE: 'Reduziert deine Fehleranzahl um 2',
+        scoreCost: 60, sellVal: 35, rarity: 'rare', weight: 5
+    },
+
+    // --- ARTIFACT
+    artifactComplete: {
+        id: 'artifactComplete', icon: '🌟',
+        nameEn: 'Codex of Completion', nameDE: 'Kodex der Vollendung',
+        descEn: 'Instantly solves the entire puzzle. Pure benefit, no drawback.',
+        descDE: 'Löst das gesamte Puzzle sofort. Reiner Vorteil, kein Nachteil.',
+        scoreCost: 0, sellVal: 500, rarity: 'artifact', weight: 1
+    },
+
+
+
 
     // ── CURSED items — powerful but risky; locked for the first 3 minutes ─
     // scoreCost is 0 for all cursed items (they are free to use — the risk
@@ -175,57 +214,59 @@ const ITEM_DEFS = {
     cursedReveal: {
         id: 'cursedReveal', icon: '☠️',
         nameEn: 'Cursed Lens', nameDE: 'Verfluchte Linse',
-        descEn: 'Reveals 6 tiles BUT 50% chance: reset board!',
-        descDE: 'Enthüllt 6 Felder, ABER 50% Reset-Chance!',
-        scoreCost: 0, sellVal: 20, rarity: 'cursed'
+        descEn: '✅ Reveals 6 tiles  ·  ⚠️ Resets all wrong marks',
+        descDE: '✅ Enthüllt 6 Felder  ·  ⚠️ Setzt alle ✕-Markierungen zurück',
+        scoreCost: 0, sellVal: 20, rarity: 'cursed', weight: 4
     },
     cursedTime: {
         id: 'cursedTime', icon: '💀',
         nameEn: 'Cursed Clock', nameDE: 'Verfluchte Uhr',
-        descEn: '+5 min BUT 40% chance: lose 4 min!',
-        descDE: '+5 Min., ABER 40% Chance: −4 Min.!',
-        scoreCost: 0, sellVal: 20, rarity: 'cursed'
+        descEn: '✅ +5 minutes  ·  ⚠️ −2 minutes immediately',
+        descDE: '✅ +5 Minuten  ·  ⚠️ −2 Minuten sofort',
+        scoreCost: 0, sellVal: 20, rarity: 'cursed', weight: 4
     },
     cursedShield: {
         id: 'cursedShield', icon: '👁️',
         nameEn: 'Demon Eye', nameDE: 'Dämonenauge',
-        descEn: 'Shield active BUT 30% chance: instant fail!',
-        descDE: 'Schild aktiv, ABER 30% sofort verloren!',
-        scoreCost: 0, sellVal: 20, rarity: 'cursed'
+        descEn: '✅ Shield + reveals 2 tiles  ·  ⚠️ Blackouts row clues 30s',
+        descDE: '✅ Schild + enthüllt 2 Felder  ·  ⚠️ Versteckt Zeilenhinweise 30s',
+        scoreCost: 0, sellVal: 20, rarity: 'cursed', weight: 4
     },
+    cursedRowSolve: {
+        id: 'cursedRowSolve', icon: '🌊',
+        nameEn: 'Tidal Row', nameDE: 'Gezeitenzeile',
+        descEn: '✅ Reveals 2 rows  ·  ⚠️ Erases 1 other row',
+        descDE: '✅ 2 Zeilen enthüllen  ·  ⚠️ 1 andere Zeile löschen',
+        scoreCost: 0, sellVal: 25, rarity: 'cursed', weight: 3
+    },
+    cursedColSolve: {
+        id: 'cursedColSolve', icon: '🌪️',
+        nameEn: 'Vortex Col', nameDE: 'Wirbelwind',
+        descEn: '✅ Reveals 2 columns  ·  ⚠️ Erases 1 other column',
+        descDE: '✅ 2 Spalten enthüllen  ·  ⚠️ 1 andere Spalte löschen',
+        scoreCost: 0, sellVal: 25, rarity: 'cursed', weight: 3
+    },
+    cursedRowCol: {
+        id: 'cursedRowCol', icon: '💥',
+        nameEn: 'Chaos Grid', nameDE: 'Chaos-Gitter',
+        descEn: '✅ Reveals 3 rows + 2 cols  ·  ⚠️ Blackouts all col clues 45s',
+        descDE: '✅ 3 Zeilen + 2 Spalten enthüllen  ·  ⚠️ Alle Spaltenhinweise 45s ausgeblendet',
+        scoreCost: 0, sellVal: 30, rarity: 'cursed', weight: 2
+    },
+
+
 };
 
 
-// ═══════════════════════════════════════════════
-//  ITEM POOL  (weighted drop table)
-//  Each string is a defId from ITEM_DEFS.
-//  Duplicate entries increase the probability of
-//  that item being awarded. Current weights:
-//    common    × 5  →  ~33 % total
-//    uncommon  × 4  →  ~27 % total
-//    rare      × 3  →  ~20 % total
-//    legendary × 2  →  ~13 % total
-//    cursed    × 2  →  ~13 % total
-//  (15 entries total; each entry = 1/15 ≈ 6.7 %)
-//
-//  To change drop rates: add or remove duplicate
-//  entries. To add a new item: add its defId here.
-// ═══════════════════════════════════════════════
-const ITEM_POOL = [
-    // common × 5
-    'reveal1', 'reveal1', 'markWrong2', 'markWrong2', 'addTime30',
-    // uncommon × 4
-    'reveal2', 'markWrong4', 'addTime60', 'shield',
-    // rare × 3
-    'reveal3', 'markWrong6', 'addTime90',
-    // legendary × 2
-    'reveal4', 'addTime180',
-    // cursed × 2
-    'cursedReveal', 'cursedTime',
-];
 
 
 
+
+// Lucky drops: same pool but with a small artifact chance on top
+function pickLuckyItem() {
+    if (Math.random() < 0.05) return 'artifactComplete';
+    return pickRandomItem();
+}
 
 
 

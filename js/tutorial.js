@@ -323,7 +323,7 @@ function highlightElement(el, arrowDir) {
     hl.className = 'tut-highlight';
     hl.style.cssText = `
         left:   ${elRect.left - demoRect.left - 4}px;
-        top:    ${elRect.top - demoRect.top - 4}px;
+        top:    ${elRect.top - demoRect.top  - 4}px;
         width:  ${elRect.width + 8}px;
         height: ${elRect.height + 8}px;
     `;

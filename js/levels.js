@@ -26,10 +26,11 @@ function lvText(obj, field) {
 const W1 = [
     {
         // Level 1-1
-        hint: "probability measure notation",
-        hintDE: "Notation des Wahrscheinlichkeitsmaßes",
+        hint: "Probability",
+        hintDE: "Wahrscheinlichkeit",
         reveal: "P is commonly used to denote a probability measure",
         revealDE: "P wird häufig zur Bezeichnung eines Wahrscheinlichkeitsmaßes verwendet",
+        timer: 300,
         bonusHint: "Answer the bonus questions correctly",
         bonusHintDE: "Beantworte die Bonusfragen richtig",
         bonusType: "quiz",
@@ -40,10 +41,11 @@ const W1 = [
     {
 
         // Level 1-2
-        hint: "element of sample space",
-        hintDE: "Element des Stichprobenraums",
+        hint: "Element",
+        hintDE: "Element",
         reveal: "omega is commonly used to denote an element of the sample space",
         revealDE: "Omega wird häufig zur Bezeichnung eines Elements des Stichprobenraums verwendet",
+        timer: 300,
         bonusHint: "Finish in 20 seconds",
         bonusHintDE: "In 20 Sekunden abschließen",
         bonusType: "fast",
@@ -54,10 +56,11 @@ const W1 = [
     {
 
         // Level 1-3
-        hint: "typical event notation",
-        hintDE: "Typische Ereignisnotation",
+        hint: "Event",
+        hintDE: "Ereignis",
         reveal: "Typically events are denoted by A,B,C,...",
         revealDE: "Ereignisse werden typischerweise mit A, B, C, ... bezeichnet",
+        timer: 300,
         bonusHint: "Use no items",
         bonusHintDE: "Keine Items verwenden",
         bonusType: "noitem",
@@ -67,10 +70,11 @@ const W1 = [
 
     {
         // Level 1-4
-        hint: "probability of an impossible event",
-        hintDE: "Wahrscheinlichkeit eines unmöglichen Ereignisses",
+        hint: "Impossible",
+        hintDE: "Unmöglich",
         reveal: "An event that cannot occur will always have probability 0",
         revealDE: "Ein Ereignis, das nicht eintreten kann, hat immer die Wahrscheinlichkeit 0",
+        timer: 300,
         bonusHint: "Finish with 0 mistakes",
         bonusHintDE: "Ohne Fehler abschließen",
         bonusType: "nomiss",
@@ -80,10 +84,11 @@ const W1 = [
 
     {
         // Level 1-5
-        hint: "the sample space",
-        hintDE: "Der Stichprobenraum",
+        hint: "Sample Space",
+        hintDE: "Ergebnismenge",
         reveal: "The sample space is usually denoted by Ω",
         revealDE: "Der Stichprobenraum wird üblicherweise mit Ω bezeichnet",
+        timer: 300,
         bonusHint: "Answer the bonus questions correctly",
         bonusHintDE: "Beantworte die Bonusfragen richtig",
         bonusType: "quiz",
@@ -93,10 +98,11 @@ const W1 = [
 
     {
         // Level 1-6
-        hint: "sum notation",
-        hintDE: "Summennotation",
+        hint: "Sum",
+        hintDE: "Summe",
         reveal: "The notation for a sum/series is Σ",
         revealDE: "Die Notation für eine Summe/Reihe ist Σ",
+        timer: 300,
         bonusHint: "Finish in under 15 seconds",
         bonusHintDE: "In unter 15 Sekunden abschließen",
         bonusType: "fast",
@@ -106,10 +112,11 @@ const W1 = [
 
     {
         // Level 1-7
-        hint: "intersection notation",
-        hintDE: "Schnittmengennotation",
+        hint: "Intersection",
+        hintDE: "Schnitt",
         reveal: "This is the typical notation for an intersection of two events",
         revealDE: "Dies ist die typische Notation für den Schnitt zweier Ereignisse",
+        timer: 300,
         bonusHint: "Finish under 20s with 0 mistakes",
         bonusHintDE: "Unter 20 Sek. ohne Fehler abschließen",
         bonusType: "combo",
@@ -119,10 +126,11 @@ const W1 = [
 
     {
         // Level 1-8
-        hint: "Order of a set",
-        hintDE: "Mächtigkeit einer Menge",
+        hint: "Order",
+        hintDE: "Mächtigkeit",
         reveal: "|A| is the notation for the order of the set A",
         revealDE: "|A| ist die Notation für die Mächtigkeit der Menge A",
+        timer: 300,
         bonusHint: "Finish in 10 seconds",
         bonusHintDE: "In 10 Sekunden abschließen",
         bonusType: "fast",
@@ -136,6 +144,7 @@ const W1 = [
         hintDE: "Erwartungswert",
         reveal: "E is the typical notation for the expected value",
         revealDE: "E ist die typische Notation für den Erwartungswert",
+        timer: 300,
         bonusHint: "Answer the bonus question correctly",
         bonusHintDE: "Beantworte die Bonusfrage richtig",
         bonusType: "quiz",
@@ -146,10 +155,11 @@ const W1 = [
     {
 
         // Level 1-10
-        hint: "Set brackets",
-        hintDE: "Mengenklammern",
+        hint: "Brackets",
+        hintDE: "Klammern",
         reveal: "{ } is the notation for a set",
         revealDE: "{ } ist die Notation für eine Menge",
+        timer: 300,
         bonusHint: "Finish with 0 mistakes",
         bonusHintDE: "Ohne Fehler abschließen",
         bonusType: "nomiss",
@@ -167,10 +177,11 @@ const W2 = [
     {
 
         // Level 2-1
-        hint: "...Algebra",
-        hintDE: "...Algebra",
+        hint: "Algebra",
+        hintDE: "Algebra",
         reveal: "We usually denote a Sigma-Algebra with A or σ",
         revealDE: "Eine Sigma-Algebra wird üblicherweise mit A oder σ bezeichnet",
+        timer: 600,
         bonusHint: "Use no items",
         bonusHintDE: "Keine Items verwenden",
         bonusType: "noitem",
@@ -184,10 +195,11 @@ const W2 = [
     {
 
         // Level 2-2
-        hint: "Venn-Diagram",
-        hintDE: "Venn-Diagramm",
+        hint: "Venn",
+        hintDE: "Venn",
         reveal: "A Venn-Diagram is a graphical presentation of two or more sets",
         revealDE: "Ein Venn-Diagramm ist eine grafische Darstellung von zwei oder mehr Mengen",
+        timer: 600,
         bonusHint: "Finish in under 2 minutes",
         bonusHintDE: "In unter 2 Minuten abschließen",
         bonusType: "fast",
@@ -205,6 +217,7 @@ const W2 = [
         hintDE: "Komplement",
         reveal: "This is the notation for the complement of a set",
         revealDE: "Dies ist die Notation für das Komplement einer Menge",
+        timer: 600,
         bonusHint: "Finish under 3 min with 0 mistakes",
         bonusHintDE: "Unter 3 Min. ohne Fehler abschließen",
         bonusType: "combo",
@@ -518,10 +531,11 @@ const W2 = [
             {
 
                 // Level 5-1
-                hint: "A and B are independent events",
-                hintDE: "A und B sind unabhängige Ereignisse",
+                hint: "Independence",
+                hintDE: "Unabhängigkeit",
                 reveal: "If A and B are independent events, then the probability of A AND B is just the product of the two separate probabilities",
                 revealDE: "Wenn A und B unabhängige Ereignisse sind, ist die Wahrscheinlichkeit von A UND B das Produkt der beiden Einzelwahrscheinlichkeiten",
+                timer: 1800,
                 bonusHint: "Complete level",
                 bonusHintDE: "Level abschließen",
                 bonusType: "nomiss",
@@ -574,6 +588,133 @@ const W2 = [
                     [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0])
             },
+
+
+            // ── NEW LEVELS ────────────────────────────────────────────────────────
+
+            {
+                // Level 5-6  (8 rows × 20 cols)  — "μ" (population mean)
+                hint: "population mean notation",
+                hintDE: "Notation des Populationsmittelwerts",
+                reveal: "μ (mu) denotes the population mean in statistics",
+                revealDE: "μ (Mu) bezeichnet den Populationsmittelwert in der Statistik",
+                bonusHint: "Finish with 0 mistakes",
+                bonusHintDE: "Ohne Fehler abschließen",
+                bonusType: "nomiss",
+                bonusParam: 0,
+                grid: G(
+                    [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0],
+                    [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0],
+                    [1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0],
+                    [1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0],
+                    [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0],
+                    [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0],
+                    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+                    [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1]
+                )
+            },
+
+            {
+                // Level 5-7  (6 rows × 15 cols)  — "σ²" (variance symbol)
+                hint: "variance notation using Greek letters",
+                hintDE: "Varianznotation mit griechischen Buchstaben",
+                reveal: "σ² (sigma squared) is the standard notation for variance",
+                revealDE: "σ² (Sigma zum Quadrat) ist die Standardnotation für die Varianz",
+                bonusHint: "Finish in under 90 seconds",
+                bonusHintDE: "In unter 90 Sekunden abschließen",
+                bonusType: "fast",
+                bonusParam: 90,
+                grid: G(
+                    [0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0],
+                    [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0],
+                    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+                    [0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0],
+                    [0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0],
+                    [1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+                )
+            },
+
+            {
+                // Level 5-8  (10 rows × 12 cols)  — the word "MODE"
+                hint: "the most frequently occurring value in a dataset",
+                hintDE: "Der am häufigsten vorkommende Wert in einem Datensatz",
+                reveal: "The mode is the value that appears most often in a data set",
+                revealDE: "Der Modus ist der Wert, der in einem Datensatz am häufigsten vorkommt",
+                bonusHint: "Use no items",
+                bonusHintDE: "Keine Items verwenden",
+                bonusType: "noitem",
+                bonusParam: 0,
+                grid: G(
+                    [1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0],
+                    [1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0],
+                    [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+                    [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+                    [1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0],
+                    [1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1],
+                    [1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1],
+                    [1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0]
+                )
+            },
+
+            {
+                // Level 5-9  (12 rows × 9 cols)  — an hourglass / normal-distribution silhouette
+                hint: "the bell-shaped continuous probability distribution",
+                hintDE: "Die glockenförmige stetige Wahrscheinlichkeitsverteilung",
+                reveal: "The normal distribution is symmetric and bell-shaped, centred at its mean μ",
+                revealDE: "Die Normalverteilung ist symmetrisch und glockenförmig, zentriert bei ihrem Mittelwert μ",
+                bonusHint: "Answer the bonus question correctly",
+                bonusHintDE: "Beantworte die Bonusfrage richtig",
+                bonusType: "quiz",
+                bonusParam: 0,
+                grid: G(
+                    [1, 1, 1, 1, 1, 1, 1, 1, 1],
+                    [0, 1, 1, 1, 1, 1, 1, 1, 0],
+                    [0, 0, 1, 1, 1, 1, 1, 0, 0],
+                    [0, 0, 0, 1, 1, 1, 0, 0, 0],
+                    [0, 0, 0, 0, 1, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 1, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 1, 0, 0, 0, 0],
+                    [0, 0, 0, 1, 1, 1, 0, 0, 0],
+                    [0, 0, 1, 1, 1, 1, 1, 0, 0],
+                    [0, 1, 1, 1, 1, 1, 1, 1, 0],
+                    [1, 1, 1, 1, 1, 1, 1, 1, 1],
+                    [0, 0, 0, 1, 1, 1, 0, 0, 0]
+                )
+            },
+
+            {
+                // Level 5-10  (7 rows × 18 cols)  — "1/n · Σxᵢ" (sample mean formula)
+                hint: "the formula for the arithmetic sample mean",
+                hintDE: "Die Formel für das arithmetische Stichprobenmittel",
+                reveal: "The sample mean x̄ = (1/n)·Σxᵢ averages all observed values",
+                revealDE: "Das Stichprobenmittel x̄ = (1/n)·Σxᵢ mittelt alle beobachteten Werte",
+                bonusHint: "Finish under 2 min with 0 mistakes",
+                bonusHintDE: "Unter 2 Min. ohne Fehler abschließen",
+                bonusType: "combo",
+                bonusParam: 120,
+                grid: G(
+                    [1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1],
+                    [1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+                    [1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0],
+                    [0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0],
+                    [0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0],
+                    [0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+                    [0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1]
+                )
+            },
+
+
+
+
+
+
+
+
+
+
+
 ];
 
 

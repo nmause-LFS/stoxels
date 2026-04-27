@@ -257,6 +257,64 @@
 
 
 
+    <!-- ═══ MATH GATE MODAL ═══ -->
+    <div id="mg-modal" class="modal-bg">
+        <div class="modal-box mg-box">
+
+            <button class="modal-close" onclick="hideMathGate()">✕ CLOSE</button>
+
+            <!-- World / tier badge -->
+            <div class="mg-world-badge" id="mg-world-badge">🔐 WORLD 1 — PROBABILITY GATE</div>
+
+            <!-- Instruction headline -->
+            <div class="mg-instruction" data-t="mg_instruction">
+                Solve this exercise to unlock the level:
+            </div>
+
+            <!-- The question text -->
+            <div class="mg-question" id="mg-question"></div>
+
+            <!-- Answer row: input + unit label + submit -->
+            <div class="mg-answer-row">
+                <input type="text"
+                       id="mg-answer-input"
+                       class="mg-input"
+                       placeholder="your answer"
+                       autocomplete="off"
+                       spellcheck="false" />
+                <span class="mg-unit" id="mg-unit" style="display:none"></span>
+                <button class="mg-submit-btn" id="mg-submit-btn" onclick="submitMathGate()" data-t="mg_submit">
+                    CHECK ▶
+                </button>
+            </div>
+
+            <!-- Feedback line (correct / wrong) -->
+            <div class="mg-feedback" id="mg-feedback"></div>
+
+            <!-- Hint box — hidden until 2 wrong attempts -->
+            <div class="mg-hint-box" id="mg-hint-box" style="display:none">
+                <div class="mg-hint-text" id="mg-hint-text"></div>
+            </div>
+
+            <!-- "New question" button — appears after 3 failed attempts -->
+            <button class="mg-new-q-btn"
+                    id="mg-new-q-btn"
+                    style="display:none"
+                    onclick="mgNewQuestion()"
+                    data-t="mg_new_q">
+                🔄 TRY A DIFFERENT QUESTION
+            </button>
+
+            <!-- Footer note -->
+            <div class="mg-footer" data-t="mg_footer">
+                Pass once and this level stays unlocked permanently.
+            </div>
+
+        </div>
+    </div>
+
+
+
 
 
 
@@ -275,6 +333,7 @@
     <script src="js/screens.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/tutorial.js"></script>
+    <script src="js/mathgate.js"></script>
     <script src="main.js"></script>
 </body>
 </html>

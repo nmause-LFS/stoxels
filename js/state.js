@@ -59,6 +59,7 @@ function initState() {
         // Migration guard: older saves won't have bonusDone
         if (!s.bonusDone) s.bonusDone = [];
         if (s.tutorialDone === undefined) s.tutorialDone = false;
+        if (!s.mathGatePassed) s.mathGatePassed = []; 
         return s;
     }
     // Fresh save structure — add new persistent fields here in the future
@@ -69,7 +70,8 @@ function initState() {
         unlockedCodes: [],   // Moodle codes already shown to the player
         done: [],            // gIdx values of completed levels
         bonusDone: [],        // gIdx values where the bonus reward was already claimed
-        tutorialDone: false
+        tutorialDone: false,
+        mathGatePassed: [],
     };
 }
 
