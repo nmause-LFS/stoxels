@@ -95,7 +95,6 @@ function goLevels() {
     hideOv();    // screens.js — hides win and lose overlays
     closeQuiz(); // scoring.js — hides the quiz overlay
     buildLS();
-    screenHistory.push('screen-game'); // Escape from levels → rebuild game? no — see goBack()
     ss('screen-levels');
 }
 
@@ -117,7 +116,6 @@ function hideModal(id) { document.getElementById(id).classList.remove('show'); }
 //      and overlays are cleared properly.
 //   3. If history is empty (shouldn't normally happen), fall back to title.
 function goBack() {
-    // Priority 1: close an open modal before doing anything else
     const openModal = document.querySelector('.modal-bg.show');
     if (openModal) {
         openModal.classList.remove('show');
@@ -127,13 +125,16 @@ function goBack() {
     if (screenHistory.length) {
         const prev = screenHistory.pop();
         if (prev === 'screen-game') {
-            goLevels(); // special-case: clean up game state properly
+            goLevels();
             return;
         }
-        stopTimer(); // stop any running timer when leaving the game screen
+        stopTimer();
+        if (prev === 'screen-levels') {
+            buildLS(); // ← rebuild so completion state is fresh
+        }
         ss(prev);
     } else {
-        showTitle(); // history is empty — go home
+        showTitle();
     }
 }
 

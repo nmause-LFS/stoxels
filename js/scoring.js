@@ -164,7 +164,7 @@ function checkWin() {
             ${t('ov_bonus_claimed_note')}
         </div>`;
 
-        if (Math.random() < 0.15) {
+        if (Math.random() < 0.5) {
             const defId = pickLuckyItem();
             const def = ITEM_DEFS[defId];
             if (def) {
@@ -177,7 +177,7 @@ function checkWin() {
         }
     } else if (!bonusMet && !curMods.ironman && !isQuizBonus) {
         // Bonus missed — small consolation lucky drop chance
-        if (Math.random() < 0.15) {
+        if (Math.random() < 0.5) {
             const defId = pickLuckyItem();
             const def = ITEM_DEFS[defId];
             if (def) {

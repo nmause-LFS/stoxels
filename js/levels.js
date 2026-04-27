@@ -729,7 +729,7 @@ const WORLDS = [
     { label: 'WORLD 2 — 10×10 STANDARD', labelDE: 'WELT 2 — 10×10 STANDARD', size: 10, data: W2 },
     { label: 'WORLD 3 — 15×15 ADVANCED', labelDE: 'WELT 3 — 15×15 FORTGESCHR.', size: 15, data: W3 },
     { label: 'WORLD 4 — 20×20 EXPERT', labelDE: 'WELT 4 — 20×20 EXPERTE', size: 20, data: W4 },
-    { label: 'WORLD 5 — NON-SQUARE SHAPES', labelDE: 'WELT 5 — NICHT-QUADRATISCH', size: null, data: W5 },
+    { label: 'WORLD 5 — Master (use items!)', labelDE: 'WELT 5 — Master (verwende Gegenstände!)', size: null, data: W5 },
 ];
 
 
