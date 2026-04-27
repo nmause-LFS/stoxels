@@ -155,16 +155,16 @@ const W1 = [
     {
 
         // Level 1-10
-        hint: "Brackets",
-        hintDE: "Klammern",
-        reveal: "{ } is the notation for a set",
-        revealDE: "{ } ist die Notation für eine Menge",
+        hint: "Random Variable",
+        hintDE: "Zufallsvariable",
+        reveal: "X is typically a random variable",
+        revealDE: "X ist typischerweise eine Zufallsvariable",
         timer: 300,
         bonusHint: "Finish with 0 mistakes",
         bonusHintDE: "Ohne Fehler abschließen",
         bonusType: "nomiss",
         bonusParam: 0,
-        grid: G([0, 1, 0, 1, 0], [0, 1, 0, 1, 0], [1, 0, 0, 0, 1],[0, 1, 0, 1, 0], [0, 1, 0, 1, 0])
+        grid: G([1,0,0,0,1],[0,1,0,1,0],[0,0,1,0,0],[0,1,0,1,0],[1,0,0,0,1])
     },
 ];
 
@@ -229,18 +229,28 @@ const W2 = [
                 [0, 1, 1, 1, 1, 1, 0, 0, 0, 0])
     },
 
+    {
+        hint: "Random Variables",
+        hintDE: "Zufallsvariablen",
+        reveal: "W,X,Y,Z are commonly used for random variables",
+        revealDE: "Mit W,X,Y,Z werden üblicherweise Zufallsvariablen notiert",
+        timer: 600,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+        [1,0,1,0,1,1,0,0,0,1],[1,0,1,0,1,0,1,0,1,0],[1,0,1,0,1,0,0,1,0,0],
+        [1,0,1,0,1,0,1,0,1,0],[1,1,1,1,1,1,0,0,0,1],[1,0,0,0,1,1,1,1,1,1],
+        [0,1,0,1,0,0,0,0,1,0],[0,0,1,0,0,0,0,1,0,0],[0,0,1,0,0,0,1,0,0,0],
+        [0,0,1,0,0,1,1,1,1,1]
+    )
+    },
+
 
 
     //Ab hier neu machen
  
-
-    {
-        hint: "rate of rare events in a fixed interval", reveal: "λ — Poisson Rate",
-        bonusHint: "Answer the bonus question correctly", bonusType: "quiz", bonusParam: 0,
-        grid: G([0, 1, 0, 0, 0, 1, 0, 0, 0, 0], [0, 1, 0, 0, 0, 1, 0, 0, 0, 0], [0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
-            [0, 1, 0, 0, 0, 1, 0, 0, 0, 0], [0, 0, 1, 0, 1, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-    },
     {
         hint: "the ratio of circumference to diameter", reveal: "π ≈ 3.14159",
         bonusHint: "Use no items", bonusType: "noitem", bonusParam: 0,
@@ -285,18 +295,30 @@ const W2 = [
     },
 ];
         const W3 = [
+
             {
-                hint: "the continuous analog of Σ — area under a curve", reveal: "∫ — Integral",
-                bonusHint: "Answer the bonus question correctly", bonusType: "quiz", bonusParam: 0, bonusParam: 0,
-                grid: G([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+                hint: "Exponential Distribution",
+                hintDE: "Exponentialverteilung",
+                reveal: "This is the distribution function of an exponential distribution",
+                revealDE: "Dies ist die Verteilungsfunktion einer Exponentialverteilung",
+                timer: 900,
+                bonusHint: "Answer the bonus question correctly",
+                bonusHintDE: "Beantworte die Bonusfrage richtig",
+                bonusType: "quiz",
+                bonusParam: 0,
+                grid: G(
+                [1,1,1,1,0,0,1,0,0,0,0,0,1,0,0],[1,0,0,0,0,1,0,0,1,0,1,0,0,1,0],[1,1,1,1,0,1,0,0,0,1,0,0,0,1,0],
+                [1,0,0,0,0,1,0,0,1,0,1,0,0,1,0],[1,0,0,0,0,0,1,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,1,1,1,0,0,0,1,0,1],[0,1,0,0,0,0,1,0,1,0,1,1,0,1,0],
+                [0,1,0,1,1,0,1,1,1,0,0,0,1,0,1],[0,1,0,0,0,0,1,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,1,1,1,0,0,0,0,0,0]
+            )
             },
+
+
+
+            // World 3 ab hier neu machen
+  
             {
                 hint: "the capital Greek letter for total variation", reveal: "Σ — Summation (large)",
                 bonusHint: "Finish in under 5 minutes", bonusType: "fast", bonusParam: 300,
@@ -407,26 +429,57 @@ const W2 = [
             },
         ];
         const W4 = [
+                // 20x20
             {
-                hint: "the big theta — parameter space in full", reveal: "θ — Theta (large)",
-                bonusHint: "Use no items", bonusType: "noitem", bonusParam: 0, bonusParam: 0,
-                grid: (() => {
-                    const g = Array.from({ length: 20 }, () => Array(20).fill(0));
-                    for (let r = 0; r < 20; r++) for (let c = 0; c < 20; c++) { const d = Math.sqrt((r - 9.5) ** 2 + (c - 9.5) ** 2); if (d >= 6.5 && d <= 8) g[r][c] = 1; }
-                    for (let c = 3; c <= 16; c++) { g[9][c] = 1; g[10][c] = 1; } return g;
-                })()
+                hint: "Union Bound",
+                hintDE: "Boolesche Ungleichung",
+                reveal: "The union bound states that the probability of a union is bounded by the sum of probabilities",
+                revealDE: "Die Boolsche Ungleichung besagt, dass die Wahrscheinlichkeit einer Vereinigung beschränkt ist durch die Summe der einzelnen Wahrscheinlichkeiten",
+                timer: 1200,
+                bonusHint: "Use no items",
+                bonusHintDE: "Verwende keine Gegenstände",
+                bonusType: "noitem",
+                bonusParam: 0,
+                grid: G(
+                [1,1,1,0,1,1,0,1,0,1,0,1,1,1,0,0,0,1,1,0],[1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,0,1,0],[1,1,1,0,1,0,0,1,0,1,0,1,1,1,0,0,0,0,1,0],
+                [1,0,0,0,1,0,0,1,0,1,0,1,0,1,0,1,0,0,1,0],[1,0,0,0,1,1,0,1,1,1,0,1,0,1,0,1,0,1,1,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [1,1,1,1,0,1,1,1,0,1,1,0,1,1,1,0,0,0,1,1],[1,0,0,0,0,1,0,1,0,1,0,0,1,0,1,0,1,0,0,1],[0,1,0,0,0,1,1,1,0,1,0,0,1,1,1,0,0,0,0,1],
+                [1,0,0,0,0,1,0,0,0,1,0,0,1,0,1,0,1,0,0,1],[1,1,1,1,0,1,0,0,0,1,1,0,1,0,1,0,1,0,1,1]
+            )
             },
+
+
             {
-                hint: "samples large enough? then distributions converge", reveal: "CLT — Central Limit Theorem",
-                bonusHint: "Finish in under 7 minutes", bonusType: "fast", bonusParam: 420,
-                grid: (() => {
-                    const g = Array.from({ length: 20 }, () => Array(20).fill(0));
-                    for (let c = 1; c <= 3; c++) for (let r = 13; r <= 16; r++) g[r][c] = 1;
-                    [[1, 5, 16], [2, 6, 15], [3, 7, 14], [2, 8, 15], [1, 9, 16]].forEach(([h, c]) => { for (let r = 16 - h; r <= 16; r++) g[r][c] = 1; });
-                    [1, 2, 4, 6, 6, 4, 2, 1].forEach((h, i) => { for (let r = 16 - h; r <= 16; r++) g[r][12 + i] = 1; });
-                    g[8][5] = 1; g[8][6] = 1; g[8][7] = 1; g[7][7] = 1; g[9][7] = 1; return g;
-                })()
+                hint: "Quantile Function",
+                hintDE: "Quantilfunktion",
+                reveal: "This is the definition of the quantile function",
+                revealDE: "Dies ist die Definition der Quantilfunktion",
+                timer: 1200,
+                bonusHint: "Finish in under 10 minutes",
+                bonusHintDE: "Löse das Puzzle in weniger als 10 Minuten",
+                bonusType: "fast",
+                bonusParam: 600,
+                grid: G(
+                [1,1,1,0,0,0,1,1,0,0,1,1,0,0,0,0,0,1,1,0],[1,0,0,1,1,0,0,1,0,0,1,0,0,1,1,1,0,0,1,0],[1,1,1,0,0,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0],
+                [1,0,0,0,0,0,0,1,0,0,1,0,0,1,1,1,0,0,1,0],[1,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,0,1,1,0],[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+                [1,1,1,1,1,0,1,1,1,1,1,0,0,0,1,1,1,0,0,0],[0,0,0,0,0,0,1,0,1,0,1,0,1,0,1,0,1,0,0,0],[1,1,1,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,1,1,0,1,1,1,0,0,0,1,1,1,0],[0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,0,0],
+                [1,0,0,0,1,0,0,1,1,0,1,1,1,0,0,0,1,1,1,0],[0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,0,0],[0,1,0,0,0,0,0,1,1,0,1,0,0,1,0,0,1,0,0,0],
+                [1,1,0,0,0,1,1,0,1,0,0,0,0,0,0,0,0,1,0,0],[1,0,1,0,1,0,1,0,0,1,0,0,1,1,1,0,0,1,0,0],[1,0,0,1,0,0,1,0,1,1,1,0,1,0,1,0,0,0,1,0],
+                [1,0,1,0,1,0,1,0,0,0,0,0,1,1,1,0,0,1,0,0],[1,1,0,0,0,1,1,0,1,1,1,0,1,0,0,0,0,1,0,0]
+            )
             },
+
+
+
+
+
+
+            // ab hier world 4 neu machen
+
             {
                 hint: "maximises the probability of observing the data", reveal: "MLE — Maximum Likelihood",
                 bonusHint: "At most 2 mistakes", bonusType: "lowmiss", bonusParam: 2,
