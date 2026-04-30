@@ -60,6 +60,7 @@ function initState() {
         if (!s.bonusDone) s.bonusDone = [];
         if (s.tutorialDone === undefined) s.tutorialDone = false;
         if (!s.mathGatePassed) s.mathGatePassed = []; 
+        if (s.primerPending === undefined) s.primerPending = false;
         return s;
     }
     // Fresh save structure — add new persistent fields here in the future
@@ -72,6 +73,7 @@ function initState() {
         bonusDone: [],        // gIdx values where the bonus reward was already claimed
         tutorialDone: false,
         mathGatePassed: [],
+        primerPending: false,
     };
 }
 

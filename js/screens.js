@@ -429,9 +429,10 @@ function _doStartLevel(gi) {
     timerFrozen = false;
     quizAnsweredCorrectly = false;
 
-    // Timer: Time Trial overrides the difficulty's timerStart with 5 minutes
+    //   timetrial : timer is halved (50% of difficulty/level default); +20 % score bonus
     const cfg = DIFF_CFG[curDiff];
-    timerSecs = curMods.timetrial ? 5 * 60 : (cur.timer || cfg.timerStart);
+    const baseTimer = cur.timer || cfg.timerStart;
+    timerSecs = curMods.timetrial ? Math.round(baseTimer * 0.5) : baseTimer;
 
     // Close any leftover overlays from a previous level
     hideOv();    // hides win and lose overlays (below)
@@ -456,6 +457,17 @@ function _doStartLevel(gi) {
     updTimer();           // timer.js — show initial time before first tick
     startTimer();         // timer.js — begin the countdown
     buildGrid();          // grid.js  — render the puzzle table
+
+    // ── Scout's Primer check ──────────────────────────────────────────────────
+    // If a primer was activated in a previous level, show the question modal now.
+    if (STATE.primerPending) {
+        STATE.primerPending = false;
+        save();
+        showPrimerModal();
+    }
+
+
+
     buildInventoryPanel(); // inventory.js — render current items
 
     // Navigation: Escape from the game screen goes back to level select
@@ -496,4 +508,235 @@ function nextLvl() {
 function replayLvl() {
     hideOv();
     startLevel(cur.gIdx);
+}
+
+
+
+
+// ═══════════════════════════════════════════════
+//  SCOUT'S PRIMER MODAL
+// ═══════════════════════════════════════════════
+
+// primerQuestion — the question currently shown in the primer modal.
+let primerQuestion = null;
+
+// getPrimerQuestion — picks randomly from the combined pool of:
+//   - all QUIZ_QUESTIONS (quiz.js)
+//   - all MATH_GATE_POOLS questions flattened (mathgate.js)
+// Returns a normalised { q, opts, isMultiChoice } object.
+// Math gate questions are converted to free-text mode.
+function getPrimerQuestion() {
+    // Flatten all math gate questions across worlds
+    const gateQs = Object.values(MATH_GATE_POOLS).flat();
+
+    // Decide: 50% chance quiz question, 50% math gate question
+    if (Math.random() < 0.5 && QUIZ_QUESTIONS.length) {
+        const raw = QUIZ_QUESTIONS[Math.floor(Math.random() * QUIZ_QUESTIONS.length)];
+        const q = (LANG === 'de' && raw.qDE) ? raw.qDE : raw.q;
+        const opts = (LANG === 'de' && raw.optsDE) ? raw.optsDE : raw.opts;
+        const optsWithFlag = opts.map((o, i) => ({ text: o, isCorrect: i === raw.correct }));
+        shuffle(optsWithFlag);
+        return { q, opts: optsWithFlag, isMultiChoice: true };
+    } else {
+        const raw = gateQs[Math.floor(Math.random() * gateQs.length)];
+        const q = (LANG === 'de' && raw.qDE) ? raw.qDE : raw.q;
+        return {
+            q,
+            answer: raw.answer,
+            tolerance: raw.tolerance,
+            unit: raw.unit || '',
+            hintEn: raw.hintEn,
+            hintDE: raw.hintDE,
+            isMultiChoice: false
+        };
+    }
+}
+
+// showPrimerModal — builds and injects a one-off modal into the DOM,
+//   then shows it. The modal is removed from the DOM when dismissed.
+function showPrimerModal() {
+    primerQuestion = getPrimerQuestion();
+
+    // Build modal HTML
+    const overlay = document.createElement('div');
+    overlay.id = 'primer-overlay';
+    overlay.className = 'modal-bg show';
+    overlay.style.cssText = 'z-index:3000;';
+
+    const q = primerQuestion.q;
+    const isMulti = primerQuestion.isMultiChoice;
+
+    let answerHtml = '';
+    if (isMulti) {
+        answerHtml = `<div class="quiz-opts" id="primer-opts" style="margin-top:14px;"></div>`;
+    } else {
+        const unitLabel = primerQuestion.unit
+            ? `<span style="font-family:var(--PX);font-size:11px;color:#888;margin-left:6px;">${primerQuestion.unit}</span>`
+            : '';
+        answerHtml = `
+            <div class="mg-answer-row" style="margin-top:14px;">
+                <input type="text" id="primer-input" class="mg-input" placeholder="${LANG === 'de' ? 'deine Antwort' : 'your answer'}" autocomplete="off" />
+                ${unitLabel}
+                <button class="mg-submit-btn" onclick="submitPrimerAnswer()">${LANG === 'de' ? 'PRÜFEN ▶' : 'CHECK ▶'}</button>
+            </div>`;
+    }
+
+    overlay.innerHTML = `
+        <div class="modal-box mg-box" style="border-left-color:var(--purple);">
+            <div class="mg-world-badge" style="background:var(--purple);color:#fff;">
+                📜 ${LANG === 'de' ? "PFADFINDER-FIBEL — BONUSFRAGE" : "SCOUT'S PRIMER — BONUS QUESTION"}
+            </div>
+            <div class="mg-instruction" style="margin-top:12px;">
+                ${LANG === 'de'
+            ? 'Beantworte diese Frage für einen Vorsprung beim Level-Start:'
+            : 'Answer correctly for a headstart on this level:'}
+            </div>
+            <div class="mg-question" id="primer-question-text" style="margin-top:10px;">${q}</div>
+            ${answerHtml}
+            <div class="mg-feedback" id="primer-feedback"></div>
+            <div class="mg-hint-box" id="primer-hint" style="display:none;"></div>
+            <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+                <button class="mg-submit-btn" id="primer-skip-btn" onclick="skipPrimer()" style="background:transparent;border-color:#555;color:#777;">
+                    ${LANG === 'de' ? 'ÜBERSPRINGEN (kein Vorsprung)' : 'SKIP (no headstart)'}
+                </button>
+            </div>
+            <div class="mg-footer">
+                ${LANG === 'de'
+            ? 'Richtig: 2 Zeilen + 2 Spalten werden automatisch für dich gelöst!'
+            : 'Correct: 2 rows + 2 columns will be solved for you as a headstart!'}
+            </div>
+        </div>`;
+
+    document.body.appendChild(overlay);
+
+    // Wire up multiple-choice buttons
+    if (isMulti) {
+        const optsEl = document.getElementById('primer-opts');
+        primerQuestion.opts.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'quiz-opt';
+            btn.textContent = opt.text;
+            if (opt.isCorrect) btn.dataset.isCorrect = '1';
+            btn.onclick = () => submitPrimerMCQ(opt.isCorrect, optsEl, btn);
+            optsEl.appendChild(btn);
+        });
+    }
+
+    // Allow Enter key for free-text input
+    setTimeout(() => {
+        const inp = document.getElementById('primer-input');
+        if (inp) {
+            inp.focus();
+            inp.addEventListener('keydown', e => { if (e.key === 'Enter') submitPrimerAnswer(); });
+        }
+    }, 100);
+}
+
+// submitPrimerMCQ — handles a multiple-choice answer in the primer modal.
+function submitPrimerMCQ(correct, optsEl, clickedBtn) {
+    Array.from(optsEl.children).forEach(btn => btn.onclick = null);
+    Array.from(optsEl.children).forEach(btn => {
+        if (btn.dataset.isCorrect === '1') btn.classList.add('correct');
+        else if (btn === clickedBtn && !correct) btn.classList.add('wrong');
+    });
+    showPrimerResult(correct);
+}
+
+// submitPrimerAnswer — handles a free-text answer in the primer modal.
+function submitPrimerAnswer() {
+    const raw = (document.getElementById('primer-input').value || '').trim().replace(',', '.');
+    const entered = parseFloat(raw);
+    const fb = document.getElementById('primer-feedback');
+    if (isNaN(entered)) {
+        fb.className = 'mg-feedback mg-bad';
+        fb.textContent = LANG === 'de' ? '⚠ Bitte eine Zahl eingeben.' : '⚠ Please enter a number.';
+        return;
+    }
+    const correct = Math.abs(entered - primerQuestion.answer) <= primerQuestion.tolerance;
+    if (!correct) {
+        const hintBox = document.getElementById('primer-hint');
+        const hint = (LANG === 'de' && primerQuestion.hintDE) ? primerQuestion.hintDE : primerQuestion.hintEn;
+        hintBox.innerHTML = '💡 ' + hint;
+        hintBox.style.display = 'block';
+    }
+    showPrimerResult(correct);
+}
+
+// showPrimerResult — shows feedback, applies the headstart if correct,
+//   then auto-closes the modal after a short delay.
+function showPrimerResult(correct) {
+    const fb = document.getElementById('primer-feedback');
+    const skipBtn = document.getElementById('primer-skip-btn');
+    if (skipBtn) skipBtn.style.display = 'none';
+
+    if (correct) {
+        fb.className = 'mg-feedback mg-ok';
+        fb.textContent = LANG === 'de'
+            ? '✓ Richtig! Vorsprung wird angewendet…'
+            : '✓ Correct! Applying headstart…';
+        setTimeout(() => {
+            closePrimerModal();
+            applyPrimerHeadstart();
+        }, 1000);
+    } else {
+        fb.className = 'mg-feedback mg-bad';
+        fb.textContent = LANG === 'de'
+            ? '✗ Falsch. Kein Vorsprung — viel Erfolg!'
+            : '✗ Wrong. No headstart — good luck!';
+        setTimeout(closePrimerModal, 1800);
+    }
+}
+
+// skipPrimer — dismisses the modal without applying any headstart.
+function skipPrimer() {
+    closePrimerModal();
+}
+
+// closePrimerModal — removes the primer overlay from the DOM.
+function closePrimerModal() {
+    const el = document.getElementById('primer-overlay');
+    if (el) el.remove();
+    primerQuestion = null;
+}
+
+// applyPrimerHeadstart — solves 2 random rows + 2 random columns,
+//   filling correct tiles and marking wrong tiles (like markWrongTiles)
+//   so the player has a genuine headstart.
+function applyPrimerHeadstart() {
+    if (!cur) return;
+    const sol = cur.grid;
+    const rows = sol.length, cols = sol[0].length;
+
+    // Solve rows: reveal all correct tiles + mark all wrong tiles in 2 rows
+    const rowIdxs = shuffle(Array.from({ length: rows }, (_, i) => i)).slice(0, 2);
+    rowIdxs.forEach(r => {
+        for (let c = 0; c < cols; c++) {
+            if (sol[r][c] === 1) {
+                revealedGrid[r][c] = true;
+                userGrid[r][c] = 1;
+            } else if (userGrid[r][c] === 0) {
+                userGrid[r][c] = 2; // mark as empty (✕)
+            }
+            renderCell(r, c);
+            updClues(r, c);
+        }
+    });
+
+    // Solve cols: same treatment for 2 columns
+    const colIdxs = shuffle(Array.from({ length: cols }, (_, i) => i)).slice(0, 2);
+    colIdxs.forEach(c => {
+        for (let r = 0; r < rows; r++) {
+            if (sol[r][c] === 1) {
+                revealedGrid[r][c] = true;
+                userGrid[r][c] = 1;
+            } else if (userGrid[r][c] === 0) {
+                userGrid[r][c] = 2;
+            }
+            renderCell(r, c);
+            updClues(r, c);
+        }
+    });
+
+    showToast(`📜 ${t('item_primer_headstart')}`);
+    checkWin(); // in case the headstart already solves the puzzle
 }

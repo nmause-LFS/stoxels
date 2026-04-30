@@ -205,6 +205,14 @@ const ITEM_DEFS = {
         scoreCost: 0, sellVal: 500, rarity: 'artifact', weight: 1
     },
 
+    scoutPrimer: {
+        id: 'scoutPrimer', icon: '📜',
+        nameEn: "Scout's Primer", nameDE: 'Pfadfinder-Fibel',
+        descEn: 'Activates now. On your next level start, answer a question — correct gives you 2 pre-solved rows & columns as a headstart!',
+        descDE: 'Aktiviert sofort. Beim nächsten Level-Start: Beantworte eine Frage — richtig gibt dir 2 vorgelöste Zeilen & Spalten!',
+        scoreCost: 0, sellVal: 40, rarity: 'epic', weight: 10
+    },
+
 
 
 

@@ -38,7 +38,9 @@ function buildInventoryPanel() {
     }
 
     // How many seconds have elapsed since the level started
-    const elapsed = (cur ? (cur.timer || DIFF_CFG[curDiff].timerStart) : DIFF_CFG[curDiff].timerStart) - timerSecs;
+    const baseTimer = cur ? (cur.timer || DIFF_CFG[curDiff].timerStart) : DIFF_CFG[curDiff].timerStart;
+    const effectiveBase = curMods.timetrial ? Math.round(baseTimer * 0.5) : baseTimer;
+    const elapsed = effectiveBase - timerSecs;
     // Cursed items unlock after 3 min normally, 1 min in Time Trial
     const cursedMinElapsed = curMods.timetrial ? 60 : 180;
 
@@ -286,6 +288,15 @@ function useItem(uid) {
         }
         msg = `🌟 ${t('item_artifact_complete')}`;
         checkWin();
+
+        // ── SCOUT'S PRIMER ────────────────────────────────────────────────────────
+        //   Marks a pending "primer" in STATE. The next time the player starts or
+        //   replays any level, a random question fires before play begins.
+        //   Correct answer → 2 rows + 2 cols pre-solved as a headstart.
+    } else if (id === 'scoutPrimer') {
+        STATE.primerPending = true;
+        save();
+        msg = `📜 ${t('item_primer_activated')}`;
 
         // ═══════════════════════════════════════════
         //  CURSED ITEMS

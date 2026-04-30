@@ -159,7 +159,7 @@ function buildTutorialDemo() {
 
             <!-- Inventory strip -->
             <div class="tut-inv-strip" id="tut-inv-strip">
-                <div class="tut-inv-header">🎒 INVENTORY — click an item to use it</div>
+                <div class="tut-inv-header">🎒 INVENTORY</div>
                 <div class="tut-inv-items">
                     <div class="tut-inv-item">🔦 <span>Candle</span> <small>COMMON · Reveals 1 tile</small></div>
                     <div class="tut-inv-item">🛡️ <span>Shield</span> <small>UNCOMMON · Blocks next mistake</small></div>

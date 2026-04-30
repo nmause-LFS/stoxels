@@ -230,6 +230,7 @@ const W2 = [
     },
 
     {
+        // Level 2-4
         hint: "Random Variables",
         hintDE: "Zufallsvariablen",
         reveal: "W,X,Y,Z are commonly used for random variables",
@@ -253,42 +254,42 @@ const W2 = [
  
     {
         hint: "the ratio of circumference to diameter", reveal: "π ≈ 3.14159",
-        bonusHint: "Use no items", bonusType: "noitem", bonusParam: 0,
+        bonusHint: "TODO", bonusType: "noitem", bonusParam: 0,
         grid: G([0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 0, 0], [0, 0, 0, 1, 0, 0, 1, 0, 0, 0],
             [0, 0, 0, 1, 0, 0, 1, 0, 0, 0], [0, 0, 0, 1, 0, 0, 1, 0, 0, 0], [0, 0, 0, 1, 0, 0, 1, 0, 0, 0],
             [0, 0, 0, 1, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     },
     {
         hint: "reject or fail to reject this", reveal: "H₀ — Null Hypothesis",
-        bonusHint: "At most 2 mistakes", bonusType: "lowmiss", bonusParam: 2,
+        bonusHint: "TODO", bonusType: "lowmiss", bonusParam: 2,
         grid: G([0, 1, 0, 0, 1, 0, 0, 0, 0, 0], [0, 1, 0, 0, 1, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 0, 0, 0, 0, 0],
             [0, 1, 0, 0, 1, 0, 0, 0, 0, 0], [0, 1, 0, 0, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 1, 1, 0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 1, 0, 0, 0, 0, 0], [0, 0, 1, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     },
     {
         hint: "data displayed as adjacent frequency rectangles", reveal: "Histogram",
-        bonusHint: "Finish with 0 mistakes", bonusType: "nomiss",
+        bonusHint: "TODO", bonusType: "nomiss",
         grid: G([0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
             [0, 0, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, 1, 1, 1, 1, 0, 0, 0, 0], [0, 1, 1, 1, 1, 1, 0, 0, 0, 0],
             [0, 1, 1, 1, 1, 1, 1, 0, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     },
     {
         hint: "the number of ways to arrange without repetition", reveal: "n! — Factorial / Combinatorics",
-        bonusHint: "Finish in under 2 minutes", bonusType: "fast", bonusParam: 120,
+        bonusHint: "TODO", bonusType: "fast", bonusParam: 120,
         grid: G([0, 1, 0, 0, 0, 1, 0, 0, 0, 0], [0, 1, 1, 0, 0, 1, 0, 0, 0, 0], [0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
             [0, 1, 0, 0, 1, 1, 0, 0, 0, 0], [0, 1, 0, 0, 0, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 1, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 1, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     },
     {
         hint: "it measures the strength of a linear association", reveal: "r — Correlation Coefficient",
-        bonusHint: "Finish with 0 mistakes", bonusType: "nomiss",
+        bonusHint: "TODO", bonusType: "nomiss",
         grid: G([0, 1, 0, 0, 0, 1, 0, 0, 0, 0], [0, 1, 0, 0, 1, 0, 0, 0, 0, 0], [0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
             [0, 1, 1, 0, 0, 0, 0, 0, 0, 0], [0, 1, 0, 1, 0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
             [0, 1, 0, 0, 0, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     },
     {
         hint: "a two-outcome experiment repeated n times", reveal: "Binomial Distribution (B/n)",
-        bonusHint: "Answer the bonus question correctly", bonusType: "quiz", bonusParam: 0,
+        bonusHint: "TODO", bonusType: "quiz", bonusParam: 0,
         grid: G([0, 1, 1, 0, 0, 0, 0, 1, 0, 0], [0, 1, 0, 1, 0, 0, 0, 1, 0, 0], [0, 1, 0, 1, 0, 0, 0, 1, 0, 0],
             [0, 1, 1, 0, 0, 0, 0, 1, 0, 0], [0, 1, 0, 1, 0, 0, 0, 1, 0, 0], [0, 1, 0, 1, 0, 0, 0, 1, 0, 0],
             [0, 1, 0, 1, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0])

@@ -87,11 +87,10 @@ function checkWin() {
 
     // ── Bonus objective evaluation ────────────────────────────────────────
     // elapsed = how many seconds the player actually spent on this level.
-    // In Time Trial mode the timer starts at 300 s instead of the normal
+    // In Time Trial mode the timer starts at half the intended timer instead of the normal
     // timerStart value, so elapsed is calculated differently.
-    const elapsed = curMods.timetrial
-        ? (5 * 60 - timerSecs)
-        : (DIFF_CFG[curDiff].timerStart - timerSecs);
+    const baseTimer = cur.timer || DIFF_CFG[curDiff].timerStart;
+    const elapsed = Math.round(baseTimer * (curMods.timetrial ? 0.5 : 1)) - timerSecs;
 
     // Bonus type reference:
     //   'fast'    — finish in ≤ bonusParam seconds elapsed

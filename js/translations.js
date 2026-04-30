@@ -1,20 +1,8 @@
-// ═══════════════════════════════════════════════
+//  ----------------------------------------------------------------------------
 //  TRANSLATIONS  (translations.js)
-//  Provides a simple two-language (EN / DE) string
-//  lookup system. Every piece of visible text that
-//  needs to switch language is stored here.
-//
-//  HOW TO ADD A NEW LANGUAGE:
-//    1. Add a new key to the T object (e.g. T.fr = { ... })
-//       and copy every key from T.en, translating the values.
-//    2. Add a new <button class="lang-btn"> in index.html.
-//    3. That's it — setLang() handles the rest automatically.
-//
-//  HOW TO ADD A NEW STRING:
-//    1. Add the key/value pair to BOTH T.en and T.de.
-//    2. Either call t('your_key') in JS, or add data-t="your_key"
-//       to an HTML element and it will be filled on language switch.
-// ═══════════════════════════════════════════════
+//  Provides a simple two-language (EN / DE) string lookup system. Every piece 
+//  of visible text that needs to switch language is stored here.
+//  ----------------------------------------------------------------------------
 
 // LANG — the currently active language code ('en' or 'de').
 //        Read by t() and by any code that needs to choose between
@@ -68,7 +56,7 @@ function setLang(l) {
 }
 
 
-// ═══════════════════════════════════════════════
+//  ----------------------------------------------------------------------------
 //  TRANSLATIONS TABLE
 //  T.en — English strings (primary / fallback)
 //  T.de — German strings
@@ -86,7 +74,7 @@ function setLang(l) {
 //    inv_*      — inventory panel
 //    bonus_*    — bonus objective labels
 //    no_*       — empty-state messages
-// ═══════════════════════════════════════════════
+//  ----------------------------------------------------------------------------
 const T = {
     en: {
         // Title screen
@@ -100,24 +88,24 @@ const T = {
         btn_next: 'NEXT ▶', btn_retry: 'RETRY', btn_retry2: 'TRY AGAIN',
 
         // Reset
-        toast_reset: '🗑 Progress reset. Fresh start!',
+        toast_reset: '🗑 All Progress has been reset.',
 
         // Tutorial modal — section headings (h) and paragraphs (p)
         tut_title: '▸ HOW TO PLAY STOXELS',
         tut_s1h: 'WHAT IS A NONOGRAM?',
-        tut_s1p: 'A nonogram is a grid puzzle. Numbers tell you how many consecutive filled cells exist. Reveal the statistics symbol to win!',
+        tut_s1p: 'A nonogram is a grid puzzle. Numbers on row and columns tell you how many consecutive filled cells exist. Reveal the full symbol to win!',
         tut_s2h: 'CONTROLS',
-        tut_s2p: '<strong>Left click</strong> — fill a cell<br><strong>Right click</strong> — mark as empty (safe)<br><strong>Drag</strong> — paint multiple cells<br><strong>Escape</strong> — go back',
+        tut_s2p: '<strong>Left click</strong> — fill a cell<br><strong>Right click</strong> — mark a cell as empty<br><strong>Hold Left Click and Drag</strong> — fill multiple cells<br><strong>CTRL + MouseWheel</strong> — Zoom in & out to scale<br><strong>Escape</strong> — go back',
         tut_s3h: 'DIFFICULTY',
-        tut_s3p: '<strong style="color:var(--green)">Easy</strong> — small penalties, ×1.0 score<br><strong style="color:var(--yellow)">Normal</strong> — standard, ×1.5 score<br><strong style="color:var(--red)">Hard</strong> — heavy penalties, ×2.5 score',
-        tut_s4h: 'MODIFIERS',
-        tut_s4p: '<strong style="color:var(--orange)">Time Trial</strong> — 5 min max<br><strong style="color:var(--red)">Hardcore</strong> — one mistake = instant fail<br><strong style="color:var(--purple)">Ironman</strong> — no items allowed, +15% score',
+        tut_s3p: '<strong style="color:var(--green)">Easy</strong> — low time penalties for mistakes, ×0.5 score<br><strong style="color:var(--yellow)">Normal</strong> — standard time penalties for mistakes, ×1 score<br><strong style="color:var(--red)">Hard</strong> — heavy time penalties for mistakes, ×1.5 score',
+        tut_s4h: 'GAME MODIFIERS',
+        tut_s4p: '<strong style="color:var(--orange)">Time Trial</strong> — 50% less time per level — 20% score multiplier <br><strong style="color:var(--red)">Hardcore</strong> — one mistake = instant fail — 30% score multiplier<br><strong style="color:var(--purple)">Ironman</strong> — items cannot be used — 15% score multiplier',
         tut_s5h: 'ITEMS & INVENTORY',
-        tut_s5p: 'Complete a level\'s bonus objective to earn one random item. Corrupted items are powerful but <strong>locked for the first 3 minutes</strong> — no cheap early use!',
-        tut_s6h: 'BONUS OBJECTIVE & QUIZ',
-        tut_s6p: 'Meet the level\'s bonus objective and a stats quiz appears (after a brief pause). Answer correctly: +50 pts + bonus item. Miss the objective: no quiz.',
+        tut_s5p: 'Complete a level\'s bonus objective to earn a random item. Consecutive clears of that level have a 50% of rewarding a lucky drop. Cursed items are powerful but <strong>locked for the first 3 minutes of a level (1 minute when Time Trial is active)</strong>',
+        tut_s6h: 'QUIZ & Probability Gates',
+        tut_s6p: 'Some levels require answering a quiz correctly after finishing a level in order to achieve the bonus objective, and some levels have a Probability Gate that can be unlocked by solving an excercise.',
         tut_s7h: 'ACHIEVEMENT CODES',
-        tut_s7p: 'Reach score milestones to unlock Moodle codes. The final Master code requires 24,000+ points (95% of maximum) — only the best players will earn it!',
+        tut_s7p: 'Reach score milestones to unlock Moodle Codes. You can see your progress towards the next achievement in the Highscores tab. More score can be earned by replaying levels on higher difficulties or by adding more game modifiers.',
 
         // Setup screen
         setup_title: '▸ GAME SETUP',
@@ -126,16 +114,16 @@ const T = {
 
         // Difficulty button labels and one-line descriptions (shown below the buttons)
         diff_easy: 'EASY', diff_normal: 'NORMAL', diff_hard: 'HARD',
-        diff_desc_easy: 'Penalties ×1 · Score multiplier ×0.5',
-        diff_desc_normal: 'Penalties ×2 · Score multiplier ×1',
-        diff_desc_hard: 'Penalties ×4 · Score multiplier ×1.5',
+        diff_desc_easy: 'Low Time Penalties for Mistakes · 50% less Score',
+        diff_desc_normal: 'Standard Time Penalties for Mistakes · Default Score',
+        diff_desc_hard: 'Strong Time Penalties for Mistakes · 50% more Score',
 
         // Modifier button labels and descriptions
         mod_tt: '⏱ TIME TRIAL', mod_hc: '💀 HARDCORE', mod_im: '🔒 IRONMAN',
-        mod_desc_none: 'No modifiers. Pure puzzle mode.',
-        mod_desc_tt: '5 minutes total (+20% score)',
-        mod_desc_hc: 'one wrong tile = instant fail! (+30% score)',
-        mod_desc_im: 'no items allowed (+15% score)',
+        mod_desc_none: 'No modifiers selected.',
+        mod_desc_tt: '50% less time per level, but 20% Score multiplier bonus',
+        mod_desc_hc: 'one wrong tile = instant fail, but 30% Score multiplier bonus',
+        mod_desc_im: 'items cannot be used, but 15% Score multiplier',
 
         // In-game HUD
         score_lbl: 'SCORE',
@@ -148,7 +136,7 @@ const T = {
         inv_empty: 'No items yet.\nComplete bonus objectives\nto earn items!',
 
         // Win / lose overlays
-        ov_win: 'PUZZLE SOLVED!',
+        ov_win: 'STOXEL SOLVED!',
         ov_lose: "TIME'S UP!",
 
         // Bonus objective type labels (used on level cards)
@@ -160,7 +148,7 @@ const T = {
         hs_title: 'HIGHSCORES',
         hs_total: 'TOTAL SCORE', hs_level: 'Level',
         hs_best: 'Best Score', hs_diff: 'Difficulty',
-        no_hs: 'No highscores yet.',
+        no_hs: '<strong style="color:var(--orange)">No highscores yet.</strong>',
         hs_mods: 'Mods',
         hs_code_unlocked: 'CODE UNLOCKED',
 
@@ -170,7 +158,7 @@ const T = {
 
         // Password / Moodle code modal
         pw_title: '🔑 NEW CODE UNLOCKED!',
-        pw_intro: 'You unlocked a Moodle code. Enter it to claim your badge:',
+        pw_intro: 'You unlocked a Moodle code. Enter it in Moodle to claim your badge!',
         pw_hint: 'Enter this code in Moodle to receive your badge.',
 
         // Level select — dynamic strings
@@ -186,8 +174,8 @@ const T = {
         ls_hs_best: 'BEST',
 
         // In-game HUD
-        lvl_prefix: 'LVL',
-        zoom_hint: 'Ctrl + scroll to zoom',
+        lvl_prefix: 'LEVEL',
+        zoom_hint: 'Ctrl + Scroll Wheel to zoom',
 
         // Penalty / mistake feedback
         pen_shield: '🛡️ Shield absorbed the mistake!',
@@ -228,6 +216,8 @@ const T = {
         item_cursed_rowcol_lucky: '💥 JACKPOT! {r} rows + {c} cols revealed!',
         item_cursed_rowcol_bad: '💥 CHAOS! {n} rows/cols erased!',
         item_artifact_complete: '🌟 CODEX activated! Puzzle solved instantly!',
+        item_primer_activated: "📜 Scout's Primer activated! Question fires on your next level.",
+        item_primer_headstart: "Headstart applied! 2 rows + 2 columns pre-solved.",
 
         item_cursed_reveal_both: 'Revealed 6 tiles! But all ✕ marks were cleared.',
         item_cursed_time_both: '+5 min added, −2 min penalty. Net: +3 min.',
@@ -263,7 +253,7 @@ const T = {
         quiz_skip: 'SKIP (no bonus)',
 
         // Inventory strip header
-        inv_strip_header: '🎒 INVENTORY — click an item to use it',
+        inv_strip_header: '🎒 INVENTORY',
 
         // Tutorial steps
         tut2_s0_title: 'Welcome to STOXELS!',
@@ -273,7 +263,7 @@ const T = {
         tut2_s1_text: 'Here is what a typical game session looks like. You will see:<br>• A <strong>puzzle grid</strong> in the centre<br>• <strong>Clue numbers</strong> on the rows and columns<br>• A <strong>timer</strong> counting down<br>• Your <strong>inventory</strong> of items below<br><br>Let\'s go through each part.',
 
         tut2_s2_title: 'The Puzzle Grid',
-        tut2_s2_text: '<strong>Left-click</strong> a cell to fill it.<br><strong>Right-click</strong> to mark it empty (✕) — safe, no penalty.<br><strong>Drag</strong> to paint multiple cells at once.<br><br>Filling a cell that should be <em>empty</em> costs you time — so think before you click!',
+        tut2_s2_text: '<strong>Left-click</strong> a cell to fill it.<br><strong>Right-click</strong> to mark it empty (✕).<br><strong>Drag</strong> to paint multiple cells at once.<br><br>Filling a cell that should be <em>empty</em> costs you time — so think before you click!',
 
         tut2_s3_title: 'Row Clues',
         tut2_s3_text: 'The numbers on the <strong>left of each row</strong> tell you how many consecutive filled cells exist in that row, and in what order.<br><br>Example: <strong>3 1</strong> means there is a run of 3 filled cells, then a gap, then 1 filled cell.',
@@ -332,19 +322,19 @@ const T = {
         // Tutorial modal
         tut_title: '▸ SO SPIELST DU STOXELS',
         tut_s1h: 'WAS IST EIN NONOGRAMM?',
-        tut_s1p: 'Ein Nonogramm ist ein Gitterpuzzle. Zahlen zeigen aufeinanderfolgende gefüllte Felder. Enthülle das Statistiksymbol!',
+        tut_s1p: 'Ein Nonogramm ist ein Gitterpuzzle. Zahlen an Zeilen und Spalten stellen die Anzahl aufeinanderfolgend gefüllter Zellen dar. Enthülle das gesamte Symbol um zu gewinnen!',
         tut_s2h: 'STEUERUNG',
-        tut_s2p: '<strong>Linksklick</strong> — Feld füllen<br><strong>Rechtsklick</strong> — Als leer markieren (sicher)<br><strong>Ziehen</strong> — Mehrere Felder<br><strong>Escape</strong> — Zurück',
+        tut_s2p: '<strong>Linksklick</strong> — Zelle füllen<br><strong>Rechtsklick</strong> — Zelle als leer markieren<br><strong>Linksklick gedrückt halten & Ziehen</strong> — Mehrere Zellen füllen<br><strong>STRG + Mausrad</strong> — Hinein- & herauszoomen zum Skalieren<br><strong>Escape</strong> — Zurück',
         tut_s3h: 'SCHWIERIGKEIT',
-        tut_s3p: '<strong style="color:var(--green)">Leicht</strong> — ×1 Strafen, ×0.5 Punkte<br><strong style="color:var(--yellow)">Normal</strong> — ×2 Strafen, ×1 Punkte<br><strong style="color:var(--red)">Schwer</strong> — ×4 Strafen, ×1.5 Punkte',
-        tut_s4h: 'MODIFIKATOREN',
-        tut_s4p: '<strong style="color:var(--orange)">Zeitrennen</strong> — Max. 5 Minuten<br><strong style="color:var(--red)">Hardcore</strong> — Ein Fehler = verloren!<br><strong style="color:var(--purple)">Eisenmann</strong> — Keine Items, +15% Punkte',
+        tut_s3p: '<strong style="color:var(--green)">Leicht</strong> — geringe Zeitstrafen bei Fehlern, ×0,5 Punkte<br><strong style="color:var(--yellow)">Normal</strong> — normale Zeitstrafen bei Fehlern, ×1 Punkte<br><strong style="color:var(--red)">Schwer</strong> — schwere Zeitstrafen bei Fehlern, ×1,5 Punkte',
+        tut_s4h: 'SPIELMODIFIKATOREN',
+        tut_s4p: '<strong style="color:var(--orange)">Time Trial</strong> — 50% weniger Zeit pro Level — 20% Punktemultiplikator<br><strong style="color:var(--red)">Hardcore</strong> — ein Fehler = sofort verloren — 30% Punktemultiplikator<br><strong style="color:var(--purple)">Ironman</strong> — Items können nicht verwendet werden — 15% Punktemultiplikator',
         tut_s5h: 'ITEMS & INVENTAR',
-        tut_s5p: 'Erfülle das Bonusziel für ein zufälliges Item. Verfluchte Items sind 3 Minuten lang gesperrt — kein billiger Früheinsatz!',
-        tut_s6h: 'BONUSZIEL & QUIZ',
-        tut_s6p: 'Bonusziel erfüllt? Dann erscheint ein Statistikquiz (kurze Pause). Richtig: +50 Pkt. + Bonusitem. Verfehlt: kein Quiz.',
+        tut_s5p: 'Erfülle das Bonusziel eines Levels, um ein zufälliges Item zu erhalten. Wiederholte Abschlüsse haben eine 50%-Chance auf einen Glücksfund. Verfluchte Items sind mächtig, aber <strong>für die ersten 3 Minuten eines Levels gesperrt (1 Minute bei aktivem Time Trial)</strong>',
+        tut_s6h: 'QUIZ & WAHRSCHEINLICHKEITSTORE',
+        tut_s6p: 'Manche Level erfordern nach dem Abschluss eine korrekt beantwortete Quizfrage, um das Bonusziel zu erreichen. Außerdem haben einige Level ein Wahrscheinlichkeitstor, das durch Lösen einer Aufgabe freigeschaltet werden kann.',
         tut_s7h: 'ACHIEVEMENT CODES',
-        tut_s7p: 'Erreiche eine gewisse Punktzahl für Moodle-Codes. Der Meister-Code erfordert 24.000+ Punkte (95% vom Maximum) — nur die Besten schaffen es!',
+        tut_s7p: 'Erreiche Punktemeilensteine, um Moodle-Codes freizuschalten. Deinen Fortschritt zum nächsten Achievement siehst du im Bestenlisten-Tab. Mehr Punkte lassen sich durch Wiederholen von Levels auf höheren Schwierigkeitsstufen oder durch zusätzliche Modifikatoren verdienen.',
 
         // Setup screen
         setup_title: '▸ SPIELEINRICHTUNG',
@@ -353,16 +343,16 @@ const T = {
 
         // Difficulty
         diff_easy: 'LEICHT', diff_normal: 'NORMAL', diff_hard: 'SCHWER',
-        diff_desc_easy: 'Strafen ×1 · Multiplikator ×0.5',
-        diff_desc_normal: 'Strafen ×2 · Multiplikator ×1',
-        diff_desc_hard: 'Strafen ×4 · Multiplikator ×1.5',
+        diff_desc_easy: 'Geringe Zeitstrafen bei Fehlern · 50% weniger Punkte',
+        diff_desc_normal: 'Normale Zeitstrafen bei Fehlern · Standard-Punkte',
+        diff_desc_hard: 'Starke Zeitstrafen bei Fehlern · 50% mehr Punkte',
 
         // Modifiers
         mod_tt: '⏱ TIME TRIAL', mod_hc: '💀 HARDCORE', mod_im: '🔒 IRONMAN',
         mod_desc_none: 'Keine Modifikatoren. Normaler Puzzlemodus.',
-        mod_desc_tt: 'Max. 5 Minuten (+20% Punkte)',
-        mod_desc_hc: 'Ein Fehler = sofort verloren! (+30% Punkte)',
-        mod_desc_im: 'Keine Items (+15% Punkte)',
+        mod_desc_tt: '50% weniger Zeit pro Level, aber 20% Punktemultiplikator-Bonus',
+        mod_desc_hc: 'ein falsches Feld = sofort verloren, aber 30% Punktemultiplikator-Bonus',
+        mod_desc_im: 'Items können nicht verwendet werden, aber 15% Punktemultiplikator-Bonus',
 
         // In-game HUD
         score_lbl: 'PUNKTE',
@@ -387,17 +377,17 @@ const T = {
         hs_title: 'BESTENLISTE',
         hs_total: 'GESAMTPUNKTE', hs_level: 'Level',
         hs_best: 'Bestes Ergebnis', hs_diff: 'Schwierigkeit',
-        no_hs: 'Noch keine Einträge.',
+        no_hs: '<strong style="color:var(--orange)">Noch keine Einträge.</strong>',
         hs_mods: 'Mods',
         hs_code_unlocked: 'CODE FREIGESCHALTET',
 
         // Codes screen
         codes_title: 'MEINE CODES',
-        no_codes: 'Noch keine Codes.\nSammle Punkte für Codes!',
+        no_codes: 'Noch keine Codes freigeschaltet.\nSammle Punkte, um Achievement-Codes freizuschalten!',
 
         // Password / Moodle code modal
         pw_title: '🔑 NEUER CODE FREIGESCHALTET!',
-        pw_intro: 'Du hast einen Moodle-Code freigeschaltet:',
+        pw_intro: 'Du hast einen Moodle-Code freigeschaltet. Gib ihn in Moodle ein, um dein Abzeichen zu erhalten!',
         pw_hint: 'Gib diesen Code in Moodle ein.',
 
         // Level select — dynamic strings
@@ -455,6 +445,8 @@ const T = {
         item_cursed_rowcol_lucky: '💥 JACKPOT! {r} Zeilen + {c} Spalten enthüllt!',
         item_cursed_rowcol_bad: '💥 CHAOS! {n} Zeilen/Spalten gelöscht!',
         item_artifact_complete: '🌟 KODEX aktiviert! Puzzle sofort gelöst!',
+        item_primer_activated: "📜 Pfadfinder-Kompass aktiviert! Frage erscheint beim nächsten Level.",
+        item_primer_headstart: "Vorsprung angewendet! 2 Zeilen + 2 Spalten vorgelöst.",
 
         item_cursed_reveal_both: '6 Felder enthüllt! Aber alle ✕-Markierungen gelöscht.',
         item_cursed_time_both: '+5 Min. hinzugefügt, −2 Min. Strafe. Netto: +3 Min.',
@@ -474,7 +466,7 @@ const T = {
         ov_win_mistake: 'Fehler',
         ov_win_mistakes: 'Fehler',
         ov_win_new: 'neu',
-        ov_win_best_was: 'Best war',
+        ov_win_best_was: 'Beste war',
         ov_bonus_met: '🎯 BONUS ERFÜLLT!',
         ov_item_earned: '🎁 Item erhalten',
         ov_bonus_claimed_note: '✓ Bonusziel bereits eingelöst — keine doppelte Belohnung.',
@@ -490,7 +482,7 @@ const T = {
         quiz_skip: 'ÜBERSPRINGEN (kein Bonus)',
 
         // Inventory strip header
-        inv_strip_header: '🎒 INVENTAR — Item anklicken zum Benutzen',
+        inv_strip_header: '🎒 INVENTAR',
 
         // Tutorial steps
         tut2_s0_title: 'Willkommen bei STOXELS!',
@@ -500,7 +492,7 @@ const T = {
         tut2_s1_text: 'So sieht eine typische Spielsitzung aus:<br>• Ein <strong>Puzzlegitter</strong> in der Mitte<br>• <strong>Hinweiszahlen</strong> an Zeilen und Spalten<br>• Ein <strong>Timer</strong>, der herunterläuft<br>• Dein <strong>Inventar</strong> unten<br><br>Gehen wir jeden Bereich durch.',
 
         tut2_s2_title: 'Das Puzzlegitter',
-        tut2_s2_text: '<strong>Linksklick</strong> füllt ein Feld.<br><strong>Rechtsklick</strong> markiert es als leer (✕) — sicher, kein Zeitabzug.<br><strong>Ziehen</strong> malt mehrere Felder auf einmal.<br><br>Ein falsch gefülltes Feld kostet Zeit — also erst denken, dann klicken!',
+        tut2_s2_text: '<strong>Linksklick</strong> füllt ein Feld.<br><strong>Rechtsklick</strong> markiert es als leer (✕).<br><strong>Ziehen</strong> malt mehrere Felder auf einmal.<br><br>Ein falsch gefülltes Feld kostet Zeit — also erst denken, dann klicken!',
 
         tut2_s3_title: 'Zeilenhinweise',
         tut2_s3_text: 'Die Zahlen <strong>links jeder Zeile</strong> zeigen, wie viele aufeinanderfolgende gefüllte Felder in dieser Zeile existieren und in welcher Reihenfolge.<br><br>Beispiel: <strong>3 1</strong> bedeutet ein Block von 3 Feldern, dann eine Lücke, dann 1 Feld.',
@@ -515,18 +507,16 @@ const T = {
         tut2_s6_text: 'Bei einem falschen Feld:<br>• Das Feld wird <strong>rot ✕</strong><br>• Sekunden werden abgezogen<br>• Die Strafe wird kurz hier angezeigt<br><br>Bei <strong>Leicht</strong> sind Strafen klein. Bei <strong>Schwer</strong> brutal. <strong>Hardcore</strong> beendet das Level beim ersten Fehler!',
 
         tut2_s7_title: 'Bonusziel',
-        tut2_s7_text: 'Jedes Level hat ein <strong>Bonusziel</strong> — z.B. unter 20 Sekunden fertig werden oder keine Fehler machen.<br><br>Ziel erreicht ➜ zufälliges Item als Belohnung.<br>Beim Typ <strong>Quiz</strong> gibt eine korrekte Antwort +50 Punkte und ein Extra-Item.',
+        tut2_s7_text: 'Jedes Level hat ein <strong>Bonusziel</strong> — z.B. unter 20 Sekunden fertig werden oder keine Fehler machen.<br><br>Ziel erreicht ➜ zufälliges Item als Belohnung, wenn du fertig bist.<br>Beim Typ <strong>Quiz</strong> gibt eine korrekte Antwort auf eine Statistikfrage +50 Punkte und ein Extra-Item.',
 
         tut2_s8_title: 'Inventar',
-        tut2_s8_text: 'Hier werden deine Items angezeigt. <strong>Klicke ein Item um es zu benutzen</strong>.<br><br>Items umfassen:<br>• 🔦 <em>Enthüllen</em> — zeigt richtige Felder grün<br>• 🛡️ <em>Schild</em> — absorbiert den nächsten Fehler<br>• ⏳ <em>+Zeit</em> — fügt Sekunden hinzu<br>• ☠️ <em>Verflucht</em> — mächtig, aber riskant, 3 Min. gesperrt<br><br><strong>Ironman</strong> deaktiviert alle Items für Bonuspunkte.',
+        tut2_s8_text: 'Hier werden deine Items angezeigt. <strong>Klicke ein Item um es zu benutzen</strong>.<br><br>Items umfassen:<br>• 🔦 <em>Enthüllen</em> — zeigt richtige Felder grün<br>• 🛡️ <em>Schild</em> — absorbiert den nächsten Fehler<br>• ⏳ <em>+Zeit</em> — fügt Sekunden hinzu<br>• ☠️ <em>Verflucht</em> — mächtig, aber riskant, 3 Min. gesperrt<br><br><strong>Ironman</strong>-Modus deaktiviert alle Items für einen Punktebonus.',
 
         tut2_s9_title: 'Schwierigkeit & Modifikatoren',
-        tut2_s9_text: 'Wähle vor dem Start die <strong>Schwierigkeit</strong>:<br>• 🟢 Leicht — kleine Strafen, ×0,5 Punkte<br>• 🟡 Normal — Standard, ×1 Punkte<br>• 🔴 Schwer — große Strafen, ×1,5 Punkte<br><br>Optionale <strong>Modifikatoren</strong> für Bonuspunkte:<br>• ⏱ Time Trial — nur 5 Min. (+20%)<br>• 💀 Hardcore — ein Fehler = sofort verloren (+30%)<br>• 🔒 Ironman — keine Items (+15%)',
+        tut2_s9_text: 'Wähle vor dem Start die <strong>Schwierigkeit</strong>:<br>• 🟢 Leicht — kleine Strafen, ×0,5 Punkte<br>• 🟡 Normal — Standard, ×1 Punkte<br>• 🔴 Schwer — schwere Strafen, ×1,5 Punkte<br><br>Füge optionale <strong>Modifikatoren</strong> für einen Punktebonus hinzu:<br>• ⏱ Time Trial — nur 5 Minuten (+20%)<br>• 💀 Hardcore — ein Fehler = sofort verloren (+30%)<br>• 🔒 Ironman — keine Items (+15%)',
 
         tut2_s10_title: 'Du bist bereit!',
         tut2_s10_text: 'Das war alles! Noch ein paar letzte Tipps:<br><br>• <strong>Strg + Scrollen</strong> zum Zoomen<br>• <strong>Escape</strong> um jederzeit zurückzugehen<br>• Genug Punkte sammeln für <strong>Moodle-Codes</strong><br>• In der <strong>Bestenliste</strong> deinen Fortschritt verfolgen<br><br>Viel Erfolg beim Rätsellösen! 🎉',
-
-
 
         // Math gate modal
         mg_gate_badge: 'WAHRSCHEINLICHKEITSTOR',
@@ -540,7 +530,6 @@ const T = {
 
         ls_to_next: 'Pkt. bis nächster Code',
         ls_all_codes: 'Alle Codes freigeschaltet!',
-
 
     }
 };

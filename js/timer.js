@@ -34,11 +34,11 @@ function startTimer() {
         updTimer();
 
         // Calculate how many seconds have elapsed since the level started
-        const elapsed = DIFF_CFG[curDiff].timerStart - timerSecs;
-        // Cursed items unlock after 3 minutes normally, 1 minute in Time Trial
+        const baseTimer = cur ? (cur.timer || DIFF_CFG[curDiff].timerStart) : DIFF_CFG[curDiff].timerStart;
+        const effectiveBase = curMods.timetrial ? Math.round(baseTimer * 0.5) : baseTimer;
+        const elapsed = effectiveBase - timerSecs;
         const thresh = curMods.timetrial ? 60 : 180;
-        // Exactly at the threshold — rebuild the inventory to remove lock badges
-        if (elapsed === thresh) buildInventoryPanel();
+        if (elapsed >= thresh && elapsed - 1 < thresh) buildInventoryPanel();
 
         // Timer reached zero — game over
         if (timerSecs <= 0) {
