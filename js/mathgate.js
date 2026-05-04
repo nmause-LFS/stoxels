@@ -5,40 +5,59 @@
 //  numeric answer (exact or within a tolerance)
 //  before the level launches.
 //
-//  Gated levels (gi = worldIdx * 10 + levelIdx):
-//    World 1: level 6  → gi  5
-//    World 2: level 1  → gi 10   level 6 → gi 15
-//    World 3: level 1  → gi 20   level 4 → gi 23   level 7 → gi 26
-//    World 4: level 1  → gi 30   level 3 → gi 32   level 5 → gi 34
-//             level 7  → gi 36   level 9 → gi 38
-//    World 5: ALL      → gi 40–49
-//
-//  Each question pool is an array of objects:
-//    { q, qDE, answer, tolerance, unit, hintEn, hintDE }
-//    answer    — the correct numeric value
-//    tolerance — max allowed deviation (0 = exact integer)
-//    unit      — string appended after the input field (e.g. '%', 'pts')
-//    hintEn/DE — shown after a wrong attempt
-// ═══════════════════════════════════════════════
-
-
 // ── Gated level index set ─────────────────────────────────────────────────
-const MATH_GATE_GI = new Set([
-    5,                          // W1-L6
-    10, 15,                     // W2-L1, W2-L6
-    20, 23, 26,                 // W3-L1, W3-L4, W3-L7
-    30, 32, 34, 36, 38,         // W4 odd gates
-    40, 41, 42, 43, 44,         // W5
-    45, 46, 47, 48, 49          // W5 (continued)
-]);
+// Gates are defined as { worldIdx (1-based), levelIdx (1-based) } pairs.
+// This is computed dynamically from WORLD_START_GI so it stays correct
+// even when you add/remove levels from any world.
+const MATH_GATE_RULES = [
+    { world: 1, level: 6  },   // W1-L6
+    { world: 2, level: 1  },   // W2-L1
+    { world: 2, level: 6  },   // W2-L6
+    { world: 3, level: 1  },   // W3-L1
+    { world: 3, level: 4  },   // W3-L4
+    { world: 3, level: 7  },   // W3-L7
+    { world: 4, level: 1  },   // W4-L1
+    { world: 4, level: 3  },   // W4-L3 (if it exists)
+    { world: 4, level: 5  },   // W4-L5 (if it exists)
+    { world: 4, level: 7  },   // W4-L7 (if it exists)
+    { world: 4, level: 9  },   // W4-L9 (if it exists)
+    { world: 5, level: 1  },   // all of W5
+    { world: 5, level: 2  },
+    { world: 5, level: 3  },
+    { world: 5, level: 4  },
+    { world: 5, level: 5  },
+    { world: 5, level: 6  },
+    { world: 5, level: 7  },
+    { world: 5, level: 8  },
+    { world: 5, level: 9  },
+    { world: 5, level: 10 },
+];
+
+// Build the actual Set of gated gi values at runtime, skipping any rules
+// that refer to levels that don't exist yet (world too small).
+function buildMathGateSet() {
+    const s = new Set();
+    MATH_GATE_RULES.forEach(({ world, level }) => {
+        const wi = world - 1;                        // 0-based world index
+        const worldData = WORLDS[wi];
+        if (!worldData) return;                      // world doesn't exist
+        if (level > worldData.data.length) return;   // level doesn't exist yet
+        const gi = WORLD_START_GI[wi] + (level - 1); // convert to global index
+        s.add(gi);
+    });
+    return s;
+}
+
+// MATH_GATE_GI is populated after WORLDS and WORLD_START_GI are defined.
+// Because mathgate.js loads after levels.js, WORLDS is already available here.
+let MATH_GATE_GI = buildMathGateSet();
 
 // isGatedLevel(gi) — returns true if this level requires a math gate.
 function isGatedLevel(gi) {
     return MATH_GATE_GI.has(gi);
 }
 
-// isMathGatePassed(gi) — true if the player has already passed the gate
-//   for this level in this session OR it is stored in STATE.
+// isMathGatePassed(gi) — true if the player has already passed the gate.
 function isMathGatePassed(gi) {
     return STATE.mathGatePassed && STATE.mathGatePassed.includes(gi);
 }
@@ -46,12 +65,6 @@ function isMathGatePassed(gi) {
 
 // ═══════════════════════════════════════════════
 //  QUESTION POOLS  (one per world)
-//  Difficulty increases across worlds:
-//    World 1 — basic probability calculations
-//    World 2 — set theory & simple distributions
-//    World 3 — hypothesis testing & integration concepts
-//    World 4 — advanced inference & regression
-//    World 5 — mixed graduate-level problems
 // ═══════════════════════════════════════════════
 
 const MATH_GATE_POOLS = {
@@ -334,10 +347,10 @@ const MATH_GATE_POOLS = {
     ],
 };
 
-// worldOfGi(gi) — returns which world pool (1-5) to use for this gi.
+// worldOfGi(gi) — returns which world pool (1-based) to use for this gi.
 function worldOfGi(gi) {
     for (let wi = WORLDS.length - 1; wi >= 0; wi--) {
-        if (gi >= WORLD_START_GI[wi]) return wi + 1;
+        if (WORLDS[wi].data.length > 0 && gi >= WORLD_START_GI[wi]) return wi + 1;
     }
     return 1;
 }

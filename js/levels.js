@@ -499,6 +499,22 @@ const W3 = [
     )
     },
 
+    {   // 5x20
+        hint: "Distribution Function",
+        hintDE: "Verteilungsfunktion",
+        reveal: "This is the definition of the distribution function of X",
+        revealDE: "Dies ist die Definition der Verteilungsfunktion von X",
+        timer: 1800,
+        bonusHint: "Finish without any mistakes",
+        bonusHintDE: "Beende das Level ohne Fehler",
+        bonusType: "nomiss",
+        bonusParam: 0,
+        grid: G(
+        [1,1,1,0,1,1,0,1,0,0,0,1,0,0,0,0,0,0,1,1],[1,0,1,0,1,0,0,0,1,0,1,0,0,1,0,1,0,1,0,1],[1,1,1,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0,0,1],
+        [1,0,0,0,1,0,0,0,1,0,1,0,0,1,0,1,0,1,0,1],[1,0,0,0,1,1,0,1,0,0,0,1,0,0,0,0,0,0,1,1]
+    )
+    },
+
     {
         // 5x25
         hint: "Distribution of a Random Variable",
@@ -513,6 +529,24 @@ const W3 = [
         grid: G(
         [1,1,1,0,1,1,0,1,0,0,0,1,0,1,1,1,0,1,1,1,1,0,1,1,0],[1,0,1,0,1,0,0,0,1,0,1,0,0,1,0,0,0,1,0,0,1,0,0,1,0],[1,1,1,0,1,0,0,0,0,1,0,0,0,1,1,1,0,1,1,1,1,0,0,1,0],
         [1,0,0,0,1,0,0,0,1,0,1,0,0,1,0,0,0,1,0,0,1,0,0,1,0],[1,0,0,0,1,1,0,1,0,0,0,1,0,1,1,1,0,1,0,0,1,0,1,1,0]
+    )
+    },
+
+    {   // 10x15
+        hint: "Exponential Distribution",
+        hintDE: "Exponentialverteilung",
+        reveal: "This is the distribution function of an exponential distribution for x>0",
+        revealDE: "Dies ist die Verteilungsfunktion einer Exponentialverteilung im Fall x > 0",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+        [1,1,1,0,1,1,0,0,0,1,1,0,0,0,0],[1,0,0,0,1,0,1,0,1,0,1,0,1,1,1],[1,1,1,0,1,0,0,1,0,0,1,0,0,0,0],
+        [1,0,0,0,1,0,1,0,1,0,1,0,1,1,1],[1,0,0,0,1,1,0,0,0,1,1,0,0,0,0],[1,0,0,0,0,0,1,1,1,0,0,0,1,0,1],
+        [1,0,0,0,0,0,1,0,1,0,1,1,0,1,0],[1,0,1,1,0,0,1,1,1,0,0,0,1,0,1],[1,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
+        [1,0,0,0,0,0,1,1,1,0,0,0,0,0,0]
     )
     },
 
@@ -557,6 +591,27 @@ const W3 = [
             [0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0]
         )
     },
+
+    {   // 20x20
+        hint: "Quantile Function",
+        hintDE: "Quantilfunktion",
+        reveal: "This is the definition of the quantile function",
+        revealDE: "Dies ist die Definition der Quantilfunktion",
+        timer: 1800,
+        bonusHint: "Finish in under 10 minutes",
+        bonusHintDE: "Beende das Level in weniger als 10 Minuten",
+        bonusType: "fast",
+        bonusParam: 600,
+        grid: G(
+        [1,1,1,0,0,0,1,0,1,1,0,0,0,0,0,1,1,0,0,0],[1,0,0,1,1,0,1,0,1,0,0,1,1,1,0,0,1,0,0,0],[1,1,1,0,0,0,1,0,1,0,0,1,0,1,0,0,1,0,0,0],
+        [1,0,0,0,0,0,0,0,1,0,0,1,1,1,0,0,1,0,0,0],[1,0,0,0,0,0,0,0,1,1,0,1,0,0,0,1,1,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
+        [0,1,1,1,0,1,1,1,1,1,0,0,0,1,1,1,0,0,0,0],[0,0,0,0,0,1,0,1,0,1,0,1,0,1,0,1,0,0,0,0],[0,1,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,1,1,0,1,1,1,0,0,0,1,1,1,0],[0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,0,0],
+        [1,0,0,0,1,0,0,1,1,0,1,1,1,0,0,0,1,1,1,0],[0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,0,0],[0,1,0,0,0,0,0,1,1,0,1,0,0,1,0,0,1,0,0,0],
+        [1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0],[1,0,1,0,1,0,1,0,1,0,0,1,1,1,0,1,0,0,0,0],[1,0,0,1,0,0,1,0,0,1,0,1,0,1,0,0,1,0,0,0],
+        [1,0,1,0,1,0,1,0,1,0,0,1,1,1,0,1,0,0,0,0],[1,1,0,0,0,1,1,0,0,0,0,1,0,0,0,1,0,0,0,0]
+    )
+    }, 
 
 
     {   // 13x40
@@ -629,6 +684,19 @@ const W3 = [
 
 
 const W4 = [
+    {
+        // 5x5
+        hint: "Expected Value",
+        hintDE: "Erwartungswert",
+        reveal: "E is the typical notation for the expected value",
+        revealDE: "E ist die typische Notation für den Erwartungswert",
+        timer: 300,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G([1, 1, 1, 1, 1], [1, 0, 0, 0, 0], [1, 1, 1, 1, 1], [1, 0, 0, 0, 0], [1, 1, 1, 1, 1])
+    },    
                 
                      
 ];
@@ -683,105 +751,8 @@ const W12 = [
 
 const W13 = [
 
-
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-    {
-        // Level 1-9
-        hint: "Expected Value",
-        hintDE: "Erwartungswert",
-        reveal: "E is the typical notation for the expected value",
-        revealDE: "E ist die typische Notation für den Erwartungswert",
-        timer: 300,
-        bonusHint: "Answer the bonus question correctly",
-        bonusHintDE: "Beantworte die Bonusfrage richtig",
-        bonusType: "quiz",
-        bonusParam: 0,
-        grid: G([1, 1, 1, 1, 1], [1, 0, 0, 0, 0], [1, 1, 1, 1, 1], [1, 0, 0, 0, 0], [1, 1, 1, 1, 1])
-    },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    {
-        hint: "Exponential Distribution",
-        hintDE: "Exponentialverteilung",
-        reveal: "This is the distribution function of an exponential distribution",
-        revealDE: "Dies ist die Verteilungsfunktion einer Exponentialverteilung",
-        timer: 900,
-        bonusHint: "Answer the bonus question correctly",
-        bonusHintDE: "Beantworte die Bonusfrage richtig",
-        bonusType: "quiz",
-        bonusParam: 0,
-        grid: G(
-            [1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0], [1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0], [1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
-            [1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0], [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1], [0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0],
-            [0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1], [0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0]
-        )
-    },
-
-
-
-
-
-
-    {
-        hint: "Quantile Function",
-        hintDE: "Quantilfunktion",
-        reveal: "This is the definition of the quantile function",
-        revealDE: "Dies ist die Definition der Quantilfunktion",
-        timer: 1200,
-        bonusHint: "Finish in under 10 minutes",
-        bonusHintDE: "Löse das Puzzle in weniger als 10 Minuten",
-        bonusType: "fast",
-        bonusParam: 600,
-        grid: G(
-            [1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0], [1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0], [1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0],
-            [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-            [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0], [1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0], [0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0],
-            [1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0], [0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0], [0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0],
-            [1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0], [1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0], [1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0],
-            [1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0], [1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0]
-        )
-    },
-
-
-
-
-
-
-
-
-
-
-
-
 ];
+
 
 
 
