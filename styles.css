@@ -22,6 +22,7 @@
     --orange: #ff8c42;
     --purple: #b06cff;
     --pink: #ff6cbb;
+    --white: #ffffff;
     /* — Puzzle grid (Lifted empty cells) — */
     --cell-empty: #242b3d; /* lifted from #1a1f2e          */
     --cell-filled: #66fcf1;
@@ -942,7 +943,7 @@
         .bonus-sidebar {
             flex-shrink: 0;
             width: 200px;
-            align-self: center;
+            align-self: flex-start;
             background: var(--panel);
             border: 1px solid var(--border);
             border-left: 3px solid var(--orange);
@@ -1124,6 +1125,23 @@
                 color: rgba(255,69,69,.55);
             }
 
+            .gc.questioned {
+                background: var(--cell-empty);
+            }
+
+                .gc.questioned::after {
+                    content: '?';
+                    position: absolute;
+                    inset: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #f5c542;
+                    font-family: var(--PX);
+                    font-size: 0.6em;
+                    line-height: 1;
+                }
+
             .gc.wrong-mark {
                 background: var(--cell-wrong-bg);
                 border-color: var(--cell-wrong-border);
@@ -1192,35 +1210,35 @@
             }
 
             .ov-sub-line {
-                font-size: 13px;
-                line-height: 1.4;
+                font-size: 20px;
+                line-height: 2;
             }
 
             .ov-sub-reveal {
                 color: var(--accent2);
                 font-style: italic;
-                font-size: 13px;
+                font-size: 20px;
             }
 
             .ov-sub-pts {
                 color: var(--yellow);
                 font-family: var(--PX);
-                font-size: 11px;
+                font-size: 20px;
             }
 
             .ov-sub-time {
                 color: var(--green);
-                font-size: 12px;
+                font-size: 20px;
             }
 
             .ov-sub-miss {
                 color: #c0c0c0;
-                font-size: 12px;
+                font-size: 20px;
             }
 
             .ov-sub-miss-ok {
                 color: var(--green);
-                font-size: 12px;
+                font-size: 20px;
             }
 
         .ov-reveal {

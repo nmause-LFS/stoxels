@@ -101,8 +101,8 @@ function buildLS() {
         const grid = block.querySelector('#wg' + wi);
 
         w.data.forEach((p, li) => {
-            // Global index: worlds are spaced 10 apart so level 3 of world 2 = 1*10+2 = 12
-            const gi = wi * 10 + li;
+            // Global index
+            const gi = WORLD_START_GI[wi] + li;
 
             // Unlock rule: first level of each world is always open;
             // all others require the previous level (gi-1) to be completed
@@ -288,7 +288,7 @@ function buildCodesScreen() {
         // Empty state — tell the player how to earn codes
         body.innerHTML = `
             <div style="padding:24px;text-align:center;">
-                <pstyle="font-size:13px;color:var(--accent2);line-height:2;">
+                <p style="font-size:13px;color:var(--accent2);line-height:2;">
                     ${t('no_codes').replace(/\n/g, '<br>')}
                 </p>
             </div>`;
@@ -443,6 +443,8 @@ function _doStartLevel(gi) {
     document.getElementById('top-hint').textContent = lvText(cur, 'hint');
     document.getElementById('sc-disp').textContent = STATE.totalScore;
     document.getElementById('pen-info').textContent = ''; // clear any previous penalty display
+    const mc = document.getElementById('mistake-counter');
+    if (mc) mc.textContent = '✗ 0';
     document.getElementById('bonus-sidebar-hint').textContent = lvText(cur, 'bonusHint') || '';
 
     // Modifier and difficulty tags below the timer
@@ -584,7 +586,7 @@ function showPrimerModal() {
     overlay.innerHTML = `
         <div class="modal-box mg-box" style="border-left-color:var(--purple);">
             <div class="mg-world-badge" style="background:var(--purple);color:#fff;">
-                📜 ${LANG === 'de' ? "PFADFINDER-FIBEL — BONUSFRAGE" : "SCOUT'S PRIMER — BONUS QUESTION"}
+                📜 ${LANG === 'de' ? "PFADFINDER-KOMPASS — BONUSFRAGE" : "SCOUT'S PRIMER — BONUS QUESTION"}
             </div>
             <div class="mg-instruction" style="margin-top:12px;">
                 ${LANG === 'de'

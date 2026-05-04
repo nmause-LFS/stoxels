@@ -387,7 +387,7 @@ function renderCell(row, col) {
     if (!el) return; // safety guard — cell might not exist yet
 
     // Clear all state classes before re-applying the correct one
-    el.classList.remove('filled', 'marked', 'wrong-mark', 'revealed');
+    el.classList.remove('filled', 'marked', 'wrong-mark', 'revealed', 'questioned');
 
     // Priority 1: wrong fill (red ✕) — overrides everything else
     if (wrongGrid[row][col]) {
@@ -403,7 +403,8 @@ function renderCell(row, col) {
 
     // Priority 3 & 4: normal player-controlled state
     const v = userGrid[row][col];
-    if (v === 1) el.classList.add('filled');  // left-click fill
-    else if (v === 2) el.classList.add('marked');  // right-click mark (✕)
+    if (v === 1) el.classList.add('filled');
+    else if (v === 2) el.classList.add('marked');
+    else if (v === 3) el.classList.add('questioned');
     // v === 0: empty — no class needed (default appearance)
 }

@@ -244,8 +244,8 @@ function useItem(uid) {
     } else if (id === 'freeze') {
         timerFrozen = true;
         msg = `${def.icon} ${t('item_freeze_msg')}`;
-        // Automatically unfreeze after 30 seconds
-        setTimeout(() => { timerFrozen = false; updTimer(); }, 30000);
+        // Automatically unfreeze after 5 minutes 
+        setTimeout(() => { timerFrozen = false; updTimer(); }, 300000);
 
         // ── SHIELD ────────────────────────────────────────────────────────────
     } else if (id === 'shield') {
@@ -327,13 +327,14 @@ function useItem(uid) {
         msg = `☠️ ${t('item_cursed_reveal_both')}`;
 
         // ── CURSED TIME ───────────────────────────────────────────────────────
-        //   ✅ Positive : +5 minutes added to the timer
-        //   ⚠️ Negative : −2 minutes deducted immediately (net gain: +3 min)
+        //   ✅ Positive : +10 minutes added to the timer
+        //   ⚠️ Negative : Row and Column blackout for 30 seconds
     } else if (id === 'cursedTime') {
-        // Apply negative first so the display shows the net result
-        timerSecs = Math.max(0, timerSecs - 120); // −2 min
-        timerSecs += 300;                          // +5 min
+        timerSecs += 600;                          // +10 min
         updTimer();
+        applyCursedRowBlackout(30000);
+        applyCursedColBlackout(30000);
+
         msg = `💀 ${t('item_cursed_time_both')}`;
 
         // ── CURSED SHIELD ─────────────────────────────────────────────────────
@@ -352,7 +353,7 @@ function useItem(uid) {
         //   ⚠️ Negative : erases progress in 1 random already-solved row
     } else if (id === 'cursedRowSolve') {
         // Positive effect
-        const revealed = solveRows(2);
+        const revealed = solveRows(3);
         // Negative effect — runs after so it cannot erase what was just revealed
         const erased = unsolveRows(1);
         msg = `🌊 ${t('item_cursed_row_both').replace('{r}', revealed).replace('{e}', erased)}`;
@@ -363,7 +364,7 @@ function useItem(uid) {
         //   ⚠️ Negative : erases progress in 1 random already-solved column
     } else if (id === 'cursedColSolve') {
         // Positive effect
-        const revealed = solveCols(2);
+        const revealed = solveCols(3);
         // Negative effect — runs after so it cannot erase what was just revealed
         const erased = unsolveCols(1);
         msg = `🌪️ ${t('item_cursed_col_both').replace('{r}', revealed).replace('{e}', erased)}`;
@@ -374,8 +375,8 @@ function useItem(uid) {
         //   ⚠️ Negative : blacks out ALL column clues for 45 seconds
     } else if (id === 'cursedRowCol') {
         // Positive effects
-        const r = solveRows(3);
-        const c = solveCols(2);
+        const r = solveRows(4);
+        const c = solveCols(4);
         // Negative effect: blackout all column clues for 45s
         applyCursedColBlackout(45000);
         msg = `💥 ${t('item_cursed_rowcol_both').replace('{r}', r).replace('{c}', c)}`;
@@ -464,7 +465,7 @@ function markWrongTiles(count) {
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
             // Only mark cells that: are empty in solution, untouched, not wrong
-            if (sol[r][c] === 0 && userGrid[r][c] === 0 && !wrongGrid[r][c]) {
+            if (sol[r][c] === 0 && (userGrid[r][c] === 0 || userGrid[r][c] === 3) && !wrongGrid[r][c]) {
                 cands.push([r, c]);
             }
         }

@@ -336,11 +336,10 @@ const MATH_GATE_POOLS = {
 
 // worldOfGi(gi) — returns which world pool (1-5) to use for this gi.
 function worldOfGi(gi) {
-    if (gi < 10) return 1;
-    if (gi < 20) return 2;
-    if (gi < 30) return 3;
-    if (gi < 40) return 4;
-    return 5;
+    for (let wi = WORLDS.length - 1; wi >= 0; wi--) {
+        if (gi >= WORLD_START_GI[wi]) return wi + 1;
+    }
+    return 1;
 }
 
 // pendingGateGi — the gi waiting to be launched after a correct answer

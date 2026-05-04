@@ -96,23 +96,32 @@
         </div>
     </div>
 
+    <!--RESET-->
     <div id="reset-modal" class="modal-bg">
         <div class="modal-box" style="border-left-color:var(--red);max-width:440px;">
-            <button class="modal-close" onclick="hideModal('reset-modal')">✕ CLOSE</button>
-            <div class="modal-title" style="color:var(--red);">⚠ RESET ALL PROGRESS</div>
+            <button class="modal-close" onclick="hideModal('reset-modal')" data-t="reset_close">✕ CLOSE</button>
+            <div class="modal-title" style="color:var(--red);" data-t="reset_title">⚠ RESET ALL PROGRESS</div>
             <div class="modal-section">
-                <p style="color:#c0a0a0;line-height:2;">
+                <p style="color:#c0a0a0;line-height:2;" data-t="reset_body">
                     This will permanently erase:<br>
-                    <strong style="color:var(--accent2)">All completed levels · All highscores · All bonus claims · All inventory items · All Moodle codes</strong><br><br>
+                    <strong style="color:var(--accent2)">
+                        · All completed levels<br>
+                        · All highscores<br>
+                        · All bonus claims<br>
+                        · All inventory items<br>
+                        · All Moodle codes
+                    </strong><br><br>
                     Your current playthrough will be gone. This cannot be undone.
                 </p>
             </div>
             <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;">
-                <button class="title-btn" style="border-color:var(--red);color:var(--red);" onclick="confirmReset()">🗑 YES, RESET EVERYTHING</button>
-                <button class="title-btn sec" onclick="hideModal('reset-modal')">CANCEL</button>
+                <button class="title-btn" style="border-color: var(--red); color: var(--red);" onclick="confirmReset()" data-t="reset_confirm">🗑 YES, RESET EVERYTHING</button>
+                <button class="title-btn sec" onclick="hideModal('reset-modal')" data-t="reset_cancel">CANCEL</button>
             </div>
         </div>
     </div>
+
+
 
     <div id="screen-levels" class="screen">
         <div class="ls-topbar">
@@ -131,6 +140,7 @@
             <div class="game-meta">
                 <span class="gtb-lvl" id="top-id">1-1</span>
                 <span class="gtb-pen" id="pen-info"></span>
+                <span class="gtb-mistakes" id="mistake-counter" style="font-family:var(--PX);font-size:9px;color:var(--red);opacity:0.85;">✗ 0</span>
                 <div class="gtb-spacer"></div>
                 <div class="gtb-score-wrap">
                     <span class="gtb-score-val" id="sc-disp">0</span>

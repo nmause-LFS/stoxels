@@ -145,7 +145,14 @@ function cd(e, row, col) {
     if (mbtn === 0) {
         pval = userGrid[row][col] === 1 ? 0 : 1; // left: fill or erase
     } else {
-        pval = userGrid[row][col] === 2 ? 0 : 2; // right: mark or unmark
+        // Cycle: 0 → 2 → 3 → 0
+        if (userGrid[row][col] === 2) {
+            pval = 3; // red cross → yellow question mark
+        } else if (userGrid[row][col] === 3) {
+            pval = 0; // yellow question mark → empty
+        } else {
+            pval = 2; // empty → red cross
+        }
     }
 
     ac(row, col); // apply immediately to the cell that was clicked
@@ -252,6 +259,8 @@ function applyPenalty() {
     // Show the penalty amount in the HUD, then clear it after 2.2 s
     const pi = document.getElementById('pen-info');
     pi.textContent = `−${pen}s (#${mistakeCount})`;
+    const mc = document.getElementById('mistake-counter');
+    if (mc) mc.textContent = `✗ ${mistakeCount}`;
     clearTimeout(pi._t); // cancel any previous hide timer
     pi._t = setTimeout(() => pi.textContent = '', 2200);
 

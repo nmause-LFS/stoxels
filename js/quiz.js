@@ -181,13 +181,33 @@ const QUIZ_QUESTIONS = [
 //  The final code requires near-perfect play
 //  (95% of maximum possible points).
 // ═══════════════════════════════════════════════
-const WORLD_CODES = [
-    { threshold: 2500, code: 'STOX-2025-BRONZE', titleEn: 'Bronze Achievement', titleDE: 'Bronze-Leistung' },
-    { threshold: 7500, code: 'STOX-2025-SILVER', titleEn: 'Silver Achievement', titleDE: 'Silber-Leistung' },
-    { threshold: 12500, code: 'STOX-2025-GOLD', titleEn: 'Gold Achievement', titleDE: 'Gold-Leistung' },
-    { threshold: 17500, code: 'STOX-2025-PLATINUM', titleEn: 'Platinum Achievement', titleDE: 'Platin-Leistung' },
-    { threshold: 24000, code: 'STOX-2025-MASTER', titleEn: 'Master Achievement', titleDE: 'Meister-Leistung' },
-];
+
+
+
+
+
+function buildWorldCodes() {
+    const levelCount = ALL.length;
+
+    // Estimate average points per level (adjust these to taste)
+    const avgPtsPerLevel = 150; // rough expected score per level on Normal
+    const totalPotential = levelCount * avgPtsPerLevel;
+
+    const tiers = [
+        { pct: 0.15, code: 'STOX-2025-BRONZE', titleEn: 'Bronze Achievement', titleDE: 'Bronze-Leistung' },
+        { pct: 0.35, code: 'STOX-2025-SILVER', titleEn: 'Silver Achievement', titleDE: 'Silber-Leistung' },
+        { pct: 0.55, code: 'STOX-2025-GOLD', titleEn: 'Gold Achievement', titleDE: 'Gold-Leistung' },
+        { pct: 0.75, code: 'STOX-2025-PLATINUM', titleEn: 'Platinum Achievement', titleDE: 'Platin-Leistung' },
+        { pct: 0.95, code: 'STOX-2025-MASTER', titleEn: 'Master Achievement', titleDE: 'Meister-Leistung' },
+    ];
+
+    return tiers.map(tier => ({
+        ...tier,
+        threshold: Math.round(totalPotential * tier.pct)
+    }));
+}
+
+const WORLD_CODES = buildWorldCodes();
 
 
 

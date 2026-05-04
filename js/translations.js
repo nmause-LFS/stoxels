@@ -133,16 +133,11 @@ const T = {
         inv_title: '🎒 INVENTORY',
         item_cost: 'Use: −',   // prefix before the score cost of using an item
         item_sell: 'Sell +',   // prefix before the sell value of an item
-        inv_empty: 'No items yet.\nComplete bonus objectives\nto earn items!',
+        inv_empty: '<strong style="color:var(--white)">No items yet. Complete bonus objectives or repeat levels to earn items!</strong>', 
 
         // Win / lose overlays
         ov_win: 'STOXEL SOLVED!',
         ov_lose: "TIME'S UP!",
-
-        // Bonus objective type labels (used on level cards)
-        bonus_nomiss: '✨ No mistakes',
-        bonus_fast: '⚡ Speed bonus',
-        bonus_quiz: '🧠 Correct answer',
 
         // Highscore screen
         hs_title: 'HIGHSCORES',
@@ -303,6 +298,12 @@ const T = {
         ls_to_next: 'pts to next code',
         ls_all_codes: 'All codes unlocked!',
 
+        reset_close: '✕ CLOSE',
+        reset_title: '⚠ RESET ALL PROGRESS',
+        reset_body: 'This will permanently erase:<br><strong style="color:var(--accent2)">· All completed levels<br>· All highscores<br>· All bonus claims<br>· All inventory items<br>· All Moodle codes</strong><br><br>Your current playthrough will be gone. This cannot be undone.',
+        reset_confirm: '🗑 YES, RESET EVERYTHING',
+        reset_cancel: 'CANCEL',
+
     },
 
     de: {
@@ -362,16 +363,11 @@ const T = {
         inv_title: '🎒 INVENTAR',
         item_cost: 'Nutzung: −',
         item_sell: 'Verkauf +',
-        inv_empty: 'Noch keine Items.\nErfülle Bonusziele!',
+        inv_empty: '<strong style="color:var(--white)">Noch keine Items. Erfülle Bonusziele oder löse bereits abgeschlossene Levels nochmal!</strong>',
 
         // Win / lose overlays
         ov_win: 'PUZZLE GELÖST!',
         ov_lose: 'ZEIT UM!',
-
-        // Bonus objective type labels
-        bonus_nomiss: '✨ Keine Fehler',
-        bonus_fast: '⚡ Schnell',
-        bonus_quiz: '🧠 Richtige Antwort',
 
         // Highscore screen
         hs_title: 'BESTENLISTE',
@@ -530,6 +526,12 @@ const T = {
 
         ls_to_next: 'Pkt. bis nächster Code',
         ls_all_codes: 'Alle Codes freigeschaltet!',
+
+        reset_close: '✕ SCHLIESSEN',
+        reset_title: '⚠ RESET',
+        reset_body: 'Folgendes wird dauerhaft gelöscht:<br><strong style="color:var(--accent2)">· Alle abgeschlossenen Level<br>· Alle Highscores<br>· Alle Bonus-Erfolge<br>· Alle Inventar-Gegenstände<br>· Alle Moodle-Codes</strong><br><br>Dein aktueller Spielstand geht verloren. Dies kann nicht rückgängig gemacht werden.',
+        reset_confirm: '🗑 JA, ALLES LÖSCHEN',
+        reset_cancel: 'ABBRECHEN',
 
     }
 };

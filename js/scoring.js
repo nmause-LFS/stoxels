@@ -10,6 +10,22 @@
 // Track current points during the active level
 let currentRunScore = 0;
 
+// rarityColors — maps a rarity key to { border, color } CSS values.
+//   Used by all item-reward divs on the win overlay so the box visually
+//   matches the item's tier instead of always showing purple.
+function rarityColors(rarity) {
+    const map = {
+        common: { border: '#7a7a7a', color: '#b0b0b0' },
+        uncommon: { border: '#2ecc71', color: '#2ecc71' },
+        rare: { border: '#3498db', color: '#3498db' },
+        epic: { border: '#9b59b6', color: '#c39bd3' },
+        legendary: { border: '#f39c12', color: '#f5b642' },
+        cursed: { border: '#e74c3c', color: '#e74c3c' },
+        artifact: { border: '#f1c40f', color: '#f1c40f' },
+    };
+    return map[rarity] || { border: 'var(--border2)', color: 'var(--accent2)' };
+}
+
 
 // ═══════════════════════════════════════════════
 //  WIN CHECK
@@ -154,8 +170,9 @@ function checkWin() {
             STATE.inventory.push(item);
             STATE.bonusDone.push(gi);
             save();
-            irz.innerHTML = `<div class="item-reward">
-                ${t('ov_item_earned')}: ${def.icon} <strong>${itemName(def)}</strong> [${rarityLabel(def.rarity)}]
+            const rc1 = rarityColors(def.rarity);
+            irz.innerHTML = `<div class="item-reward" style="border-color:${rc1.border};color:${rc1.color};">
+                ${t('ov_item_earned')}: ${def.icon} <strong>${itemName(def)}</strong>
             </div>`;
         }
     } else if (bonusMet && bonusAlreadyDone && !curMods.ironman && !isQuizBonus) {
@@ -169,8 +186,9 @@ function checkWin() {
             if (def) {
                 STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
                 save();
-                irz.innerHTML += `<div class="item-reward" style="border-color:var(--yellow);color:var(--yellow);">
-                    ${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong> [${rarityLabel(def.rarity)}]
+                const rc2 = rarityColors(def.rarity);
+                irz.innerHTML += `<div class="item-reward" style="border-color:${rc2.border};color:${rc2.color};">
+                    ${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong>
                 </div>`;
             }
         }
@@ -182,8 +200,9 @@ function checkWin() {
             if (def) {
                 STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
                 save();
-                irz.innerHTML = `<div class="item-reward" style="border-color:var(--yellow);color:var(--yellow);">
-                    ${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong> [${rarityLabel(def.rarity)}]
+                const rc3 = rarityColors(def.rarity);
+                irz.innerHTML = `<div class="item-reward" style="border-color:${rc3.border};color:${rc3.color};">
+                    ${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong>
                 </div>`;
             }
         }
@@ -293,8 +312,9 @@ function answerQuiz(correct, optsEl, clickedBtn) {
                     STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
                     save();
                     const irz = document.getElementById('item-reward-zone');
-                    irz.innerHTML += `<div class="item-reward" style="border-color:var(--yellow);color:var(--yellow);margin-top:4px;">
-                        ${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong> [${rarityLabel(def.rarity)}]
+                    const rcq1 = rarityColors(def.rarity);
+                    irz.innerHTML += `<div class="item-reward" style="border-color:${rcq1.border};color:${rcq1.color};margin-top:4px;">
+                        ${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong>
                     </div>`;
                 }
             }
@@ -313,9 +333,10 @@ function answerQuiz(correct, optsEl, clickedBtn) {
                     STATE.bonusDone.push(cur.gIdx);
                     save();
                     const irz = document.getElementById('item-reward-zone');
+                    const rcq2 = rarityColors(def.rarity);
                     irz.innerHTML +=
-                        `<div class="item-reward" style="margin-top:4px;">${t('ov_quiz_reward')}: ` +
-                        `${def.icon} <strong>${itemName(def)}</strong> [${rarityLabel(def.rarity)}]</div>`;
+                        `<div class="item-reward" style="border-color:${rcq2.border};color:${rcq2.color};margin-top:4px;">${t('ov_quiz_reward')}: ` +
+                        `${def.icon} <strong>${itemName(def)}</strong></div>`;
                 }
             }
         }

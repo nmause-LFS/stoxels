@@ -119,7 +119,7 @@ function buildTutorialDemo() {
                 <span class="tut-lvl-label">LVL T-1</span>
                 <span class="tut-pen-area" id="tut-penalty-area">−30s (#1)</span>
                 <div style="flex:1"></div>
-                <span class="tut-score-val">142 <span style="font-size:8px;opacity:.6">SCORE</span></span>
+                <span class="tut-score-val">142 <span style="font-size:8px;opacity:.6">${LANG === 'de' ? 'Punkte' : 'SCORE'}</span></span>
                 <button class="tut-back-btn">◀ LEVELS</button>
             </div>
 
@@ -135,7 +135,7 @@ function buildTutorialDemo() {
                             <span>⏱</span>
                             <span class="tut-timer-val" id="tut-timer-display">08:42</span>
                         </div>
-                        <div class="tut-hint-text">typical event notation</div>
+                        <div class="tut-hint-text">${LANG === 'de' ? 'Ereignis' : 'Event'}</div>
                         <div class="tut-mod-tags" id="tut-mod-tags">
                             <span class="mod-tag tt">⏱ TIME TRIAL</span>
                             <span class="mod-tag diff">NORMAL</span>
@@ -152,14 +152,14 @@ function buildTutorialDemo() {
                 <!-- Bonus sidebar -->
                 <div class="tut-bonus-sidebar" id="tut-bonus-sidebar">
                     <div class="tut-bonus-label">🎯 BONUS</div>
-                    <div class="tut-bonus-hint">Finish in under 20s</div>
+                    <div class="tut-bonus-hint"> ${LANG === 'de' ? 'In unter 20 Sek. abschließen' : 'Finish in under 20s'}</div>
                 </div>
 
             </div>
 
             <!-- Inventory strip -->
             <div class="tut-inv-strip" id="tut-inv-strip">
-                <div class="tut-inv-header">🎒 INVENTORY</div>
+                <div class="tut-inv-header">🎒 ${LANG === 'de' ? 'Inventar' : 'Inventory'}</div>
                 <div class="tut-inv-items">
                     <div class="tut-inv-item">🔦 <span>Candle</span> <small>COMMON · Reveals 1 tile</small></div>
                     <div class="tut-inv-item">🛡️ <span>Shield</span> <small>UNCOMMON · Blocks next mistake</small></div>

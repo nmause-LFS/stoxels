@@ -82,34 +82,34 @@ const ITEM_DEFS = {
 
     // ── REVEAL items — show N correct (unfilled) tiles in green ──────────
     reveal1: {
-        id: 'reveal1', icon: '🔦',
+        id: 'reveal1', icon: '🕯️',
         nameEn: 'Candle', nameDE: 'Kerze',
-        descEn: 'Reveals 1 correct tile', descDE: 'Enthüllt 1 Feld',
+        descEn: 'Reveals 1 correct cell', descDE: 'Enthüllt eine richtige Zelle ',
         scoreCost: 15, sellVal: 8, rarity: 'common', weight: 10
     },
     reveal2: {
         id: 'reveal2', icon: '🔍',
         nameEn: 'Magnifier', nameDE: 'Lupe',
-        descEn: 'Reveals 2 correct tiles', descDE: 'Enthüllt 2 Felder',
+        descEn: 'Reveals 2 correct cell', descDE: 'Enthüllt 2 richtige Zellen',
         scoreCost: 30, sellVal: 18, rarity: 'uncommon', weight: 8
     },
     reveal3: {
         id: 'reveal3', icon: '🔭',
         nameEn: 'Spyglass', nameDE: 'Fernglas',
-        descEn: 'Reveals 3 correct tiles', descDE: 'Enthüllt 3 Felder',
+        descEn: 'Reveals 3 correct cell', descDE: 'Enthüllt 3 richtige Zellen',
         scoreCost: 55, sellVal: 35, rarity: 'rare', weight: 5
     },
     reveal4: {
-        id: 'reveal4', icon: '🛸',
+        id: 'reveal4', icon: '📡',
         nameEn: 'Scanner', nameDE: 'Scanner',
-        descEn: 'Reveals 4 correct tiles', descDE: 'Enthüllt 4 Felder',
+        descEn: 'Reveals 4 correct cell', descDE: 'Enthüllt 4 richtige Zellen',
         scoreCost: 90, sellVal: 60, rarity: 'epic', weight: 3
     },
 
     // ── MARK-WRONG items — place a ✕ on N empty-but-wrong cells ──────────
     // Helps the player eliminate impossible cells without guessing.
     markWrong2: {
-        id: 'markWrong2', icon: '🚫',
+        id: 'markWrong2', icon: '✏️',
         nameEn: 'Eraser', nameDE: 'Radierer',
         descEn: 'Marks 2 wrong empty tiles', descDE: 'Markiert 2 leere Felder',
         scoreCost: 20, sellVal: 12, rarity: 'common', weight: 10
@@ -128,7 +128,7 @@ const ITEM_DEFS = {
     },
     markWrong8: {
         id: 'markWrong8', icon: '💎',
-        nameEn: 'Perfect Filter', nameDE: 'Perfektfilter',
+        nameEn: 'Error Gem', nameDE: 'Fehlerstein',
         descEn: 'Marks 8 wrong empty tiles', descDE: 'Markiert 8 leere Felder',
         scoreCost: 100, sellVal: 70, rarity: 'epic', weight: 3
     },
@@ -136,25 +136,25 @@ const ITEM_DEFS = {
     // ── ADD-TIME items — extend the countdown by N seconds ───────────────
     addTime30: {
         id: 'addTime30', icon: '⏳',
-        nameEn: '+30s Hourglass', nameDE: '+30s Sanduhr',
+        nameEn: 'Hourglass', nameDE: 'Sanduhr',
         descEn: 'Adds 30 seconds', descDE: 'Fügt 30 Sek. hinzu',
         scoreCost: 25, sellVal: 15, rarity: 'common', weight: 10
     },
     addTime60: {
-        id: 'addTime60', icon: '⌛',
-        nameEn: '+60s Hourglass', nameDE: '+60s Sanduhr',
+        id: 'addTime60', icon: '⏱️', 
+        nameEn: 'Stopwatch', nameDE: 'Stoppuhr',
         descEn: 'Adds 60 seconds', descDE: 'Fügt 60 Sek. hinzu',
         scoreCost: 45, sellVal: 28, rarity: 'uncommon', weight: 8
     },
     addTime90: {
         id: 'addTime90', icon: '🕰️',
-        nameEn: '+90s Clock', nameDE: '+90s Uhr',
+        nameEn: 'Clock', nameDE: 'Uhr',
         descEn: 'Adds 90 seconds', descDE: 'Fügt 90 Sek. hinzu',
         scoreCost: 70, sellVal: 45, rarity: 'rare', weight: 5
     },
     addTime180: {
         id: 'addTime180', icon: '⚡',
-        nameEn: '+3min Turbo', nameDE: '+3min Turbo',
+        nameEn: 'Time Machine', nameDE: 'Zeitmaschine',
         descEn: 'Adds 3 minutes', descDE: 'Fügt 3 Min. hinzu',
         scoreCost: 120, sellVal: 80, rarity: 'epic', weight: 3
     },
@@ -163,7 +163,7 @@ const ITEM_DEFS = {
     freeze: {
         id: 'freeze', icon: '❄️',
         nameEn: 'Time Freeze', nameDE: 'Zeitfrieren',
-        descEn: 'Pauses timer 30 sec', descDE: 'Stoppt Timer 30 Sek.',
+        descEn: 'Pauses timer for 5 min', descDE: 'Friert die Zeit für 5 Min. ein',
         scoreCost: 80, sellVal: 50, rarity: 'epic', weight: 3
     },
     shield: {
@@ -175,7 +175,7 @@ const ITEM_DEFS = {
     // ── ROW-SOLVE ─────────────────────────────────────────────────────────
     rowSolve: {
         id: 'rowSolve', icon: '📐',
-        nameEn: 'Ruler', nameDE: 'Lineal',
+        nameEn: 'Set Square', nameDE: 'Geodreieck',
         descEn: 'Reveals a full random unsolved row', descDE: 'Enthüllt eine zufällige ungelöste Zeile',
         scoreCost: 110, sellVal: 70, rarity: 'legendary', weight: 2
     },
@@ -183,15 +183,15 @@ const ITEM_DEFS = {
     // ── COL-SOLVE ─────────────────────────────────────────────────────────
     colSolve: {
         id: 'colSolve', icon: '📏',
-        nameEn: 'Set Square', nameDE: 'Winkel',
+        nameEn: 'Ruler', nameDE: 'Lineal',
         descEn: 'Reveals a full random unsolved column', descDE: 'Enthüllt eine zufällige ungelöste Spalte',
         scoreCost: 110, sellVal: 70, rarity: 'legendary', weight: 2
     },
 
     // ── MISTAKE-ERASER ────────────────────────────────────────────────────
     mistakeEraser: {
-        id: 'mistakeEraser', icon: '✏️',
-        nameEn: 'Eraser', nameDE: 'Radierer',
+        id: 'mistakeEraser', icon: '🎓',
+        nameEn: 'Tutor', nameDE: 'Tutor',
         descEn: 'Reduces your mistake count by 2', descDE: 'Reduziert deine Fehleranzahl um 2',
         scoreCost: 60, sellVal: 35, rarity: 'rare', weight: 5
     },
@@ -199,18 +199,18 @@ const ITEM_DEFS = {
     // --- ARTIFACT
     artifactComplete: {
         id: 'artifactComplete', icon: '🌟',
-        nameEn: 'Codex of Completion', nameDE: 'Kodex der Vollendung',
-        descEn: 'Instantly solves the entire puzzle. Pure benefit, no drawback.',
-        descDE: 'Löst das gesamte Puzzle sofort. Reiner Vorteil, kein Nachteil.',
+        nameEn: 'Codex of Completion', nameDE: 'Kodex der Fertigstellung',
+        descEn: 'Instantly solves the entire puzzle.',
+        descDE: 'Löst das gesamte Puzzle sofort.',
         scoreCost: 0, sellVal: 500, rarity: 'artifact', weight: 1
     },
 
     scoutPrimer: {
         id: 'scoutPrimer', icon: '📜',
-        nameEn: "Scout's Primer", nameDE: 'Pfadfinder-Fibel',
-        descEn: 'Activates now. On your next level start, answer a question — correct gives you 2 pre-solved rows & columns as a headstart!',
-        descDE: 'Aktiviert sofort. Beim nächsten Level-Start: Beantworte eine Frage — richtig gibt dir 2 vorgelöste Zeilen & Spalten!',
-        scoreCost: 0, sellVal: 40, rarity: 'epic', weight: 10
+        nameEn: "Scout's Primer", nameDE: 'Pfadfinder-Kompass',
+        descEn: 'Activates now. On your next level start, answer a question — A correct answer gives you 2 pre-solved rows & columns as a headstart!',
+        descDE: 'Aktiviert sofort. Beim nächsten Level-Start: Beantworte eine Frage — Eine richtige Antwort gibt dir 2 vorgelöste Zeilen & Spalten!',
+        scoreCost: 0, sellVal: 40, rarity: 'epic', weight: 4
     },
 
 
@@ -222,43 +222,43 @@ const ITEM_DEFS = {
     cursedReveal: {
         id: 'cursedReveal', icon: '☠️',
         nameEn: 'Cursed Lens', nameDE: 'Verfluchte Linse',
-        descEn: '✅ Reveals 6 tiles  ·  ⚠️ Resets all wrong marks',
-        descDE: '✅ Enthüllt 6 Felder  ·  ⚠️ Setzt alle ✕-Markierungen zurück',
+        descEn: '✅ Reveals 6 cells  ·  ⚠️ Resets all wrong marks',
+        descDE: '✅ Enthüllt 6 Zellen  ·  ⚠️ Setzt alle ✕-Markierungen zurück',
         scoreCost: 0, sellVal: 20, rarity: 'cursed', weight: 4
     },
     cursedTime: {
         id: 'cursedTime', icon: '💀',
         nameEn: 'Cursed Clock', nameDE: 'Verfluchte Uhr',
-        descEn: '✅ +5 minutes  ·  ⚠️ −2 minutes immediately',
-        descDE: '✅ +5 Minuten  ·  ⚠️ −2 Minuten sofort',
+        descEn: '✅ +5 minutes  ·  ⚠️ Blackouts row & column clues for 30s',
+        descDE: '✅ +5 Minuten  ·  ⚠️ Versteckt Zeilen - und Spaltenhinweise für 30s',
         scoreCost: 0, sellVal: 20, rarity: 'cursed', weight: 4
     },
     cursedShield: {
         id: 'cursedShield', icon: '👁️',
         nameEn: 'Demon Eye', nameDE: 'Dämonenauge',
-        descEn: '✅ Shield + reveals 2 tiles  ·  ⚠️ Blackouts row clues 30s',
-        descDE: '✅ Schild + enthüllt 2 Felder  ·  ⚠️ Versteckt Zeilenhinweise 30s',
+        descEn: '✅ Shield + reveals 2 cells  ·  ⚠️ Blackouts row clues 30s',
+        descDE: '✅ Schild + enthüllt 2 Zellen  ·  ⚠️ Versteckt Zeilenhinweise 30s',
         scoreCost: 0, sellVal: 20, rarity: 'cursed', weight: 4
     },
     cursedRowSolve: {
         id: 'cursedRowSolve', icon: '🌊',
-        nameEn: 'Tidal Row', nameDE: 'Gezeitenzeile',
-        descEn: '✅ Reveals 2 rows  ·  ⚠️ Erases 1 other row',
-        descDE: '✅ 2 Zeilen enthüllen  ·  ⚠️ 1 andere Zeile löschen',
+        nameEn: 'Tidal Wave', nameDE: 'Flutwelle',
+        descEn: '✅ Reveals 3 rows · ⚠️ Erases 1 other row',
+        descDE: '✅ 3 Zeilen enthüllen  ·  ⚠️ 1 andere Zeile löschen',
         scoreCost: 0, sellVal: 25, rarity: 'cursed', weight: 3
     },
     cursedColSolve: {
         id: 'cursedColSolve', icon: '🌪️',
-        nameEn: 'Vortex Col', nameDE: 'Wirbelwind',
-        descEn: '✅ Reveals 2 columns  ·  ⚠️ Erases 1 other column',
-        descDE: '✅ 2 Spalten enthüllen  ·  ⚠️ 1 andere Spalte löschen',
+        nameEn: 'Column Vortex', nameDE: 'Wirbelwind',
+        descEn: '✅ Reveals 3 columns · ⚠️ Erases 1 other column',
+        descDE: '✅ 3 Spalten enthüllen  ·  ⚠️ 1 andere Spalte löschen',
         scoreCost: 0, sellVal: 25, rarity: 'cursed', weight: 3
     },
     cursedRowCol: {
         id: 'cursedRowCol', icon: '💥',
         nameEn: 'Chaos Grid', nameDE: 'Chaos-Gitter',
-        descEn: '✅ Reveals 3 rows + 2 cols  ·  ⚠️ Blackouts all col clues 45s',
-        descDE: '✅ 3 Zeilen + 2 Spalten enthüllen  ·  ⚠️ Alle Spaltenhinweise 45s ausgeblendet',
+        descEn: '✅ Reveals 4 rows + 4 cols  ·  ⚠️ Blackouts all col clues 45s',
+        descDE: '✅ 4 Zeilen + 4 Spalten enthüllen  ·  ⚠️ Alle Spaltenhinweise 45s ausgeblendet',
         scoreCost: 0, sellVal: 30, rarity: 'cursed', weight: 2
     },
 
