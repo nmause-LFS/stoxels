@@ -190,15 +190,15 @@ function buildWorldCodes() {
     const levelCount = ALL.length;
 
     // Estimate average points per level (adjust these to taste)
-    const avgPtsPerLevel = 150; // rough expected score per level on Normal
+    const avgPtsPerLevel = 290; // rough expected score per level on Normal
     const totalPotential = levelCount * avgPtsPerLevel;
 
     const tiers = [
-        { pct: 0.15, code: 'STOX-2025-BRONZE', titleEn: 'Bronze Achievement', titleDE: 'Bronze-Leistung' },
-        { pct: 0.35, code: 'STOX-2025-SILVER', titleEn: 'Silver Achievement', titleDE: 'Silber-Leistung' },
-        { pct: 0.55, code: 'STOX-2025-GOLD', titleEn: 'Gold Achievement', titleDE: 'Gold-Leistung' },
-        { pct: 0.75, code: 'STOX-2025-PLATINUM', titleEn: 'Platinum Achievement', titleDE: 'Platin-Leistung' },
-        { pct: 0.95, code: 'STOX-2025-MASTER', titleEn: 'Master Achievement', titleDE: 'Meister-Leistung' },
+        { pct: 0.15, code: 'TY_4_P14Y1N_5T0XE15', titleEn: 'Bronze Achievement', titleDE: 'Bronze-Achievement' },
+        { pct: 0.35, code: '570CH4ST1CS_15_FUN', titleEn: 'Silver Achievement', titleDE: 'Silber-Achievement' },
+        { pct: 0.55, code: 'p>0.05_DENIED', titleEn: 'Gold Achievement', titleDE: 'Gold-Achievement' },
+        { pct: 0.75, code: 'E(X)=WIN', titleEn: 'Platinum Achievement', titleDE: 'Platin-Achievement' },
+        { pct: 0.95, code: 'CentralLimitTheorem', titleEn: 'Master Achievement', titleDE: 'Meister-Achievement' },
     ];
 
     return tiers.map(tier => ({

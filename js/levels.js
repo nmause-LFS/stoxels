@@ -102,6 +102,24 @@ const W1 = [
         )
     },
 
+    {
+
+        // 10x10
+        hint: "Venn",
+        hintDE: "Venn",
+        reveal: "A Venn-Diagram is a graphical presentation of two or more sets",
+        revealDE: "Ein Venn-Diagramm ist eine grafische Darstellung von zwei oder mehr Mengen",
+        timer: 600,
+        bonusHint: "Finish in under 2 minutes",
+        bonusHintDE: "In unter 2 Minuten abschließen",
+        bonusType: "fast",
+        bonusParam: 120,
+        grid: G([0, 1, 1, 1, 1, 1, 1, 1, 1, 0], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 1, 1, 1, 1, 1, 1, 0, 1], [0, 1, 0, 0, 0, 0, 0, 0, 1, 0], [0, 1, 0, 0, 0, 0, 0, 0, 1, 0],
+            [1, 0, 1, 1, 1, 1, 1, 1, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 0])
+    },
+
 
     {
         // 5x25
@@ -167,9 +185,9 @@ const W1 = [
         reveal: "This is De Morgan's rule for the intersection of two sets",
         revealDE: "Dies ist die Regel von De Morgan für den Schnitt zweier Mengen",
         timer: 1800,
-        bonusHint: "Complete level",
-        bonusHintDE: "Complete level (DE)",
-        bonusType: "nomiss",
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
         bonusParam: 0,
         grid: G(
             [1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0], [1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0], [1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0],
@@ -185,10 +203,10 @@ const W1 = [
         reveal: "If P is a probability measure and A,B are disjoint, then the probability of a union is just the sum of probabilities",
         revealDE: "Wenn P ein Wahrscheinlichkeitsmaß und A,B disjunkte Ereignisse sind, dann entspricht die Wahrscheinlichkeit einer Vereinigung der Summe der Wahrscheinlichkeiten",
         timer: 1800,
-        bonusHint: "Complete level",
-        bonusHintDE: "Complete level (DE)",
-        bonusType: "nomiss",
-        bonusParam: 0,
+        bonusHint: "Finish in under 10 Minutes",
+        bonusHintDE: "Beende das Level in unter 10 Minuten",
+        bonusType: "fast",
+        bonusParam: 600,
         grid: G(
             [0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1],
@@ -206,9 +224,9 @@ const W1 = [
         reveal: "This property only holds if A is a subset of B",
         revealDE: "Diese Eigenschaft gilt nur, wenn A eine Teilmenge von B ist",
         timer: 1800,
-        bonusHint: "Complete level",
-        bonusHintDE: "Complete level (DE)",
-        bonusType: "nomiss",
+        bonusHint: "Complete the level without using any items",
+        bonusHintDE: "Beende das Level ohne Items zu nutzen",
+        bonusType: "noitem",
         bonusParam: 0,
         grid: G(
             [0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
@@ -228,8 +246,8 @@ const W1 = [
         reveal: "This is the formula of the Geometric Series in case |q|<1",
         revealDE: "Dies ist die Formel der Geometrischen Reihe für |q|<1",
         timer: 1800,
-        bonusHint: "Complete level",
-        bonusHintDE: "Complete level (DE)",
+        bonusHint: "Complete the level with at most 5 mistakes",
+        bonusHintDE: "Beende das Level mit höchstens 5 Fehlern",
         bonusType: "lowmiss",
         bonusParam: 5,
         grid: G(
@@ -251,12 +269,356 @@ const W1 = [
 
 const W2 = [
 
+    {   // 5x5
+        hint: "Unequal",
+        hintDE: "Ungleich",
+        reveal: "The typical notation to denote that two parameters are not equal",
+        revealDE: "Die typische Notation für die Ungleichheit zweier Parameter",
+        timer: 1800,
+        bonusHint: "Finish within 30 seconds",
+        bonusHintDE: "Beende das Level in weniger als 30 Sekunden",
+        bonusType: "fast",
+        bonusParam: 30,
+        grid: G(
+        [0,0,1,0,0],[1,1,1,1,1],[0,0,1,0,0],
+        [1,1,1,1,1],[0,0,1,0,0]
+    )
+    },
+
+    {
+        // 5x5
+        hint: "Impossible Event",
+        hintDE: "Unmögliches Ereignis",
+        reveal: "An event that cannot occur will always have probability 0",
+        revealDE: "Ein Ereignis, das nicht eintreten kann, hat immer die Wahrscheinlichkeit 0",
+        timer: 1800,
+        bonusHint: "Finish with 0 mistakes",
+        bonusHintDE: "Ohne Fehler abschließen",
+        bonusType: "nomiss",
+        bonusParam: 0,
+        grid: G([0, 1, 1, 1, 0], [1, 0, 0, 0, 1], [1, 0, 0, 0, 1], [1, 0, 0, 0, 1], [0, 1, 1, 1, 0])
+    },
+
+    {
+        // 5x5
+        hint: "Order",
+        hintDE: "Mächtigkeit",
+        reveal: "|A| is the notation for the order of the set A",
+        revealDE: "|A| ist die Notation für die Mächtigkeit der Menge A",
+        timer: 300,
+        bonusHint: "Finish in 10 seconds",
+        bonusHintDE: "In 10 Sekunden abschließen",
+        bonusType: "fast",
+        bonusParam: 10,
+        grid: G([1, 0, 0, 0, 1], [1, 0, 0, 0, 1], [1, 0, 1, 0, 1], [1, 0, 0, 0, 1], [1, 0, 0, 0, 1])
+    },
+
+    {   // 10x10
+        hint: "Odds",
+        hintDE: "Chance",
+        reveal: "The odds of an event A with occurance probability p = P(A) is defined as p/(1-p)",
+        revealDE: "Die Chance eines Ereignisses A mit Eintrittswahrscheinlichkeit p=P(A) ist definiert durch p/(1-p)",
+        timer: 1800,
+        bonusHint: "Anser the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+        [0,0,0,1,1,1,0,0,0,0],[0,0,0,1,0,1,0,0,0,0],[0,0,0,1,1,1,0,0,0,0],
+        [0,0,0,1,0,0,0,0,0,0],[1,1,1,1,1,1,1,1,1,1],[0,0,0,0,0,0,0,0,0,0],
+        [1,0,0,0,0,0,1,1,1,0],[1,0,1,1,1,0,1,0,1,0],[1,0,0,0,0,0,1,1,1,0],
+        [1,0,0,0,0,0,1,0,0,0]
+    )
+    },
+
+    {   // 5x20
+        hint: "Draw without Replacement",
+        hintDE: "Ziehen ohne Zurücklegen",
+        reveal: "When drawing without replacement you need to assume that the elements are different for different i and j",
+        revealDE: "Beim Ziehen ohne Zurücklegen muss in der formalen Darstellung angenommen werden, dass die Elemente verschieden sind",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+        [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1],[0,0,0,1,1,0,1,0,1,1,1,0,0,0,0,1,1,0,0,0],[1,0,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0,0,1],
+        [1,0,1,0,1,0,1,0,1,1,1,0,1,0,1,0,1,0,0,1],[1,1,1,1,1,0,1,0,0,1,0,0,1,1,1,1,1,0,1,1]
+    )
+    },
+
+
+    {   // 5x20
+        hint: "Laplace - Room",
+        hintDE: "Laplace-Raum",
+        reveal: "A Laplace-Room consists of a finite sample space and the discrete union distribution P",
+        revealDE: "Ein Laplace-Room besteht aus einer endlichen Ergebnismenge und der diskreten Gleichverteilung P",
+        timer: 1800,
+        bonusHint: "Finish with at most 3 mistakes",
+        bonusHintDE: "Beende das Level mit höchstens 3 Fehlern",
+        bonusType: "lowmiss",
+        bonusParam: 3,
+        grid: G(
+        [0,1,1,0,0,0,1,0,0,0,0,0,0,1,1,1,0,1,1,0],[0,1,0,0,0,1,0,1,0,0,0,0,0,1,0,1,0,0,1,0],[0,1,0,0,1,0,0,0,1,0,0,0,0,1,1,1,0,0,1,0],
+        [0,1,0,0,0,1,0,1,0,0,1,0,0,1,0,0,0,0,1,0],[0,1,1,0,1,1,0,1,1,0,1,0,0,1,0,0,0,1,1,0]
+    )
+    },
+
+
+    {
+        // 10x10
+        hint: "Algebra",
+        hintDE: "Algebra",
+        reveal: "We usually denote a Sigma-Algebra with A or σ",
+        revealDE: "Eine Sigma-Algebra wird üblicherweise mit A oder σ bezeichnet",
+        timer: 1800,
+        bonusHint: "Use no items",
+        bonusHintDE: "Keine Items verwenden",
+        bonusType: "noitem",
+        bonusParam: 0,
+        grid: G([0, 0, 0, 0, 1, 1, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 1, 0, 0, 0], [0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 1, 0, 1, 0], [1, 0, 1, 1, 0, 0, 0, 1, 1, 0], [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 1, 0, 0], [0, 0, 0, 1, 1, 1, 0, 0, 0, 0], [0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 1, 1, 1, 0, 0, 0, 0])
+    },
+
+
+    {   // 15x25
+        hint: "Discrete Uniform Distribution",
+        hintDE: "Diskrete Gleichverteilung",
+        reveal: "For a sample space with K elements the discrete uniform distribution is defined as 1/K",
+        revealDE: "Für eine Ergebnismenge mit K Elementen ist die diskrete Gleichverteilung definiert durch 1/K",
+        timer: 1800,
+        bonusHint: "Finish within 10 Minutes",
+        bonusHintDE: "Beende das Level in 10 Minuten",
+        bonusType: "fast",
+        bonusParam: 600,
+        grid: G(
+        [0,0,1,1,1,0,1,1,0,1,1,0,0,0,0,0,0,0,1,1,0,1,1,0,0],[0,0,1,0,1,0,1,0,0,1,0,0,0,0,0,1,1,0,0,1,0,0,1,0,0],[0,0,1,1,1,0,1,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0,0],
+        [0,0,1,0,0,0,1,0,0,1,0,0,1,0,1,0,1,0,0,1,0,0,1,0,0],[0,0,1,0,0,0,1,1,0,1,1,0,1,1,1,1,1,0,1,1,0,1,1,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],[0,0,1,1,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0],[0,0,1,1,1,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0]
+    )
+    },
+
+    {   // 15x25
+        hint: "Conditional Expectation",
+        hintDE: "Bedingte Wahrscheinlichkeit",
+        reveal: "This is the definition of P(A|B) when P(B)>0",
+        revealDE: "Dies ist die Definition von P(A|B) wenn P(B)>0 ist",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,1,1,1,0,1,1,0,1,1,1,0,0,0,0,0,1,1,1,0,1,1,0,0],[0,0,1,0,1,0,1,0,0,1,0,1,0,1,1,1,0,1,0,1,0,0,1,0,0],
+        [0,0,1,1,1,0,1,0,0,1,1,1,0,1,0,1,0,1,1,1,0,0,1,0,0],[0,0,1,0,0,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,0,1,0,0],[0,0,1,0,0,0,1,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1,1,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,1,1,1,0,1,1,0,1,1,1,0,1,1,0,0,0,0,0,0],[0,0,0,0,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,0,0,0,0,0],[0,0,0,0,0,0,1,1,1,0,1,0,0,1,1,1,0,0,1,0,0,0,0,0,0],
+        [0,0,0,0,0,0,1,0,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,0,0],[0,0,0,0,0,0,1,0,0,0,1,1,0,1,1,1,0,1,1,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    )
+    },
+
+    {
+        // 20x20
+        hint: "Union Bound",
+        hintDE: "Boolesche Ungleichung",
+        reveal: "The union bound states that the probability of a union is bounded by the sum of probabilities",
+        revealDE: "Die Boolsche Ungleichung besagt, dass die Wahrscheinlichkeit einer Vereinigung beschränkt ist durch die Summe der einzelnen Wahrscheinlichkeiten",
+        timer: 1800,
+        bonusHint: "Use no items",
+        bonusHintDE: "Verwende keine Gegenstände",
+        bonusType: "noitem",
+        bonusParam: 0,
+        grid: G(
+            [1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0], [1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0], [1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0],
+            [1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0], [1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1], [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1], [0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1], [1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1]
+        )
+    },
+
+
+    {   // 15x40
+        hint: "Inclusion-Exclusion-Principle",
+        hintDE: "Siebformel",
+        reveal: "The Inclusion-Exclusion-Principle is used for calculating the probability of the union of two events",
+        revealDE: "Die Siebformel kann zur Berechnung der Wahrscheinlichkeit einer Vereinigung verwendet werden",
+        timer: 1800,
+        bonusHint: "Finish with at most 10 mistakes",
+        bonusHintDE: "Beende das Level mit höchstens 10 Fehlern",
+        bonusType: "lowmiss",
+        bonusParam: 10,
+        grid: G(
+        [0,0,0,0,0,0,0,1,1,1,0,1,1,0,1,1,1,0,0,0,0,0,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,1,1,1,0,1,0,0,1,1,1,0,1,0,1,0,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,1,0,0,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,1,0,0,0,1,1,0,1,0,1,0,1,1,1,0,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,1,1,1,0,1,1,0,1,1,1,0,1,1,0,0,0,0,0,1,1,1,0,1,1,0,1,1,1,0,1,1,0,0,0,0],
+        [0,1,1,1,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,0,0,0],[0,0,0,0,0,1,1,1,0,1,0,0,1,1,1,0,0,1,0,1,1,1,0,1,1,1,0,1,0,0,1,1,1,0,0,1,0,0,0,0],[0,1,1,1,0,1,0,0,0,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0],
+        [0,0,0,0,0,1,0,0,0,1,1,0,1,0,1,0,1,1,0,0,0,0,0,1,0,0,0,1,1,0,1,1,1,0,1,1,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,1,0,1,1,1,0,0,0,0,0,1,1,1,0,1,1,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0,0,1,0,1,0,1,1,1,0,1,0,1,0,0,1,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,1,1,1,0,0,1,1,1,0,1,0,0,1,1,1,0,1,0,1,0,1,1,1,0,0,1,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,0,1,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1,1,0,0,0,0,0,0,0,0]
+    )
+    },
+
 ];
 
 
 const W3 = [
 
-            
+    {
+        // 5x5
+        hint: "Random Variable",
+        hintDE: "Zufallsvariable",
+        reveal: "X is typically a random variable",
+        revealDE: "X ist typischerweise eine Zufallsvariable",
+        timer: 1800,
+        bonusHint: "Finish with 0 mistakes",
+        bonusHintDE: "Ohne Fehler abschließen",
+        bonusType: "nomiss",
+        bonusParam: 0,
+        grid: G([1, 0, 0, 0, 1], [0, 1, 0, 1, 0], [0, 0, 1, 0, 0], [0, 1, 0, 1, 0], [1, 0, 0, 0, 1])
+    },
+
+
+    {   // 5x10
+        hint: "Infinity",
+        hintDE: "Unendlichkeit",
+        reveal: "The typical notation for infinity",
+        revealDE: "Die typische Notation für unendlich",
+        timer: 1800,
+        bonusHint: "Finish with 0 mistakes",
+        bonusHintDE: "Beende das Level ohne Fehler",
+        bonusType: "nomiss",
+        bonusParam: 0,
+        grid: G(
+        [1,1,1,0,0,0,0,1,1,1],[1,0,0,1,0,0,1,0,0,1],[1,0,0,0,1,1,0,0,0,1],
+        [1,0,0,1,0,0,1,0,0,1],[1,1,1,1,0,0,1,1,1,1]
+    )
+    },
+
+    {
+        // 5x25
+        hint: "Distribution of a Random Variable",
+        hintDE: "Verteilung einer Zufallsvariable",
+        reveal: "This is the definition of the distribution of a random variable",
+        revealDE: "Dies ist die Definition der Verteilung einer Zufallsvariable",
+        timer: 1800,
+        bonusHint: "Finish with at most 3 mistakes",
+        bonusHintDE: "Beende das Level mit höchstens 3 Fehlern",
+        bonusType: "lowmiss",
+        bonusParam: 3,
+        grid: G(
+        [1,1,1,0,1,1,0,1,0,0,0,1,0,1,1,1,0,1,1,1,1,0,1,1,0],[1,0,1,0,1,0,0,0,1,0,1,0,0,1,0,0,0,1,0,0,1,0,0,1,0],[1,1,1,0,1,0,0,0,0,1,0,0,0,1,1,1,0,1,1,1,1,0,0,1,0],
+        [1,0,0,0,1,0,0,0,1,0,1,0,0,1,0,0,0,1,0,0,1,0,0,1,0],[1,0,0,0,1,1,0,1,0,0,0,1,0,1,1,1,0,1,0,0,1,0,1,1,0]
+    )
+    },
+
+
+    {
+        // 15x15
+        hint: "Probability Tree",
+        hintDE: "Wahrscheinlichkeitsbaum",
+        reveal: "This is a graphical representation of a probability tree",
+        revealDE: "Dies ist eine graphische Darstellung eines Wahrscheinlichkeitsbaumes",
+        timer: 1800,
+        bonusHint: "Finish within 10 Minutes",
+        bonusHintDE: "Beende das Level in weniger als 10 Minuten",
+        bonusType: "fast",
+        bonusParam: 600,
+        grid: G(
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,1,1,1,0,0,0,0,0,0],[0,0,0,0,0,0,1,1,1,0,0,0,0,0,0],
+        [0,0,0,0,0,1,0,0,0,1,0,0,0,0,0],[0,0,0,0,1,0,0,0,0,0,1,0,0,0,0],[0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+        [0,1,1,1,0,0,0,0,0,0,0,1,1,1,0],[0,1,1,1,0,0,0,0,0,0,0,1,1,1,0],[0,1,0,1,1,0,0,0,0,0,1,1,0,1,0],
+        [0,1,0,0,1,0,0,0,0,0,1,0,0,1,0],[0,1,0,0,1,0,0,0,0,0,1,0,0,1,0],[1,1,1,0,1,1,1,0,1,1,1,0,1,1,1],
+        [1,1,1,0,1,1,1,0,1,1,1,0,1,1,1],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    )
+    },
+    
+
+
+    {   // 15x25
+        hint: "Total Probability",
+        hintDE: "Totale Wahrscheinlichkeit",
+        reveal: "This is the formula of the total probability theorem",
+        revealDE: "Dies ist die Formel aus dem Satz der totalen Wahrscheinlichkeit",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1],
+            [1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1], [0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1],
+            [1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1], [0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0]
+        )
+    },
+
+
+    {   // 13x40
+        hint: "P(A_i | B) = ?",
+        hintDE: "P(A_i | B) = ?",
+        reveal: "This is the Bayes - Theorem",
+        revealDE: "Dies ist der Satz von Bayes",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+        [1,1,1,0,1,1,0,1,1,1,0,1,0,1,1,1,0,0,0,1,1,0,0,0,1,1,1,0,1,1,0,1,1,1,0,0,0,1,1,0],[1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,0,1,0,0,0,1,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0],[1,1,1,0,1,0,0,1,1,1,0,1,0,1,1,1,0,0,0,0,1,0,1,0,1,1,1,0,1,0,0,1,1,1,0,0,0,0,1,0],
+        [1,0,0,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,0,1,0,0,0,1,0,0,0,1,0,0,1,0,1,0,1,0,0,1,0],[1,0,0,0,1,1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,0,0,0,1,0,0,0,1,1,0,1,0,1,0,1,0,1,1,0],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,1,0,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    )
+    },
+
+    {
+        // 10x35
+        hint: "Independence",
+        hintDE: "Unabhängigkeit",
+        reveal: "If A and B are independent events, then the probability of A AND B is just the product of the two separate probabilities",
+        revealDE: "Wenn A und B unabhängige Ereignisse sind, ist die Wahrscheinlichkeit von A UND B das Produkt der beiden Einzelwahrscheinlichkeiten",
+        timer: 1800,
+        bonusHint: "Complete level",
+        bonusHintDE: "Level abschließen",
+        bonusType: "nomiss",
+        bonusParam: 0,
+        grid: G(
+        [0,0,0,0,0,0,0,1,1,1,0,1,1,0,1,1,1,0,0,0,0,0,1,1,1,0,1,1,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,1,0,1,0,1,0,0,1,0,1,0,1,1,1,0,1,0,1,0,0,1,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,1,1,1,0,1,0,0,1,1,1,0,1,0,1,0,1,1,1,0,0,1,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,1,0,0,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,0,1,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,1,0,0,0,1,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1,1,0,0,0,0,0,0,0],[0,0,0,0,0,1,1,1,0,1,1,0,1,1,1,0,1,1,0,0,0,1,1,1,0,1,1,0,1,1,1,0,1,1,0],
+        [0,1,1,1,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0],[0,0,0,0,0,1,1,1,0,1,0,0,1,1,1,0,0,1,0,1,0,1,1,1,0,1,0,0,1,1,1,0,0,1,0],[0,1,1,1,0,1,0,0,0,1,0,0,1,0,1,0,0,1,0,0,0,1,0,0,0,1,0,0,1,0,1,0,0,1,0],
+        [0,0,0,0,0,1,0,0,0,1,1,0,1,0,1,0,1,1,0,0,0,1,0,0,0,1,1,0,1,1,1,0,1,1,0]
+    )
+    },
+
+
+    {
+            //15x30
+        hint: "Interval Probability",
+        hintDE: "Intervallwahrscheinlichkeit",
+        reveal: "This is how you can calculate the probability of a (continuous) random variable X being in an interval [a,b]",
+        revealDE: "Mit dieser Formel lässt sich die Wahrscheinlichkeit berechnen, dass eine stetige Zufallsvariable X im Intervall [a,b] liegt",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+        [1,1,1,0,1,1,0,1,1,0,0,0,0,1,0,1,0,0,0,1,0,0,1,0,1,0,0,0,1,1],[1,0,1,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0,1,0,0,1,0,0,1,0,0,0,0,1],[1,1,1,0,1,0,0,1,1,1,0,1,0,0,0,0,0,1,0,0,1,0,0,0,1,1,1,0,0,1],
+        [1,0,0,0,1,0,0,1,0,1,0,0,1,0,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1],[1,0,0,0,1,1,0,1,1,1,0,0,0,1,0,1,0,0,0,1,0,0,1,0,1,1,1,0,1,1],[0,0,0,0,0,0,1,1,1,0,1,1,0,1,0,0,0,1,0,0,1,0,1,0,0,0,1,1,0,0],
+        [0,0,1,1,1,0,1,0,1,0,1,0,0,0,1,0,1,0,0,1,0,0,1,0,0,0,0,1,0,0],[0,0,0,0,0,0,1,1,1,0,1,0,0,0,0,1,0,0,1,0,0,0,1,1,1,0,0,1,0,0],[0,0,1,1,1,0,1,0,0,0,1,0,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0],
+        [0,0,0,0,0,0,1,0,0,0,1,1,0,1,0,0,0,1,0,0,1,0,1,1,1,0,1,1,0,0],[0,0,0,0,0,0,1,1,1,0,1,1,0,1,0,0,0,1,0,0,1,0,1,1,0,0,1,1,0,0],[0,0,0,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0],
+        [0,0,1,1,1,0,1,1,1,0,1,0,0,0,0,1,0,0,1,0,0,0,1,1,1,0,0,1,0,0],[0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0],[0,0,0,0,0,0,1,0,0,0,1,1,0,1,0,0,0,1,0,0,1,0,1,1,1,0,1,1,0,0]
+    )
+    },
+
+
 
 
 
@@ -268,36 +630,13 @@ const W3 = [
 
 const W4 = [
                 
-            
-
-
-
-
-
-
-            
+                     
 ];
 
 
 
 
-
-
-// World 5
 const W5 = [
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 ];
@@ -349,78 +688,15 @@ const W13 = [
 
 
 
-    {
-
-        // Level 1-3
-        hint: "Event",
-        hintDE: "Ereignis",
-        reveal: "Typically events are denoted by A,B,C,...",
-        revealDE: "Ereignisse werden typischerweise mit A, B, C, ... bezeichnet",
-        timer: 300,
-        bonusHint: "Use no items",
-        bonusHintDE: "Keine Items verwenden",
-        bonusType: "noitem",
-        bonusParam: 0,
-        grid: G([0, 0, 1, 0, 0], [0, 1, 1, 1, 0], [1, 0, 0, 0, 1], [1, 1, 1, 1, 1], [1, 0, 0, 0, 1])
-    },
-
-    {
-        // Level 1-4
-        hint: "Impossible Event",
-        hintDE: "Unmögliches Ereignis",
-        reveal: "An event that cannot occur will always have probability 0",
-        revealDE: "Ein Ereignis, das nicht eintreten kann, hat immer die Wahrscheinlichkeit 0",
-        timer: 300,
-        bonusHint: "Finish with 0 mistakes",
-        bonusHintDE: "Ohne Fehler abschließen",
-        bonusType: "nomiss",
-        bonusParam: 0,
-        grid: G([0, 1, 1, 1, 0], [1, 0, 0, 0, 1], [1, 0, 0, 0, 1], [1, 0, 0, 0, 1], [0, 1, 1, 1, 0])
-    },
 
 
 
-    {
-        // Level 1-6
-        hint: "Sum",
-        hintDE: "Summe",
-        reveal: "The notation for a sum/series is Σ",
-        revealDE: "Die Notation für eine Summe/Reihe ist Σ",
-        timer: 300,
-        bonusHint: "Finish in under 15 seconds",
-        bonusHintDE: "In unter 15 Sekunden abschließen",
-        bonusType: "fast",
-        bonusParam: 15,
-        grid: G([1, 1, 1, 1, 1], [0, 1, 0, 0, 0], [0, 0, 1, 0, 0], [0, 1, 0, 0, 0], [1, 1, 1, 1, 1])
-    },
 
-    {
-        // Level 1-7
-        hint: "Intersection",
-        hintDE: "Schnitt",
-        reveal: "This is the typical notation for an intersection of two events",
-        revealDE: "Dies ist die typische Notation für den Schnitt zweier Ereignisse",
-        timer: 300,
-        bonusHint: "Finish under 20s with 0 mistakes",
-        bonusHintDE: "Unter 20 Sek. ohne Fehler abschließen",
-        bonusType: "combo",
-        bonusParam: 20,
-        grid: G([0, 1, 1, 1, 0], [1, 0, 0, 0, 1], [1, 0, 0, 0, 1], [1, 0, 0, 0, 1], [1, 0, 0, 0, 1])
-    },
 
-    {
-        // Level 1-8
-        hint: "Order",
-        hintDE: "Mächtigkeit",
-        reveal: "|A| is the notation for the order of the set A",
-        revealDE: "|A| ist die Notation für die Mächtigkeit der Menge A",
-        timer: 300,
-        bonusHint: "Finish in 10 seconds",
-        bonusHintDE: "In 10 Sekunden abschließen",
-        bonusType: "fast",
-        bonusParam: 10,
-        grid: G([1, 0, 0, 0, 1], [1, 0, 0, 0, 1], [1, 0, 1, 0, 1], [1, 0, 0, 0, 1], [1, 0, 0, 0, 1])
-    },
+
+
+
+
 
     {
         // Level 1-9
@@ -436,78 +712,16 @@ const W13 = [
         grid: G([1, 1, 1, 1, 1], [1, 0, 0, 0, 0], [1, 1, 1, 1, 1], [1, 0, 0, 0, 0], [1, 1, 1, 1, 1])
     },
 
-    {
-
-        // Level 1-10
-        hint: "Random Variable",
-        hintDE: "Zufallsvariable",
-        reveal: "X is typically a random variable",
-        revealDE: "X ist typischerweise eine Zufallsvariable",
-        timer: 300,
-        bonusHint: "Finish with 0 mistakes",
-        bonusHintDE: "Ohne Fehler abschließen",
-        bonusType: "nomiss",
-        bonusParam: 0,
-        grid: G([1, 0, 0, 0, 1], [0, 1, 0, 1, 0], [0, 0, 1, 0, 0], [0, 1, 0, 1, 0], [1, 0, 0, 0, 1])
-    },
-
-
-    {
-
-        // Level 2-1
-        hint: "Algebra",
-        hintDE: "Algebra",
-        reveal: "We usually denote a Sigma-Algebra with A or σ",
-        revealDE: "Eine Sigma-Algebra wird üblicherweise mit A oder σ bezeichnet",
-        timer: 600,
-        bonusHint: "Use no items",
-        bonusHintDE: "Keine Items verwenden",
-        bonusType: "noitem",
-        bonusParam: 0,
-        grid: G([0, 0, 0, 0, 1, 1, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 1, 0, 0, 0], [0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
-            [0, 0, 0, 1, 0, 0, 1, 0, 1, 0], [1, 0, 1, 1, 0, 0, 0, 1, 1, 0], [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 1, 1, 0, 0], [0, 0, 0, 1, 1, 1, 0, 0, 0, 0], [0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
-            [0, 0, 0, 1, 1, 1, 0, 0, 0, 0])
-    },
-
-    {
-
-        // Level 2-2
-        hint: "Venn",
-        hintDE: "Venn",
-        reveal: "A Venn-Diagram is a graphical presentation of two or more sets",
-        revealDE: "Ein Venn-Diagramm ist eine grafische Darstellung von zwei oder mehr Mengen",
-        timer: 600,
-        bonusHint: "Finish in under 2 minutes",
-        bonusHintDE: "In unter 2 Minuten abschließen",
-        bonusType: "fast",
-        bonusParam: 120,
-        grid: G([0, 1, 1, 1, 1, 1, 1, 1, 1, 0], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 1, 1, 1, 1, 1, 1, 0, 1], [0, 1, 0, 0, 0, 0, 0, 0, 1, 0], [0, 1, 0, 0, 0, 0, 0, 0, 1, 0],
-            [1, 0, 1, 1, 1, 1, 1, 1, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [0, 1, 1, 1, 1, 1, 1, 1, 1, 0])
-    },
 
 
 
-    {
-        // Level 2-4
-        hint: "Random Variables",
-        hintDE: "Zufallsvariablen",
-        reveal: "W,X,Y,Z are commonly used for random variables",
-        revealDE: "Mit W,X,Y,Z werden üblicherweise Zufallsvariablen notiert",
-        timer: 600,
-        bonusHint: "Answer the bonus question correctly",
-        bonusHintDE: "Beantworte die Bonusfrage richtig",
-        bonusType: "quiz",
-        bonusParam: 0,
-        grid: G(
-            [1, 0, 1, 0, 1, 1, 0, 0, 0, 1], [1, 0, 1, 0, 1, 0, 1, 0, 1, 0], [1, 0, 1, 0, 1, 0, 0, 1, 0, 0],
-            [1, 0, 1, 0, 1, 0, 1, 0, 1, 0], [1, 1, 1, 1, 1, 1, 0, 0, 0, 1], [1, 0, 0, 0, 1, 1, 1, 1, 1, 1],
-            [0, 1, 0, 1, 0, 0, 0, 0, 1, 0], [0, 0, 1, 0, 0, 0, 0, 1, 0, 0], [0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
-            [0, 0, 1, 0, 0, 1, 1, 1, 1, 1]
-        )
-    },
+
+
+
+
+
+
+
 
 
 
@@ -532,26 +746,7 @@ const W13 = [
 
 
 
-    {
-        hint: "Union Bound",
-        hintDE: "Boolesche Ungleichung",
-        reveal: "The union bound states that the probability of a union is bounded by the sum of probabilities",
-        revealDE: "Die Boolsche Ungleichung besagt, dass die Wahrscheinlichkeit einer Vereinigung beschränkt ist durch die Summe der einzelnen Wahrscheinlichkeiten",
-        timer: 1200,
-        bonusHint: "Use no items",
-        bonusHintDE: "Verwende keine Gegenstände",
-        bonusType: "noitem",
-        bonusParam: 0,
-        grid: G(
-            [1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0], [1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0], [1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0],
-            [1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0], [1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1], [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1], [0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1], [1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1]
-        )
-    },
+
 
 
     {
@@ -577,48 +772,9 @@ const W13 = [
 
 
 
-    {
 
-        // Level 5-1
-        hint: "Independence",
-        hintDE: "Unabhängigkeit",
-        reveal: "If A and B are independent events, then the probability of A AND B is just the product of the two separate probabilities",
-        revealDE: "Wenn A und B unabhängige Ereignisse sind, ist die Wahrscheinlichkeit von A UND B das Produkt der beiden Einzelwahrscheinlichkeiten",
-        timer: 1800,
-        bonusHint: "Complete level",
-        bonusHintDE: "Level abschließen",
-        bonusType: "nomiss",
-        bonusParam: 0,
-        grid: G(
-            [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0],
-            [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0], [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0], [1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0],
-            [1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0], [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0], [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0],
-            [1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0])
-    },
 
-    {
-        hint: "Total Probability",
-        hintDE: "Totale Wahrscheinlichkeit",
-        reveal: "This is the formula of the total probability theorem",
-        revealDE: "Dies ist die Formel aus dem Satz der totalen Wahrscheinlichkeit",
-        timer: 1800,
-        bonusHint: "Answer the bonus question correctly",
-        bonusHintDE: "Beantworte die Bonusfrage richtig",
-        bonusType: "quiz",
-        bonusParam: 0,
-        grid: G(
-            [1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1],
-            [1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1], [0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1],
-            [1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1], [0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
-            [0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0]
-        )
-    },
+
 
 
 
