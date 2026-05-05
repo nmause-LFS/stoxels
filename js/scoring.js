@@ -280,6 +280,8 @@ function showQuiz(worldNum) {
     } else {
         // ── Multiple-choice question ──────────────────────────────────────
         if (inputRow) inputRow.style.display = 'none';
+        hintBox.style.display = 'none';
+        hintBox.textContent = '';
 
         q.opts.forEach(opt => {
             const btn = document.createElement('button');
