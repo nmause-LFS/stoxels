@@ -29,6 +29,11 @@ function checkWorldCodes() {
         if (STATE.totalScore >= wc.threshold) {
             STATE.unlockedCodes.push(wc.code);
             newCodes.push(wc); // queue for display
+            trackEvent('achievement_unlocked', {
+            code_title: LANG === 'de' ? wc.titleDE : wc.titleEn,
+            threshold: wc.threshold,
+            total_score: STATE.totalScore,
+        });
         }
     });
 

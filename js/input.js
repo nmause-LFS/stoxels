@@ -213,6 +213,18 @@ function ac(row, col) {
             if (curMods.hardcore) {
                 dead = true;
                 stopTimer();
+                trackEvent('level_failed', {        
+                    level_id: `${cur.world}-${cur.li}`,
+                    world: cur.world,
+                    level_index: cur.li,
+                    difficulty: curDiff,
+                    reason: 'hardcore_mistake',
+                    mistakes: mistakeCount,
+                });
+
+
+
+
                 document.getElementById('lose-title').textContent = t('hc_fail_title');
                 document.getElementById('lose-sub').textContent = t('hc_fail_sub');
                 document.getElementById('ov-lose').classList.add('show');

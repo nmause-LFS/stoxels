@@ -58,63 +58,47 @@ function checkWin() {
     const sol = cur.grid;
     const rows = sol.length, cols = sol[0].length;
 
-    // Scan every cell — return early if anything doesn't match
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
             const effective = userGrid[r][c] === 1 || revealedGrid[r][c];
-            if (effective !== (sol[r][c] === 1)) return; // not complete yet
+            if (effective !== (sol[r][c] === 1)) return;
         }
     }
 
-    // ── Puzzle complete ───────────────────────────────────────────────────
     dead = true;
-    stopTimer(); // timer.js
+    stopTimer();
 
     const gi = cur.gIdx;
-    if (!STATE.done.includes(gi)) STATE.done.push(gi); // mark level as completed
+    const isFirstClear = !STATE.done.includes(gi);   // ← check BEFORE pushing
+    if (!STATE.done.includes(gi)) STATE.done.push(gi);
 
-    // ── Score calculation ─────────────────────────────────────────────────
     const baseScore = 100 + (rows + cols) * 2;
     const timeBonus = Math.floor(timerSecs / 10);
     const mistakePenalty = mistakeCount * 20;
     const rawScore = Math.max(10, baseScore + timeBonus - mistakePenalty);
-    const mult = scoreMultiplier(); // config.js
+    const mult = scoreMultiplier();
     const pts = Math.round(rawScore * mult);
 
-    // Only award the improvement over the player's previous best for this level.
-    // If this run scores lower than or equal to the stored best, award 0.
-    // This prevents farming the same level for unlimited points.
     const hs = STATE.levelHS[gi];
     const prevBest = hs ? hs.score : 0;
     const ptsAwarded = Math.max(0, pts - prevBest);
     STATE.totalScore += ptsAwarded;
 
-    // Update high score for this level if this run beats the previous best
     if (!hs || pts > hs.score) {
         STATE.levelHS[gi] = {
             score: pts,
             diff: curDiff,
             time: timerSecs,
-            mods: { ...curMods } // snapshot so mods can't change retroactively
+            mods: { ...curMods }
         };
     }
     save();
+
     document.getElementById('sc-disp').textContent = STATE.totalScore;
 
-    // ── Bonus objective evaluation ────────────────────────────────────────
-    // elapsed = how many seconds the player actually spent on this level.
-    // In Time Trial mode the timer starts at half the intended timer instead of the normal
-    // timerStart value, so elapsed is calculated differently.
     const baseTimer = cur.timer || DIFF_CFG[curDiff].timerStart;
     const elapsed = Math.round(baseTimer * (curMods.timetrial ? 0.5 : 1)) - timerSecs;
 
-    // Bonus type reference:
-    //   'fast'    — finish in ≤ bonusParam seconds elapsed
-    //   'nomiss'  — finish with exactly 0 mistakes
-    //   'lowmiss' — finish with ≤ bonusParam mistakes (lenient version of nomiss)
-    //   'noitem'  — finish without using any item this level
-    //   'quiz'    — always met on completion; actual bonus comes from answering correctly
-    //   'combo'   — finish in ≤ bonusParam seconds AND 0 mistakes (hardest)
     const bt = cur.bonusType || 'nomiss';
     const bp = cur.bonusParam !== undefined ? cur.bonusParam : 0;
 
@@ -123,14 +107,32 @@ function checkWin() {
     else if (bt === 'nomiss') bonusMet = mistakeCount === 0;
     else if (bt === 'lowmiss') bonusMet = mistakeCount <= bp;
     else if (bt === 'noitem') bonusMet = itemsUsedThisLevel === 0;
-    else if (bt === 'quiz') bonusMet = true; // quiz determines the actual reward
+    else if (bt === 'quiz') bonusMet = true;
     else if (bt === 'combo') bonusMet = elapsed <= bp && mistakeCount === 0;
-    // Combined no-item variants — no items used AND the secondary condition:
     else if (bt === 'noitem_nomiss') bonusMet = itemsUsedThisLevel === 0 && mistakeCount === 0;
     else if (bt === 'noitem_fast') bonusMet = itemsUsedThisLevel === 0 && elapsed <= bp;
 
-    // ── Build win overlay content ─────────────────────────────────────────
-    buildReveal(); // render the mini solution grid (bottom of this file)
+    // ← trackEvent now safely after bonusMet is defined
+    trackEvent('level_completed', {
+        level_id: `${cur.world}-${cur.li}`,
+        world: cur.world,
+        level_index: cur.li,
+        difficulty: curDiff,
+        time_remaining: timerSecs,
+        time_elapsed: elapsed,
+        mistakes: mistakeCount,
+        items_used: itemsUsedThisLevel,
+        score: pts,
+        mod_timetrial: curMods.timetrial,
+        mod_hardcore: curMods.hardcore,
+        mod_ironman: curMods.ironman,
+        bonus_met: bonusMet,
+        bonus_type: bt,
+        is_first_clear: isFirstClear,
+        grid_size: `${cols}x${rows}`,
+    });
+
+    buildReveal();
 
     const mins = Math.floor(timerSecs / 60);
     const secs = timerSecs % 60;
@@ -145,25 +147,18 @@ function checkWin() {
         `<div class="ov-sub-line ov-sub-time">⏱ ${mins}:${String(secs).padStart(2, '0')} ${t('ov_win_left')} · ${t('ov_win_solved_in')} ${elapsedMins}:${String(elapsedSecs).padStart(2, '0')}</div>` +
         `<div class="ov-sub-line ${mistakeCount === 0 ? 'ov-sub-miss-ok' : 'ov-sub-miss'}">✗ ${mistakeCount} ${mistakeCount !== 1 ? t('ov_win_mistakes') : t('ov_win_mistake')}</div>`;
 
-    // Bonus badge — green if met, grey if missed; shows the hint if missed
     const bl = document.getElementById('bonus-list');
     bl.innerHTML = `<span class="bonus-badge ${bonusMet ? 'earned' : 'missed'}">
         ${bonusMet ? t('ov_bonus_met') : '🎯 ' + lvText(cur, 'bonusHint')}
     </span>`;
 
-    // ── Item reward ───────────────────────────────────────────────────────
-    // Award one random item if: bonus was met AND Ironman is off AND this
-    // level's bonus hasn't been claimed before (no duplicate rewards).
-    // EXCEPTION: quiz bonus types skip the item award here — the quiz flow
-    // (answerQuiz) is the sole item/points gatekeeper for those levels,
-    // preventing a double-item situation.
     const irz = document.getElementById('item-reward-zone');
     irz.innerHTML = '';
     const bonusAlreadyDone = STATE.bonusDone.includes(gi);
     const isQuizBonus = (bt === 'quiz');
 
     if (bonusMet && !curMods.ironman && !bonusAlreadyDone && !isQuizBonus) {
-        const defId = pickRandomItem(); // items.js
+        const defId = pickRandomItem();
         const def = ITEM_DEFS[defId];
         if (def) {
             const item = { defId, uid: Date.now() + Math.random().toString(36).slice(2) };
@@ -179,7 +174,6 @@ function checkWin() {
         irz.innerHTML = `<div class="item-reward" style="border-color:var(--border2);color:#666;">
             ${t('ov_bonus_claimed_note')}
         </div>`;
-
         if (Math.random() < 0.5) {
             const defId = pickLuckyItem();
             const def = ITEM_DEFS[defId];
@@ -193,7 +187,6 @@ function checkWin() {
             }
         }
     } else if (!bonusMet && !curMods.ironman && !isQuizBonus) {
-        // Bonus missed — small consolation lucky drop chance
         if (Math.random() < 0.5) {
             const defId = pickLuckyItem();
             const def = ITEM_DEFS[defId];
@@ -208,13 +201,8 @@ function checkWin() {
         }
     }
 
-    // Check if completing this level finished a whole World → unlock a Moodle code
-    checkWorldCodes(); // codes.js
+    checkWorldCodes();
 
-    // ── Show quiz or win overlay ──────────────────────────────────────────
-    // If this level's bonus type is 'quiz' AND the bonus was met, show the
-    // quiz after a short pause (so the player can read the overlay first).
-    // Otherwise, show the win overlay directly after a shorter pause.
     if (bonusMet && cur.bonusType === 'quiz') {
         setTimeout(() => showQuiz(cur.world), 1500);
     } else {
@@ -356,6 +344,15 @@ function answerQuizInput() {
 // _resolveQuizAnswer(correct) — shared reward/penalty logic for both MC and
 //   input quiz answers. Grants +50 pts + item on correct first-time answer.
 function _resolveQuizAnswer(correct) {
+
+    trackEvent('quiz_answered', {
+        level_id: `${cur.world}-${cur.li}`,
+        world: cur.world,
+        correct: correct,
+        question_type: currentQuizQuestion ? currentQuizQuestion.type : 'unknown',
+        already_claimed: STATE.bonusDone.includes(cur.gIdx),
+    });
+
     quizAnsweredCorrectly = correct;
     const resEl = document.getElementById('quiz-result');
     const quizAlreadyClaimed = STATE.bonusDone.includes(cur.gIdx);
@@ -416,6 +413,13 @@ function finishQuiz() {
 // skipQuiz — called when the player clicks "SKIP" or presses Escape.
 //   No points or items are awarded. Shows the win overlay immediately.
 function skipQuiz() {
+    trackEvent('quiz_answered', {
+        level_id: `${cur.world}-${cur.li}`,
+        world: cur.world,
+        correct: null,
+        question_type: 'skipped',
+    });
+
     closeQuiz();
     setTimeout(() => document.getElementById('ov-win').classList.add('show'), 300);
 }

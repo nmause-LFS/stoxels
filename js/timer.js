@@ -98,6 +98,19 @@ function updTimer() {
 //   Note: dead = true and stopTimer() are called by the tick loop BEFORE
 //   this function, so no need to repeat them here.
 function timesUp() {
+    trackEvent('level_failed', {
+        level_id: `${cur.world}-${cur.li}`,
+        world: cur.world,
+        level_index: cur.li,
+        difficulty: curDiff,
+        reason: 'timeout',
+        mistakes: mistakeCount,
+        items_used: itemsUsedThisLevel,
+        mod_timetrial: curMods.timetrial,
+        mod_hardcore: curMods.hardcore,
+        mod_ironman: curMods.ironman,
+    });
+
     document.getElementById('lose-title').textContent = t('ov_lose'); // translated string
     document.getElementById('lose-sub').textContent =
         `${mistakeCount} ${mistakeCount !== 1 ? t('ov_win_mistakes') : t('ov_win_mistake')}. ${t('btn_retry2')}!`;

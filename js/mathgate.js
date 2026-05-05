@@ -1525,6 +1525,11 @@ function submitMathGate() {
         if (!STATE.mathGatePassed.includes(pendingGateGi)) {
             STATE.mathGatePassed.push(pendingGateGi);
             save();
+            trackEvent('math_gate_passed', {
+            level_id: `${cur ? cur.world + '-' + cur.li : '?'}`,
+            gate_gi: pendingGateGi,
+            attempts: gateAttempts + 1,
+            });
         }
         showMgFeedback(t('mg_correct'), true);
         document.getElementById('mg-submit-btn').disabled = true;
