@@ -134,28 +134,28 @@ const ITEM_DEFS = {
     },
 
     // ── ADD-TIME items — extend the countdown by N seconds ───────────────
-    addTime30: {
-        id: 'addTime30', icon: '⏳',
+    addTime60: {
+        id: 'addTime60', icon: '⏳',
         nameEn: 'Hourglass', nameDE: 'Sanduhr',
-        descEn: 'Adds 30 seconds', descDE: 'Fügt 30 Sek. hinzu',
+        descEn: 'Adds 60 seconds', descDE: 'Fügt 60 Sek. hinzu',
         scoreCost: 25, sellVal: 15, rarity: 'common', weight: 10
     },
-    addTime60: {
-        id: 'addTime60', icon: '⏱️', 
+    addTime300: {
+        id: 'addTime300', icon: '⏱️', 
         nameEn: 'Stopwatch', nameDE: 'Stoppuhr',
-        descEn: 'Adds 60 seconds', descDE: 'Fügt 60 Sek. hinzu',
+        descEn: 'Adds 5 minutes', descDE: 'Fügt 5 Min. hinzu',
         scoreCost: 45, sellVal: 28, rarity: 'uncommon', weight: 8
     },
-    addTime90: {
-        id: 'addTime90', icon: '🕰️',
+    addTime600: {
+        id: 'addTime600', icon: '🕰️',
         nameEn: 'Clock', nameDE: 'Uhr',
-        descEn: 'Adds 90 seconds', descDE: 'Fügt 90 Sek. hinzu',
+        descEn: 'Adds 10 minutes', descDE: 'Fügt 10 Min. hinzu',
         scoreCost: 70, sellVal: 45, rarity: 'rare', weight: 5
     },
-    addTime180: {
-        id: 'addTime180', icon: '⚡',
-        nameEn: 'Time Machine', nameDE: 'Zeitmaschine',
-        descEn: 'Adds 3 minutes', descDE: 'Fügt 3 Min. hinzu',
+    addTime900: {
+        id: 'addTime900', icon: '⚡',
+        nameEn: 'Chronobolt', nameDE: 'Chronoblitz',
+        descEn: 'Adds 15 minutes', descDE: 'Fügt 15 Min. hinzu',
         scoreCost: 120, sellVal: 80, rarity: 'epic', weight: 3
     },
 
@@ -177,7 +177,7 @@ const ITEM_DEFS = {
         id: 'rowSolve', icon: '📐',
         nameEn: 'Set Square', nameDE: 'Geodreieck',
         descEn: 'Reveals a full random unsolved row', descDE: 'Enthüllt eine zufällige ungelöste Zeile',
-        scoreCost: 110, sellVal: 70, rarity: 'legendary', weight: 2
+        scoreCost: 110, sellVal: 70, rarity: 'legendary', weight: 4
     },
 
     // ── COL-SOLVE ─────────────────────────────────────────────────────────
@@ -185,7 +185,7 @@ const ITEM_DEFS = {
         id: 'colSolve', icon: '📏',
         nameEn: 'Ruler', nameDE: 'Lineal',
         descEn: 'Reveals a full random unsolved column', descDE: 'Enthüllt eine zufällige ungelöste Spalte',
-        scoreCost: 110, sellVal: 70, rarity: 'legendary', weight: 2
+        scoreCost: 110, sellVal: 70, rarity: 'legendary', weight: 4
     },
 
     // ── MISTAKE-ERASER ────────────────────────────────────────────────────

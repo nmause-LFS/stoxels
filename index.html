@@ -219,6 +219,14 @@
         <div class="quiz-title" data-t="quiz_title">⭐ BONUS QUESTION</div>
         <div class="quiz-q" id="quiz-q"></div>
         <div class="quiz-opts" id="quiz-opts"></div>
+        <!-- Input row — shown only for numeric-input questions -->
+        <div class="mg-answer-row" id="quiz-input-row" style="display:none; margin-top:12px;">
+            <input type="text" id="quiz-input" class="mg-input"
+                   placeholder="your answer" autocomplete="off" spellcheck="false" />
+            <span class="mg-unit" id="quiz-input-unit" style="display:none;"></span>
+            <button class="mg-submit-btn" id="quiz-input-submit" onclick="answerQuizInput()">CHECK ▶</button>
+        </div>
+        <div class="mg-hint-box" id="quiz-input-hint" style="display:none; margin-top:8px;"></div>
         <div class="quiz-result" id="quiz-result"></div>
         <button class="quiz-skip" id="quiz-continue" onclick="finishQuiz()" style="display:none" data-t="quiz_continue">CONTINUE ▶</button>
         <button class="quiz-skip" onclick="skipQuiz()" data-t="quiz_skip">SKIP (no bonus)</button>

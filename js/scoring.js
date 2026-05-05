@@ -216,7 +216,7 @@ function checkWin() {
     // quiz after a short pause (so the player can read the overlay first).
     // Otherwise, show the win overlay directly after a shorter pause.
     if (bonusMet && cur.bonusType === 'quiz') {
-        setTimeout(() => showQuiz(), 1500);
+        setTimeout(() => showQuiz(cur.world), 1500);
     } else {
         setTimeout(() => document.getElementById('ov-win').classList.add('show'), 600);
     }
@@ -239,51 +239,66 @@ function checkWin() {
 //      correct one with data-isCorrect="1" for later highlighting, and
 //      attaches the answerQuiz() handler.
 //   5. Shows the overlay.
-function showQuiz() {
-    const q = getQuizQuestion(); // quiz.js
+// currentQuizQuestion — holds the question object for the active quiz so
+//   answerQuizInput() can read it without it being passed as an argument.
+let currentQuizQuestion = null;
 
-    // Cache the correct answer text so answerQuiz can always highlight it
-    const correctText = q.opts.find(o => o.isCorrect).text;
+function showQuiz(worldNum) {
+    const q = getQuizQuestion(worldNum);
+    currentQuizQuestion = q;
+
     document.getElementById('quiz-q').textContent = q.q;
-    document.getElementById('quiz-q').dataset.correctText = correctText;
     document.getElementById('quiz-result').textContent = '';
     document.getElementById('quiz-continue').style.display = 'none';
 
     const optsEl = document.getElementById('quiz-opts');
     optsEl.innerHTML = '';
 
-    q.opts.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'quiz-opt';
-        btn.textContent = opt.text;
-        if (opt.isCorrect) btn.dataset.isCorrect = '1'; // flag for green highlight
-        btn.onclick = () => answerQuiz(opt.isCorrect, optsEl, btn);
-        optsEl.appendChild(btn);
-    });
+    // Hide/show the input row depending on question type
+    const inputRow = document.getElementById('quiz-input-row');
+    const inputEl = document.getElementById('quiz-input');
+    const unitEl = document.getElementById('quiz-input-unit');
+    const hintBox = document.getElementById('quiz-input-hint');
+
+    if (q.type === 'input') {
+        // ── Numeric-input question ────────────────────────────────────────
+        inputRow.style.display = 'flex';
+        inputEl.value = '';
+        inputEl.disabled = false;
+        unitEl.textContent = q.unit || '';
+        unitEl.style.display = q.unit ? 'inline' : 'none';
+        hintBox.style.display = 'none';
+        hintBox.textContent = '';
+
+        // Submit on Enter key
+        inputEl.onkeydown = e => { if (e.key === 'Enter') answerQuizInput(); };
+        const submitBtn = document.getElementById('quiz-input-submit');
+        submitBtn.style.display = 'inline-block';
+        submitBtn.disabled = false;
+        submitBtn.onclick = answerQuizInput;
+
+    } else {
+        // ── Multiple-choice question ──────────────────────────────────────
+        if (inputRow) inputRow.style.display = 'none';
+
+        q.opts.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'quiz-opt';
+            btn.textContent = opt.text;
+            if (opt.isCorrect) btn.dataset.isCorrect = '1';
+            btn.onclick = () => answerQuiz(opt.isCorrect, optsEl, btn);
+            optsEl.appendChild(btn);
+        });
+    }
 
     document.getElementById('quiz-overlay').classList.add('show');
+    if (q.type === 'input') setTimeout(() => inputEl && inputEl.focus(), 120);
 }
 
-// answerQuiz(correct, optsEl, clickedBtn) — handles the player's answer.
-//   correct    — boolean: did the player click the right button?
-//   optsEl     — the container of all answer buttons (used for highlighting)
-//   clickedBtn — the specific button the player clicked
-//
-//   Steps:
-//   1. Records the result in quizAnsweredCorrectly (state.js).
-//   2. Disables all buttons (sets onclick to null) so the player can't
-//      change their answer after clicking.
-//   3. Highlights the correct button green regardless of whether the
-//      player was right. If they were wrong, also highlights their
-//      chosen button red so they can see their mistake.
-//   4. If correct: awards +50 pts, updates the score display, and
-//      (unless Ironman) grants a bonus item which is appended to the
-//      item-reward-zone below the win overlay.
-//   5. If wrong: shows an error message, no score or item awarded.
-//   6. Reveals the Continue button so the player can proceed.
+// answerQuiz(correct, optsEl, clickedBtn) — handles a multiple-choice answer.
+//   Locks all buttons, highlights correct/wrong, then delegates to
+//   _resolveQuizAnswer() for the shared reward logic.
 function answerQuiz(correct, optsEl, clickedBtn) {
-    quizAnsweredCorrectly = correct; // state.js — readable by other systems if needed
-
     // Lock all buttons immediately to prevent second clicks
     Array.from(optsEl.children).forEach(btn => btn.onclick = null);
 
@@ -296,15 +311,57 @@ function answerQuiz(correct, optsEl, clickedBtn) {
         }
     });
 
+    _resolveQuizAnswer(correct);
+}
+
+// answerQuizInput — handles submission of a numeric-input bonus quiz question.
+//   Reads #quiz-input, checks against currentQuizQuestion.answer ± tolerance,
+//   then calls the shared reward logic via _resolveQuizAnswer().
+function answerQuizInput() {
+    if (!currentQuizQuestion || currentQuizQuestion.type !== 'input') return;
+
+    const inputEl = document.getElementById('quiz-input');
+    const raw = (inputEl.value || '').trim().replace(',', '.');
+    const entered = parseFloat(raw);
     const resEl = document.getElementById('quiz-result');
 
+    if (isNaN(entered)) {
+        resEl.className = 'quiz-result bad';
+        resEl.textContent = LANG === 'de' ? '⚠ Bitte eine Zahl eingeben.' : '⚠ Please enter a number.';
+        return;
+    }
+
+    inputEl.disabled = true;
+    document.getElementById('quiz-input-submit').disabled = true;
+
+    const correct = Math.abs(entered - currentQuizQuestion.answer) <= currentQuizQuestion.tolerance;
+
+    // Show hint if wrong
+    if (!correct) {
+        const hint = (LANG === 'de' && currentQuizQuestion.hintDE)
+            ? currentQuizQuestion.hintDE
+            : currentQuizQuestion.hintEn;
+        if (hint) {
+            const hintBox = document.getElementById('quiz-input-hint');
+            hintBox.textContent = '💡 ' + hint;
+            hintBox.style.display = 'block';
+        }
+    }
+
+    _resolveQuizAnswer(correct);
+}
+
+// _resolveQuizAnswer(correct) — shared reward/penalty logic for both MC and
+//   input quiz answers. Grants +50 pts + item on correct first-time answer.
+function _resolveQuizAnswer(correct) {
+    quizAnsweredCorrectly = correct;
+    const resEl = document.getElementById('quiz-result');
     const quizAlreadyClaimed = STATE.bonusDone.includes(cur.gIdx);
 
     if (correct) {
         if (quizAlreadyClaimed) {
             resEl.className = 'quiz-result ok';
             resEl.textContent = t('quiz_correct_claimed');
-
             if (!curMods.ironman && Math.random() < 0.15) {
                 const defId = pickRandomItem();
                 const def = ITEM_DEFS[defId];
@@ -312,8 +369,8 @@ function answerQuiz(correct, optsEl, clickedBtn) {
                     STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
                     save();
                     const irz = document.getElementById('item-reward-zone');
-                    const rcq1 = rarityColors(def.rarity);
-                    irz.innerHTML += `<div class="item-reward" style="border-color:${rcq1.border};color:${rcq1.color};margin-top:4px;">
+                    const rc = rarityColors(def.rarity);
+                    irz.innerHTML += `<div class="item-reward" style="border-color:${rc.border};color:${rc.color};margin-top:4px;">
                         ${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong>
                     </div>`;
                 }
@@ -321,10 +378,8 @@ function answerQuiz(correct, optsEl, clickedBtn) {
         } else {
             resEl.className = 'quiz-result ok';
             resEl.textContent = t('quiz_correct');
-
             STATE.totalScore += 50;
             document.getElementById('sc-disp').textContent = STATE.totalScore;
-
             if (!curMods.ironman) {
                 const defId = pickRandomItem();
                 const def = ITEM_DEFS[defId];
@@ -333,10 +388,8 @@ function answerQuiz(correct, optsEl, clickedBtn) {
                     STATE.bonusDone.push(cur.gIdx);
                     save();
                     const irz = document.getElementById('item-reward-zone');
-                    const rcq2 = rarityColors(def.rarity);
-                    irz.innerHTML +=
-                        `<div class="item-reward" style="border-color:${rcq2.border};color:${rcq2.color};margin-top:4px;">${t('ov_quiz_reward')}: ` +
-                        `${def.icon} <strong>${itemName(def)}</strong></div>`;
+                    const rc = rarityColors(def.rarity);
+                    irz.innerHTML += `<div class="item-reward" style="border-color:${rc.border};color:${rc.color};margin-top:4px;">${t('ov_quiz_reward')}: ${def.icon} <strong>${itemName(def)}</strong></div>`;
                 }
             }
         }
@@ -345,7 +398,6 @@ function answerQuiz(correct, optsEl, clickedBtn) {
         resEl.textContent = t('quiz_wrong');
     }
 
-    // Show the continue button now that the answer has been processed
     document.getElementById('quiz-continue').style.display = 'block';
 }
 
@@ -370,6 +422,7 @@ function skipQuiz() {
 //   Called by finishQuiz(), skipQuiz(), and the Escape handler in main.js.
 function closeQuiz() {
     document.getElementById('quiz-overlay').classList.remove('show');
+    currentQuizQuestion = null;
 }
 
 
