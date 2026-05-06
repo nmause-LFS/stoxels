@@ -3,25 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stoxels</title>
+    <title>STOXELS - v0.13 BETA</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="class.css">
 
     <script>
-    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+" (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchGroups earlyAccessFeatureEnabled".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-    posthog.init('phc_D7LCHRBRmNEf3o5c5USg37ECBZTPcNJGYnSTkuGvdHFC', {
-    api_host: 'https://us.i.posthog.com',
-    person_profiles: 'identified_only',
-    autocapture: false,  // we only want custom game events, not every click
-    capture_pageview: true
-});
-</script>
+        !function (t, e) { var o, n, p, r; e.__SV || (window.posthog = e, e._i = [], e.init = function (i, s, a) { function g(t, e) { var o = e.split("."); 2 == o.length && (t = t[o[0]], e = o[1]), t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } } (p = t.createElement("script")).type = "text/javascript", p.crossOrigin = "anonymous", p.async = !0, p.src = s.api_host + "/static/array.js", (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r); var u = e; for (void 0 !== a ? u = e[a] = [] : a = "posthog", u.people = u.people || [], u.toString = function (t) { var e = "posthog"; return "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e }, u.people.toString = function () { return u.toString(1) + " (stub)" }, o = "capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchGroups earlyAccessFeatureEnabled".split(" "), n = 0; n < o.length; n++)g(u, o[n]); e._i.push([i, s, a]) }, e.__SV = 1) }(document, window.posthog || []);
+        posthog.init('phc_D7LCHRBRmNEf3o5c5USg37ECBZTPcNJGYnSTkuGvdHFC', {
+            api_host: 'https://us.i.posthog.com',
+            person_profiles: 'identified_only',
+            autocapture: false,  // we only want custom game events, not every click
+            capture_pageview: true
+        });
+    </script>
 
 
 
 </head>
 <body>
     <div id="screen-title" class="screen active">
-        <h1 class="title-glow">STOXELS</h1>
+        <h1 class="title-glow">STOXELS<br><span style="font-size:0.35em;opacity:0.5;letter-spacing:3px;">v0.13 BETA</span></h1>
         <p class="title-tag" data-t="tagline">PROBABILITY THEORY &amp; STATISTICS NONOGRAMS</p>
         <div class="lang-switch">
             <button class="lang-btn active" onclick="setLang('en')">EN</button>
@@ -162,6 +163,7 @@
                 <button class="gtb-btn" onclick="goLevels()" data-t="btn_levels">◀ LEVELS</button>
             </div>
             <div class="puzzle-and-sidebar">
+                <div id="class-hud-panel"></div>
                 <div class="puzzle-scaler-wrap" id="puzzle-scaler-wrap">
                     <div class="puzzle-scaler" id="puzzle-scaler">
                         <div class="puzzle-hud">
@@ -345,7 +347,9 @@
     </div>
 
 
-
+    <div id="class-selection-overlay">
+        <div id="class-selection-content"></div>
+    </div>
 
 
 
@@ -366,6 +370,7 @@
     <script src="js/tutorial.js"></script>
     <script src="js/mathgate.js"></script>
     <script src="js/analytics.js"></script>
+    <script src="js/class.js"></script>
     <script src="main.js"></script>
 </body>
 </html>

@@ -67,7 +67,7 @@ function buildLS() {
     body.innerHTML = ''; // clear previous render
 
 
-    // Inject tooltip styles once
+    // Inject tooltip + badge styles once
     if (!document.getElementById('ls-tooltip-style')) {
         const style = document.createElement('style');
         style.id = 'ls-tooltip-style';
@@ -77,6 +77,8 @@ function buildLS() {
             max-width:280px; line-height:1.6; pointer-events:none; opacity:0;
             transition:opacity 0.15s; border-left:3px solid var(--purple); }
         .lc-tooltip.show { opacity:1; }
+        .lc-items-hint { font-family:var(--PX); font-size:9px; color:var(--orange);
+            margin-top:4px; opacity:0.9; }
     `;
         document.head.appendChild(style);
     }
@@ -117,7 +119,7 @@ function buildLS() {
             const card = document.createElement('div');
 
             const isMathGated = isGatedLevel(gi) && !isMathGatePassed(gi);
-                card.className = 'level-card' +
+            card.className = 'level-card' +
                 (isUnlocked ? '' : ' locked') +
                 (isDone ? ' done' : '') +
                 (isMathGated && isUnlocked ? ' math-gated' : '');
@@ -160,7 +162,7 @@ function buildLS() {
                                 ${modMap[m] || m.slice(0, 2).toUpperCase()}
                             </span>`
                         ).join('') +
-                    `<span class="lc-mod-tag diff">${t('diff_' + (hs.diff || 'normal')).slice(0, 1)}</span>` +
+                        `<span class="lc-mod-tag diff">${t('diff_' + (hs.diff || 'normal')).slice(0, 1)}</span>` +
                         '</div>';
                 }
             }
@@ -170,11 +172,20 @@ function buildLS() {
                 ? `${p.grid[0].length}×${p.grid.length}`   // actual cols × rows
                 : (w.size ? `${w.size}×${w.size}` : '?');  // fallback to world size
 
+            // "Items recommended" badge — shown on large grids (≥ 200 cells) that
+            // are intentionally hard to brute-force without item assistance.
+            // The badge is hidden once the level has been cleared at least once.
+            const cellCount = p.grid ? p.grid.length * p.grid[0].length : 0;
+            const showItemsBadge = isUnlocked && !isDone && cellCount >= 200;
+            const itemsBadge = showItemsBadge
+                ? `<div class="lc-items-hint">🎒 ${t('ls_items_recommended')}</div>`
+                : '';
+
             card.innerHTML = `
                 <div class="lc-num">${wi + 1}-${li + 1}</div>
                 <div class="lc-hint">${isUnlocked ? lvText(p, 'hint') : '???'}</div>
                 <div class="lc-sz">${szStr}</div>
-                ${bonusText}${hsText}${modTagsHtml}
+                ${bonusText}${itemsBadge}${hsText}${modTagsHtml}
                 <div class="lc-stars">${stars}</div>`;
 
             // Only attach click handler to unlocked cards
@@ -445,7 +456,15 @@ function _doStartLevel(gi) {
     document.getElementById('pen-info').textContent = ''; // clear any previous penalty display
     const mc = document.getElementById('mistake-counter');
     if (mc) mc.textContent = '✗ 0';
-    document.getElementById('bonus-sidebar-hint').textContent = lvText(cur, 'bonusHint') || '';
+
+    // Bonus sidebar: show the bonus hint, plus an "items recommended" note
+    // on large levels (≥ 200 cells) to set the right expectation.
+    const bonusSidebarEl = document.getElementById('bonus-sidebar-hint');
+    const levelCells = rows * cols;
+    const itemsNote = levelCells >= 200 && !STATE.done.includes(cur.gIdx)
+        ? `\n🎒 ${t('ls_items_recommended')}`
+        : '';
+    bonusSidebarEl.textContent = (lvText(cur, 'bonusHint') || '') + itemsNote;
 
     // Modifier and difficulty tags below the timer
     const mt = document.getElementById('mod-tags');
@@ -472,6 +491,10 @@ function _doStartLevel(gi) {
 
     buildInventoryPanel(); // inventory.js — render current items
 
+    resetActiveCooldown();          // class.js — reset cooldown on new level
+    applyClassPassiveOnLevelStart(); // class.js — apply passive effects
+    buildClassHUD();                 // class.js — render class panel
+
     // Navigation: Escape from the game screen goes back to level select
     screenHistory.push('screen-levels');
     ss('screen-game'); // ui.js — switch to the game screen
@@ -497,11 +520,12 @@ function hideOv() {
 function nextLvl() {
     hideOv();
     const n = cur.gIdx + 1;
-    if (n < ALL.length) {
-        startLevel(n); // start the very next level
-    } else {
-        goLevels();    // no more levels — go back to the level select (ui.js)
-    }
+    const proceed = () => {
+        if (n < ALL.length) startLevel(n);
+        else goLevels();
+    };
+    if (triggerClassEventIfPending(proceed)) return;
+    proceed();
 }
 
 // replayLvl — restarts the current level from scratch.
@@ -509,7 +533,9 @@ function nextLvl() {
 //   which resets all state and rebuilds the grid cleanly.
 function replayLvl() {
     hideOv();
-    startLevel(cur.gIdx);
+    const gi = cur.gIdx;
+    if (triggerClassEventIfPending(() => startLevel(gi))) return;
+    startLevel(gi);
 }
 
 

@@ -188,6 +188,15 @@ function sp() {
 //      update userGrid, re-render the cell, refresh clue colours, and
 //      check whether the puzzle is now complete.
 function ac(row, col) {
+
+    if (activeAbilityMode) {
+        if (pval === 1 || mbtn === 0) {
+            executeActiveAbility(row, col); // class.js
+        }
+        return;
+    }
+
+
     // No-op: cell already has the desired value
     if (userGrid[row][col] === pval) return;
 
@@ -235,6 +244,7 @@ function ac(row, col) {
 
     // Valid move: update the data, refresh the display, and check for a win
     userGrid[row][col] = pval;
+    if (pval === 1 && cur.grid[row][col] === 1) onCorrectFill(); // class.js
     renderCell(row, col);   // grid.js — re-draws the cell visual
     updClues(row, col);     // grid.js — refreshes clue number colours
     checkWin();             // scoring.js — tests whether the puzzle is solved
@@ -265,7 +275,8 @@ function applyPenalty() {
     const pen = pens[Math.min(mistakeCount - 1, pens.length - 1)];
 
     // Deduct penalty seconds and refresh the clock display
-    timerSecs = Math.max(0, timerSecs - pen);
+    const penMult = getClassPenaltyMultiplier(); // class.js
+    timerSecs = Math.max(0, timerSecs - Math.round(pen * penMult));
     updTimer();
 
     // Show the penalty amount in the HUD, then clear it after 2.2 s

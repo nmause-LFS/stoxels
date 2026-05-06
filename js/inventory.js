@@ -132,9 +132,10 @@ function applyCursedBlackout() {
     }, duration);
 }
 
-// applyCursedRowBlackout — blacks out ALL row clues for 30 s (fixed duration).
-//   Used as the negative effect for cursedShield.
-function applyCursedRowBlackout() {
+// applyCursedRowBlackout — blacks out ALL row clues for the given duration (ms).
+//   Defaults to 30 000 ms (30 s) when called without an argument.
+//   Used as the negative effect for cursedShield and cursedTime.
+function applyCursedRowBlackout(durationMs = 30000) {
     if (!cur) return;
     const rows = cur.grid.length;
     for (let r = 0; r < rows; r++) {
@@ -144,7 +145,7 @@ function applyCursedRowBlackout() {
     setTimeout(() => {
         document.querySelectorAll('.clue-blackout')
             .forEach(el => el.classList.remove('clue-blackout'));
-    }, 30000);
+    }, durationMs);
 }
 
 // applyCursedColBlackout — blacks out ALL column clues for a given duration (ms).
@@ -316,14 +317,17 @@ function useItem(uid) {
         revealTiles(6);
         // Negative effect: wipe all player ✕ marks (userGrid === 2) back to 0
         const rows = cur.grid.length, cols = cur.grid[0].length;
+        const unmarked = [];
         for (let r = 0; r < rows; r++) {
             for (let c = 0; c < cols; c++) {
                 if (userGrid[r][c] === 2) {
                     userGrid[r][c] = 0;
                     renderCell(r, c);
+                    unmarked.push(`g-${r}-${c}`);
                 }
             }
         }
+        _applyCellEffect(unmarked, 'unmark');
         msg = `☠️ ${t('item_cursed_reveal_both')}`;
 
         // ── CURSED TIME ───────────────────────────────────────────────────────
@@ -348,25 +352,41 @@ function useItem(uid) {
         applyCursedRowBlackout(); // 30s fixed duration (defined above)
         msg = `👁️ ${t('item_cursed_shield_both')}`;
 
-        // ── CURSED ROW-SOLVE ──────────────────────────────────────────────────
-        //   ✅ Positive : fully reveals 2 random unsolved rows
-        //   ⚠️ Negative : erases progress in 1 random already-solved row
+        // ── CURSED ROW-SOLVE ──────────────────────────────────────────────
+        //   ✅ Positive : fully reveals 3 random unsolved rows
+        //   ⚠️ Negative : erases progress in 1 random DIFFERENT already-solved row
     } else if (id === 'cursedRowSolve') {
+        // Snapshot which rows had ANY filled correct cells before we reveal
+        const preFilledRows = new Set();
+        {
+            const s = cur.grid, rows = s.length, cols = s[0].length;
+            for (let r = 0; r < rows; r++)
+                for (let c = 0; c < cols; c++)
+                    if (s[r][c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])) { preFilledRows.add(r); break; }
+        }
         // Positive effect
         const revealed = solveRows(3);
-        // Negative effect — runs after so it cannot erase what was just revealed
-        const erased = unsolveRows(1);
+        // Negative effect — only erase rows that existed BEFORE the reveal
+        const erased = unsolveRowsExcluding(1, preFilledRows);
         msg = `🌊 ${t('item_cursed_row_both').replace('{r}', revealed).replace('{e}', erased)}`;
         if (revealed > 0) checkWin();
 
         // ── CURSED COL-SOLVE ──────────────────────────────────────────────────
-        //   ✅ Positive : fully reveals 2 random unsolved columns
-        //   ⚠️ Negative : erases progress in 1 random already-solved column
+        //   ✅ Positive : fully reveals 3 random unsolved columns
+        //   ⚠️ Negative : erases progress in 1 random DIFFERENT already-solved column
     } else if (id === 'cursedColSolve') {
+        // Snapshot which cols had ANY filled correct cells before we reveal
+        const preFilledCols = new Set();
+        {
+            const s = cur.grid, rows = s.length, cols = s[0].length;
+            for (let c = 0; c < cols; c++)
+                for (let r = 0; r < rows; r++)
+                    if (s[r][c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])) { preFilledCols.add(c); break; }
+        }
         // Positive effect
         const revealed = solveCols(3);
-        // Negative effect — runs after so it cannot erase what was just revealed
-        const erased = unsolveCols(1);
+        // Negative effect — only erase cols that existed BEFORE the reveal
+        const erased = unsolveColsExcluding(1, preFilledCols);
         msg = `🌪️ ${t('item_cursed_col_both').replace('{r}', revealed).replace('{e}', erased)}`;
         if (revealed > 0) checkWin();
 
@@ -442,12 +462,15 @@ function revealTiles(count) {
         }
     }
 
+    const affected = [];
     shuffle(cands).slice(0, count).forEach(([r, c]) => {
         revealedGrid[r][c] = true; // mark as item-revealed (green, can't erase)
         userGrid[r][c] = 1;        // count as filled for win-check purposes
         renderCell(r, c);          // grid.js — redraw the cell
         updClues(r, c);            // grid.js — refresh clue colours
+        affected.push(`g-${r}-${c}`);
     });
+    _applyCellEffect(affected, 'reveal');
 
     checkWin(); // scoring.js — the reveal may have completed the puzzle
 }
@@ -471,10 +494,13 @@ function markWrongTiles(count) {
         }
     }
 
+    const affected = [];
     shuffle(cands).slice(0, count).forEach(([r, c]) => {
         userGrid[r][c] = 2; // 2 = right-click mark (✕)
         renderCell(r, c);   // grid.js
+        affected.push(`g-${r}-${c}`);
     });
+    _applyCellEffect(affected, 'mark');
 }
 
 
@@ -571,6 +597,7 @@ function solveRows(count) {
         if (!done) unsolved.push(r);
     }
     shuffle(unsolved);
+    const affected = [];
     unsolved.slice(0, count).forEach(r => {
         for (let c = 0; c < cols; c++) {
             if (sol[r][c] === 1 && userGrid[r][c] !== 1) {
@@ -578,9 +605,11 @@ function solveRows(count) {
                 userGrid[r][c] = 1;
                 renderCell(r, c);
                 updClues(r, c);
+                affected.push(`g-${r}-${c}`);
             }
         }
     });
+    _applyCellEffect(affected, 'reveal');
     return Math.min(count, unsolved.length);
 }
 
@@ -593,6 +622,7 @@ function solveCols(count) {
         if (!done) unsolved.push(c);
     }
     shuffle(unsolved);
+    const affected = [];
     unsolved.slice(0, count).forEach(c => {
         for (let r = 0; r < rows; r++) {
             if (sol[r][c] === 1 && userGrid[r][c] !== 1) {
@@ -600,8 +630,213 @@ function solveCols(count) {
                 userGrid[r][c] = 1;
                 renderCell(r, c);
                 updClues(r, c);
+                affected.push(`g-${r}-${c}`);
             }
         }
     });
+    _applyCellEffect(affected, 'reveal');
     return Math.min(count, unsolved.length);
 }
+
+// ═══════════════════════════════════════════════
+//  EXCLUDING VARIANTS — for cursed row/col solve
+//  These only erase rows/cols that were already
+//  filled BEFORE the current item was used, so
+//  the positive reveal and the negative erase
+//  always affect different rows/columns.
+// ═══════════════════════════════════════════════
+
+// unsolveRowsExcluding(count, allowedSet) — like unsolveRows but only
+//   considers rows whose index is in allowedSet (pre-filled before use).
+//   If allowedSet is empty (board was blank), picks any filled row instead.
+function unsolveRowsExcluding(count, allowedSet) {
+    const sol = cur.grid, rows = sol.length, cols = sol[0].length;
+    let candidates = [];
+    for (let r = 0; r < rows; r++) {
+        if (!allowedSet.has(r)) continue;
+        const hasFilled = sol[r].some((v, c) => v === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c]));
+        if (hasFilled) candidates.push(r);
+    }
+    // Fallback: if no pre-existing filled rows, erase any filled row
+    if (!candidates.length) {
+        for (let r = 0; r < rows; r++) {
+            const hasFilled = sol[r].some((v, c) => v === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c]));
+            if (hasFilled) candidates.push(r);
+        }
+    }
+    shuffle(candidates);
+    const targets = candidates.slice(0, count);
+    const erasedCells = [];
+    targets.forEach(r => {
+        for (let c = 0; c < cols; c++) {
+            if (sol[r][c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])) {
+                userGrid[r][c] = 0;
+                revealedGrid[r][c] = false;
+                renderCell(r, c);
+                erasedCells.push(`g-${r}-${c}`);
+            }
+        }
+    });
+    // Lingering red shimmer so the player clearly sees what was erased
+    _applyCellEffect(erasedCells, 'erase');
+    return targets.length;
+}
+
+// unsolveColsExcluding(count, allowedSet) — same as above but for columns.
+function unsolveColsExcluding(count, allowedSet) {
+    const sol = cur.grid, rows = sol.length, cols = sol[0].length;
+    let candidates = [];
+    for (let c = 0; c < cols; c++) {
+        if (!allowedSet.has(c)) continue;
+        const hasFilled = sol.some((row, r) => row[c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c]));
+        if (hasFilled) candidates.push(c);
+    }
+    if (!candidates.length) {
+        for (let c = 0; c < cols; c++) {
+            const hasFilled = sol.some((row, r) => row[c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c]));
+            if (hasFilled) candidates.push(c);
+        }
+    }
+    shuffle(candidates);
+    const targets = candidates.slice(0, count);
+    const erasedCells = [];
+    targets.forEach(c => {
+        for (let r = 0; r < rows; r++) {
+            if (sol[r][c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])) {
+                userGrid[r][c] = 0;
+                revealedGrid[r][c] = false;
+                renderCell(r, c);
+                erasedCells.push(`g-${r}-${c}`);
+            }
+        }
+    });
+    // Lingering red shimmer so the player clearly sees what was erased
+    _applyCellEffect(erasedCells, 'erase');
+    return targets.length;
+}
+
+
+// ═══════════════════════════════════════════════
+//  CELL EFFECT SYSTEM
+//  A unified lingering animation applied to any
+//  cell that is touched by an item effect.
+//
+//  Types:
+//    'reveal'   — green pulse  (tile revealed / row-col solved)
+//    'mark'     — orange pulse (empty tile marked ✕ by item)
+//    'erase'    — red pulse    (filled tile wiped by cursed item)
+//    'artifact' — gold burst   (artifact / primer headstart)
+//    'unmark'   — yellow fade  (✕ marks cleared by cursedReveal)
+//
+//  Usage:
+//    _applyCellEffect(['g-3-2', 'g-3-5'], 'reveal');
+// ═══════════════════════════════════════════════
+
+// _ensureCellEffectCSS — injects all keyframes + classes once.
+function _ensureCellEffectCSS() {
+    if (document.getElementById('cell-effect-style')) return;
+    const style = document.createElement('style');
+    style.id = 'cell-effect-style';
+    style.textContent = `
+        /* ── reveal: green glow sweeping in ── */
+        @keyframes cellRevealPulse {
+            0%   { background: rgba(46, 213, 115, 0.90); box-shadow: inset 0 0 0 2px #2ed573, 0 0 6px #2ed573; }
+            50%  { background: rgba(46, 213, 115, 0.55); box-shadow: inset 0 0 0 1px #2ed573, 0 0 3px #2ed573; }
+            100% { background: rgba(46, 213, 115, 0.00); box-shadow: none; }
+        }
+        .cell-fx-reveal {
+            animation: cellRevealPulse 1.6s ease-out forwards;
+            pointer-events: none;
+        }
+
+        /* ── mark: orange pulse (item placed a ✕) ── */
+        @keyframes cellMarkPulse {
+            0%   { background: rgba(255, 165, 0, 0.80); box-shadow: inset 0 0 0 2px #ffaa00; }
+            50%  { background: rgba(255, 165, 0, 0.45); box-shadow: inset 0 0 0 1px #ffaa00; }
+            100% { background: rgba(255, 165, 0, 0.00); box-shadow: none; }
+        }
+        .cell-fx-mark {
+            animation: cellMarkPulse 1.6s ease-out forwards;
+            pointer-events: none;
+        }
+
+        /* ── erase: red drain (cursed item wiped a filled tile) ── */
+        @keyframes cellErasePulse {
+            0%   { background: rgba(220, 50, 50, 0.85); box-shadow: inset 0 0 0 2px #ff3333; }
+            40%  { background: rgba(180, 20, 20, 0.65); box-shadow: inset 0 0 0 2px #cc0000; }
+            70%  { background: rgba(220, 50, 50, 0.40); box-shadow: inset 0 0 0 1px #ff3333; }
+            100% { background: rgba(220, 50, 50, 0.00); box-shadow: none; }
+        }
+        .cell-fx-erase {
+            animation: cellErasePulse 2.0s ease-out forwards;
+            pointer-events: none;
+        }
+
+        /* ── artifact / primer: gold starburst ── */
+        @keyframes cellArtifactPulse {
+            0%   { background: rgba(255, 215, 0, 0.95); box-shadow: inset 0 0 0 2px #ffd700, 0 0 10px #ffd700; }
+            40%  { background: rgba(255, 215, 0, 0.60); box-shadow: inset 0 0 0 1px #ffd700, 0 0 5px #ffd700; }
+            100% { background: rgba(255, 215, 0, 0.00); box-shadow: none; }
+        }
+        .cell-fx-artifact {
+            animation: cellArtifactPulse 1.8s ease-out forwards;
+            pointer-events: none;
+        }
+
+        /* ── unmark: yellow fade (✕ marks cleared by cursedReveal) ── */
+        @keyframes cellUnmarkPulse {
+            0%   { background: rgba(255, 230, 50, 0.75); box-shadow: inset 0 0 0 2px #ffe632; }
+            60%  { background: rgba(255, 230, 50, 0.35); box-shadow: inset 0 0 0 1px #ffe632; }
+            100% { background: rgba(255, 230, 50, 0.00); box-shadow: none; }
+        }
+        .cell-fx-unmark {
+            animation: cellUnmarkPulse 1.4s ease-out forwards;
+            pointer-events: none;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// _applyCellEffect(cellIds, type) — applies the named effect class to each
+//   cell element in cellIds, then removes the class once the animation ends.
+//   Handles rapid re-use of the same cell via a forced reflow.
+//
+//   Duration map keeps cleanup timers in sync with the CSS animation lengths:
+const _cellEffectDuration = { reveal: 1700, mark: 1700, erase: 2100, artifact: 1900, unmark: 1500 };
+
+function _applyCellEffect(cellIds, type) {
+    if (!cellIds.length) return;
+    _ensureCellEffectCSS();
+    const cls = `cell-fx-${type}`;
+    const duration = _cellEffectDuration[type] || 1800;
+    cellIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.remove(cls);
+        void el.offsetWidth; // force reflow so animation restarts on rapid re-use
+        el.classList.add(cls);
+    });
+    setTimeout(() => {
+        cellIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove(cls);
+        });
+    }, duration);
+}
+
+
+// ═══════════════════════════════════════════════
+//  INVENTORY SCROLL WHEEL
+//  Scroll the inventory strip with the mouse wheel
+//  when the cursor is hovering over it — no need
+//  to grab the scrollbar on a long item list.
+// ═══════════════════════════════════════════════
+document.addEventListener('wheel', (e) => {
+    // Only act when the cursor is over the inventory strip (not Ctrl+wheel zoom)
+    if (e.ctrlKey) return;
+    const strip = e.target.closest('#inv-list');
+    if (!strip) return;
+    e.preventDefault();
+    // Scroll speed: 120px per notch feels natural for item cards
+    strip.scrollLeft += e.deltaY > 0 ? 120 : -120;
+}, { passive: false });

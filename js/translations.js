@@ -133,7 +133,7 @@ const T = {
         inv_title: '🎒 INVENTORY',
         item_cost: 'Use: −',   // prefix before the score cost of using an item
         item_sell: 'Sell +',   // prefix before the sell value of an item
-        inv_empty: '<strong style="color:var(--white)">No items yet. Complete bonus objectives or repeat levels to earn items!</strong>', 
+        inv_empty: '<strong style="color:var(--white)">No items yet. Complete bonus objectives or repeat levels to earn items!</strong>',
 
         // Win / lose overlays
         ov_win: 'STOXEL SOLVED!',
@@ -297,6 +297,7 @@ const T = {
 
         ls_to_next: 'pts to next code',
         ls_all_codes: 'All codes unlocked!',
+        ls_items_recommended: 'Items recommended — this puzzle may require item assistance to complete',
 
         reset_close: '✕ CLOSE',
         reset_title: '⚠ RESET ALL PROGRESS',
@@ -526,6 +527,7 @@ const T = {
 
         ls_to_next: 'Pkt. bis nächster Code',
         ls_all_codes: 'Alle Codes freigeschaltet!',
+        ls_items_recommended: 'Items empfohlen — dieses Puzzle könnte Item-Hilfe benötigen',
 
         reset_close: '✕ SCHLIESSEN',
         reset_title: '⚠ RESET',

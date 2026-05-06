@@ -61,6 +61,11 @@ function initState() {
         if (s.tutorialDone === undefined) s.tutorialDone = false;
         if (!s.mathGatePassed) s.mathGatePassed = []; 
         if (s.primerPending === undefined) s.primerPending = false;
+        if (!s.classWorldsCompleted) s.classWorldsCompleted = [];
+        if (s.playerClass === undefined) s.playerClass = null;
+        if (!s.classPassiveLevel) s.classPassiveLevel = 1;
+        if (!s.classActiveLevel) s.classActiveLevel = 1;
+        if (s.classUpgradesAvailable === undefined) s.classUpgradesAvailable = 0;
         return s;
     }
     // Fresh save structure — add new persistent fields here in the future
@@ -74,6 +79,11 @@ function initState() {
         tutorialDone: false,
         mathGatePassed: [],
         primerPending: false,
+        playerClass: null,
+        classPassiveLevel: 1,
+        classActiveLevel: 1,
+        classUpgradesAvailable: 0,
+        classWorldsCompleted: [],
     };
 }
 

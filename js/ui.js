@@ -92,8 +92,11 @@ function showTutorial() {
 //   Also hides the win/lose overlays and closes any open quiz, since
 //   this can be called mid-overlay via the "LEVELS" button.
 function goLevels() {
-    hideOv();    // screens.js — hides win and lose overlays
-    closeQuiz(); // scoring.js — hides the quiz overlay
+    hideOv();
+    closeQuiz();
+    if (typeof triggerClassEventIfPending === 'function') {
+        if (triggerClassEventIfPending(() => { buildLS(); ss('screen-levels'); })) return;
+    }
     buildLS();
     ss('screen-levels');
 }
@@ -158,8 +161,15 @@ function confirmReset() {
         inventory: [],
         unlockedCodes: [],
         done: [],
-        bonusDone: []
+        bonusDone: [],
     };
+    // already handled by initState() since we call it again,
+    // but explicitly clear them for safety:
+    STATE.playerClass = null;
+    STATE.classPassiveLevel = 1;
+    STATE.classActiveLevel = 1;
+    STATE.classUpgradesAvailable = 0;
+    STATE.classWorldsCompleted = [];
     showTitle();
     showToast(t('toast_reset'));
 }

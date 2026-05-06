@@ -175,33 +175,44 @@ function checkWin() {
             ${t('ov_bonus_claimed_note')}
         </div>`;
         if (Math.random() < 0.5) {
-            const defId = pickLuckyItem();
-            const def = ITEM_DEFS[defId];
-            if (def) {
-                STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
-                save();
-                const rc2 = rarityColors(def.rarity);
-                irz.innerHTML += `<div class="item-reward" style="border-color:${rc2.border};color:${rc2.color};">
-                    ${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong>
-                </div>`;
+            const luckyCount = Math.floor(Math.random() * 3) + 1; // 1–3 items
+            let luckyHtml = '';
+            for (let i = 0; i < luckyCount; i++) {
+                const defId = pickLuckyItem();
+                const def = ITEM_DEFS[defId];
+                if (def) {
+                    STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
+                    const rc2 = rarityColors(def.rarity);
+                    luckyHtml += `<div class="item-reward" style="border-color:${rc2.border};color:${rc2.color};">
+                        ${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong>
+                    </div>`;
+                }
             }
+            if (luckyHtml) { save(); irz.innerHTML += luckyHtml; }
         }
     } else if (!bonusMet && !curMods.ironman && !isQuizBonus) {
         if (Math.random() < 0.5) {
-            const defId = pickLuckyItem();
-            const def = ITEM_DEFS[defId];
-            if (def) {
-                STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
-                save();
-                const rc3 = rarityColors(def.rarity);
-                irz.innerHTML = `<div class="item-reward" style="border-color:${rc3.border};color:${rc3.color};">
-                    ${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong>
-                </div>`;
+            const luckyCount = Math.floor(Math.random() * 3) + 1; // 1–3 items
+            let luckyHtml = '';
+            for (let i = 0; i < luckyCount; i++) {
+                const defId = pickLuckyItem();
+                const def = ITEM_DEFS[defId];
+                if (def) {
+                    STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
+                    const rc3 = rarityColors(def.rarity);
+                    luckyHtml += `<div class="item-reward" style="border-color:${rc3.border};color:${rc3.color};">
+                        ${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong>
+                    </div>`;
+                }
             }
+            if (luckyHtml) { save(); irz.innerHTML = luckyHtml; }
         }
     }
 
     checkWorldCodes();
+    
+
+    checkWorldCompletion(); // class.js — check if a world was just completed
 
     if (bonusMet && cur.bonusType === 'quiz') {
         setTimeout(() => showQuiz(cur.world), 1500);
@@ -405,7 +416,8 @@ function _resolveQuizAnswer(correct) {
 //   saves, then shows the win overlay.
 function finishQuiz() {
     closeQuiz();
-    checkWorldCodes(); // codes.js — re-check in case this was the last level
+    checkWorldCodes(); // codes.js
+    checkWorldCompletion(); // class.js — set flag if a world was just finished
     save();
     setTimeout(() => document.getElementById('ov-win').classList.add('show'), 300);
 }
