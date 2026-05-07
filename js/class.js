@@ -311,13 +311,14 @@ const CLASS_LIST = ['statistician', 'mathmagician', 'probabilist'];
 
 let activeAbilityMode = false;
 
+// Per-skill independent cooldown state.
+// Each slot ('active1', 'active2') tracks its own remaining seconds + interval.
 let cooldownState = {
     active1: { remaining: 0, interval: null },
     active2: { remaining: 0, interval: null },
 };
 
-// Legacy single-cooldown variables — still used by startActiveCooldown,
-// updateCooldownDisplay, and resetActiveCooldown.
+// Legacy single-cooldown variables — kept so nothing outside this file breaks.
 let activeCooldownRemaining = 0;
 let cooldownInterval = null;
 
@@ -460,6 +461,28 @@ function buildClassCard(cid, mode) {
 }
 
 
+function confirmClassSelection(cid) {
+    if (!CLASS_DEFS[cid]) return;
+
+    STATE.playerClass = cid;
+    STATE.classPassiveLevel = 1;
+    STATE.classActive1Level = 1;
+    STATE.classActive2Level = 1;
+    STATE.classActiveLevel = 1;
+    STATE.classActiveChoice = 'active1';
+    if (!STATE.classWorldsCompleted) STATE.classWorldsCompleted = [];
+    STATE.classWorldsCompleted.push(STATE._lastClassWorld);
+    save();
+
+    const def = CLASS_DEFS[cid];
+    const name = LANG === 'de' ? def.nameDE : def.nameEn;
+    showToast(`${def.icon} ${name} ${LANG === 'de' ? 'gewählt!' : 'selected!'}`);
+
+    closeClassOverlay();
+    buildClassHUD();
+}
+
+
 // ═══════════════════════════════════════════════
 //  CLASS UPGRADE SCREEN
 // ═══════════════════════════════════════════════
@@ -595,6 +618,7 @@ function closeClassOverlay() {
 //  CLASS HUD  (shown during gameplay)
 // ═══════════════════════════════════════════════
 
+
 function buildClassHUD() {
     const panel = document.getElementById('class-hud-panel');
     if (!panel) return;
@@ -610,48 +634,51 @@ function buildClassHUD() {
 
     panel.style.display = 'flex';
 
-    // Levels and Passive Data
     const passLv = STATE.classPassiveLevel || 1;
-    const actLv = STATE.classActiveLevel || 1; // Assuming both actives share a level, or use separate state if needed
     const passData = def.passive.levels[passLv - 1];
     const passName = LANG === 'de' ? def.passive.nameDE : def.passive.nameEn;
     const name = LANG === 'de' ? def.nameDE : def.nameEn;
 
-    // Ensure classActiveChoice is always a string key, not a number
-    // (state.js initialises it as 1; normalise to 'active1' here)
     if (!STATE.classActiveChoice || typeof STATE.classActiveChoice === 'number') {
         STATE.classActiveChoice = 'active1';
     }
 
-    const isOnCooldown = activeCooldownRemaining > 0;
-
-    // Helper to build the HTML for an active skill block
+    // Helper to build one active skill block
     const renderActiveSkill = (key) => {
         const skill = def[key];
-        // Each active has its own level: classActive1Level / classActive2Level
         const skillLv = key === 'active1'
             ? (STATE.classActive1Level || 1)
             : (STATE.classActive2Level || 1);
         const skillData = skill.levels[skillLv - 1];
         const skillName = LANG === 'de' ? skill.nameDE : skill.nameEn;
-        const isSelected = STATE.classActiveChoice === key;
-        const isActive = activeAbilityMode && isSelected;
+        const isArmed = activeAbilityMode && STATE.classActiveChoice === key;
+        const cdRemaining = cooldownState[key].remaining;
+        const isOnCooldown = cdRemaining > 0;
+
+        let btnLabel, btnClass, btnDisabled;
+        if (isArmed) {
+            btnLabel = LANG === 'de' ? '✕ ABBRECHEN' : '✕ CANCEL';
+            btnClass = 'chud-active-btn armed';
+            btnDisabled = false;
+        } else if (isOnCooldown) {
+            btnLabel = formatCooldown(cdRemaining);
+            btnClass = 'chud-active-btn on-cooldown';
+            btnDisabled = true;
+        } else {
+            btnLabel = LANG === 'de' ? '▶ EINSETZEN' : '▶ ACTIVATE';
+            btnClass = 'chud-active-btn';
+            btnDisabled = activeAbilityMode; // disable the OTHER button while one is armed
+        }
 
         return `
-            <div class="chud-section ${isSelected ? 'selected-skill' : ''}" style="border-left: 3px solid ${isSelected ? def.color : 'transparent'}; padding-left: 8px; margin-bottom: 10px;">
-                <div class="chud-label active-lbl">🎯 ${LANG === 'de' ? 'AKTIV' : 'ACTIVE'} <span class="chud-lv">Lv${skillLv}</span></div>
-                <div class="chud-skill-name" style="font-weight:bold; color:${isSelected ? def.colorLight : '#ccc'};">${skillName}</div>
+            <div class="chud-section" style="border-left: 3px solid ${isArmed ? def.color : 'transparent'}; padding-left: 8px; margin-bottom: 10px;">
+                <div class="chud-label active-lbl">🎯 ${LANG === 'de' ? 'AKTIV' : 'ACTIVE'} ${key === 'active1' ? '1' : '2'} <span class="chud-lv">Lv${skillLv}</span></div>
+                <div class="chud-skill-name" style="font-weight:bold; color:${isArmed ? def.colorLight : '#ccc'};">${skillName}</div>
                 <div class="chud-skill-desc" style="font-size: 0.85em; opacity: 0.9;">${LANG === 'de' ? skillData.descDE : skillData.descEn}</div>
-                
-                <button class="chud-active-btn ${isActive ? 'armed' : ''} ${isOnCooldown && isSelected ? 'on-cooldown' : ''}"
+                <button class="${btnClass}"
                         onclick="toggleActiveAbility('${key}')"
-                        ${isOnCooldown && isSelected ? 'disabled' : ''}>
-                    ${isActive
-                ? (LANG === 'de' ? '✕ ABBRECHEN' : '✕ CANCEL')
-                : (isOnCooldown && isSelected)
-                    ? (LANG === 'de' ? '⏳ WARTEN' : '⏳ COOLDOWN')
-                    : (LANG === 'de' ? '▶ EINSETZEN' : '▶ ACTIVATE')
-            }
+                        ${btnDisabled ? 'disabled' : ''}>
+                    ${btnLabel}
                 </button>
             </div>
         `;
@@ -667,12 +694,11 @@ function buildClassHUD() {
             <div class="chud-skill-desc">${LANG === 'de' ? passData.descDE : passData.descEn}</div>
         </div>
 
-        ${isOnCooldown ? `<div class="chud-cooldown" id="chud-cd-display" style="color: #e74c3c; text-align: center; font-weight: bold;">${formatCooldown(activeCooldownRemaining)}</div>` : ''}
-
         ${renderActiveSkill('active1')}
         ${renderActiveSkill('active2')}
     `;
 }
+
 
 function formatCooldown(secs) {
     const m = Math.floor(secs / 60);
@@ -752,8 +778,8 @@ function executeActiveAbility(row, col) {
         }
     }
 
-    const cd = def[activeKey].cooldownSeconds;
-    startActiveCooldown(cd);
+    const cdSeconds = def[activeKey].cooldownSeconds;
+    startSlotCooldown(activeKey, cdSeconds);
     buildClassHUD();
 }
 
@@ -1004,42 +1030,69 @@ function _executeFieldScan(scanSize, durationMs) {
 
 
 
-
 // ═══════════════════════════════════════════════
-//  COOLDOWN SYSTEM
+//  COOLDOWN SYSTEM  (per-slot, independent)
 // ═══════════════════════════════════════════════
 
-function startActiveCooldown(seconds) {
-    if (cooldownInterval) clearInterval(cooldownInterval);
-    activeCooldownRemaining = seconds;
-    updateCooldownDisplay();
+// startSlotCooldown — starts an independent countdown for one skill slot.
+//   Updates only that slot's button each tick by patching the DOM directly,
+//   avoiding a full HUD rebuild on every tick.
+function startSlotCooldown(slot, seconds) {
+    const state = cooldownState[slot];
 
-    cooldownInterval = setInterval(() => {
-        activeCooldownRemaining--;
-        updateCooldownDisplay();
-        if (activeCooldownRemaining <= 0) {
-            activeCooldownRemaining = 0;
-            clearInterval(cooldownInterval);
-            cooldownInterval = null;
-            buildClassHUD(); // re-render to re-enable button
+    // Clear any pre-existing interval for this slot
+    if (state.interval) clearInterval(state.interval);
+    state.remaining = seconds;
+
+    // Initial render
+    _patchCooldownButton(slot);
+
+    state.interval = setInterval(() => {
+        state.remaining--;
+        if (state.remaining <= 0) {
+            state.remaining = 0;
+            clearInterval(state.interval);
+            state.interval = null;
+            buildClassHUD(); // full rebuild to restore ACTIVATE button
+        } else {
+            _patchCooldownButton(slot);
         }
     }, 1000);
 }
 
-function updateCooldownDisplay() {
-    // Update the shared cooldown timer readout if it exists
-    const el = document.getElementById('chud-cd-display');
-    if (el) el.textContent = formatCooldown(activeCooldownRemaining);
+// _patchCooldownButton — updates only the button text for one slot
+//   without rebuilding the entire HUD. Falls back to full rebuild if
+//   the button element can't be found (e.g. panel was just re-rendered).
+function _patchCooldownButton(slot) {
+    // Buttons are identified by their onclick attribute value
+    const btn = document.querySelector(`#class-hud-panel button[onclick="toggleActiveAbility('${slot}')"]`);
+    if (!btn) {
+        buildClassHUD();
+        return;
+    }
+    btn.textContent = formatCooldown(cooldownState[slot].remaining);
+}
 
-    // The HUD now renders two buttons; rebuild it so both reflect the
-    // current cooldown state rather than trying to patch them individually.
-    buildClassHUD();
+// startActiveCooldown — legacy wrapper kept so nothing outside breaks.
+//   Previously used a single shared timer; now delegates to startSlotCooldown.
+function startActiveCooldown(seconds) {
+    // No-op: executeActiveAbility now calls startSlotCooldown directly.
+    // Kept to avoid ReferenceErrors from any stale call sites.
+}
+
+function updateCooldownDisplay() {
+    // No longer needed — per-slot patching handles updates.
 }
 
 function resetActiveCooldown() {
-    if (cooldownInterval) clearInterval(cooldownInterval);
-    cooldownInterval = null;
+    // Clear both slot timers
+    ['active1', 'active2'].forEach(slot => {
+        if (cooldownState[slot].interval) clearInterval(cooldownState[slot].interval);
+        cooldownState[slot].interval = null;
+        cooldownState[slot].remaining = 0;
+    });
     activeCooldownRemaining = 0;
+    cooldownInterval = null;
     activeAbilityMode = false;
     correctFillStreak = 0;
     nextPenaltyHalved = false;
