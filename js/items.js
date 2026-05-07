@@ -163,8 +163,9 @@ const ITEM_DEFS = {
     freeze: {
         id: 'freeze', icon: '❄️',
         nameEn: 'Time Freeze', nameDE: 'Zeitfrieren',
-        descEn: 'Pauses timer for 5 min', descDE: 'Friert die Zeit für 5 Min. ein',
-        scoreCost: 80, sellVal: 50, rarity: 'epic', weight: 3
+        descEn: '⚡ Freezes timer for 2s — mistakes cost NO time during the freeze',
+        descDE: '⚡ Friert den Timer für 2s ein — Fehler kosten keine Zeit',
+        scoreCost: 0, sellVal: 30, rarity: 'epic', weight: 3
     },
     shield: {
         id: 'shield', icon: '🛡️',

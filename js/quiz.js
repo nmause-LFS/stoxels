@@ -73,8 +73,8 @@ const QUIZ_QUESTIONS = [
         correct: 0
     },
     {
-        q: "What is the variance of a Bernoulli(p) distribution?",
-        qDE: "Wie lautet die Varianz einer Bernoulli(p)-Verteilung?",
+        q: "What is the variance of a Ber(p) distribution?",
+        qDE: "Wie lautet die Varianz einer Ber(p)-Verteilung?",
         opts: ["p(1−p)", "p²", "(1−p)²", "1/p"],
         optsDE: ["p(1−p)", "p²", "(1−p)²", "1/p"],
         correct: 0
@@ -88,7 +88,7 @@ const QUIZ_QUESTIONS = [
     },
     {
         q: "If X~N(0,1), what is P(X > 0)?",
-        qDE: "Wenn X~N(0,1) gilt, wie groß ist P(X > 0)?",
+        qDE: "Wenn X~N(0,1) gilt, was ist P(X > 0)?",
         opts: ["0.5", "0.25", "0.75", "1.0"],
         optsDE: ["0.5", "0.25", "0.75", "1.0"],
         correct: 0
@@ -108,8 +108,8 @@ const QUIZ_QUESTIONS = [
         correct: 0
     },
     {
-        q: "The CDF F(x) = P(X ≤ x). What is F(+∞)?",
-        qDE: "Die VKF F(x) = P(X ≤ x). Was ist F(+∞)?",
+        q: "For the CDF F(x) = P(X ≤ x), what is lim F(x) for x->oo?",
+        qDE: "Für die Verteilungsfunktion F(x) = P(X ≤ x), was ist lim F(x) für x->oo?",
         opts: ["1", "0", "0.5", "Undefined"],
         optsDE: ["1", "0", "0.5", "Undefiniert"],
         correct: 0
@@ -123,13 +123,6 @@ const QUIZ_QUESTIONS = [
 //  Questions here are drawn only when the player
 //  is in that world. Keep topic-specific questions
 //  here (e.g. World 1 = basic probability).
-//
-//  FORMAT per question:
-//    q       — English question text
-//    qDE     — German question text
-//    opts    — array of 4 answer strings (English)
-//    optsDE  — array of 4 answer strings (German)
-//    correct — index (0-based) of the correct option
 // ═══════════════════════════════════════════════
 const BONUS_QUIZ_POOLS = {
 
@@ -160,15 +153,15 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: "De Morgan's first law states that (A ∪ B)ᶜ equals:",
-            qDE: "Die erste De-Morgan-Regel besagt, dass (A ∪ B)ᶜ gleich ist:",
+            q: "De Morgan's law states that (A ∪ B)ᶜ equals:",
+            qDE: "Die Regel von De-Morgan besagt, dass (A ∪ B)ᶜ gleich ist:",
             opts: ["Aᶜ ∩ Bᶜ", "Aᶜ ∪ Bᶜ", "A ∩ B", "A ∪ B"],
             optsDE: ["Aᶜ ∩ Bᶜ", "Aᶜ ∪ Bᶜ", "A ∩ B", "A ∪ B"],
             correct: 0
         },
         {
-            q: "A probability measure P must satisfy P(Ω) =",
-            qDE: "Ein Wahrscheinlichkeitsmaß P muss P(Ω) = erfüllen:",
+            q: "A probability measure P must satisfy P(Ω) = ?",
+            qDE: "Ein Wahrscheinlichkeitsmaß P muss P(Ω) = ? erfüllen:",
             opts: ["1", "0", "0.5", "Any positive number"],
             optsDE: ["1", "0", "0.5", "Eine beliebige positive Zahl"],
             correct: 0
@@ -217,8 +210,8 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: "De Morgan's second law states that (A ∩ B)ᶜ equals:",
-            qDE: "Die zweite De-Morgan-Regel besagt, dass (A ∩ B)ᶜ gleich ist:",
+            q: "De Morgan's law states that (A ∩ B)ᶜ equals:",
+            qDE: "Die Regel von De-Morgan besagt, dass (A ∩ B)ᶜ gleich ist mit:",
             opts: ["Aᶜ ∪ Bᶜ", "Aᶜ ∩ Bᶜ", "A ∪ B", "A ∩ B"],
             optsDE: ["Aᶜ ∪ Bᶜ", "Aᶜ ∩ Bᶜ", "A ∪ B", "A ∩ B"],
             correct: 0
@@ -245,13 +238,6 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: "Which Kolmogorov axiom states that probabilities are non-negative?",
-            qDE: "Welches Kolmogorov-Axiom besagt, dass Wahrscheinlichkeiten nicht-negativ sind?",
-            opts: ["First axiom: P(A) ≥ 0 for all A", "Second axiom: P(Ω) = 1", "Third axiom: σ-additivity", "There is no such axiom"],
-            optsDE: ["Erstes Axiom: P(A) ≥ 0 für alle A", "Zweites Axiom: P(Ω) = 1", "Drittes Axiom: σ-Additivität", "Es gibt kein solches Axiom"],
-            correct: 0
-        },
-        {
             q: "A coin is flipped twice. How many elementary events are in the sample space?",
             qDE: "Eine Münze wird zweimal geworfen. Wie viele Elementarereignisse hat die Ergebnismenge?",
             opts: ["4", "2", "8", "6"],
@@ -260,7 +246,7 @@ const BONUS_QUIZ_POOLS = {
         },
         {
             q: "P(A) = 0.4, P(B) = 0.5, P(A ∩ B) = 0.2. What is P(A ∪ B)?",
-            qDE: "P(A) = 0,4, P(B) = 0,5, P(A ∩ B) = 0,2. Wie groß ist P(A ∪ B)?",
+            qDE: "P(A) = 0,4, P(B) = 0,5, P(A ∩ B) = 0,2. Was ist P(A ∪ B)?",
             opts: ["0.7", "0.9", "0.2", "0.45"],
             optsDE: ["0,7", "0,9", "0,2", "0,45"],
             correct: 0
@@ -289,7 +275,7 @@ const BONUS_QUIZ_POOLS = {
             q: "Drawing WITHOUT replacement means:",
             qDE: "Ziehen OHNE Zurücklegen bedeutet:",
             opts: ["Each element can only be drawn once", "Elements can be drawn multiple times", "The order does not matter", "The sample space is infinite"],
-            optsDE: ["Jedes Element kann nur einmal gezogen werden", "Elemente können mehrfach gezogen werden", "Die Reihenfolge spielt keine Rolle", "Die Ergebnismenge ist unendlich"],
+            optsDE: ["Jedes Element kann nur einmal gezogen werden", "Elemente können mehrfach gezogen werden", "Die Reihenfolge spielt keine Rolle", "Die Ergebnismenge ist unendlich groß"],
             correct: 0
         },
         {
@@ -336,8 +322,8 @@ const BONUS_QUIZ_POOLS = {
         },
 
         {
-            q: "The binomial coefficient C(n, k) counts the number of ways to choose k items from n where:",
-            qDE: "Der Binomialkoeffizient C(n, k) zählt die Möglichkeiten, k Elemente aus n zu wählen, wobei:",
+            q: "The binomial coefficient B(n, k) counts the number of ways to choose k items from n where:",
+            qDE: "Der Binomialkoeffizient B(n, k) zählt die Möglichkeiten, k Elemente aus n zu wählen, wobei:",
             opts: ["Order does NOT matter and draws are without replacement", "Order matters and draws are with replacement", "Order matters and draws are without replacement", "Order does NOT matter and draws are with replacement"],
             optsDE: ["Reihenfolge KEINE Rolle spielt und ohne Zurücklegen gezogen wird", "Reihenfolge zählt und mit Zurücklegen gezogen wird", "Reihenfolge zählt und ohne Zurücklegen gezogen wird", "Reihenfolge KEINE Rolle spielt und mit Zurücklegen gezogen wird"],
             correct: 0

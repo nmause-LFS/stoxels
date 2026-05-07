@@ -1164,6 +1164,14 @@
             .gc.bb {
                 border-bottom: 2px solid var(--cell-group-divider) !important;
             }
+
+            .gc.scan-reveal {
+                outline: 2px solid #f1c40f;
+                z-index: 2;
+                transition: outline 0.1s;
+            }
+
+
         /* ── OVERLAYS ── */
         .overlay {
             display: none;

@@ -206,11 +206,20 @@ function ac(row, col) {
     // Left-click fill: check against the solution
     if (mbtn === 0 && pval === 1) {
         if (cur.grid[row][col] !== 1) {
-            // Wrong fill — check for shield before applying penalty
+            if (window._freezeActive) {
+                // During freeze: mistake is cosmetically marked but costs zero time
+                wrongGrid[row][col] = true;
+                renderCell(row, col);
+                mistakeCount++;
+                const mc = document.getElementById('mistake-counter');
+                if (mc) mc.textContent = `✗ ${mistakeCount}`;
+                showToast('❄️ Frozen! No penalty.');
+                return;
+            }
             if (shieldActive) {
                 shieldActive = false;
                 showToast(t('pen_shield'));
-                return; // shield blocks the mistake entirely
+                return;
             }
 
             // Mark the cell wrong and apply the time penalty

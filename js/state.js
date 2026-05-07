@@ -59,13 +59,18 @@ function initState() {
         // Migration guard: older saves won't have bonusDone
         if (!s.bonusDone) s.bonusDone = [];
         if (s.tutorialDone === undefined) s.tutorialDone = false;
-        if (!s.mathGatePassed) s.mathGatePassed = []; 
+        if (!s.mathGatePassed) s.mathGatePassed = [];
         if (s.primerPending === undefined) s.primerPending = false;
         if (!s.classWorldsCompleted) s.classWorldsCompleted = [];
         if (s.playerClass === undefined) s.playerClass = null;
         if (!s.classPassiveLevel) s.classPassiveLevel = 1;
         if (!s.classActiveLevel) s.classActiveLevel = 1;
+        // Migrate old single classActiveLevel to per-ability levels
+        if (!s.classActive1Level) s.classActive1Level = s.classActiveLevel || 1;
+        if (!s.classActive2Level) s.classActive2Level = s.classActiveLevel || 1;
         if (s.classUpgradesAvailable === undefined) s.classUpgradesAvailable = 0;
+        // Normalise classActiveChoice — old saves stored number 1, needs to be string
+        if (!s.classActiveChoice || typeof s.classActiveChoice === 'number') s.classActiveChoice = 'active1';
         return s;
     }
     // Fresh save structure — add new persistent fields here in the future
@@ -82,8 +87,11 @@ function initState() {
         playerClass: null,
         classPassiveLevel: 1,
         classActiveLevel: 1,
+        classActive1Level: 1,
+        classActive2Level: 1,
         classUpgradesAvailable: 0,
         classWorldsCompleted: [],
+        classActiveChoice: 'active1',
     };
 }
 

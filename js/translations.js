@@ -305,6 +305,9 @@ const T = {
         reset_confirm: '🗑 YES, RESET EVERYTHING',
         reset_cancel: 'CANCEL',
 
+        item_freeze_msg: '❄️ TIME FREEZE!',
+        item_freeze_ended: '❄️ Freeze ended',
+
     },
 
     de: {
@@ -534,6 +537,9 @@ const T = {
         reset_body: 'Folgendes wird dauerhaft gelöscht:<br><strong style="color:var(--accent2)">· Alle abgeschlossenen Level<br>· Alle Highscores<br>· Alle Bonus-Erfolge<br>· Alle Inventar-Gegenstände<br>· Alle Moodle-Codes</strong><br><br>Dein aktueller Spielstand geht verloren. Dies kann nicht rückgängig gemacht werden.',
         reset_confirm: '🗑 JA, ALLES LÖSCHEN',
         reset_cancel: 'ABBRECHEN',
+
+        item_freeze_msg: '❄️ ZEITFRIEREN!',
+        item_freeze_ended: '❄️ Zeitfrieren vorbei!',
 
     }
 };

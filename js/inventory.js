@@ -243,10 +243,30 @@ function useItem(uid) {
 
         // ── FREEZE ────────────────────────────────────────────────────────────
     } else if (id === 'freeze') {
+        const FREEZE_DURATION = 2000; // 2 seconds in ms
         timerFrozen = true;
+        shieldActive = true; // reuse shield flag to block penalty cost during freeze
+        window._freezeActive = true;
+        updTimer();
         msg = `${def.icon} ${t('item_freeze_msg')}`;
-        // Automatically unfreeze after 5 minutes 
-        setTimeout(() => { timerFrozen = false; updTimer(); }, 300000);
+
+        // Visual countdown on the timer element
+        let remaining = 2;
+        const freezeTick = setInterval(() => {
+            remaining--;
+            const el = document.getElementById('timer-val');
+            if (el) el.textContent = `❄️ ${remaining}s`;
+            if (remaining <= 0) clearInterval(freezeTick);
+        }, 1000);
+
+        setTimeout(() => {
+            timerFrozen = false;
+            window._freezeActive = false;
+            shieldActive = false;
+            clearInterval(freezeTick);
+            updTimer();
+            showToast(t('item_freeze_ended'));
+        }, FREEZE_DURATION);
 
         // ── SHIELD ────────────────────────────────────────────────────────────
     } else if (id === 'shield') {
