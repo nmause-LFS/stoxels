@@ -74,7 +74,12 @@ const SCALE_MAX = 2.4;
 // manualZoomActive— true once the player has used Ctrl+Wheel to zoom manually.
 //                   While true, scalePuzzle() will NOT override their chosen zoom.
 //                   Reset to false when a new level loads (buildGrid).
+// baselineZoom    — the auto-fit scale calculated by scalePuzzle(). Used to
+//                   derive a relative zoom factor for the class HUD so it
+//                   always starts at its natural CSS size (scale 1) and only
+//                   grows/shrinks proportionally when the player manually zooms.
 let currentZoom = 1;
+let baselineZoom = 1;
 let manualZoomActive = false;
 
 
@@ -112,6 +117,7 @@ function scalePuzzle() {
     // Respect manual zoom — only overwrite if the player hasn't zoomed
     if (!manualZoomActive) {
         currentZoom = autoScale;
+        baselineZoom = autoScale; // record the natural fit scale for HUD relative scaling
     }
 
     applyZoom();
@@ -124,6 +130,10 @@ function scalePuzzle() {
 //   scaling. By explicitly setting the wrapper's height and minWidth to
 //   the post-scale dimensions, we force the page to scroll properly when
 //   the player has zoomed in beyond the viewport bounds.
+//   The class HUD panel (#class-hud-panel) is also scaled in sync so it
+//   doesn't appear mismatched when the player uses Ctrl+Wheel zoom.
+//   The HUD scale is relative to the baseline (auto-fit) zoom so it always
+//   starts at its natural CSS size and only changes on manual zoom.
 function applyZoom() {
     const scaler = document.getElementById('puzzle-scaler');
     const wrap = document.getElementById('puzzle-scaler-wrap');
@@ -134,6 +144,15 @@ function applyZoom() {
     // Make the wrapper occupy the actual rendered footprint of the scaled content
     wrap.style.height = (scaler.offsetHeight * currentZoom) + 'px';
     wrap.style.minWidth = (scaler.offsetWidth * currentZoom) + 'px';
+
+    // Scale the class HUD relative to the baseline auto-fit zoom.
+    // hudScale = 1.0 at default zoom, <1 when zoomed out, >1 when zoomed in.
+    const hud = document.getElementById('class-hud-panel');
+    if (hud) {
+        const hudScale = baselineZoom > 0 ? currentZoom / baselineZoom : 1;
+        hud.style.transformOrigin = 'top left';
+        hud.style.transform = `scale(${hudScale})`;
+    }
 }
 
 

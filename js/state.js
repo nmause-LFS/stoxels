@@ -17,10 +17,14 @@
 let cur = null, userGrid = [], wrongGrid = [], revealedGrid = [];
 
 // mistakeCount      — how many wrong fills the player has made this level
+// absorbedMistakes  — how many wrong clicks were absorbed by shield/class passive (no penalty applied)
 // itemsUsedThisLevel— tracks item usage so the "noitem" bonus can be checked
 // dead              — set to true when the timer hits 0 or a Hardcore mistake
 //                     occurs; prevents further input and stops the timer
-let mistakeCount = 0, itemsUsedThisLevel = 0, dead = false;
+// levelStartTime    — Date.now() snapshot when the level begins, used for accurate
+//                     elapsed-time display on the win overlay regardless of item time changes
+let mistakeCount = 0, absorbedMistakes = 0, itemsUsedThisLevel = 0, dead = false;
+let levelStartTime = 0;
 
 // shieldActive  — true while a Shield item is protecting the next mistake
 // timerFrozen   — true while a Freeze item has paused the countdown

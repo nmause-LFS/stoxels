@@ -290,6 +290,8 @@ function useItem(uid) {
         const before = mistakeCount;
         mistakeCount = Math.max(0, mistakeCount - 2);
         const removed = before - mistakeCount;
+        const mcEl = document.getElementById('mistake-counter');
+        if (mcEl) mcEl.textContent = `✗ ${mistakeCount}`;
         msg = removed > 0
             ? `${def.icon} ${t('item_mistake_erased').replace('{n}', removed)}`
             : `${def.icon} ${t('item_mistake_erased_none')}`;

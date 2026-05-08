@@ -203,7 +203,7 @@ const ITEM_DEFS = {
         nameEn: 'Codex of Completion', nameDE: 'Kodex der Fertigstellung',
         descEn: 'Instantly solves the entire puzzle.',
         descDE: 'Löst das gesamte Puzzle sofort.',
-        scoreCost: 0, sellVal: 500, rarity: 'artifact', weight: 1
+        scoreCost: 0, sellVal: 500, rarity: 'artifact', weight: 50
     },
 
     scoutPrimer: {

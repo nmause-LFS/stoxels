@@ -1,0 +1,127 @@
+﻿/* Game Setup Screen   */
+
+#screen-setup {
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.setup-box {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    max-width: 560px;
+    width: 100%;
+    padding: 30px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+}
+
+.setup-title {
+    font-family: var(--PX);
+    font-size: 20px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    margin-bottom: 26px;
+}
+
+.setup-group {
+    margin-bottom: 22px;
+}
+
+.setup-group-label {
+    font-family: var(--PX);
+    font-size: 15px;
+    color: var(--yellow);
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+}
+
+
+/* Game Setup Text  */
+.setup-desc {
+    font-size: 20px;
+    color: var(--setup-opt-inactive);
+    margin-top: 10px;
+    line-height: 1.6;
+}
+
+/* Game Setup Buttons  */
+.setup-btns {
+    display: flex;
+    gap: 10px;
+    margin-top: 26px; 
+    flex-wrap: wrap;        /* If the screen is too narrow, buttons will wrap to the next line */
+}
+
+
+/* Button on level selection for returning back to the Setup */
+
+.back-btn {
+    font-family: var(--PX);
+    font-size: 12px;
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--accent2);
+    padding: 7px 12px;
+    cursor: pointer;
+    transition: all .12s;   /* Makes the color change smooth, not instant      */
+    white-space: nowrap;    /* Prevents the text from breaking into two lines  */
+}
+
+    .back-btn:hover {
+        border-color: var(--accent);    /* Border lights up in --accent color on mouseover  */
+        color: var(--accent);
+    }
+
+/* Game Setup - Difficulty & Game Modifiers Buttons  */
+
+.setup-options {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Game Setup - Text for Difficulties and Game Modifiers  */
+
+.setup-opt {
+    font-family: var(--PX);
+    font-size: 12px;
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--setup-opt-inactive);
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: all .12s;
+    position: relative;
+}
+
+    .setup-opt:hover {                  /* mouseover effect for Game Setup Buttons */
+        border-color: var(--accent2);
+        color: var(--accent2);
+    }
+
+    
+    .setup-opt.sel {
+        border-color: var(--accent);        /* Game Setup Difficulty Selection, cyan background on selection   */
+        color: var(--accent);
+        background: rgba(102,252,241,.07);
+    }
+
+    .setup-opt.sel-yellow {            /* Selected Game Modifiers have a yellow border and background  */
+        border-color: var(--yellow);
+        color: var(--yellow);
+        background: rgba(245,197,24,.07);
+    }
+
+    /* Game Setup - Additional +SCORE blocks on the top right of each Game Modifier  */
+    .setup-opt .tag {
+        position: absolute;
+        top: -8px;
+        right: 4px;
+        font-size: 7px;
+        background: var(--purple);
+        color: #fff;
+        padding: 1px 4px;
+    }
+

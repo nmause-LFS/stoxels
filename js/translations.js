@@ -158,7 +158,7 @@ const T = {
 
         // Level select — dynamic strings
         ls_total: 'TOTAL',
-        ls_bonus_claimed: 'Bonus claimed — reward received!',
+        ls_bonus_claimed: 'Bonus claimed',
         ls_complete_level: 'Complete level',
         ls_locked_hint: '🔓 Beat this level to unlock improvement hints!',
         ls_no_score: 'Complete this level to set a score!',
@@ -170,7 +170,7 @@ const T = {
 
         // In-game HUD
         lvl_prefix: 'LEVEL',
-        zoom_hint: 'Ctrl + Scroll Wheel to zoom',
+        zoom_hint: '',
 
         // Penalty / mistake feedback
         pen_shield: '🛡️ Shield absorbed the mistake!',
@@ -196,7 +196,7 @@ const T = {
         item_shield_msg: 'Shield active!',
         item_cursed_locked: '☠️ Cursed items unlock after {n} more min',
         item_discarded: 'Item discarded',
-        item_sell_btn: '🗑 Discard',
+        item_sell_btn: 'x',
         inv_cursed_locked_label: '🔒 LOCKED {n}min+',
         item_row_solved: 'Row fully revealed!',
         item_row_solved_none: 'All rows already solved!',
@@ -231,18 +231,19 @@ const T = {
         ov_win_solved_in: 'solved in',
         ov_win_mistake: 'mistake',
         ov_win_mistakes: 'mistakes',
+        ov_win_absorbed: 'absorbed by shield/skill',
         ov_win_new: 'new',
         ov_win_best_was: 'best was',
         ov_bonus_met: '🎯 BONUS MET!',
         ov_item_earned: '🎁 Item earned',
-        ov_bonus_claimed_note: '✓ Bonus objective already claimed — no duplicate reward.',
+        ov_bonus_claimed_note: '✓ Bonus objective already claimed.',
         ov_lucky_drop: '🍀 Lucky drop!',
         ov_quiz_reward: '🧠 Quiz reward',
 
         // Quiz overlay
         quiz_title: '⭐ BONUS QUESTION',
         quiz_correct: '✓ CORRECT! +50 bonus pts & item!',
-        quiz_correct_claimed: '✓ Correct! (Bonus already claimed — no duplicate reward.)',
+        quiz_correct_claimed: '✓ Correct! (Bonus already claimed)',
         quiz_wrong: '✗ Wrong answer. No bonus.',
         quiz_continue: 'CONTINUE ▶',
         quiz_skip: 'SKIP (no bonus)',
@@ -392,7 +393,7 @@ const T = {
 
         // Level select — dynamic strings
         ls_total: 'GESAMT',
-        ls_bonus_claimed: 'Bonus erhalten — Belohnung eingelöst!',
+        ls_bonus_claimed: 'Bonus erhalten!',
         ls_complete_level: 'Level abschließen',
         ls_locked_hint: '🔓 Schließe dieses Level ab für Verbesserungshinweise!',
         ls_no_score: 'Schließe dieses Level ab, um eine Punktzahl zu setzen!',
@@ -404,7 +405,7 @@ const T = {
 
         // In-game HUD
         lvl_prefix: 'LVL',
-        zoom_hint: 'Strg + Scrollen zum Zoomen',
+        zoom_hint: '',
 
         // Penalty / mistake feedback
         pen_shield: '🛡️ Schild hat den Fehler absorbiert!',
@@ -430,7 +431,7 @@ const T = {
         item_shield_msg: 'Schild aktiv!',
         item_cursed_locked: '☠️ Verfluchte Items entsperren nach {n} weiteren Min.',
         item_discarded: 'Item verworfen',
-        item_sell_btn: '🗑 Verwerfen',
+        item_sell_btn: 'x',
         inv_cursed_locked_label: '🔒 GESPERRT {n}min+',
         item_row_solved: 'Zeile vollständig enthüllt!',
         item_row_solved_none: 'Alle Zeilen bereits gelöst!',
@@ -465,18 +466,19 @@ const T = {
         ov_win_solved_in: 'gelöst in',
         ov_win_mistake: 'Fehler',
         ov_win_mistakes: 'Fehler',
+        ov_win_absorbed: 'absorbiert durch Schild/Fähigkeit',
         ov_win_new: 'neu',
         ov_win_best_was: 'Beste war',
         ov_bonus_met: '🎯 BONUS ERFÜLLT!',
         ov_item_earned: '🎁 Item erhalten',
-        ov_bonus_claimed_note: '✓ Bonusziel bereits eingelöst — keine doppelte Belohnung.',
+        ov_bonus_claimed_note: '✓ Bonusziel bereits geschafft.',
         ov_lucky_drop: '🍀 Glücksfund!',
         ov_quiz_reward: '🧠 Quiz-Belohnung',
 
         // Quiz overlay
         quiz_title: '⭐ BONUSFRAGE',
         quiz_correct: '✓ RICHTIG! +50 Bonuspunkte & Item!',
-        quiz_correct_claimed: '✓ Richtig! (Bonus bereits eingelöst — keine doppelte Belohnung.)',
+        quiz_correct_claimed: '✓ Richtig! (Bonus bereits erhalten)',
         quiz_wrong: '✗ Falsche Antwort. Kein Bonus.',
         quiz_continue: 'WEITER ▶',
         quiz_skip: 'ÜBERSPRINGEN (kein Bonus)',

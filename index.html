@@ -4,8 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STOXELS - v0.14 BETA</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="class.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/screens.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/game.css">
+    <link rel="stylesheet" href="css/game-setup.css">
+    <link rel="stylesheet" href="css/inventory.css">
+    <link rel="stylesheet" href="css/overlays.css">
+    <link rel="stylesheet" href="css/modals.css">
+    <link rel="stylesheet" href="css/class.css">
 
     <script>
         !function (t, e) { var o, n, p, r; e.__SV || (window.posthog = e, e._i = [], e.init = function (i, s, a) { function g(t, e) { var o = e.split("."); 2 == o.length && (t = t[o[0]], e = o[1]), t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } } (p = t.createElement("script")).type = "text/javascript", p.crossOrigin = "anonymous", p.async = !0, p.src = s.api_host + "/static/array.js", (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r); var u = e; for (void 0 !== a ? u = e[a] = [] : a = "posthog", u.people = u.people || [], u.toString = function (t) { var e = "posthog"; return "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e }, u.people.toString = function () { return u.toString(1) + " (stub)" }, o = "capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchGroups earlyAccessFeatureEnabled".split(" "), n = 0; n < o.length; n++)g(u, o[n]); e._i.push([i, s, a]) }, e.__SV = 1) }(document, window.posthog || []);
@@ -173,7 +180,7 @@
                             </div>
                             <div class="puzzle-hint" id="top-hint"></div>
                             <div class="mod-tags-row" id="mod-tags"></div>
-                            <div style="font-size:9px;color: #000000;font-family:var(--PX);margin-top:2px;" data-t="zoom_hint">Ctrl + scroll to zoom</div>
+                            <!--<div style="font-size:9px;color: #000000;font-family:var(--PX);margin-top:2px;" data-t="zoom_hint">Ctrl + scroll to zoom</div>-->
                         </div>
                         <div class="picross-wrap">
                             <table class="ptable" id="ptable" oncontextmenu="return false;" onmouseleave="clearHover();hoverRow=-1;hoverCol=-1;"></table>

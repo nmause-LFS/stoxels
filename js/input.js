@@ -218,6 +218,7 @@ function ac(row, col) {
             }
             if (shieldActive) {
                 shieldActive = false;
+                absorbedMistakes++;
                 showToast(t('pen_shield'));
                 return;
             }
@@ -231,7 +232,7 @@ function ac(row, col) {
             if (curMods.hardcore) {
                 dead = true;
                 stopTimer();
-                trackEvent('level_failed', {        
+                trackEvent('level_failed', {
                     level_id: `${cur.world}-${cur.li}`,
                     world: cur.world,
                     level_index: cur.li,
@@ -308,8 +309,3 @@ function applyPenalty() {
         timesUp(); // timer.js
     }
 }
-
-
-
-
-

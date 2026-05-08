@@ -431,6 +431,8 @@ function _doStartLevel(gi) {
 
     // Reset all per-level state variables (state.js)
     mistakeCount = 0;
+    absorbedMistakes = 0;
+    levelStartTime = Date.now();
     itemsUsedThisLevel = 0;
     dead = false;
     painting = false;

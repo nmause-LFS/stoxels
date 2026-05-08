@@ -619,6 +619,104 @@ function closeClassOverlay() {
 // ═══════════════════════════════════════════════
 
 
+
+function buildClassHUD() {
+    const panel = document.getElementById('class-hud-panel');
+    if (!panel) return;
+
+    if (!STATE.playerClass) {
+        panel.innerHTML = '';
+        panel.style.display = 'none';
+        return;
+    }
+
+    const def = CLASS_DEFS[STATE.playerClass];
+    if (!def) return;
+
+    panel.style.display = 'flex';
+
+    const passLv = STATE.classPassiveLevel || 1;
+    const passData = def.passive.levels[passLv - 1];
+    const passName = LANG === 'de' ? def.passive.nameDE : def.passive.nameEn;
+    const name = LANG === 'de' ? def.nameDE : def.nameEn;
+
+    if (!STATE.classActiveChoice || typeof STATE.classActiveChoice === 'number') {
+        STATE.classActiveChoice = 'active1';
+    }
+
+    const PASSIVE_COLOR = '#f39c12';
+    const ACTIVE_COLOR = '#3498db';
+
+    // Helper to build one active skill block (clickable, no button)
+    const renderActiveSkill = (key) => {
+        const skill = def[key];
+        const skillLv = key === 'active1'
+            ? (STATE.classActive1Level || 1)
+            : (STATE.classActive2Level || 1);
+        const skillData = skill.levels[skillLv - 1];
+        const skillName = LANG === 'de' ? skill.nameDE : skill.nameEn;
+        const isArmed = activeAbilityMode && STATE.classActiveChoice === key;
+        const cdRemaining = cooldownState[key].remaining;
+        const isOnCooldown = cdRemaining > 0;
+
+        const rankLabel = LANG === 'de' ? 'Rang' : 'Rank';
+        const descText = LANG === 'de' ? skillData.descDE : skillData.descEn;
+
+        // Determine section style
+        let sectionStyle = `border-left: 3px solid ${isArmed ? '#e74c3c' : ACTIVE_COLOR}; padding-left: 8px; margin-bottom: 6px; cursor: pointer; position: relative; padding: 8px 8px 8px 10px; background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-left: 3px solid ${isArmed ? '#e74c3c' : ACTIVE_COLOR};`;
+        if (isOnCooldown) sectionStyle += ' opacity: 0.7; cursor: not-allowed;';
+        if (isArmed) sectionStyle += ' background: rgba(231,76,60,0.1);';
+
+        const clickAttr = isOnCooldown
+            ? ''
+            : `onclick="toggleActiveAbility('${key}')"`;
+
+        // Cooldown overlay (shown when on cooldown)
+        const cooldownOverlay = isOnCooldown ? `
+            <div class="chud-cd-overlay">
+                <span class="chud-cd-timer">${formatCooldown(cdRemaining)}</span>
+                <span class="chud-cd-label">${LANG === 'de' ? 'Abklingzeit' : 'Cooldown'}</span>
+            </div>` : '';
+
+        // Armed hint
+        const armedHint = isArmed ? `<div class="chud-armed-hint">${LANG === 'de' ? '✕ Klicken zum Abbrechen' : '✕ Click to cancel'}</div>` : '';
+
+        return `
+            <div class="chud-active-section${isArmed ? ' armed' : ''}${isOnCooldown ? ' on-cooldown' : ''}"
+                 style="${sectionStyle}"
+                 ${clickAttr}>
+                <div class="chud-skill-name" style="color: ${ACTIVE_COLOR}; font-weight: bold; margin-bottom: 4px;">
+                    ${skillName} <span class="chud-rank" style="opacity:0.65; font-size:0.85em;">— ${rankLabel} ${skillLv}</span>
+                </div>
+                <div class="chud-skill-desc" style="position: relative;">
+                    ${descText}
+                    ${cooldownOverlay}
+                </div>
+                ${armedHint}
+            </div>
+        `;
+    };
+
+    panel.innerHTML = `
+        <div class="chud-icon">${def.icon}</div>
+        <div class="chud-name" style="color:${def.colorLight}; font-size: 1.2em; margin-bottom: 10px;">${name}</div>
+
+        <div class="chud-passive-section" style="margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; padding: 8px 8px 8px 10px; background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-left: 3px solid ${PASSIVE_COLOR}; margin-bottom: 10px;">
+            <div class="chud-skill-name" style="color: ${PASSIVE_COLOR}; font-weight: bold; margin-bottom: 4px;">
+                ${passName} <span class="chud-rank" style="opacity:0.65; font-size:0.85em;">— ${LANG === 'de' ? 'Rang' : 'Rank'} ${passLv}</span>
+            </div>
+            <div class="chud-skill-desc">${LANG === 'de' ? passData.descDE : passData.descEn}</div>
+        </div>
+
+        ${renderActiveSkill('active1')}
+        ${renderActiveSkill('active2')}
+    `;
+}
+
+
+
+/*
+
 function buildClassHUD() {
     const panel = document.getElementById('class-hud-panel');
     if (!panel) return;
@@ -699,6 +797,8 @@ function buildClassHUD() {
     `;
 }
 
+
+ */ 
 
 function formatCooldown(secs) {
     const m = Math.floor(secs / 60);
@@ -1141,6 +1241,7 @@ function getClassPenaltyMultiplier() {
         // Check free mistakes
         if (window._classFreeMistakes > 0) {
             window._classFreeMistakes--;
+            absorbedMistakes++;
             return 0.0; // free! no penalty
         }
     }

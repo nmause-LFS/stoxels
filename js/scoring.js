@@ -96,8 +96,10 @@ function checkWin() {
 
     document.getElementById('sc-disp').textContent = STATE.totalScore;
 
-    const baseTimer = cur.timer || DIFF_CFG[curDiff].timerStart;
-    const elapsed = Math.round(baseTimer * (curMods.timetrial ? 0.5 : 1)) - timerSecs;
+    // Use wall-clock elapsed time so that items that add/remove timer seconds
+    // don't distort the "solved in" display. levelStartTime is set in _doStartLevel().
+    const elapsedMs = Date.now() - levelStartTime;
+    const elapsed = Math.round(elapsedMs / 1000);
 
     const bt = cur.bonusType || 'nomiss';
     const bp = cur.bonusParam !== undefined ? cur.bonusParam : 0;
@@ -141,11 +143,25 @@ function checkWin() {
     const gainNote = ptsAwarded < pts
         ? ` (+${ptsAwarded} ${t('ov_win_new')} — ${t('ov_win_best_was')} ${prevBest})`
         : ` (+${ptsAwarded})`;
+
+    // Build the mistake line — show absorbed count as a note when relevant
+    const totalWrongClicks = mistakeCount + absorbedMistakes;
+    let mistakeLine;
+    if (totalWrongClicks === 0) {
+        mistakeLine = `<div class="ov-sub-line ov-sub-miss-ok">✗ 0 ${t('ov_win_mistakes')}</div>`;
+    } else if (absorbedMistakes > 0 && mistakeCount === 0) {
+        mistakeLine = `<div class="ov-sub-line ov-sub-miss-ok">✗ 0 ${t('ov_win_mistakes')} <span style="opacity:0.55;font-size:0.85em">(${absorbedMistakes} ${t('ov_win_absorbed')})</span></div>`;
+    } else if (absorbedMistakes > 0) {
+        mistakeLine = `<div class="ov-sub-line ov-sub-miss">✗ ${mistakeCount} ${mistakeCount !== 1 ? t('ov_win_mistakes') : t('ov_win_mistake')} <span style="opacity:0.55;font-size:0.85em">(${absorbedMistakes} ${t('ov_win_absorbed')})</span></div>`;
+    } else {
+        mistakeLine = `<div class="ov-sub-line ${mistakeCount === 0 ? 'ov-sub-miss-ok' : 'ov-sub-miss'}">✗ ${mistakeCount} ${mistakeCount !== 1 ? t('ov_win_mistakes') : t('ov_win_mistake')}</div>`;
+    }
+
     document.getElementById('ov-sub').innerHTML =
         `<div class="ov-sub-line ov-sub-reveal">"${lvText(cur, 'reveal')}"</div>` +
         `<div class="ov-sub-line ov-sub-pts">${pts} ${t('ov_win_pts')} (×${mult.toFixed(2)})${gainNote}</div>` +
         `<div class="ov-sub-line ov-sub-time">⏱ ${mins}:${String(secs).padStart(2, '0')} ${t('ov_win_left')} · ${t('ov_win_solved_in')} ${elapsedMins}:${String(elapsedSecs).padStart(2, '0')}</div>` +
-        `<div class="ov-sub-line ${mistakeCount === 0 ? 'ov-sub-miss-ok' : 'ov-sub-miss'}">✗ ${mistakeCount} ${mistakeCount !== 1 ? t('ov_win_mistakes') : t('ov_win_mistake')}</div>`;
+        mistakeLine;
 
     const bl = document.getElementById('bonus-list');
     bl.innerHTML = `<span class="bonus-badge ${bonusMet ? 'earned' : 'missed'}">
@@ -209,8 +225,9 @@ function checkWin() {
         }
     }
 
-    checkWorldCodes();
-    
+    // Delay the world-code check so the popup doesn't fire instantly on level finish.
+    // The win overlay itself appears after 600ms; codes pop after 2s to feel distinct.
+    setTimeout(() => checkWorldCodes(), 2000);
 
     checkWorldCompletion(); // class.js — check if a world was just completed
 
