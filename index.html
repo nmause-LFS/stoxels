@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STOXELS - v0.15 BETA</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/screens.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/game.css">
+    <link rel="stylesheet" href="css/game-setup.css">
+    <link rel="stylesheet" href="css/inventory.css">
+    <link rel="stylesheet" href="css/overlays.css">
+    <link rel="stylesheet" href="css/modals.css">
+    <link rel="stylesheet" href="css/class.css">
+    <link rel="stylesheet" href="css/achievements.css">
+
+    <script>
+        !function (t, e) { var o, n, p, r; e.__SV || (window.posthog = e, e._i = [], e.init = function (i, s, a) { function g(t, e) { var o = e.split("."); 2 == o.length && (t = t[o[0]], e = o[1]), t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } } (p = t.createElement("script")).type = "text/javascript", p.crossOrigin = "anonymous", p.async = !0, p.src = s.api_host + "/static/array.js", (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r); var u = e; for (void 0 !== a ? u = e[a] = [] : a = "posthog", u.people = u.people || [], u.toString = function (t) { var e = "posthog"; return "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e }, u.people.toString = function () { return u.toString(1) + " (stub)" }, o = "capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchGroups earlyAccessFeatureEnabled".split(" "), n = 0; n < o.length; n++)g(u, o[n]); e._i.push([i, s, a]) }, e.__SV = 1) }(document, window.posthog || []);
+        posthog.init('phc_D7LCHRBRmNEf3o5c5USg37ECBZTPcNJGYnSTkuGvdHFC', {
+            api_host: 'https://us.i.posthog.com',
+            person_profiles: 'identified_only',
+            autocapture: false,  // we only want custom game events, not every click
+            capture_pageview: true
+        });
+    </script>
+
+
+
+</head>
+<body>
+    <div id="screen-title" class="screen active">
+        <h1 class="title-glow">STOXELS<br><span style="font-size:0.35em;opacity:0.5;letter-spacing:3px;">v0.15 BETA</span></h1>
+        <p class="title-tag" data-t="tagline">PROBABILITY THEORY &amp; STATISTICS NONOGRAMS</p>
+        <div class="lang-switch">
+            <button class="lang-btn active" onclick="setLang('en')">EN</button>
+            <button class="lang-btn" onclick="setLang('de')">DE</button>
+        </div>
+        <div class="title-btns">
+            <button class="title-btn" onclick="showTutorial()" data-t="btn_play">▶ PLAY</button>
+            <button class="title-btn sec" onclick="showModal('tut-modal')" data-t="btn_howtoplay">? HOW TO PLAY</button>
+            <button class="title-btn sec" onclick="showHS()" data-t="btn_highscores">🏆 HIGHSCORES</button>
+            <button class="title-btn sec" onclick="showCodes()" data-t="btn_codes">🔑 MY CODES</button>
+            <button class="title-btn sec" onclick="showAchievements()" data-t="btn_achievements">🏆 ACHIEVEMENTS</button>
+            <button class="title-btn sec" onclick="showModal('reset-modal')" style="border-color:var(--red);color:var(--red); font-family:var(--PX)">🗑 RESET</button>
+        </div>
+        <div class="title-deco" id="tdeco"></div>
+    </div>
+
+    <div id="tut-modal" class="modal-bg">
+        <div class="modal-box">
+            <button class="modal-close" onclick="hideModal('tut-modal')">✕ CLOSE</button>
+            <div class="modal-title" data-t="tut_title">▸ HOW TO PLAY STOXELS</div>
+            <div class="modal-section">
+                <h3 data-t="tut_s1h">WHAT IS A NONOGRAM?</h3>
+                <p data-t="tut_s1p">A nonogram is a grid puzzle. Numbers along rows and columns tell you how many consecutive filled cells exist. Reveal the hidden symbol to win!</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s2h">CONTROLS</h3>
+                <p data-t="tut_s2p"><strong>Left click</strong> — fill a cell (wrong fills cost time!)<br><strong>Right click</strong> — mark a cell with ✕ (safe, no penalty)<br><strong>Drag</strong> — paint multiple cells<br><strong>Escape</strong> — go back to previous screen</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s3h">DIFFICULTY</h3>
+                <p data-t="tut_s3p"><strong style="color:var(--green)">Easy</strong> — small penalties (×1), ×0.5 score<br><strong style="color:var(--yellow)">Normal</strong> — standard (×2), ×1 score<br><strong style="color:var(--red)">Hard</strong> — heavy penalties (×4), ×1.5 score</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s4h">MODIFIERS</h3>
+                <p data-t="tut_s4p"><strong style="color:var(--orange)">Time Trial</strong> — only 5 minutes!<br><strong style="color:var(--red)">Hardcore</strong> — one wrong tile = instant fail<br><strong style="color:var(--purple)">Ironman</strong> — no items allowed, +15% score</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s5h">ITEMS &amp; INVENTORY</h3>
+                <p data-t="tut_s5p">Complete the level's bonus objective to earn ONE random item. Items range from Common to Legendary — rarer items are more powerful. Corrupted items are gambles! Items cost score to use, and can be sold. Ironman disables all item use.</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s8h">CLASSES &amp; CLASS SKILLS</h3>
+                <p data-t="tut_s8p">Completing Ascension - Levels allows you to select one out of three possible classes. Each class has a passive ability and two active abilities, which can heavily alter the way you approach a Stoxel and help in case you get stuck. Abilities can be upgraded by playing more Ascension - Levels.</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s6h">BONUS OBJECTIVE &amp; QUIZ</h3>
+                <p data-t="tut_s6p">Each level has a bonus objective (shown on the level card). If you <strong>meet</strong> the bonus objective, a stats multiple-choice quiz appears after a brief pause — answer correctly for +50 pts and a bonus item! If you miss the objective, no quiz appears.</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s7h">MOODLE CODES</h3>
+                <p data-t="tut_s7p">Complete all levels in a World to unlock a Moodle Code. Enter it in Moodle to earn a badge that is stored in your Moodle profile.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-setup" class="screen">
+        <div class="setup-box">
+            <div class="setup-title" data-t="setup_title">▸ GAME SETUP</div>
+            <div class="setup-group">
+                <div class="setup-group-label" data-t="setup_diff">DIFFICULTY</div>
+                <div class="setup-options" id="diff-opts">
+                    <button class="setup-opt" data-diff="easy" onclick="selDiff(this)" data-t="diff_easy">EASY</button>
+                    <button class="setup-opt sel" data-diff="normal" onclick="selDiff(this)" data-t="diff_normal">NORMAL</button>
+                    <button class="setup-opt" data-diff="hard" onclick="selDiff(this)" data-t="diff_hard">HARD</button>
+                </div>
+                <div class="setup-desc" id="diff-desc"></div>
+            </div>
+            <div class="setup-group">
+                <div class="setup-group-label" data-t="setup_mod">MODIFIERS <span style="font-size:8px;color:#555">(OPTIONAL)</span></div>
+                <div class="setup-options">
+                    <button class="setup-opt" data-mod="timetrial" onclick="togMod(this)">
+                        <span class="tag" style="background:var(--orange)">+SCORE</span>
+                        <span data-t="mod_tt">⏱ TIME TRIAL</span>
+                    </button>
+                    <button class="setup-opt" data-mod="hardcore" onclick="togMod(this)">
+                        <span class="tag" style="background:var(--red)">+SCORE</span>
+                        <span data-t="mod_hc">💀 HARDCORE</span>
+                    </button>
+                    <button class="setup-opt" data-mod="ironman" onclick="togMod(this)">
+                        <span class="tag" style="background:var(--purple)">+SCORE</span>
+                        <span data-t="mod_im">🔒 IRONMAN</span>
+                    </button>
+                </div>
+                <div class="setup-desc" id="mod-desc" data-t="mod_desc_none">No modifiers. Pure puzzle mode.</div>
+            </div>
+            <div class="setup-btns">
+                <button class="title-btn" onclick="startSetup()" data-t="btn_confirm">▶ SELECT LEVEL</button>
+                <button class="title-btn sec" onclick="showTitle()" data-t="btn_back">◀ BACK</button>
+            </div>
+        </div>
+    </div>
+
+    <!--RESET-->
+    <div id="reset-modal" class="modal-bg">
+        <div class="modal-box" style="border-left-color:var(--red);max-width:440px;">
+            <button class="modal-close" onclick="hideModal('reset-modal')" data-t="reset_close">✕ CLOSE</button>
+            <div class="modal-title" style="color:var(--red);" data-t="reset_title">⚠ RESET ALL PROGRESS</div>
+            <div class="modal-section">
+                <p style="color:#c0a0a0;line-height:2;" data-t="reset_body">
+                    This will permanently erase:<br>
+                    <strong style="color:var(--accent2)">
+                        · All completed levels<br>
+                        · All highscores<br>
+                        · All bonus claims<br>
+                        · All inventory items<br>
+                        · All Moodle codes
+                    </strong><br><br>
+                    Your current playthrough will be gone. This cannot be undone.
+                </p>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;">
+                <button class="title-btn" style="border-color: var(--red); color: var(--red);" onclick="confirmReset()" data-t="reset_confirm">🗑 YES, RESET EVERYTHING</button>
+                <button class="title-btn sec" onclick="hideModal('reset-modal')" data-t="reset_cancel">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div id="screen-levels" class="screen">
+        <div class="ls-topbar">
+            <button class="back-btn" onclick="showSetup()">◀ <span data-t="btn_setup">SETUP</span></button>
+            <span class="ls-title" data-t="ls_title">SELECT LEVEL</span>
+            <div style="margin-left:auto;display:flex;gap:14px;align-items:center;">
+                <span style="font-family:var(--PX);font-size:8px;" id="ls-mods"></span>
+                <span class="ls-score" id="ls-score">TOTAL: 0</span>
+            </div>
+        </div>
+        <div class="ls-body" id="ls-body"></div>
+    </div>
+
+    <div id="screen-game" class="screen">
+        <div class="game-main">
+            <div class="game-meta">
+                <span class="gtb-lvl" id="top-id">1-1</span>
+                <span class="gtb-pen" id="pen-info"></span>
+                <span class="gtb-mistakes" id="mistake-counter" style="font-family:var(--PX);font-size:9px;color:var(--red);opacity:0.85;">✗ 0</span>
+                <div class="gtb-spacer"></div>
+                <div class="gtb-score-wrap">
+                    <span class="gtb-score-val" id="sc-disp">0</span>
+                    <span class="gtb-score-lbl" data-t="score_lbl">SCORE</span>
+                </div>
+                <button class="gtb-btn" onclick="goLevels()" data-t="btn_levels">◀ LEVELS</button>
+            </div>
+            <div class="puzzle-and-sidebar">
+                <div id="class-hud-panel"></div>
+                <div class="puzzle-scaler-wrap" id="puzzle-scaler-wrap">
+                    <div class="puzzle-scaler" id="puzzle-scaler">
+                        <div class="puzzle-hud">
+                            <div class="timer-row">
+                                <span class="timer-icon">⏱</span>
+                                <span class="timer-val" id="timer-val">15:00</span>
+                            </div>
+                            <div class="puzzle-hint" id="top-hint"></div>
+                            <div class="mod-tags-row" id="mod-tags"></div>
+                            <!--<div style="font-size:9px;color: #000000;font-family:var(--PX);margin-top:2px;" data-t="zoom_hint">Ctrl + scroll to zoom</div>-->
+                        </div>
+                        <div class="picross-wrap">
+                            <table class="ptable" id="ptable" oncontextmenu="return false;" onmouseleave="clearHover();hoverRow=-1;hoverCol=-1;"></table>
+                        </div>
+                    </div>
+                </div>
+                <div class="bonus-sidebar" id="bonus-sidebar">
+                    <div class="bonus-sidebar-label">🎯 BONUS</div>
+                    <div class="bonus-sidebar-hint" id="bonus-sidebar-hint"></div>
+                </div>
+            </div>
+            <div class="inv-strip">
+                <div class="item-use-toast" id="item-toast"></div>
+                <div class="inv-strip-header" data-t="inv_strip_header">🎒 INVENTORY — click an item to use it</div>
+                <div class="inv-strip-list" id="inv-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-hs" class="screen">
+        <div class="ls-topbar">
+            <button class="back-btn" onclick="showTitle()">◀ <span data-t="btn_menu">MENU</span></button>
+            <span class="ls-title" data-t="hs_title">HIGHSCORES</span>
+        </div>
+        <div class="hs-body" id="hs-body"></div>
+    </div>
+
+    <div id="screen-codes" class="screen">
+        <div class="ls-topbar">
+            <button class="back-btn" onclick="showTitle()">◀ <span data-t="btn_menu">MENU</span></button>
+            <span class="ls-title" data-t="codes_title">MY CODES</span>
+        </div>
+        <div class="ls-body" id="codes-body"></div>
+    </div>
+
+    <div class="overlay" id="ov-win">
+        <div class="ov-title win" data-t="ov_win">PUZZLE SOLVED!</div>
+        <div id="ov-reveal" class="ov-reveal"></div>
+        <div class="ov-sub" id="ov-sub"></div>
+        <div class="bonus-list" id="bonus-list"></div>
+        <div id="item-reward-zone"></div>
+        <div class="ov-btns">
+            <button class="ob p" onclick="nextLvl()" data-t="btn_next">NEXT ▶</button>
+            <button class="ob s" onclick="replayLvl()" data-t="btn_retry">RETRY</button>
+            <button class="ob s" onclick="goLevels()" data-t="btn_levels">LEVELS</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="ov-lose">
+        <div class="ov-title lose" id="lose-title" data-t="ov_lose">TIME'S UP!</div>
+        <div class="ov-sub" id="lose-sub"></div>
+        <div class="ov-btns">
+            <button class="ob p" onclick="replayLvl()" data-t="btn_retry2">TRY AGAIN</button>
+            <button class="ob s" onclick="goLevels()" data-t="btn_levels">LEVELS</button>
+        </div>
+    </div>
+
+    <div class="quiz-overlay" id="quiz-overlay">
+        <div class="quiz-title" data-t="quiz_title">⭐ BONUS QUESTION</div>
+        <div class="quiz-q" id="quiz-q"></div>
+        <div class="quiz-opts" id="quiz-opts"></div>
+        <!-- Input row — shown only for numeric-input questions -->
+        <div class="mg-answer-row" id="quiz-input-row" style="display:none; margin-top:12px;">
+            <input type="text" id="quiz-input" class="mg-input"
+                   placeholder="your answer" autocomplete="off" spellcheck="false" />
+            <span class="mg-unit" id="quiz-input-unit" style="display:none;"></span>
+            <button class="mg-submit-btn" id="quiz-input-submit" onclick="answerQuizInput()">CHECK ▶</button>
+        </div>
+        <div class="mg-hint-box" id="quiz-input-hint" style="display:none; margin-top:8px;"></div>
+        <div class="quiz-result" id="quiz-result"></div>
+        <button class="quiz-skip" id="quiz-continue" onclick="finishQuiz()" style="display:none" data-t="quiz_continue">CONTINUE ▶</button>
+        <button class="quiz-skip" onclick="skipQuiz()" data-t="quiz_skip">SKIP (no bonus)</button>
+    </div>
+
+    <div id="pw-modal" class="modal-bg">
+        <div class="modal-box pw-box">
+            <button class="modal-close" onclick="hideModal('pw-modal')">✕ CLOSE</button>
+            <div class="modal-title" data-t="pw_title">🔑 NEW CODE UNLOCKED!</div>
+            <div id="pw-content"></div>
+        </div>
+    </div>
+
+    <div class="penalty-flash" id="pen-flash"></div>
+
+    <!-- ═══ TUTORIAL SCREEN ═══ -->
+    <div id="screen-tutorial" class="screen">
+        <div class="tut-screen-layout">
+
+            <!-- Top bar -->
+            <div class="tut-topbar">
+                <span class="tut-topbar-title">📖 INTERACTIVE TUTORIAL</span>
+                <span class="tut-step-counter" id="tut-step-counter">1 / 11</span>
+                <button class="tut-skip-btn" onclick="finishTutorial()">SKIP TUTORIAL ▶</button>
+            </div>
+
+            <!-- Demo area (the annotated game mock) -->
+            <div class="tut-demo-area" id="tut-demo-area"></div>
+
+            <!-- Floating bubble (title + text) -->
+            <div class="tut-bubble tut-bubble-center" id="tut-bubble">
+                <div class="tut-bubble-title" id="tut-bubble-title">Welcome!</div>
+                <div class="tut-bubble-text" id="tut-bubble-text"></div>
+            </div>
+
+            <!-- Bottom navigation -->
+            <div class="tut-nav">
+                <button class="tut-nav-btn sec" onclick="prevTutStep()" id="tut-prev-btn">◀ PREV</button>
+                <button class="tut-nav-btn" id="tut-next-btn" onclick="advanceTutStep()">NEXT ▶</button>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <!-- ═══ MATH GATE MODAL ═══ -->
+    <div id="mg-modal" class="modal-bg">
+        <div class="modal-box mg-box">
+
+            <button class="modal-close" onclick="hideMathGate()">✕ CLOSE</button>
+
+            <!-- World / tier badge -->
+            <div class="mg-world-badge" id="mg-world-badge">🔐 WORLD 1 — PROBABILITY GATE</div>
+
+            <!-- Instruction headline -->
+            <div class="mg-instruction" data-t="mg_instruction">
+                Solve this exercise to unlock the level:
+            </div>
+
+            <!-- The question text -->
+            <div class="mg-question" id="mg-question"></div>
+
+            <!-- Answer row: input + unit label + submit -->
+            <div class="mg-answer-row">
+                <input type="text"
+                       id="mg-answer-input"
+                       class="mg-input"
+                       placeholder="your answer"
+                       autocomplete="off"
+                       spellcheck="false" />
+                <span class="mg-unit" id="mg-unit" style="display:none"></span>
+                <button class="mg-submit-btn" id="mg-submit-btn" onclick="submitMathGate()" data-t="mg_submit">
+                    CHECK ▶
+                </button>
+            </div>
+
+            <!-- Feedback line (correct / wrong) -->
+            <div class="mg-feedback" id="mg-feedback"></div>
+
+            <!-- Hint box — hidden until 2 wrong attempts -->
+            <div class="mg-hint-box" id="mg-hint-box" style="display:none">
+                <div class="mg-hint-text" id="mg-hint-text"></div>
+            </div>
+
+            <!-- "New question" button — appears after 3 failed attempts -->
+            <button class="mg-new-q-btn"
+                    id="mg-new-q-btn"
+                    style="display:none"
+                    onclick="mgNewQuestion()"
+                    data-t="mg_new_q">
+                🔄 TRY A DIFFERENT QUESTION
+            </button>
+
+            <!-- Footer note -->
+            <div class="mg-footer" data-t="mg_footer">
+                Pass once and this level stays unlocked permanently.
+            </div>
+
+        </div>
+    </div>
+
+
+    <div id="class-selection-overlay">
+        <div id="class-selection-content"></div>
+    </div>
+
+    <div id="screen-achievements" class="screen">
+        <div class="ach-topbar">
+            <button class="gtb-btn" onclick="goBack()">MENU</button>
+            <div class="ach-title">ACHIEVEMENTS</div>
+            <button class="gtb-btn"
+                    onclick="resetAchievements()"
+                    style="margin-left: auto; color: var(--red); border-color: var(--red);">
+                RESET ALL
+            </button>
+
+        </div>
+        <div class="ach-body" id="ach-body">
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script src="js/translations.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/levels.js"></script>
+    <script src="js/items.js"></script>
+    <script src="js/quiz.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/grid.js"></script>
+    <script src="js/input.js"></script>
+    <script src="js/scoring.js"></script>
+    <script src="js/inventory.js"></script>
+    <script src="js/codes.js"></script>
+    <script src="js/screens.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/tutorial.js"></script>
+    <script src="js/mathgate.js"></script>
+    <script src="js/analytics.js"></script>
+    <script src="js/class.js"></script>
+    <script src="js/achievements.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

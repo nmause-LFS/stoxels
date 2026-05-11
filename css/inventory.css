@@ -1,0 +1,162 @@
+/* Inventory panel that sits at the bottom of the screen  */
+
+.inv-strip {
+    position: relative;
+    width: 100%;
+    max-width: 1600px;
+    margin: 30px auto 0;
+    background: var(--panel); 
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+/* INVENTORY text label on the top of the inventory panel  */
+
+.inv-strip-header {
+    font-family: var(--PX);
+    font-size: 12px;
+    color: var(--yellow);
+    padding: 7px 18px 4px;
+    letter-spacing: 1px;
+}
+
+/* Items in the inventory panel   */
+
+.inv-strip-list {
+    display: flex;          /* Makes item appear horizontally */
+    gap: 10px;
+    padding: 6px 16px 12px;
+    overflow-x: auto;       /* Allows scrolling sideways for too many items   */
+    min-height: 100px;
+    align-items: flex-start;
+}
+
+
+/* Item Card Box for each item in the inventory that represents an item */
+
+.inv-item {
+    position: relative;          /* Anchor for the absolute icon and sell button */
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 12px;
+    cursor: pointer;
+    transition: all .12s;
+    flex-shrink: 0;
+    min-width: 150px;
+    max-width: 180px;
+    min-height: 150px;
+    
+    display: flex;               /* Use flex to stack text content */
+    flex-direction: column;
+    overflow: hidden;            /* CRITICAL: Keeps the large background icon inside the box */
+}
+
+
+
+/* Hover Effect for mouseover on an item card in inventory */
+    .inv-item:hover {
+        border-color: var(--accent);
+    }
+
+    /* Disallow item useage for Ironman players */
+    .inv-item.ironman-lock {
+        opacity: .4;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    /* Disallow cursed item useage (early on in a level)  */
+    .inv-item.cursed-locked {
+        opacity: .5;
+        cursor: not-allowed;
+        pointer-events: none;
+        border-color: var(--inv-cursed-lock) !important;
+    }
+
+    /* Item Icon as background for item cards */
+
+    .inv-item-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        font-size: 100px;            /* Large watermark size */
+        opacity: 0.25;                /* Faint enough to stay in the background */
+        pointer-events: none;        /* Ensures the icon doesn't block clicks on the card */
+        z-index: 0;                  /* Sits behind the text */
+    }
+
+
+    /* Item Name */
+.inv-item-name {
+    font-family: var(--PX);
+    font-size: 12px;
+    color: var(--accent);
+    margin-bottom: 3px;
+}
+        /* Text colors for each item based on their rarity  */
+
+        .inv-item-name.common {color: #aaa;}
+        .inv-item-name.uncommon {color: #4fc;}
+        .inv-item-name.rare {color: #88f;}
+        .inv-item-name.epic {color: #c8f;}
+        .inv-item-name.legendary {color: #fd0;}
+        .inv-item-name.cursed {color: #f44;}
+        .inv-item-name.artifact {color: #ffd700;}
+
+
+    /*  Item Description Text */
+.inv-item-desc {
+    font-size: 15px;
+    color: #ffffff; /*var(--yellow); */
+    line-height: 1.45;
+    font-weight: bold;
+}
+
+
+/* Item Discard Button */
+.inv-sell-btn {
+    position: absolute;  /* Breaks it out of the normal layout flow */
+    top: 5px;            /* Distance from the top */
+    right: 5px;          /* Distance from the right */
+    
+    font-family: var(--PX);
+    font-size: 10px;     /* Slightly larger for the "X" */
+    line-height: 1;
+    
+    background: transparent;
+    border: none;        /* Removing the green border */
+    color: #f44;         /* Using the "cursed" red color */
+    
+    padding: 4px;
+    cursor: pointer;
+    transition: transform .1s;
+}
+
+    .inv-sell-btn:hover {
+        color: #ff6666;      /* Lighter red on hover[cite: 5] */
+        transform: scale(1.2); /* Slight pop effect[cite: 5] */
+        background: transparent; /* Keep it clean[cite: 5] */
+    }
+
+
+/* Message that occurs while the inventory is empty  */
+
+.inv-empty-msg {
+    font-size: 20px;
+    color: var(--inv-item-empty);
+    padding: 10px;
+    line-height: 1.7;
+    align-self: center;
+}
+
+
+/* LOCKED text for Cursed items for the first few minutes   */
+
+.inv-cursed-warning {
+    font-family: var(--PX);
+    font-size: 10px;
+    color: var(--red);
+    margin-top: 3px;
+}
