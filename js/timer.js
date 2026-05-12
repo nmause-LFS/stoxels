@@ -108,13 +108,12 @@ function timesUp() {
         mod_ironman: curMods.ironman,
     });
 
+    // bounceback: record which level was just failed so scoring.js can
+    // detect an immediate retry win on the same level.
+    if (cur) window._lastFailedGi = cur.gIdx;
+
     document.getElementById('lose-title').textContent = t('ov_lose'); // translated string
     document.getElementById('lose-sub').textContent =
         `${mistakeCount} ${mistakeCount !== 1 ? t('ov_win_mistakes') : t('ov_win_mistake')}. ${t('btn_retry2')}!`;
     document.getElementById('ov-lose').classList.add('show');
 }
-
-
-
-
-

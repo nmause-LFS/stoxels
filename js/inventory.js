@@ -31,42 +31,31 @@ function buildInventoryPanel() {
     const list = document.getElementById('inv-list');
     list.innerHTML = ''; // clear previous render
 
-    // Empty state message
+// Empty state message
     if (!STATE.inventory.length) {
         list.innerHTML = `<div class="inv-empty-msg">${t('inv_empty').replace(/\n/g, '<br>')}</div>`;
+        updateReshuffleCounter();
         return;
     }
-
-    const elapsed = Math.floor((Date.now() - levelStartTime) / 1000);
-    const cursedMinElapsed = curMods.timetrial ? 60 : 180;
 
     STATE.inventory.forEach(item => {
         const def = ITEM_DEFS[item.defId];
         if (!def) return; // skip if definition is missing (shouldn't happen)
 
-        const isCursed = def.rarity === 'cursed';
-        const cursedStillLocked = isCursed && elapsed < cursedMinElapsed;
         const isLocked = curMods.ironman; // Ironman locks ALL items
 
         // Build the CSS class string for the card
         let cls = 'inv-item';
         if (isLocked) cls += ' ironman-lock';
-        else if (cursedStillLocked) cls += ' cursed-locked';
 
         const el = document.createElement('div');
         el.className = cls;
         el.dataset.uid = item.uid; // store uid for event handlers
 
-        // Show a countdown label on cursed items that are still locked
-        const cursedWarning = cursedStillLocked
-            ? `<div class="inv-cursed-warning">${t('inv_cursed_locked_label').replace('{n}', Math.ceil((cursedMinElapsed - elapsed) / 60))}</div>`
-            : '';
-
         el.innerHTML = `
             <span class="inv-item-icon">${def.icon}</span>
             <div class="inv-item-name ${def.rarity}">${itemName(def)}</div>
             <div class="inv-item-desc">${itemDesc(def)}</div>
-            ${cursedWarning}
             <div class="inv-item-val">
                 <button class="inv-sell-btn" onclick="sellItem('${item.uid}', event)">
                     ${t('item_sell_btn')}
@@ -74,15 +63,57 @@ function buildInventoryPanel() {
             </div>`;
 
         // Only attach the use-handler if the item is actually usable right now
-        if (!isLocked && !cursedStillLocked) {
+        if (!isLocked) {
             el.onclick = (e) => {
                 // Guard: don't fire useItem if the discard button was clicked
                 if (!e.target.classList.contains('inv-sell-btn')) useItem(item.uid);
             };
         }
 
+        // Right-click → reshuffle contribution
+        el.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            if (dead || curMods.ironman) return;
+            reshuffleRightClickItem(item.uid);
+        });        
+
         list.appendChild(el);
+
+
     });
+
+    // item_hoarder: track if the player has ever held 10+ items at once.
+    // buildInventoryPanel runs after every inventory change, making it the
+    // single reliable place to catch the high-water mark.
+    if (STATE.inventory.length >= 10) {
+        // We use a one-time counter rather than a boolean so the achievement
+        // tiers (1, 3, 7 times reaching 10+) can accumulate properly.
+        // Guard with a flag so rapid redraws don't spam-increment the stat.
+        if (!window._lastInventoryHoarderSize || window._lastInventoryHoarderSize < STATE.inventory.length) {
+            trackAchStat('maxInventoryReached');
+        }
+    }
+    window._lastInventoryHoarderSize = STATE.inventory.length;
+
+    // collector: check if inventory currently contains at least one item of
+    // every rarity tier simultaneously. Only fires when the count is new.
+    const RARITIES = ['common', 'uncommon', 'rare', 'epic', 'legendary', 'cursed', 'artifact'];
+    const raritiesPresent = new Set(
+        STATE.inventory.map(item => ITEM_DEFS[item.defId]?.rarity).filter(Boolean)
+    );
+    if (RARITIES.every(r => raritiesPresent.has(r))) {
+        // Use a session flag so this only increments once per time all rarities
+        // are held simultaneously, not on every panel rebuild.
+        if (!window._collectorTriggeredThisSession) {
+            window._collectorTriggeredThisSession = true;
+            trackAchStat('collectorAllRarities');
+        }
+    } else {
+        // Reset the flag so it can fire again if the player rebuilds the set
+        window._collectorTriggeredThisSession = false;
+    }
+
+    updateReshuffleCounter();
 }
 
 
@@ -204,15 +235,6 @@ function useItem(uid) {
     const def = ITEM_DEFS[item.defId];
     if (!def) return;
 
-    // Enforce cursed-item time lock
-    const isCursed = def.rarity === 'cursed';
-    const elapsed = Math.floor((Date.now() - levelStartTime) / 1000);
-    const cursedMinElapsed = curMods.timetrial ? 60 : 180;
-    if (isCursed && elapsed < cursedMinElapsed) {
-        showToast(t('item_cursed_locked').replace('{n}', Math.ceil((cursedMinElapsed - elapsed) / 60)));
-        return;
-    }
-
     let msg = ''; // toast message built per item type below
     const id = def.id;
 
@@ -245,6 +267,8 @@ function useItem(uid) {
         updTimer();
         msg = `${def.icon} ${t('item_freeze_msg')}`;
 
+        // freeze_clutch: used a freeze with 10 seconds or less on the clock
+        if (timerSecs <= 10) trackAchStat('freezeClutches');
         // Visual countdown on the timer element
         let remaining = 2;
         const freezeTick = setInterval(() => {
@@ -440,6 +464,19 @@ function useItem(uid) {
         if (secs > 0) trackAchStat('timeAdded', secs);
     }
     if (id === 'cursedTime') trackAchStat('timeAdded', 1200); // +20 min
+
+    // three_items_level: fire once the moment the 3rd item is used this level
+    if (itemsUsedThisLevel === 3) trackAchStat('threeItemsOneLevelCount');
+
+    // cursed_first: used a cursed item on the very first attempt at this level
+    if (def.rarity === 'cursed' && !STATE.done.includes(cur.gIdx)) {
+        trackAchStat('cursedFirstAttempts');
+    }
+
+    // item_hoarder: check if current inventory size (post-use) still qualifies,
+    // but we also check on add — the real trigger is reaching 10 while holding.
+    // Re-check here in case an item was just used to drop below threshold and
+    // back up; the actual high-water check happens in buildInventoryPanel.
     // ────────────────────────────────────────────────────────────────────
 
 
@@ -466,6 +503,10 @@ function sellItem(uid, e) {
 
     const def = ITEM_DEFS[STATE.inventory[idx].defId];
     STATE.inventory.splice(idx, 1);
+
+    // ── Achievement tracking ─────────────────────────────────────────────
+    trackAchStat('itemsSold');
+    // ────────────────────────────────────────────────────────────────────
 
     save();
     buildInventoryPanel();
@@ -878,3 +919,99 @@ document.addEventListener('wheel', (e) => {
     // Scroll speed: 120px per notch feels natural for item cards
     strip.scrollLeft += e.deltaY > 0 ? 120 : -120;
 }, { passive: false });
+
+
+
+// ── RESHUFFLE STATE ───────────────────────────────────────────────────────
+let reshuffleCount = 0; // tracks right-clicked (discarded) items toward the goal
+const RESHUFFLE_GOAL = 5;
+
+
+// updateReshuffleCounter — syncs the counter badge next to the INVENTORY label.
+function updateReshuffleCounter() {
+    const el = document.getElementById('reshuffle-counter');
+    if (el) el.textContent = `♻ ${reshuffleCount}/${RESHUFFLE_GOAL}`;
+}
+
+
+
+
+// ═══════════════════════════════════════════════
+//  RESHUFFLE SYSTEM
+//  Right-clicking an item discards it and increments
+//  a counter. At 5 discards, a modal opens showing
+//  3 random items — the player picks one to keep.
+// ═══════════════════════════════════════════════
+
+function reshuffleRightClickItem(uid) {
+    const idx = STATE.inventory.findIndex(i => i.uid === uid);
+    if (idx < 0) return;
+
+    const def = ITEM_DEFS[STATE.inventory[idx].defId];
+    STATE.inventory.splice(idx, 1);
+    reshuffleCount++;
+
+    save();
+    buildInventoryPanel(); // also calls updateReshuffleCounter()
+    showToast(`${def.icon} Tossed into the reshuffle pile… (${reshuffleCount}/${RESHUFFLE_GOAL})`);
+
+    if (reshuffleCount >= RESHUFFLE_GOAL) {
+        reshuffleCount = 0;
+        updateReshuffleCounter();
+        setTimeout(() => openReshuffleModal(), 300); // slight delay so toast reads first
+    }
+}
+
+function openReshuffleModal() {
+    // Pick 3 distinct random items
+    const picks = [];
+    const usedIds = new Set();
+    let attempts = 0;
+    while (picks.length < 3 && attempts < 50) {
+        attempts++;
+        const id = pickLuckyItem(); // uses existing weighted pool with artifact chance
+        if (!usedIds.has(id)) {
+            usedIds.add(id);
+            picks.push(ITEM_DEFS[id]);
+        }
+    }
+
+    // Build modal HTML
+    const cardsHtml = picks.map(def => `
+        <div class="rshuffle-card" data-id="${def.id}">
+            <div class="rshuffle-card-icon">${def.icon}</div>
+            <div class="rshuffle-card-name ${def.rarity}">${itemName(def)}</div>
+            <div class="rshuffle-card-rarity">${rarityLabel(def.rarity)}</div>
+            <div class="rshuffle-card-desc">${itemDesc(def)}</div>
+        </div>`).join('');
+
+    const modal = document.createElement('div');
+    modal.id = 'rshuffle-modal';
+    modal.innerHTML = `
+        <div id="rshuffle-box">
+            <div id="rshuffle-title">♻ Reshuffle Reward</div>
+            <div id="rshuffle-subtitle">5 items sacrificed — choose your reward:</div>
+            <div id="rshuffle-cards">${cardsHtml}</div>
+        </div>`;
+    document.body.appendChild(modal);
+
+    // Attach click handlers
+    modal.querySelectorAll('.rshuffle-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const chosenId = card.dataset.id;
+            const chosenDef = ITEM_DEFS[chosenId];
+
+            // Add chosen item to inventory
+            STATE.inventory.push({ uid: `item_${Date.now()}_${Math.random().toString(36).slice(2)}`, defId: chosenId });
+
+            // Count toward merchant achievement (same as a sell/trade action)
+            trackAchStat('itemsSold');
+
+            save();
+            buildInventoryPanel();
+            showToast(`${chosenDef.icon} ${itemName(chosenDef)} added to your inventory!`);
+
+            modal.remove();
+        });
+    });
+}

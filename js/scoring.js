@@ -94,13 +94,20 @@ function checkWin() {
     }
     save();
 
+    document.getElementById('sc-disp').textContent = STATE.totalScore;
+
+    // Use wall-clock elapsed time so that items that add/remove timer seconds
+    // don't distort the "solved in" display. levelStartTime is set in _doStartLevel().
+    const elapsedMs = Date.now() - levelStartTime;
+    const elapsed = Math.round(elapsedMs / 1000);
+
     // ── Achievement tracking ─────────────────────────────────────────────
+    // (placed after elapsed/pts/mult are defined so all fields can be passed)
     {
-        // Count how many cells were filled correctly this level
+        const totalCells = rows * cols;
         let cellsFilled = 0;
-        const sol = cur.grid;
-        for (let r = 0; r < sol.length; r++)
-            for (let c = 0; c < sol[0].length; c++)
+        for (let r = 0; r < rows; r++)
+            for (let c = 0; c < cols; c++)
                 if (sol[r][c] === 1) cellsFilled++;
 
         onLevelCompleteAch({
@@ -110,23 +117,29 @@ function checkWin() {
             mods: curMods,
             playerClass: STATE.playerClass || null,
             absorbedMistakes: absorbedMistakes,
+            absorbedThisLevel: absorbedMistakes,
             cellsFilled: cellsFilled,
+            totalCells: totalCells,
+            rows: rows,
+            cols: cols,
             scoreEarned: ptsAwarded,
             world: cur.world,
             gi: gi,
+            // fields needed by new achievements:
+            elapsed: elapsed,
+            timerSecs: timerSecs,
+            pts: pts,
+            prevBest: prevBest,
+            mult: mult,
+            isFirstClear: isFirstClear,
+            hadPenaltyClutwch: !!window._hadPenaltyClutch,
+            isBouncebackWin: window._lastFailedGi === gi,
         });
+        window._hadPenaltyClutch = false; // reset for next level
+        window._lastFailedGi = null;       // reset bounceback flag
         checkWorldCompleteAch();
     }
     // ────────────────────────────────────────────────────────────────────
-
-
-
-    document.getElementById('sc-disp').textContent = STATE.totalScore;
-
-    // Use wall-clock elapsed time so that items that add/remove timer seconds
-    // don't distort the "solved in" display. levelStartTime is set in _doStartLevel().
-    const elapsedMs = Date.now() - levelStartTime;
-    const elapsed = Math.round(elapsedMs / 1000);
 
     const bt = cur.bonusType || 'nomiss';
     const bp = cur.bonusParam !== undefined ? cur.bonusParam : 0;

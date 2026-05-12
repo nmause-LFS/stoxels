@@ -10,26 +10,26 @@
 // This is computed dynamically from WORLD_START_GI so it stays correct
 // even when you add/remove levels from any world.
 const MATH_GATE_RULES = [
-    { world: 1, level: 6  },   // W1-L6
-    { world: 2, level: 1  },   // W2-L1
-    { world: 2, level: 6  },   // W2-L6
-    { world: 3, level: 1  },   // W3-L1
-    { world: 3, level: 4  },   // W3-L4
-    { world: 3, level: 7  },   // W3-L7
-    { world: 4, level: 1  },   // W4-L1
-    { world: 4, level: 3  },   // W4-L3 (if it exists)
-    { world: 4, level: 5  },   // W4-L5 (if it exists)
-    { world: 4, level: 7  },   // W4-L7 (if it exists)
-    { world: 4, level: 9  },   // W4-L9 (if it exists)
-    { world: 5, level: 1  },   // all of W5
-    { world: 5, level: 2  },
-    { world: 5, level: 3  },
-    { world: 5, level: 4  },
-    { world: 5, level: 5  },
-    { world: 5, level: 6  },
-    { world: 5, level: 7  },
-    { world: 5, level: 8  },
-    { world: 5, level: 9  },
+    { world: 1, level: 6 },   // W1-L6
+    { world: 2, level: 1 },   // W2-L1
+    { world: 2, level: 6 },   // W2-L6
+    { world: 3, level: 1 },   // W3-L1
+    { world: 3, level: 4 },   // W3-L4
+    { world: 3, level: 7 },   // W3-L7
+    { world: 4, level: 1 },   // W4-L1
+    { world: 4, level: 3 },   // W4-L3 (if it exists)
+    { world: 4, level: 5 },   // W4-L5 (if it exists)
+    { world: 4, level: 7 },   // W4-L7 (if it exists)
+    { world: 4, level: 9 },   // W4-L9 (if it exists)
+    { world: 5, level: 1 },   // all of W5
+    { world: 5, level: 2 },
+    { world: 5, level: 3 },
+    { world: 5, level: 4 },
+    { world: 5, level: 5 },
+    { world: 5, level: 6 },
+    { world: 5, level: 7 },
+    { world: 5, level: 8 },
+    { world: 5, level: 9 },
     { world: 5, level: 10 },
 ];
 
@@ -76,11 +76,11 @@ const MATH_GATE_POOLS = {
         // ── 1. ERGEBNISMENGE (Sample Space) ──────────────────────────────────────
 
         {
-            q: 'A regular fair die is rolled once. How many elements does the sample space Ω contain?',
-            qDE: 'Ein fairer Würfel wird einmal geworfen. Wie viele Elemente enthält die Ergebnismenge Ω?',
+            q: 'A six-sided fair die is rolled once. How many elements does the sample space Ω contain?',
+            qDE: 'Ein sechsseitiger fairer Würfel wird einmal geworfen. Wie viele Elemente enthält die Ergebnismenge Ω?',
             answer: 6, tolerance: 0, unit: 'elements',
-            hintEn: 'Ω = {1, 2, 3, 4, 5, 6} — one outcome per face.',
-            hintDE: 'Ω = {1, 2, 3, 4, 5, 6} — ein Ergebnis pro Seite.'
+            hintEn: 'Ω = {1, 2, 3, 4, 5, 6}',
+            hintDE: 'Ω = {1, 2, 3, 4, 5, 6}'
         },
         {
             q: 'A fair coin is flipped three times. How many elements are in the sample space?',
@@ -135,12 +135,9 @@ const MATH_GATE_POOLS = {
             q: 'A bag has 3 red and 7 blue balls. What is the probability of drawing a red ball? Enter as a percentage.',
             qDE: 'Ein Beutel enthält 3 rote und 7 blaue Bälle. Wie groß ist die Wahrscheinlichkeit, einen roten Ball zu ziehen? Gib als Prozentzahl ein.',
             answer: 30, tolerance: 0, unit: '%',
-            hintEn: '',
-            hintDE: ''
+            hintEn: 'In total there are 30 balls in the bag.',
+            hintDE: 'Insgesamt sind 10 Bälle in dem Beutel.'
         },
-
-
-
 
         // ── 3. ZUFALLSEXPERIMENT (Random Experiment) ────────────────────────────
 
@@ -164,24 +161,24 @@ const MATH_GATE_POOLS = {
         // ── 4. DISJUNKTE EREIGNISSE (Mutually Exclusive Events) ─────────────────
 
         {
-            q: 'P(A) = 0.3 and P(B) = 0.5. A and B are mutually exclusive. What is P(A ∪ B)?',
+            q: 'P(A) = 0.3 and P(B) = 0.5. A and B are disjoint. What is P(A ∪ B)?',
             qDE: 'P(A) = 0,3 und P(B) = 0,5. A und B sind disjunkt. Wie groß ist P(A ∪ B)?',
             answer: 0.8, tolerance: 0.001, unit: '',
-            hintEn: 'Disjoint: P(A ∪ B) = P(A) + P(B)',
-            hintDE: 'Disjunkt: P(A ∪ B) = P(A) + P(B)'
+            hintEn: 'P(A ∪ B) = P(A) + P(B) for disjoint events',
+            hintDE: 'P(A ∪ B) = P(A) + P(B) für disjunkte Ereignisse'
         },
         {
-            q: 'A and B are mutually exclusive and P(A ∪ B) = 0.7. If P(A) = 0.4, what is P(B)?',
+            q: 'A and B are disjoint and P(A ∪ B) = 0.7. If P(A) = 0.4, what is P(B)?',
             qDE: 'A und B sind disjunkt und P(A ∪ B) = 0,7. Falls P(A) = 0,4, was ist P(B)?',
             answer: 0.3, tolerance: 0.001, unit: '',
-            hintEn: 'P(B) = P(A ∪ B) − P(A)',
-            hintDE: 'P(B) = P(A ∪ B) − P(A)'
+            hintEn: 'P(B) = P(A ∪ B) − P(A) for disjoint events',
+            hintDE: 'P(B) = P(A ∪ B) − P(A) für disjunkte Ereignisse'
         },
         {
-            q: 'If A and B are mutually exclusive, what is P(A ∩ B)?',
+            q: 'If A and B are disjoint, what is P(A ∩ B)?',
             qDE: 'Wenn A und B disjunkt sind, was ist P(A ∩ B)?',
             answer: 0, tolerance: 0, unit: '',
-            hintEn: 'Mutually exclusive means A ∩ B = ∅.',
+            hintEn: 'Disjoint means A ∩ B = ∅.',
             hintDE: 'Disjunkt bedeutet A ∩ B = ∅'
         },
 
@@ -191,8 +188,8 @@ const MATH_GATE_POOLS = {
             q: 'Ω = {1, 2, 3}. How many elements does the power set Pot(Ω) contain?',
             qDE: 'Ω = {1, 2, 3}. Wie viele Elemente enthält die Potenzmenge Pot(Ω)?',
             answer: 8, tolerance: 0, unit: 'elements',
-            hintEn: '',
-            hintDE: ''
+            hintEn: 'The power set contains all possible subsets.',
+            hintDE: 'Die Potenzmenge enthält alle möglichen Teilmengen.'
         },
 
         {
@@ -206,18 +203,18 @@ const MATH_GATE_POOLS = {
         // ── 6. ELEMENTAREREIGNIS (Elementary Event) ──────────────────────────────
 
         {
-            q: 'A die is rolled. How many elementary events does the sample space contain?',
-            qDE: 'Ein Würfel wird geworfen. Wie viele Elementarereignisse enthält die Ergebnismenge?',
+            q: 'A fair six-sided die is rolled. How many elementary events does the sample space contain?',
+            qDE: 'Ein fairer sechsseitiger Würfel wird geworfen. Wie viele Elementarereignisse enthält die Ergebnismenge?',
             answer: 6, tolerance: 0, unit: 'elementary events',
             hintEn: 'Each face {1}, {2}, …, {6} is one elementary event.',
             hintDE: 'Jede Seite {1}, {2}, …, {6} ist ein Elementarereignis.'
         },
         {
             q: 'In a Laplace experiment with 8 equally likely elementary events, what is the probability of each elementary event? Enter as a decimal.',
-            qDE: 'In einem Laplace-Experiment mit 8 gleich wahrscheinlichen Elementarereignissen: Wie groß ist die Wahrscheinlichkeit jedes Elementarereignisses? Gib als Dezimalzahl ein.',
+            qDE: 'Betrachte ein Laplace-Experiment mit 8 gleich wahrscheinlichen Elementarereignissen. Wie groß ist die Wahrscheinlichkeit jedes Elementarereignisses? Gib als Dezimalzahl ein.',
             answer: 0.125, tolerance: 0.001, unit: '',
-            hintEn: 'P(ω) = 1/8 = 0.125 for each elementary event.',
-            hintDE: 'P(ω) = 1/8 = 0,125 für jedes Elementarereignis.'
+            hintEn: 'In a Laplace experiment the probability measure is the discrete uniform distribution.',
+            hintDE: 'In einem Laplace-Experiment ist das Wahrscheinlichkeitsmaß die diskrete Gleichverteilung.'
         },
 
 
@@ -227,7 +224,7 @@ const MATH_GATE_POOLS = {
             q: 'P(A) = 0.5, P(B) = 0.4, P(A ∩ B) = 0.2. What is P(A ∪ B)?',
             qDE: 'P(A) = 0,5, P(B) = 0,4, P(A ∩ B) = 0,2. Wie groß ist P(A ∪ B)?',
             answer: 0.7, tolerance: 0.001, unit: '',
-            hintEn: 'Inclusion-exclusion: P(A ∪ B) = P(A) + P(B) − P(A ∩ B).',
+            hintEn: 'Inclusion-exclusion formula: P(A ∪ B) = P(A) + P(B) − P(A ∩ B).',
             hintDE: 'Siebformel: P(A ∪ B) = P(A) + P(B) − P(A ∩ B).'
         },
         {
@@ -238,11 +235,11 @@ const MATH_GATE_POOLS = {
             hintDE: 'Umstellen: P(A ∩ B) = P(A) + P(B) − P(A ∪ B).'
         },
         {
-            q: 'A die is rolled. A = {1,2,3}, B = {3,4,5}. How many elements are in A ∩ B?',
-            qDE: 'Ein Würfel wird geworfen. A = {1,2,3}, B = {3,4,5}. Wie viele Elemente enthält A ∩ B?',
+            q: 'A fair six-sided die is rolled. A = {1,2,3}, B = {3,4,5}. How many elements are in A ∩ B?',
+            qDE: 'Ein fairer sechsseitiger Würfel wird geworfen. A = {1,2,3}, B = {3,4,5}. Wie viele Elemente enthält A ∩ B?',
             answer: 1, tolerance: 0, unit: 'elements',
-            hintEn: 'A ∩ B = {3}.',
-            hintDE: 'A ∩ B = {3}.'
+            hintEn: 'Count the amount of same elements in both sets.',
+            hintDE: 'Zähle die Anzahl der Elemente, die in beiden Mengen vorkommen.'
         },
 
         // ── 8. KOMPLEMENT (Complement) ───────────────────────────────────────────
@@ -262,16 +259,16 @@ const MATH_GATE_POOLS = {
             hintDE: 'P(A) = 1 − P(Aᶜ)'
         },
         {
-            q: 'A die is rolled. A = {1,2,3,4}. How many elements does Aᶜ contain?',
-            qDE: 'Ein Würfel wird geworfen. A = {1,2,3,4}. Wie viele Elemente enthält Aᶜ?',
+            q: 'A fair six-sided die is rolled. A = {1,2,3,4}. How many elements does Aᶜ contain?',
+            qDE: 'Ein fairer sechsseitiger Würfel wird geworfen. A = {1,2,3,4}. Wie viele Elemente enthält Aᶜ?',
             answer: 2, tolerance: 0, unit: 'elements',
-            hintEn: 'Aᶜ = {5, 6} — the elements of Ω not in A.',
-            hintDE: 'Aᶜ = {5, 6} — die Elemente von Ω, die nicht in A liegen.'
+            hintEn: 'Which elements of Ω are not in A?',
+            hintDE: 'Welche Elemente von Ω sind nicht in A?'
         },
 
         {
             q: 'P(A) = 0.6. What is P(Aᶜ)?',
-            qDE: 'P(A) = 0,6. Wie groß ist P(Aᶜ)?',
+            qDE: 'P(A) = 0,6. Was ist P(Aᶜ)?',
             answer: 0.4, tolerance: 0.001, unit: '',
             hintEn: 'The complement rule: P(Aᶜ) = 1 − P(A).',
             hintDE: 'Komplementregel: P(Aᶜ) = 1 − P(A).'
@@ -283,12 +280,12 @@ const MATH_GATE_POOLS = {
             q: 'By De Morgan\'s law: (A ∪ B)ᶜ = Aᶜ __ Bᶜ. Enter 1 for ∩ or 2 for ∪.',
             qDE: 'Nach der De-Morgan-Regel gilt: (A ∪ B)ᶜ = Aᶜ __ Bᶜ. Gib 1 für ∩ oder 2 für ∪ ein.',
             answer: 1, tolerance: 0, unit: '',
-            hintEn: '(A ∪ B)ᶜ = Aᶜ ∩ Bᶜ — De Morgan\'s first law.',
-            hintDE: '(A ∪ B)ᶜ = Aᶜ ∩ Bᶜ — erste De-Morgan-Regel.'
+            hintEn: 'The complement of an union is an intersection.',
+            hintDE: 'Das Komplement einer Vereinigung ist ein Schnitt.'
         },
         {
             q: 'P(Aᶜ) = 0.3, P(Bᶜ) = 0.4, P(Aᶜ ∩ Bᶜ) = 0.1. By De Morgan, what is P((A ∪ B)ᶜ)?',
-            qDE: 'P(Aᶜ) = 0,3, P(Bᶜ) = 0,4, P(Aᶜ ∩ Bᶜ) = 0,1. Nach De Morgan: Wie groß ist P((A ∪ B)ᶜ)?',
+            qDE: 'P(Aᶜ) = 0,3, P(Bᶜ) = 0,4, P(Aᶜ ∩ Bᶜ) = 0,1. Was ist P((A ∪ B)ᶜ) gemäß De Morgan?',
             answer: 0.1, tolerance: 0.001, unit: '',
             hintEn: '(A ∪ B)ᶜ = Aᶜ ∩ Bᶜ, so P((A ∪ B)ᶜ) = P(Aᶜ ∩ Bᶜ)',
             hintDE: '(A ∪ B)ᶜ = Aᶜ ∩ Bᶜ, also P((A ∪ B)ᶜ) = P(Aᶜ ∩ Bᶜ)'
@@ -304,25 +301,25 @@ const MATH_GATE_POOLS = {
         // ── 10. DISTRIBUTIVGESETZ (Distributive Law) ─────────────────────────────
 
         {
-            q: 'Simplify: A ∩ (B ∪ C). Which law gives A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)? Enter 1 for distributive law, 2 for De Morgan.',
-            qDE: 'Vereinfache: A ∩ (B ∪ C). Welches Gesetz liefert A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)? Gib 1 für Distributivgesetz, 2 für De Morgan ein.',
+            q: 'Which law gives A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)? Enter 1 for distributive law, 2 for De Morgan or 3 for the law of large numbers.',
+            qDE: 'Welches Gesetz liefert A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)? Gib 1 für Distributivgesetz, 2 für De Morgan oder 3 für das Gesetz großer Zahlen ein.',
             answer: 1, tolerance: 0, unit: '',
             hintEn: 'The distributive law: A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C).',
             hintDE: 'Das Distributivgesetz: A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C).'
         },
         {
-            q: 'P(A ∩ B) = 0.1, P(A ∩ C) = 0.2, and (A ∩ B) and (A ∩ C) are disjoint. Using the distributive law, what is P(A ∩ (B ∪ C))?',
-            qDE: 'P(A ∩ B) = 0,1, P(A ∩ C) = 0,2, und (A ∩ B) und (A ∩ C) sind disjunkt. Mit dem Distributivgesetz: Wie groß ist P(A ∩ (B ∪ C))?',
+            q: 'P(A ∩ B) = 0.1, P(A ∩ C) = 0.2, and (A ∩ B) and (A ∩ C) are disjoint. What is P(A ∩ (B ∪ C))?',
+            qDE: 'P(A ∩ B) = 0,1, P(A ∩ C) = 0,2, und (A ∩ B) und (A ∩ C) sind disjunkt. Was ist P(A ∩ (B ∪ C))?',
             answer: 0.3, tolerance: 0.001, unit: '',
             hintEn: 'A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C).',
             hintDE: 'A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)'
         },
         {
-            q: 'Using the distributive law: A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C). True or false? Enter 1 for true, 0 for false.',
-            qDE: 'Mit dem Distributivgesetz: A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C). Wahr oder falsch? Gib 1 für wahr, 0 für falsch ein.',
+            q: 'Is A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C) true or false? Enter 1 for true, 0 for false.',
+            qDE: 'Ist A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C) wahr oder falsch? Gib 1 für wahr, 0 für falsch ein.',
             answer: 1, tolerance: 0, unit: '',
-            hintEn: 'Yes — union distributes over intersection, just as ∩ distributes over ∪.',
-            hintDE: 'Ja — die Vereinigung ist distributiv über den Schnitt, genau wie ∩ über ∪.'
+            hintEn: 'Yes — ∪ distributes over ∩, just as ∩ distributes over ∪.',
+            hintDE: 'Ja — ∩ ist distributiv über ∩, genau wie ∩ über ∪.'
         },
 
         // ── 11. WAHRSCHEINLICHKEITSMASS (Probability Measure) ────────────────────
@@ -335,9 +332,9 @@ const MATH_GATE_POOLS = {
             hintDE: 'Kolmogorov-Axiom.'
         },
         {
-            q: 'Events A₁, A₂, A₃ are pairwise disjoint with P(A₁) = 0.2, P(A₂) = 0.5, P(A₃) = 0.3. What is P(A₁ ∪ A₂ ∪ A₃)?',
-            qDE: 'Ereignisse A₁, A₂, A₃ sind paarweise disjunkt mit P(A₁) = 0,2, P(A₂) = 0,5, P(A₃) = 0,3. Wie groß ist P(A₁ ∪ A₂ ∪ A₃)?',
-            answer: 1.0, tolerance: 0.001, unit: '',
+            q: 'Events A₁, A₂, A₃ are pairwise disjoint with P(A₁) = 0.25, P(A₂) = 0.55, P(A₃) = 0.1. What is P(A₁ ∪ A₂ ∪ A₃)?',
+            qDE: 'Ereignisse A₁, A₂, A₃ sind paarweise disjunkt mit P(A₁) = 0,25, P(A₂) = 0,55, P(A₃) = 0,1. Wie groß ist P(A₁ ∪ A₂ ∪ A₃)?',
+            answer: 0.9, tolerance: 0.001, unit: '',
             hintEn: 'σ-additivity.',
             hintDE: 'σ-Additivität.'
         },
@@ -359,15 +356,15 @@ const MATH_GATE_POOLS = {
             hintDE: 'P(A ∩ B) ≤ min(P(A), P(B)).'
         },
         {
-            q: 'P(A) = 0.7. What is the minimum possible value of P(A ∪ B) if P(B) = 0.4? Enter as a decimal.',
-            qDE: 'P(A) = 0,7. Was ist der minimal mögliche Wert von P(A ∪ B), wenn P(B) = 0,4? Gib als Dezimalzahl ein.',
+            q: 'P(A) = 0.7 and P(B) = 0.4. What is the minimum possible value of P(A ∪ B)? Enter as a decimal.',
+            qDE: 'P(A) = 0,7 und P(B) = 0.4. Was ist der minimal mögliche Wert von P(A ∪ B)? Gib als Dezimalzahl ein.',
             answer: 0.7, tolerance: 0.001, unit: '',
             hintEn: 'P(A ∪ B) ≥ max(P(A), P(B)).',
             hintDE: 'P(A ∪ B) ≥ max(P(A), P(B)).'
         },
         {
-            q: 'If A ⊆ B, then P(A) ≤ P(B). P(B) = 0.6 and A ⊆ B. What is the maximum possible value of P(A)? Enter as a decimal.',
-            qDE: 'Falls A ⊆ B, gilt P(A) ≤ P(B). P(B) = 0,6 und A ⊆ B. Was ist der maximal mögliche Wert von P(A)? Gib als Dezimalzahl ein.',
+            q: 'P(B) = 0.6 and A ⊆ B. What is the maximum possible value of P(A)? Enter as a decimal.',
+            qDE: 'P(B) = 0,6 und A ⊆ B. Was ist der maximal mögliche Wert von P(A)? Gib als Dezimalzahl ein.',
             answer: 0.6, tolerance: 0.001, unit: '',
             hintEn: 'Since A ⊆ B, P(A) ≤ P(B).',
             hintDE: 'Da A ⊆ B, gilt P(A) ≤ P(B).'
@@ -398,7 +395,7 @@ const MATH_GATE_POOLS = {
         },
         {
             q: 'P(A) = 0.5 and P(B) = 0.6. The union bound gives P(A ∪ B) ≤ 1.1. But probabilities cannot exceed 1. So the tightest valid upper bound is?',
-            qDE: 'P(A) = 0,5 und P(B) = 0,6. Die Boolesche Ungleichung liefert P(A ∪ B) ≤ 1,1. Da Wahrscheinlichkeiten nicht größer als 1 sein können, ist die schärfste gültige obere Schranke?',
+            qDE: 'P(A) = 0,5 und P(B) = 0,6. Die Boolesche Ungleichung liefert P(A ∪ B) ≤ 1,1. Da Wahrscheinlichkeiten nicht größer als 1 sein können, was ist die schärfste gültige obere Schranke?',
             answer: 1.0, tolerance: 0.001, unit: '',
             hintEn: 'The union bound gives 1.1, but P(A ∪ B) ≤ 1 always.',
             hintDE: 'Die Boolesche Ungleichung liefert 1,1, aber P(A ∪ B) ≤ 1 gilt immer.'
@@ -408,14 +405,14 @@ const MATH_GATE_POOLS = {
 
         {
             q: 'A Laplace space has 20 equally likely outcomes. Event A contains 5 outcomes. What is P(A)? Enter as a decimal.',
-            qDE: 'Ein Laplace-Raum hat 20 gleich wahrscheinliche Ergebnisse. Ereignis A enthält 5 Ergebnisse. Wie groß ist P(A)? Gib als Dezimalzahl ein.',
+            qDE: 'Ein Laplace-Raum hat 20 gleich wahrscheinliche Ergebnisse. Ereignis A enthält 5 Ergebnisse. Was ist P(A)? Gib als Dezimalzahl ein.',
             answer: 0.25, tolerance: 0.001, unit: '',
-            hintEn: 'P(A) = |A| / |Ω| = 5 / 20',
-            hintDE: 'P(A) = |A| / |Ω| = 5 / 20'
+            hintEn: 'P(A) = |A| / |Ω|',
+            hintDE: 'P(A) = |A| / |Ω|'
         },
         {
-            q: 'A card is drawn from a standard 52-card deck (Laplace space). What is the probability of drawing an ace? Enter the numerator of the fraction over 52.',
-            qDE: 'Eine Karte wird aus einem Standarddeck mit 52 Karten gezogen (Laplace-Raum). Wie groß ist die Wahrscheinlichkeit, ein Ass zu ziehen? Gib den Zähler über 52 ein.',
+            q: 'A card is randomly drawn from a standard 52-card deck. What is the probability of drawing an ace? Enter the numerator of the fraction over 52.',
+            qDE: 'Eine Karte wird aus einem Standarddeck mit 52 Karten zufällig gezogen. Wie groß ist die Wahrscheinlichkeit, ein Ass zu ziehen? Gib den Zähler über 52 ein.',
             answer: 4, tolerance: 0, unit: '/ 52',
             hintEn: 'There are 4 aces in 52 cards.',
             hintDE: 'Es gibt 4 Asse in 52 Karten.'
@@ -476,8 +473,8 @@ const MATH_GATE_POOLS = {
             q: 'An urn contains 5 balls labelled 1–5. You draw 3 times with replacement, order matters. How many outcomes are possible?',
             qDE: 'Eine Urne enthält 5 Bälle (1–5). Du ziehst 3 Mal mit Zurücklegen, Reihenfolge zählt. Wie viele Ergebnisse sind möglich?',
             answer: 125, tolerance: 0, unit: 'outcomes',
-            hintEn: 'With replacement, order matters: 5³',
-            hintDE: 'Mit Zurücklegen, Reihenfolge zählt: 5³.'
+            hintEn: 'With replacement, order matters: 5 possibilities in each draw.',
+            hintDE: 'Mit Zurücklegen, Reihenfolge zählt: 5 Möglichkeiten in jedem Zug.'
         },
         {
             q: 'An urn has 4 balls. Drawing 2 times with replacement and order matters: what is the probability of drawing ball #1 both times? Enter as a fraction over 16.',
@@ -488,27 +485,27 @@ const MATH_GATE_POOLS = {
         },
         {
             q: 'An urn contains 3 balls (red, blue, green). Drawing 2 times with replacement, order matters. How many outcomes contain at least one red ball?',
-            qDE: 'Eine Urne enthält 3 Bälle (rot, blau, grün). 2 Mal mit Zurücklegen, Reihenfolge zählt. Wie viele Ergebnisse enthalten mindestens einen roten Ball?',
+            qDE: 'Eine Urne enthält 3 Bälle (rot, blau, grün). Ziehe zwei Mal mit Zurücklegen, Reihenfolge zählt. Wie viele Ergebnisse enthalten mindestens einen roten Ball?',
             answer: 5, tolerance: 0, unit: 'outcomes',
-            hintEn: 'Total: 3² = 9. No red: 2² = 4',
-            hintDE: 'Gesamt: 3² = 9. Kein Rot: 2² = 4'
+            hintEn: 'Total outcomes: 3² = 9. No red: 2² = 4',
+            hintDE: 'Gesamtergebnisse: 3² = 9. Kein Rot: 2² = 4'
         },
 
         // ── 6. URNENMODELL MIT REIHENFOLGE OHNE ZURÜCKLEGEN ──────────────────────
 
         {
             q: 'An urn has 6 balls. You draw 2 without replacement, order matters. How many ordered outcomes are possible?',
-            qDE: 'Eine Urne hat 6 Bälle. Du ziehst 2 ohne Zurücklegen, Reihenfolge zählt. Wie viele geordnete Ergebnisse sind möglich?',
+            qDE: 'Eine Urne enthält 6 Bälle. Du ziehst 2 Bälle ohne Zurücklegen, Reihenfolge zählt. Wie viele geordnete Ergebnisse sind möglich?',
             answer: 30, tolerance: 0, unit: 'outcomes',
-            hintEn: '6 × 5 = 30. First draw: 6 options, second: 5 (no replacement).',
-            hintDE: '6 × 5 = 30. Erster Zug: 6 Möglichkeiten, zweiter: 5 (ohne Zurücklegen).'
+            hintEn: 'First draw: 6 options, second draw: 5 (no replacement).',
+            hintDE: 'Erster Zug: 6 Möglichkeiten, zweiter Zug: 5 (ohne Zurücklegen).'
         },
         {
             q: 'How many ways can 4 runners finish in 1st, 2nd, and 3rd place out of 8 runners? (Order matters, no replacement.)',
             qDE: 'Wie viele Möglichkeiten gibt es für Platz 1, 2 und 3 bei 8 Läufern? (Reihenfolge zählt, ohne Zurücklegen.)',
             answer: 336, tolerance: 0, unit: 'ways',
-            hintEn: '8 × 7 × 6 = 336 ordered arrangements.',
-            hintDE: '8 × 7 × 6 = 336 geordnete Anordnungen.'
+            hintEn: '8 different runners can finish first, 7 can finish second,...',
+            hintDE: '8 Läufer können Platz 1 erreichen, 7 Läufer können Platz 2 erreichen,...'
         },
         {
             q: 'An urn has 5 balls numbered 1–5. Two are drawn without replacement, order matters. What is the probability of drawing (1, 2) in exactly that order? Enter as a fraction over 20.',
@@ -529,17 +526,17 @@ const MATH_GATE_POOLS = {
         },
         {
             q: 'The odds in favour of event A are 3 (i.e. 3:1). What is P(A)? Enter as a decimal.',
-            qDE: 'Die Odds für Ereignis A betragen 3 (also 3:1). Wie groß ist P(A)? Gib als Dezimalzahl ein.',
+            qDE: 'Die Odds für Ereignis A betragen 3 (also 3:1). Was ist P(A)? Gib als Dezimalzahl ein.',
             answer: 0.75, tolerance: 0.001, unit: '',
-            hintEn: 'Odds = p/(1−p) = 3 → p = 3/4 = 0.75.',
-            hintDE: 'Odds = p/(1−p) = 3 → p = 3/4 = 0,75.'
+            hintEn: 'Odds = p/(1−p) = 3',
+            hintDE: 'Odds = p/(1−p) = 3'
         },
         {
             q: 'P(A) = 0.25. What are the odds against A (i.e. P(Aᶜ)/P(A))? Enter as a decimal.',
             qDE: 'P(A) = 0,25. Wie groß sind die Odds gegen A (also P(Aᶜ)/P(A))? Gib als Dezimalzahl ein.',
             answer: 3.0, tolerance: 0.001, unit: '',
-            hintEn: 'Odds against = (1 − 0.25) / 0.25 = 0.75 / 0.25 = 3.',
-            hintDE: 'Odds gegen A = (1 − 0,25) / 0,25 = 0,75 / 0,25 = 3.'
+            hintEn: 'Odds against = (1 − 0.25) / 0.25',
+            hintDE: 'Odds gegen A = (1 − 0,25) / 0,25'
         },
 
         // ── 8. SIEBFORMEL / INCLUSION-EXCLUSION ──────────────────────────────────
@@ -548,15 +545,15 @@ const MATH_GATE_POOLS = {
             q: 'P(A) = 0.5, P(B) = 0.4, P(C) = 0.3, P(A∩B) = 0.2, P(A∩C) = 0.1, P(B∩C) = 0.15, P(A∩B∩C) = 0.05. What is P(A ∪ B ∪ C)?',
             qDE: 'P(A) = 0,5, P(B) = 0,4, P(C) = 0,3, P(A∩B) = 0,2, P(A∩C) = 0,1, P(B∩C) = 0,15, P(A∩B∩C) = 0,05. Wie groß ist P(A ∪ B ∪ C)?',
             answer: 0.8, tolerance: 0.001, unit: '',
-            hintEn: 'Inclusion-exclusion: (0.5+0.4+0.3) − (0.2+0.1+0.15) + 0.05 = 1.2 − 0.45 + 0.05 = 0.8.',
-            hintDE: 'Siebformel: (0,5+0,4+0,3) − (0,2+0,1+0,15) + 0,05 = 1,2 − 0,45 + 0,05 = 0,8.'
+            hintEn: 'Inclusion-exclusion formula for 3 sets.',
+            hintDE: 'Siebformel für 3 Mengen.'
         },
         {
             q: 'P(A) = 0.6, P(B) = 0.5, P(C) = 0.4, P(A∩B) = 0.3, P(A∩C) = 0.2, P(B∩C) = 0.25, P(A∩B∩C) = 0.1. What is P(A ∪ B ∪ C)?',
             qDE: 'P(A) = 0,6, P(B) = 0,5, P(C) = 0,4, P(A∩B) = 0,3, P(A∩C) = 0,2, P(B∩C) = 0,25, P(A∩B∩C) = 0,1. Wie groß ist P(A ∪ B ∪ C)?',
             answer: 0.85, tolerance: 0.001, unit: '',
-            hintEn: 'Inclusion-exclusion: (0.6+0.5+0.4) − (0.3+0.2+0.25) + 0.1 = 1.5 − 0.75 + 0.1 = 0.85.',
-            hintDE: 'Siebformel: (0,6+0,5+0,4) − (0,3+0,2+0,25) + 0,1 = 1,5 − 0,75 + 0,1 = 0,85.'
+            hintEn: 'Inclusion-exclusion formula for 3 sets.',
+            hintDE: 'Siebformel für 3 Mengen.'
         },
         {
             q: 'In the inclusion-exclusion formula for 3 sets, how many pairwise intersection terms are subtracted? Enter a whole number.',
@@ -573,7 +570,7 @@ const MATH_GATE_POOLS = {
             qDE: 'Ω = {1,2,3,4}. Ist ℱ = {∅, {1,2}, {3,4}, Ω} eine gültige σ-Algebra? Gib 1 für ja, 0 für nein ein.',
             answer: 1, tolerance: 0, unit: '',
             hintEn: 'Check: contains ∅ and Ω ✓; {1,2}ᶜ = {3,4} ∈ ℱ ✓; closed under unions ✓. Valid.',
-            hintDE: 'Prüfung: enthält ∅ und Ω ✓; {1,2}ᶜ = {3,4} ∈ ℱ ✓; abgeschlossen unter Vereinigung ✓. Gültig.'
+            hintDE: 'Check: enthält ∅ und Ω ✓; {1,2}ᶜ = {3,4} ∈ ℱ ✓; abgeschlossen unter Vereinigung ✓. Gültig.'
         },
         {
             q: 'Ω = {1,2,3}. Is ℱ = {∅, {1}, {2}, Ω} a valid σ-algebra? Enter 1 for yes, 0 for no.',
@@ -582,48 +579,32 @@ const MATH_GATE_POOLS = {
             hintEn: '{1} ∪ {2} = {1,2} is not in ℱ — not closed under unions. Invalid.',
             hintDE: '{1} ∪ {2} = {1,2} ist nicht in ℱ — nicht abgeschlossen unter Vereinigung. Ungültig.'
         },
-        {
-            q: 'What is the smallest possible σ-algebra on any non-empty Ω? Enter 1 for {∅, Ω} or 2 for the full power set.',
-            qDE: 'Was ist die kleinste mögliche σ-Algebra auf einem beliebigen nicht-leeren Ω? Gib 1 für {∅, Ω} oder 2 für die volle Potenzmenge ein.',
-            answer: 1, tolerance: 0, unit: '',
-            hintEn: 'The trivial σ-algebra {∅, Ω} is always the smallest. The power set is the largest.',
-            hintDE: 'Die triviale σ-Algebra {∅, Ω} ist immer die kleinste. Die Potenzmenge ist die größte.'
-        },
     ],
 
     // ── WORLD 3 ─────────────────────────────────────────────────────────
     // 
     3: [
-
+        // ── 1. BEDINGTE WAHRSCHEINLICHKEIT (Conditional Probability) ─────────────
 
 
         {
             q: 'P(A ∩ B) = 0.12 and P(B) = 0.4. What is P(A | B)?',
-            qDE: 'P(A ∩ B) = 0,12 und P(B) = 0,4. Wie groß ist P(A | B)?',
+            qDE: 'P(A ∩ B) = 0,12 und P(B) = 0,4. Was ist P(A | B)?',
             answer: 0.3, tolerance: 0.001, unit: '',
-            hintEn: 'P(A|B) = P(A ∩ B) / P(B) = 0.12 / 0.4.',
-            hintDE: 'P(A|B) = P(A ∩ B) / P(B) = 0,12 / 0,4.'
+            hintEn: 'P(A|B) = P(A ∩ B) / P(B)',
+            hintDE: 'P(A|B) = P(A ∩ B) / P(B)'
         },
 
-        // ── 1. BEDINGTE WAHRSCHEINLICHKEIT (Conditional Probability) ─────────────
-
-        {
-            q: 'P(A ∩ B) = 0.12, P(B) = 0.4. What is P(A | B)? Enter as a decimal.',
-            qDE: 'P(A ∩ B) = 0,12, P(B) = 0,4. Wie groß ist P(A | B)? Gib als Dezimalzahl ein.',
-            answer: 0.3, tolerance: 0.001, unit: '',
-            hintEn: 'P(A|B) = P(A ∩ B) / P(B).',
-            hintDE: 'P(A|B) = P(A ∩ B) / P(B).'
-        },
         {
             q: 'P(B | A) = 0.5, P(A) = 0.6. What is P(A ∩ B)? Enter as a decimal.',
-            qDE: 'P(B | A) = 0,5, P(A) = 0,6. Wie groß ist P(A ∩ B)? Gib als Dezimalzahl ein.',
+            qDE: 'P(B | A) = 0,5, P(A) = 0,6. Was ist P(A ∩ B)? Gib als Dezimalzahl ein.',
             answer: 0.3, tolerance: 0.001, unit: '',
             hintEn: 'Multiplication rule: P(A ∩ B) = P(B|A) · P(A)',
             hintDE: 'Multiplikationsregel: P(A ∩ B) = P(B|A) · P(A)'
         },
         {
             q: 'P(A) = 0.4, P(B) = 0.5, P(A ∩ B) = 0.2. What is P(A | B)? Enter as a decimal.',
-            qDE: 'P(A) = 0,4, P(B) = 0,5, P(A ∩ B) = 0,2. Wie groß ist P(A | B)? Gib als Dezimalzahl ein.',
+            qDE: 'P(A) = 0,4, P(B) = 0,5, P(A ∩ B) = 0,2. Was ist P(A | B)? Gib als Dezimalzahl ein.',
             answer: 0.4, tolerance: 0.001, unit: '',
             hintEn: 'P(A|B) = P(A ∩ B) / P(B)',
             hintDE: 'P(A|B) = P(A ∩ B) / P(B)'
@@ -633,21 +614,21 @@ const MATH_GATE_POOLS = {
 
         {
             q: 'B₁ and B₂ partition Ω. P(B₁) = 0.3, P(B₂) = 0.7, P(A|B₁) = 0.4, P(A|B₂) = 0.2. What is P(A)?',
-            qDE: 'B₁ und B₂ partitionieren Ω. P(B₁) = 0,3, P(B₂) = 0,7, P(A|B₁) = 0,4, P(A|B₂) = 0,2. Wie groß ist P(A)?',
+            qDE: 'B₁ und B₂ partitionieren Ω. P(B₁) = 0,3, P(B₂) = 0,7, P(A|B₁) = 0,4, P(A|B₂) = 0,2. Was ist P(A)?',
             answer: 0.26, tolerance: 0.001, unit: '',
-            hintEn: 'P(A) = P(A|B₁)·P(B₁) + P(A|B₂)·P(B₂).',
+            hintEn: 'P(A) = P(A|B₁)·P(B₁) + P(A|B₂)·P(B₂)',
             hintDE: 'P(A) = P(A|B₁)·P(B₁) + P(A|B₂)·P(B₂)'
         },
         {
             q: 'Three machines produce parts: B₁ (50%), B₂ (30%), B₃ (20%). Defect rates: P(D|B₁)=0.02, P(D|B₂)=0.05, P(D|B₃)=0.03. What is P(D)? Enter as a decimal.',
-            qDE: 'Drei Maschinen produzieren Teile: B₁ (50%), B₂ (30%), B₃ (20%). Ausschussraten: P(D|B₁)=0,02, P(D|B₂)=0,05, P(D|B₃)=0,03. Wie groß ist P(D)?',
+            qDE: 'Drei Maschinen produzieren Teile: B₁ (50%), B₂ (30%), B₃ (20%). Ausschussraten: P(D|B₁)=0,02, P(D|B₂)=0,05, P(D|B₃)=0,03. Was ist P(D)?',
             answer: 0.031, tolerance: 0.001, unit: '',
             hintEn: 'P(D) = 0.02×0.5 + 0.05×0.3 + 0.03×0.2',
             hintDE: 'P(D) = 0,02×0,5 + 0,05×0,3 + 0,03×0,2'
         },
         {
             q: 'B₁, B₂, B₃ partition Ω with P(B₁)=0.2, P(B₂)=0.5, P(B₃)=0.3. P(A|B₁)=0.6, P(A|B₂)=0.4, P(A|B₃)=0.1. What is P(A)?',
-            qDE: 'B₁, B₂, B₃ partitionieren Ω mit P(B₁)=0,2, P(B₂)=0,5, P(B₃)=0,3. P(A|B₁)=0,6, P(A|B₂)=0,4, P(A|B₃)=0,1. Wie groß ist P(A)?',
+            qDE: 'B₁, B₂, B₃ partitionieren Ω mit P(B₁)=0,2, P(B₂)=0,5, P(B₃)=0,3. P(A|B₁)=0,6, P(A|B₂)=0,4, P(A|B₃)=0,1. Was ist P(A)?',
             answer: 0.35, tolerance: 0.001, unit: '',
             hintEn: 'P(A) = 0.6×0.2 + 0.4×0.5 + 0.1×0.3',
             hintDE: 'P(A) = 0,6×0,2 + 0,4×0,5 + 0,1×0,3'
@@ -657,21 +638,15 @@ const MATH_GATE_POOLS = {
 
         {
             q: 'P(B₁)=0.3, P(B₂)=0.7, P(A|B₁)=0.4, P(A|B₂)=0.2, P(A)=0.26. What is P(B₁|A)? Enter as a decimal rounded to 2 places.',
-            qDE: 'P(B₁)=0,3, P(B₂)=0,7, P(A|B₁)=0,4, P(A|B₂)=0,2, P(A)=0,26. Wie groß ist P(B₁|A)? Gib als Dezimalzahl auf 2 Stellen gerundet an.',
+            qDE: 'P(B₁)=0,3, P(B₂)=0,7, P(A|B₁)=0,4, P(A|B₂)=0,2, P(A)=0,26. Was ist P(B₁|A)? Gib als Dezimalzahl auf 2 Stellen gerundet an.',
             answer: 0.46, tolerance: 0.01, unit: '',
             hintEn: 'Bayes: P(B₁|A) = P(A|B₁)·P(B₁) / P(A)',
             hintDE: 'Bayes: P(B₁|A) = P(A|B₁)·P(B₁) / P(A)'
         },
-        {
-            q: 'A test for a disease is 90% sensitive: P(+|D)=0.9. Specificity: P(−|Dᶜ)=0.95, so P(+|Dᶜ)=0.05. Prevalence P(D)=0.01. What is P(D|+)? Enter as a decimal rounded to 3 places.',
-            qDE: 'Ein Test hat Sensitivität P(+|K)=0,9 und Spezifität P(−|Kᶜ)=0,95, also P(+|Kᶜ)=0,05. Prävalenz P(K)=0,01. Wie groß ist P(K|+)? Gib als Dezimalzahl auf 3 Stellen gerundet an.',
-            answer: 0.154, tolerance: 0.005, unit: '',
-            hintEn: 'P(+) = 0.9×0.01 + 0.05×0.99 = 0.009 + 0.0495',
-            hintDE: 'P(+) = 0,9×0,01 + 0,05×0,99 = 0,009 + 0,0495 = 0,0585. P(K|+)'
-        },
+
         {
             q: 'P(A|B)=0.6, P(B)=0.4, P(A)=0.3. What is P(B|A)? Enter as a decimal rounded to 2 places.',
-            qDE: 'P(A|B)=0,6, P(B)=0,4, P(A)=0,3. Wie groß ist P(B|A)? Gib als Dezimalzahl auf 2 Stellen gerundet an.',
+            qDE: 'P(A|B)=0,6, P(B)=0,4, P(A)=0,3. Was ist P(B|A)? Gib als Dezimalzahl auf 2 Stellen gerundet an.',
             answer: 0.8, tolerance: 0.01, unit: '',
             hintEn: 'Bayes: P(B|A) = P(A|B)·P(B)/P(A)',
             hintDE: 'Bayes: P(B|A) = P(A|B)·P(B)/P(A)'
@@ -688,7 +663,7 @@ const MATH_GATE_POOLS = {
         },
         {
             q: 'In a two-stage probability tree, P(B₁)=0.6, P(B₂)=0.4. P(A|B₁)=0.3, P(A|B₂)=0.7. What is P(B₂ ∩ A)?',
-            qDE: 'In einem zweistufigen Wahrscheinlichkeitsbaum: P(B₁)=0,6, P(B₂)=0,4. P(A|B₁)=0,3, P(A|B₂)=0,7. Wie groß ist P(B₂ ∩ A)?',
+            qDE: 'In einem zweistufigen Wahrscheinlichkeitsbaum: P(B₁)=0,6, P(B₂)=0,4. P(A|B₁)=0,3, P(A|B₂)=0,7. Was ist P(B₂ ∩ A)?',
             answer: 0.28, tolerance: 0.001, unit: '',
             hintEn: 'P(B₂ ∩ A) = P(A|B₂) · P(B₂)',
             hintDE: 'P(B₂ ∩ A) = P(A|B₂) · P(B₂)'
@@ -697,16 +672,16 @@ const MATH_GATE_POOLS = {
             q: 'A coin is flipped twice. In the probability tree, how many paths lead to exactly one head?',
             qDE: 'Eine Münze wird zweimal geworfen. Wie viele Pfade im Wahrscheinlichkeitsbaum führen zu genau einem Kopf?',
             answer: 2, tolerance: 0, unit: 'paths',
-            hintEn: 'The paths HT and TH both give exactly one head — 2 paths.',
-            hintDE: 'Die Pfade KZ und ZK ergeben jeweils genau einen Kopf — 2 Pfade.'
+            hintEn: 'The paths Head-Tails and Tails-Head both give exactly one head — 2 paths.',
+            hintDE: 'Die Pfade Kopf-Zahl und Zahl-Kopf ergeben jeweils genau einen Kopf — 2 Pfade.'
         },
 
         // ── 5. STOCHASTISCHE UNABHÄNGIGKEIT (Statistical Independence) ────────────
 
         {
-            q: 'P(A)=0.4, P(B)=0.5, P(A ∩ B)=0.2. Are A and B independent? Enter 1 for yes, 0 for no.',
-            qDE: 'P(A)=0,4, P(B)=0,5, P(A ∩ B)=0,2. Sind A und B unabhängig? Gib 1 für ja, 0 für nein ein.',
-            answer: 1, tolerance: 0, unit: '',
+            q: 'P(A)=0.4, P(A ∩ B)=0.2. For which value of P(B) are A and B independent?',
+            qDE: 'P(A)=0,4, P(A ∩ B)=0,2. Für welchen Wert von P(B) sind A und B unabhängig? ',
+            answer: 0.5, tolerance: 0, unit: '',
             hintEn: 'Independent if P(A ∩ B) = P(A)·P(B).',
             hintDE: 'Unabhängig wenn P(A ∩ B) = P(A)·P(B).'
         },
@@ -719,7 +694,7 @@ const MATH_GATE_POOLS = {
         },
         {
             q: 'A and B are independent with P(A)=0.5 and P(B)=0.4. What is P(A ∩ B)? Enter as a decimal.',
-            qDE: 'A und B sind unabhängig mit P(A)=0,5 und P(B)=0,4. Wie groß ist P(A ∩ B)? Gib als Dezimalzahl ein.',
+            qDE: 'A und B sind unabhängig mit P(A)=0,5 und P(B)=0,4. Was ist P(A ∩ B)? Gib als Dezimalzahl ein.',
             answer: 0.2, tolerance: 0.001, unit: '',
             hintEn: 'Independence: P(A ∩ B) = P(A) · P(B)',
             hintDE: 'Unabhängigkeit: P(A ∩ B) = P(A) · P(B)'
@@ -729,45 +704,45 @@ const MATH_GATE_POOLS = {
 
         {
             q: 'A fair die is rolled. X is the number shown. What is P(X = 3)? Enter as a fraction over 6.',
-            qDE: 'Ein fairer Würfel wird geworfen. X ist die gezeigte Zahl. Wie groß ist P(X = 3)? Gib den Zähler über 6 ein.',
+            qDE: 'Ein fairer Würfel wird geworfen. X ist die gezeigte Zahl. Was ist P(X = 3)? Gib den Zähler über 6 ein.',
             answer: 1, tolerance: 0, unit: '/ 6',
-            hintEn: 'X maps each face to its number. P(X=3) = 1/6 in a Laplace space.',
-            hintDE: 'X bildet jede Seite auf ihre Zahl ab. P(X=3) = 1/6 im Laplace-Raum.'
+            hintEn: 'X maps each face to its number.',
+            hintDE: 'X bildet jede Seite auf ihre Zahl ab'
         },
         {
             q: 'X takes values {0, 1, 2} with P(X=0)=0.2, P(X=1)=0.5, P(X=2)=0.3. What is P(X ≥ 1)? Enter as a decimal.',
-            qDE: 'X nimmt Werte {0,1,2} an mit P(X=0)=0,2, P(X=1)=0,5, P(X=2)=0,3. Wie groß ist P(X ≥ 1)? Gib als Dezimalzahl ein.',
+            qDE: 'X nimmt Werte {0,1,2} an mit P(X=0)=0,2, P(X=1)=0,5, P(X=2)=0,3. Was ist ist P(X ≥ 1)? Gib als Dezimalzahl ein.',
             answer: 0.8, tolerance: 0.001, unit: '',
-            hintEn: 'P(X ≥ 1) = 1 − P(X=0) = 1 − 0.2 = 0.8.',
-            hintDE: 'P(X ≥ 1) = 1 − P(X=0) = 1 − 0,2 = 0,8.'
+            hintEn: 'P(X ≥ 1) = 1 − P(X=0)',
+            hintDE: 'P(X ≥ 1) = 1 − P(X=0)'
         },
         {
             q: 'X takes values {1, 2, 3} with P(X=1)=0.5, P(X=2)=0.3, P(X=3)=p. What must p be? Enter as a decimal.',
-            qDE: 'X nimmt Werte {1,2,3} an mit P(X=1)=0,5, P(X=2)=0,3, P(X=3)=p. Wie groß muss p sein? Gib als Dezimalzahl ein.',
+            qDE: 'X nimmt Werte {1,2,3} an mit P(X=1)=0,5, P(X=2)=0,3, P(X=3)=p. Was muss p sein? Gib als Dezimalzahl ein.',
             answer: 0.2, tolerance: 0.001, unit: '',
-            hintEn: 'All probabilities must sum to 1: p = 1 − 0.5 − 0.3 = 0.2.',
-            hintDE: 'Alle Wahrscheinlichkeiten müssen 1 ergeben: p = 1 − 0,5 − 0,3 = 0,2.'
+            hintEn: 'All probabilities must sum to 1',
+            hintDE: 'Alle Wahrscheinlichkeiten müssen 1 ergeben'
         },
 
         // ── 7. VERTEILUNG VON ZUFALLSVARIABLEN (Distribution of Random Variables) ─
 
         {
             q: 'X has distribution P(X=1)=0.3, P(X=2)=0.4, P(X=3)=0.3. What is P(X ≤ 2)? Enter as a decimal.',
-            qDE: 'X hat die Verteilung P(X=1)=0,3, P(X=2)=0,4, P(X=3)=0,3. Wie groß ist P(X ≤ 2)? Gib als Dezimalzahl ein.',
+            qDE: 'X hat die Verteilung P(X=1)=0,3, P(X=2)=0,4, P(X=3)=0,3. Was ist P(X ≤ 2)? Gib als Dezimalzahl ein.',
             answer: 0.7, tolerance: 0.001, unit: '',
             hintEn: 'P(X ≤ 2) = P(X=1) + P(X=2).',
             hintDE: 'P(X ≤ 2) = P(X=1) + P(X=2).'
         },
         {
             q: 'X is uniformly distributed on {1, 2, 3, 4, 5}. What is P(2 ≤ X ≤ 4)? Enter as a decimal.',
-            qDE: 'X ist gleichverteilt auf {1,2,3,4,5}. Wie groß ist P(2 ≤ X ≤ 4)? Gib als Dezimalzahl ein.',
+            qDE: 'X ist gleichverteilt auf {1,2,3,4,5}. Was ist P(2 ≤ X ≤ 4)? Gib als Dezimalzahl ein.',
             answer: 0.6, tolerance: 0.001, unit: '',
             hintEn: 'Values {2,3,4}: 3 out of 5 equally likely outcomes.',
             hintDE: 'Werte {2,3,4}: 3 von 5 gleich wahrscheinlichen Ergebnissen.'
         },
         {
             q: 'X has P(X=0)=0.1, P(X=1)=0.4, P(X=2)=0.4, P(X=3)=0.1. What is P(X = 1 or X = 2)? Enter as a decimal.',
-            qDE: 'X hat P(X=0)=0,1, P(X=1)=0,4, P(X=2)=0,4, P(X=3)=0,1. Wie groß ist P(X=1 oder X=2)? Gib als Dezimalzahl ein.',
+            qDE: 'X hat P(X=0)=0,1, P(X=1)=0,4, P(X=2)=0,4, P(X=3)=0,1. Was ist P(X=1 oder X=2)? Gib als Dezimalzahl ein.',
             answer: 0.8, tolerance: 0.001, unit: '',
             hintEn: 'P(X=1) + P(X=2)',
             hintDE: 'P(X=1) + P(X=2)'
@@ -777,21 +752,21 @@ const MATH_GATE_POOLS = {
 
         {
             q: 'X is discrete with P(X=k) = 0.1 for k = 1,…,10. What is P(3 ≤ X ≤ 7)? Enter as a decimal.',
-            qDE: 'X ist diskret mit P(X=k) = 0,1 für k = 1,…,10. Wie groß ist P(3 ≤ X ≤ 7)? Gib als Dezimalzahl ein.',
+            qDE: 'X ist diskret mit P(X=k) = 0,1 für k = 1,…,10. Was ist P(3 ≤ X ≤ 7)? Gib als Dezimalzahl ein.',
             answer: 0.5, tolerance: 0.001, unit: '',
-            hintEn: 'Values 3,4,5,6,7: 5 outcomes × 0.1',
-            hintDE: 'Werte 3,4,5,6,7: 5 Ergebnisse × 0,1'
+            hintEn: 'Values 3,4,5,6,7',
+            hintDE: 'Werte 3,4,5,6,7'
         },
         {
-            q: 'F(x) is a CDF with F(3)=0.7 and F(1)=0.3. What is P(1 < X ≤ 3)? Enter as a decimal.',
-            qDE: 'F(x) ist eine Verteilungsfunktion mit F(3)=0,7 und F(1)=0,3. Wie groß ist P(1 < X ≤ 3)? Gib als Dezimalzahl ein.',
+            q: 'F(x) is a distribution function with F(3)=0.7 and F(1)=0.3. What is P(1 < X ≤ 3)? Enter as a decimal.',
+            qDE: 'F(x) ist eine Verteilungsfunktion mit F(3)=0,7 und F(1)=0,3. Was ist P(1 < X ≤ 3)? Gib als Dezimalzahl ein.',
             answer: 0.4, tolerance: 0.001, unit: '',
             hintEn: 'P(1 < X ≤ 3) = F(3) − F(1)',
             hintDE: 'P(1 < X ≤ 3) = F(3) − F(1)'
         },
         {
             q: 'F(5)=0.9 and F(2)=0.5. What is P(2 < X ≤ 5)? Enter as a decimal.',
-            qDE: 'F(5)=0,9 und F(2)=0,5. Wie groß ist P(2 < X ≤ 5)? Gib als Dezimalzahl ein.',
+            qDE: 'F(5)=0,9 und F(2)=0,5. Was ist P(2 < X ≤ 5)? Gib als Dezimalzahl ein.',
             answer: 0.4, tolerance: 0.001, unit: '',
             hintEn: 'P(2 < X ≤ 5) = F(5) − F(2)',
             hintDE: 'P(2 < X ≤ 5) = F(5) − F(2)'
@@ -800,15 +775,15 @@ const MATH_GATE_POOLS = {
         // ── 9. ZÄHLDICHTE (Probability Mass Function) ─────────────────────────────
 
         {
-            q: 'A discrete RV X has PMF p(1)=0.2, p(2)=0.5, p(3)=0.3. What is p(2)? Enter as a decimal.',
-            qDE: 'Eine diskrete ZV X hat Zähldichte p(1)=0,2, p(2)=0,5, p(3)=0,3. Wie groß ist p(2)? Gib als Dezimalzahl ein.',
+            q: 'A discrete Random Variable X has PMF p(1)=0.2, p(2)=0.5, p(3)=0.3. What is p(2)? Enter as a decimal.',
+            qDE: 'Eine diskrete Zufallsvariable X hat die Zähldichte p(1)=0,2, p(2)=0,5, p(3)=0,3. Was ist p(2)? Gib als Dezimalzahl ein.',
             answer: 0.5, tolerance: 0.001, unit: '',
-            hintEn: 'The PMF directly gives P(X=2) = p(2) = 0.5.',
-            hintDE: 'Die Zähldichte gibt direkt P(X=2) = p(2) = 0,5.'
+            hintEn: 'The PMF directly gives P(X=2) = p(2)',
+            hintDE: 'Die Zähldichte gibt direkt P(X=2) = p(2)'
         },
         {
             q: 'A PMF must sum to 1. If p(1)=0.3 and p(2)=0.3, and X only takes values 1, 2, 3, what is p(3)?',
-            qDE: 'Eine Zähldichte muss 1 ergeben. Wenn p(1)=0,3 und p(2)=0,3 und X nur Werte 1,2,3 annimmt, wie groß ist p(3)?',
+            qDE: 'Eine Zähldichte muss 1 ergeben. Wenn p(1)=0,3 und p(2)=0,3 und X nur Werte 1,2,3 annimmt, was ist p(3)?',
             answer: 0.4, tolerance: 0.001, unit: '',
             hintEn: 'p(3) = 1 − 0.3 − 0.3',
             hintDE: 'p(3) = 1 − 0,3 − 0,3'
@@ -817,8 +792,8 @@ const MATH_GATE_POOLS = {
             q: 'X has PMF p(k) = c · k for k = 1, 2, 3, 4. What must c be so that all probabilities sum to 1? Enter as a decimal.',
             qDE: 'X hat Zähldichte p(k) = c · k für k = 1,2,3,4. Welchen Wert muss c haben, damit sich alle Wahrscheinlichkeiten zu 1 addieren? Gib als Dezimalzahl ein.',
             answer: 0.1, tolerance: 0.001, unit: '',
-            hintEn: 'c(1+2+3+4) = 1 → 10c = 1',
-            hintDE: 'c(1+2+3+4) = 1 → 10c = 1'
+            hintEn: 'c(1+2+3+4) = 1',
+            hintDE: 'c(1+2+3+4) = 1'
         },
 
         // ── 10. VERTEILUNGSFUNKTION (Cumulative Distribution Function) ────────────
@@ -831,19 +806,21 @@ const MATH_GATE_POOLS = {
             hintDE: 'F(2) = p(1) + p(2)'
         },
         {
-            q: 'A CDF satisfies F(+∞) = ?',
+            q: 'A distribution function satisfies F(+∞) = ?',
             qDE: 'Eine Verteilungsfunktion erfüllt F(+∞) = ?',
             answer: 1, tolerance: 0, unit: '',
-            hintEn: 'By definition the CDF approaches 1 as x → +∞.',
-            hintDE: 'Per Definition nähert sich die Verteilungsfunktion 1 an für x → +∞.'
+            hintEn: 'By definition...',
+            hintDE: 'Per Definition...'
         },
         {
             q: 'F(x) is a CDF. Which value is impossible for F(x)? Enter 1 for −0.2, 2 for 0, 3 for 0.7, or 4 for 1.',
             qDE: 'F(x) ist eine Verteilungsfunktion. Welcher Wert ist unmöglich für F(x)? Gib 1 für −0,2, 2 für 0, 3 für 0,7 oder 4 für 1 ein.',
             answer: 1, tolerance: 0, unit: '',
-            hintEn: 'A CDF satisfies 0 ≤ F(x) ≤ 1 for all x. Negative values are impossible.',
-            hintDE: 'Eine Verteilungsfunktion erfüllt 0 ≤ F(x) ≤ 1 für alle x. Negative Werte sind unmöglich.'
+            hintEn: 'A CDF satisfies 0 ≤ F(x) ≤ 1 for all x',
+            hintDE: 'Eine Verteilungsfunktion erfüllt 0 ≤ F(x) ≤ 1 für alle x'
         },
+
+        //todo continue
 
         // ── 11. QUANTILFUNKTION (Quantile Function) ───────────────────────────────
 
@@ -916,7 +893,7 @@ const MATH_GATE_POOLS = {
             hintEn: 'F(0) = 1 − e^(−λ·0) = 1 − e⁰ = 1 − 1 = 0. The distribution starts at 0.',
             hintDE: 'F(0) = 1 − e^(−λ·0) = 1 − e⁰ = 1 − 1 = 0. Die Verteilung beginnt bei 0.'
         },
-       
+
     ],
 
     // ── WORLD 4 ─────────────────────────────────────────────────────────
@@ -2038,9 +2015,9 @@ function submitMathGate() {
             STATE.mathGatePassed.push(pendingGateGi);
             save();
             trackEvent('math_gate_passed', {
-            level_id: `${cur ? cur.world + '-' + cur.li : '?'}`,
-            gate_gi: pendingGateGi,
-            attempts: gateAttempts + 1,
+                level_id: `${cur ? cur.world + '-' + cur.li : '?'}`,
+                gate_gi: pendingGateGi,
+                attempts: gateAttempts + 1,
             });
         }
         showMgFeedback(t('mg_correct'), true);
@@ -2054,6 +2031,7 @@ function submitMathGate() {
         trackAchStat('questionsCorrect');
     } else {
         gateAttempts++;
+        trackAchStat('gateRejections');
         showMgFeedback(t('mg_wrong').replace('{n}', gateAttempts), false);
 
         // After 2 wrong attempts show the hint

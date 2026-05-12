@@ -209,8 +209,8 @@ const ITEM_DEFS = {
     scoutPrimer: {
         id: 'scoutPrimer', icon: '📜',
         nameEn: "Scout's Primer", nameDE: 'Pfadfinder-Kompass',
-        descEn: 'Activates now. On your next level start, answer a question — A correct answer gives you 2 pre-solved rows & columns as a headstart!',
-        descDE: 'Aktiviert sofort. Beim nächsten Level-Start: Beantworte eine Frage — Eine richtige Antwort gibt dir 2 vorgelöste Zeilen & Spalten!',
+        descEn: 'On your next level start, answer up to 5 questions. Each correct answer pre-solves a row & column!',
+        descDE: 'Beim nächsten Level-Start erscheinen bis zu 5 Fragen. Jede richtige Antwort gibt eine vorgelöste Zeile & Spalte!',
         scoreCost: 0, sellVal: 40, rarity: 'epic', weight: 4
     },
 

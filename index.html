@@ -31,7 +31,7 @@
 <body>
     <div id="screen-title" class="screen active">
         <h1 class="title-glow">STOXELS<br><span style="font-size:0.35em;opacity:0.5;letter-spacing:3px;">v0.15 BETA</span></h1>
-        <p class="title-tag" data-t="tagline">PROBABILITY THEORY &amp; STATISTICS NONOGRAMS</p>
+        <p class="title-tag" data-t="tagline">STOCHASTICS &amp; STATISTICS NONOGRAMS</p>
         <div class="lang-switch">
             <button class="lang-btn active" onclick="setLang('en')">EN</button>
             <button class="lang-btn" onclick="setLang('de')">DE</button>
@@ -198,11 +198,12 @@
                     <div class="bonus-sidebar-hint" id="bonus-sidebar-hint"></div>
                 </div>
             </div>
-            <div class="inv-strip">
-                <div class="item-use-toast" id="item-toast"></div>
-                <div class="inv-strip-header" data-t="inv_strip_header">🎒 INVENTORY — click an item to use it</div>
-                <div class="inv-strip-list" id="inv-list"></div>
-            </div>
+                <div class="inv-strip">
+                    <div class="item-use-toast" id="item-toast"></div>
+                    <div class="inv-strip-header" data-t="inv_strip_header">🎒 INVENTORY - Left Click to use an item - Right Click to reshuffle</div>
+                    <div id="reshuffle-counter" class="reshuffle-counter-bar">♻ 0/5</div>
+                    <div class="inv-strip-list" id="inv-list"></div>
+                </div>
         </div>
     </div>
 
@@ -370,7 +371,7 @@
             <button class="gtb-btn"
                     onclick="resetAchievements()"
                     style="margin-left: auto; color: var(--red); border-color: var(--red);">
-                RESET ALL
+                RESET ALL ACHIEVEMENTS
             </button>
 
         </div>

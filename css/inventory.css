@@ -160,3 +160,99 @@
     color: var(--red);
     margin-top: 3px;
 }
+
+
+
+
+/* ── RESHUFFLE COUNTER (next to INVENTORY label) ── */
+#reshuffle-counter {
+    font-family: var(--PX);
+    font-size: 11px;
+    color: #aaa;
+    padding: 0 18px 4px;
+    letter-spacing: 0.5px;
+}
+
+/* ── RESHUFFLE MODAL OVERLAY ── */
+#rshuffle-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+#rshuffle-box {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 28px 32px 32px;
+    max-width: 620px;
+    width: 90%;
+    text-align: center;
+}
+
+#rshuffle-title {
+    font-family: var(--PX);
+    font-size: 18px;
+    color: var(--yellow);
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+}
+
+#rshuffle-subtitle {
+    font-size: 13px;
+    color: #aaa;
+    margin-bottom: 22px;
+}
+
+#rshuffle-cards {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.rshuffle-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 18px 14px;
+    min-width: 150px;
+    max-width: 170px;
+    cursor: pointer;
+    transition: border-color .12s, transform .12s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.rshuffle-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+}
+
+.rshuffle-card-icon {
+    font-size: 42px;
+}
+
+.rshuffle-card-name {
+    font-family: var(--PX);
+    font-size: 12px;
+    text-align: center;
+}
+
+.rshuffle-card-rarity {
+    font-size: 10px;
+    color: #777;
+    font-family: var(--PX);
+    letter-spacing: 0.5px;
+}
+
+.rshuffle-card-desc {
+    font-size: 12px;
+    color: #ccc;
+    text-align: center;
+    line-height: 1.4;
+}

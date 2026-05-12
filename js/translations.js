@@ -78,7 +78,7 @@ function setLang(l) {
 const T = {
     en: {
         // Title screen
-        tagline: 'PROBABILITY THEORY & STATISTICS NONOGRAMS',
+        tagline: 'STOCHASTICS & STATISTICS NONOGRAMS',
 
         // Navigation buttons (used across multiple screens)
         btn_play: '▶ PLAY', btn_howtoplay: '? HOW TO PLAY',
@@ -252,7 +252,7 @@ const T = {
         quiz_skip: 'SKIP (no bonus)',
 
         // Inventory strip header
-        inv_strip_header: '🎒 INVENTORY',
+        inv_strip_header: '🎒 INVENTORY - Left Click to use an item - Right Click to add to the reshuffle pile',
 
         // Tutorial steps
         tut2_s0_title: 'Welcome to STOXELS!',
@@ -304,7 +304,7 @@ const T = {
 
         reset_close: '✕ CLOSE',
         reset_title: '⚠ RESET ALL PROGRESS',
-        reset_body: 'This will permanently erase:<br><strong style="color:var(--accent2)">· All completed levels<br>· All highscores<br>· All bonus claims<br>· All inventory items<br>· All Moodle codes</strong><br><br>Your current playthrough will be gone. This cannot be undone.',
+        reset_body: 'This will permanently erase:<br><strong style="color:var(--accent2)">· All completed levels<br>· All highscores<br>· All bonus claims<br>· All inventory items<br>· All Moodle codes<br><br>This will NOT reset your collected achievements.</strong><br><br>Your current playthrough will be gone. This cannot be undone.',
         reset_confirm: '🗑 YES, RESET EVERYTHING',
         reset_cancel: 'CANCEL',
 
@@ -315,7 +315,7 @@ const T = {
 
     de: {
         // Title screen
-        tagline: 'WAHRSCHEINLICHKEITSTHEORIE & STATISTIK NONOGRAMME',
+        tagline: 'STOCHASTIK & STATISTIK NONOGRAMME',
 
         // Navigation buttons
         btn_play: '▶ SPIELEN', btn_howtoplay: '? ANLEITUNG',
@@ -490,7 +490,7 @@ const T = {
         quiz_skip: 'ÜBERSPRINGEN (kein Bonus)',
 
         // Inventory strip header
-        inv_strip_header: '🎒 INVENTAR',
+        inv_strip_header: '🎒 INVENTAR - Links Klick um ein Item zu verwenden - Rechts Klick um ein Item zum Tausch-Stapel hinzuzufügen ',
 
         // Tutorial steps
         tut2_s0_title: 'Willkommen bei STOXELS!',

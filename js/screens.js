@@ -145,7 +145,7 @@ function buildLS() {
                 (isDone ? ' done' : '') +
                 (isMathGated && isUnlocked ? ' math-gated' : '') +
                 (isLastInWorld && w.data.length > 1 ? ' ascension' : '') +
-                (isMaxCleared(gi) ? ' max-cleared' : ''); 
+                (isMaxCleared(gi) ? ' max-cleared' : '');
 
             // Star rating (only shown if the level has been completed)
             const stars = isDone ? getStars(gi) : '';
@@ -471,6 +471,12 @@ function startLevel(gi) {
 function _doStartLevel(gi) {
     cur = ALL[gi]; // set the current puzzle (levels.js)
 
+    // level_replayed: increment whenever a level that's already in STATE.done
+    // is started again (replay button, or manually re-selecting from level select).
+    if (STATE.done.includes(gi)) {
+        trackAchStat('levelsReplayed');
+    }
+
     const rows = cur.grid.length;
     const cols = cur.grid[0].length;
 
@@ -599,6 +605,8 @@ function replayLvl() {
 
 // primerQuestion — the question currently shown in the primer modal.
 let primerQuestion = null;
+let primerStreak = 0;        // how many questions answered correctly so far
+const PRIMER_MAX = 5;        // maximum questions in a chain
 
 // getPrimerQuestion — picks randomly from the combined pool of:
 //   - all QUIZ_QUESTIONS (quiz.js)
@@ -634,10 +642,10 @@ function getPrimerQuestion() {
 
 // showPrimerModal — builds and injects a one-off modal into the DOM,
 //   then shows it. The modal is removed from the DOM when dismissed.
-function showPrimerModal() {
+function showPrimerModal(streak = 0) {
+    primerStreak = streak;
     primerQuestion = getPrimerQuestion();
 
-    // Build modal HTML
     const overlay = document.createElement('div');
     overlay.id = 'primer-overlay';
     overlay.className = 'modal-bg show';
@@ -645,6 +653,16 @@ function showPrimerModal() {
 
     const q = primerQuestion.q;
     const isMulti = primerQuestion.isMultiChoice;
+
+    // Progress indicator: show e.g. "Question 1 / 5"
+    const progressLabel = LANG === 'de'
+        ? `Frage ${streak + 1} von ${PRIMER_MAX} — Bei richtiger Antwort: +1 Zeile & +1 Spalte vorgelöst`
+        : `Question ${streak + 1} of ${PRIMER_MAX} — On correct answer: +1 row & +1 column pre-solved`;
+
+    // Dots showing streak so far
+    const dots = Array.from({ length: PRIMER_MAX }, (_, i) =>
+        `<span style="display:inline-block;width:12px;height:12px;border-radius:50%;margin:0 3px;background:${i < streak ? 'var(--green)' : 'var(--border2)'}"></span>`
+    ).join('');
 
     let answerHtml = '';
     if (isMulti) {
@@ -655,7 +673,8 @@ function showPrimerModal() {
             : '';
         answerHtml = `
             <div class="mg-answer-row" style="margin-top:14px;">
-                <input type="text" id="primer-input" class="mg-input" placeholder="${LANG === 'de' ? 'deine Antwort' : 'your answer'}" autocomplete="off" />
+                <input type="text" id="primer-input" class="mg-input"
+                    placeholder="${LANG === 'de' ? 'deine Antwort' : 'your answer'}" autocomplete="off" />
                 ${unitLabel}
                 <button class="mg-submit-btn" onclick="submitPrimerAnswer()">${LANG === 'de' ? 'PRÜFEN ▶' : 'CHECK ▶'}</button>
             </div>`;
@@ -664,32 +683,36 @@ function showPrimerModal() {
     overlay.innerHTML = `
         <div class="modal-box mg-box" style="border-left-color:var(--purple);">
             <div class="mg-world-badge" style="background:var(--purple);color:#fff;">
-                📜 ${LANG === 'de' ? "PFADFINDER-KOMPASS — BONUSFRAGE" : "SCOUT'S PRIMER — BONUS QUESTION"}
+                📜 ${LANG === 'de' ? "PFADFINDER-KOMPASS — BONUSFRAGEN" : "SCOUT'S PRIMER — BONUS QUESTIONS"}
             </div>
-            <div class="mg-instruction" style="margin-top:12px;">
-                ${LANG === 'de'
-            ? 'Beantworte diese Frage für einen Vorsprung beim Level-Start:'
-            : 'Answer correctly for a headstart on this level:'}
+            <div style="margin-top:10px;text-align:center;">${dots}</div>
+            <div class="mg-instruction" style="margin-top:8px;font-size:10px;opacity:0.75;">
+                ${progressLabel}
             </div>
             <div class="mg-question" id="primer-question-text" style="margin-top:10px;">${q}</div>
             ${answerHtml}
             <div class="mg-feedback" id="primer-feedback"></div>
             <div class="mg-hint-box" id="primer-hint" style="display:none;"></div>
             <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
-                <button class="mg-submit-btn" id="primer-skip-btn" onclick="skipPrimer()" style="background:transparent;border-color:#555;color:#777;">
-                    ${LANG === 'de' ? 'ÜBERSPRINGEN (kein Vorsprung)' : 'SKIP (no headstart)'}
+                <button class="mg-submit-btn" id="primer-skip-btn" onclick="skipPrimer()"
+                    style="background:transparent;border-color:#555;color:#777;">
+                    ${LANG === 'de' ? 'ÜBERSPRINGEN (kein weiterer Vorsprung)' : 'SKIP (no further headstart)'}
                 </button>
             </div>
             <div class="mg-footer">
-                ${LANG === 'de'
-            ? 'Richtig: 2 Zeilen + 2 Spalten werden automatisch für dich gelöst!'
-            : 'Correct: 2 rows + 2 columns will be solved for you as a headstart!'}
+                ${streak === 0
+                    ? (LANG === 'de'
+                        ? 'Richtig: nächste Frage erscheint. Bis zu 5 Zeilen + 5 Spalten möglich!'
+                        : 'Correct: next question appears. Up to 5 rows + 5 columns possible!')
+                    : (LANG === 'de'
+                        ? `Bisher richtig: ${streak} — weiter für mehr Vorsprung!`
+                        : `Correct so far: ${streak} — keep going for more headstart!`)
+                }
             </div>
         </div>`;
 
     document.body.appendChild(overlay);
 
-    // Wire up multiple-choice buttons
     if (isMulti) {
         const optsEl = document.getElementById('primer-opts');
         primerQuestion.opts.forEach(opt => {
@@ -702,7 +725,6 @@ function showPrimerModal() {
         });
     }
 
-    // Allow Enter key for free-text input
     setTimeout(() => {
         const inp = document.getElementById('primer-input');
         if (inp) {
@@ -742,35 +764,69 @@ function submitPrimerAnswer() {
     showPrimerResult(correct);
 }
 
-// showPrimerResult — shows feedback, applies the headstart if correct,
-//   then auto-closes the modal after a short delay.
+
+
 function showPrimerResult(correct) {
     const fb = document.getElementById('primer-feedback');
     const skipBtn = document.getElementById('primer-skip-btn');
     if (skipBtn) skipBtn.style.display = 'none';
 
     if (correct) {
+        const newStreak = primerStreak + 1;
         fb.className = 'mg-feedback mg-ok';
-        fb.textContent = LANG === 'de'
-            ? '✓ Richtig! Vorsprung wird angewendet…'
-            : '✓ Correct! Applying headstart…';
-        setTimeout(() => {
-            closePrimerModal();
-            applyPrimerHeadstart();
-        }, 1000);
+
+        if (newStreak >= PRIMER_MAX) {
+            // Answered all 5 correctly
+            fb.textContent = LANG === 'de'
+                ? `✓ Perfekt! ${newStreak}/${PRIMER_MAX} richtig — maximaler Vorsprung!`
+                : `✓ Perfect! ${newStreak}/${PRIMER_MAX} correct — maximum headstart!`;
+            trackAchStat('primerCorrect');
+            setTimeout(() => {
+                closePrimerModal();
+                applyPrimerHeadstart(newStreak);
+            }, 1000);
+        } else {
+            // Correct but more questions remain
+            fb.textContent = LANG === 'de'
+                ? `✓ Richtig! ${newStreak}/${PRIMER_MAX} — nächste Frage…`
+                : `✓ Correct! ${newStreak}/${PRIMER_MAX} — next question…`;
+            trackAchStat('primerCorrect');
+            setTimeout(() => {
+                closePrimerModal();
+                showPrimerModal(newStreak); // chain: open next question
+            }, 900);
+        }
     } else {
+        // Wrong answer — apply whatever streak was built up
         fb.className = 'mg-feedback mg-bad';
-        fb.textContent = LANG === 'de'
-            ? '✗ Falsch. Kein Vorsprung — viel Erfolg!'
-            : '✗ Wrong. No headstart — good luck!';
-        setTimeout(closePrimerModal, 1800);
+        if (primerStreak > 0) {
+            fb.textContent = LANG === 'de'
+                ? `✗ Falsch. Vorsprung für ${primerStreak} richtige Antwort(en) wird angewendet…`
+                : `✗ Wrong. Applying headstart for ${primerStreak} correct answer(s)…`;
+            setTimeout(() => {
+                closePrimerModal();
+                applyPrimerHeadstart(primerStreak);
+            }, 1800);
+        } else {
+            fb.textContent = LANG === 'de'
+                ? '✗ Falsch. Kein Vorsprung — viel Erfolg!'
+                : '✗ Wrong. No headstart — good luck!';
+            setTimeout(closePrimerModal, 1800);
+        }
     }
 }
 
-// skipPrimer — dismisses the modal without applying any headstart.
+
+
 function skipPrimer() {
-    closePrimerModal();
+    if (primerStreak > 0) {
+        closePrimerModal();
+        applyPrimerHeadstart(primerStreak);
+    } else {
+        closePrimerModal();
+    }
 }
+
 
 // closePrimerModal — removes the primer overlay from the DOM.
 function closePrimerModal() {
@@ -779,31 +835,28 @@ function closePrimerModal() {
     primerQuestion = null;
 }
 
-// applyPrimerHeadstart — solves 2 random rows + 2 random columns,
-//   filling correct tiles and marking wrong tiles (like markWrongTiles)
-//   so the player has a genuine headstart.
-function applyPrimerHeadstart() {
-    if (!cur) return;
+
+
+function applyPrimerHeadstart(count) {
+    if (!cur || count <= 0) return;
     const sol = cur.grid;
     const rows = sol.length, cols = sol[0].length;
 
-    // Solve rows: reveal all correct tiles + mark all wrong tiles in 2 rows
-    const rowIdxs = shuffle(Array.from({ length: rows }, (_, i) => i)).slice(0, 2);
+    const rowIdxs = shuffle(Array.from({ length: rows }, (_, i) => i)).slice(0, count);
     rowIdxs.forEach(r => {
         for (let c = 0; c < cols; c++) {
             if (sol[r][c] === 1) {
                 revealedGrid[r][c] = true;
                 userGrid[r][c] = 1;
             } else if (userGrid[r][c] === 0) {
-                userGrid[r][c] = 2; // mark as empty (✕)
+                userGrid[r][c] = 2;
             }
             renderCell(r, c);
             updClues(r, c);
         }
     });
 
-    // Solve cols: same treatment for 2 columns
-    const colIdxs = shuffle(Array.from({ length: cols }, (_, i) => i)).slice(0, 2);
+    const colIdxs = shuffle(Array.from({ length: cols }, (_, i) => i)).slice(0, count);
     colIdxs.forEach(c => {
         for (let r = 0; r < rows; r++) {
             if (sol[r][c] === 1) {
@@ -817,6 +870,11 @@ function applyPrimerHeadstart() {
         }
     });
 
-    showToast(`📜 ${t('item_primer_headstart')}`);
-    checkWin(); // in case the headstart already solves the puzzle
+    const msg = LANG === 'de'
+        ? `📜 ${count} Zeile(n) + ${count} Spalte(n) vorgelöst!`
+        : `📜 ${count} row(s) + ${count} column(s) pre-solved!`;
+    showToast(msg);
+    checkWin();
+
+    if (dead) trackAchStat('primerSolvedAll');
 }

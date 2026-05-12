@@ -46,8 +46,8 @@ const W1 = [
         reveal: "omega is a possible result in a random experiment",
         revealDE: "omega ist ein mögliches Ergebnis eines Zufallsexperiments",
         timer: 1800,
-        bonusHint: "Finish in 20 seconds",
-        bonusHintDE: "In 20 Sekunden abschließen",
+        bonusHint: "Finish in less than 20 seconds",
+        bonusHintDE: "In weniger als 20 Sekunden abschließen",
         bonusType: "fast",
         bonusParam: 20,
         grid: G([0, 0, 0, 0, 0], [0, 0, 0, 1, 1], [1, 0, 0, 0, 1], [1, 0, 1, 0, 1], [1, 1, 1, 1, 1])
@@ -92,8 +92,8 @@ const W1 = [
         reveal: "Smallest event in a sample space",
         revealDE: "Kleinste Ereignis in der Ergebnismenge",
         timer: 1800,
-        bonusHint: "Finish in 30 seconds",
-        bonusHintDE: "In 30 Sekunden abschließen",
+        bonusHint: "Finish in less than 30 seconds",
+        bonusHintDE: "In weniger als 30 Sekunden abschließen",
         bonusType: "fast",
         bonusParam: 30,
         grid: G(
@@ -110,8 +110,8 @@ const W1 = [
         reveal: "A Venn-Diagram is a graphical presentation of two or more sets",
         revealDE: "Ein Venn-Diagramm ist eine grafische Darstellung von zwei oder mehr Mengen",
         timer: 1800,
-        bonusHint: "Finish in under 2 minutes",
-        bonusHintDE: "In unter 2 Minuten abschließen",
+        bonusHint: "Finish in less than 2 minutes",
+        bonusHintDE: "In weniger als 2 Minuten abschließen",
         bonusType: "fast",
         bonusParam: 120,
         grid: G([0, 1, 1, 1, 1, 1, 1, 1, 1, 0], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -203,8 +203,8 @@ const W1 = [
         reveal: "If P is a probability measure and A,B are disjoint, then the probability of a union is just the sum of probabilities",
         revealDE: "Wenn P ein Wahrscheinlichkeitsmaß und A,B disjunkte Ereignisse sind, dann entspricht die Wahrscheinlichkeit einer Vereinigung der Summe der Wahrscheinlichkeiten",
         timer: 1800,
-        bonusHint: "Finish in under 10 Minutes",
-        bonusHintDE: "Beende das Level in unter 10 Minuten",
+        bonusHint: "Finish in less than 10 minutes",
+        bonusHintDE: "In weniger als 10 Minuten abschließen",
         bonusType: "fast",
         bonusParam: 600,
         grid: G(
@@ -275,8 +275,8 @@ const W2 = [
         reveal: "The typical notation to denote that two parameters are not equal",
         revealDE: "Die typische Notation für die Ungleichheit zweier Parameter",
         timer: 1800,
-        bonusHint: "Finish within 30 seconds",
-        bonusHintDE: "Beende das Level in weniger als 30 Sekunden",
+        bonusHint: "Finish in less than 30 seconds",
+        bonusHintDE: "In weniger als 30 Sekunden abschließen",
         bonusType: "fast",
         bonusParam: 30,
         grid: G(
@@ -306,8 +306,8 @@ const W2 = [
         reveal: "|A| is the notation for the order of the set A",
         revealDE: "|A| ist die Notation für die Mächtigkeit der Menge A",
         timer: 1800,
-        bonusHint: "Finish in 10 seconds",
-        bonusHintDE: "In 10 Sekunden abschließen",
+        bonusHint: "Finish in less than 10 seconds",
+        bonusHintDE: "In weniger als 10 Sekunden abschließen",
         bonusType: "fast",
         bonusParam: 10,
         grid: G([1, 0, 0, 0, 1], [1, 0, 0, 0, 1], [1, 0, 1, 0, 1], [1, 0, 0, 0, 1], [1, 0, 0, 0, 1])
@@ -389,8 +389,8 @@ const W2 = [
         reveal: "For a sample space with K elements the discrete uniform distribution is defined as 1/K",
         revealDE: "Für eine Ergebnismenge mit K Elementen ist die diskrete Gleichverteilung definiert durch 1/K",
         timer: 1800,
-        bonusHint: "Finish within 10 Minutes",
-        bonusHintDE: "Beende das Level in 10 Minuten",
+        bonusHint: "Finish in less than 10 minutes",
+        bonusHintDE: "In weniger als 10 Minuten abschließen",
         bonusType: "fast",
         bonusParam: 1800,
         grid: G(
@@ -475,10 +475,10 @@ const W3 = [
         reveal: "X is typically a random variable",
         revealDE: "X ist typischerweise eine Zufallsvariable",
         timer: 1800,
-        bonusHint: "Finish with 0 mistakes",
-        bonusHintDE: "Ohne Fehler abschließen",
-        bonusType: "nomiss",
-        bonusParam: 0,
+        bonusHint: "Finish in less than 20 seconds",
+        bonusHintDE: "In weniger als 20 Sekunden abschließen",
+        bonusType: "fast",
+        bonusParam: 20,
         grid: G([1, 0, 0, 0, 1], [0, 1, 0, 1, 0], [0, 0, 1, 0, 0], [0, 1, 0, 1, 0], [1, 0, 0, 0, 1])
     },
 
@@ -505,10 +505,10 @@ const W3 = [
         reveal: "This is the definition of the distribution function of X",
         revealDE: "Dies ist die Definition der Verteilungsfunktion von X",
         timer: 1800,
-        bonusHint: "Finish without any mistakes",
-        bonusHintDE: "Beende das Level ohne Fehler",
-        bonusType: "nomiss",
-        bonusParam: 0,
+        bonusHint: "Finish in less than 5 minutes",
+        bonusHintDE: "In weniger als 5 Minuten abschließen",
+        bonusType: "fast",
+        bonusParam: 300,
         grid: G(
         [1,1,1,0,1,1,0,1,0,0,0,1,0,0,0,0,0,0,1,1],[1,0,1,0,1,0,0,0,1,0,1,0,0,1,0,1,0,1,0,1],[1,1,1,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0,0,1],
         [1,0,0,0,1,0,0,0,1,0,1,0,0,1,0,1,0,1,0,1],[1,0,0,0,1,1,0,1,0,0,0,1,0,0,0,0,0,0,1,1]
@@ -558,8 +558,8 @@ const W3 = [
         reveal: "This is a graphical representation of a probability tree",
         revealDE: "Dies ist eine graphische Darstellung eines Wahrscheinlichkeitsbaumes",
         timer: 1800,
-        bonusHint: "Finish within 10 Minutes",
-        bonusHintDE: "Beende das Level in weniger als 10 Minuten",
+        bonusHint: "Finish in less than 10 minutes",
+        bonusHintDE: "In weniger als 10 Minuten abschließen",
         bonusType: "fast",
         bonusParam: 600,
         grid: G(
@@ -598,8 +598,8 @@ const W3 = [
         reveal: "This is the definition of the quantile function",
         revealDE: "Dies ist die Definition der Quantilfunktion",
         timer: 1800,
-        bonusHint: "Finish in under 10 minutes",
-        bonusHintDE: "Beende das Level in weniger als 10 Minuten",
+        bonusHint: "Finish in less than 10 minutes",
+        bonusHintDE: "In weniger als 10 Minuten abschließen",
         bonusType: "fast",
         bonusParam: 600,
         grid: G(
@@ -737,10 +737,10 @@ const W4 = [
         reveal: "Notation for the Bernoulli distribution with parameter p",
         revealDE: "Notation für die Bernoulli - Verteilung mit Parameter p",
         timer: 1800,
-        bonusHint: "Finish in 3 Minutes",
-        bonusHintDE: "In 3 Minuten abschließen",
+        bonusHint: "Finish in less than 3 Minutes",
+        bonusHintDE: "In weniger als 3 Minuten abschließen",
         bonusType: "fast",
-        bonusParam: 20,
+        bonusParam: 180,
         grid: G(
             [0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0], [0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0], [0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0],
             [0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0], [0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0]
@@ -770,8 +770,8 @@ const W4 = [
         reveal: "Typical notation for a random sample in stochastics",
         revealDE: "Typische Notation für eine Zufallsstichprobe in der Stochastik",
         timer: 1800,
-        bonusHint: "Finish within 1 minute",
-        bonusHintDE: "Beende das Level in weniger als 1 Minute",
+        bonusHint: "Finish in less than 1 minute",
+        bonusHintDE: "In weniger als 1 Minute abschließen",
         bonusType: "fast",
         bonusParam: 60,
         grid: G(
@@ -836,8 +836,8 @@ const W4 = [
         reveal: "Typical notation of the binomial coefficient",
         revealDE: "Typische Notation für den Binomialkoeffizienten",
         timer: 1800,
-        bonusHint: "Finish within 2 minutes",
-        bonusHintDE: "Beende das Level in weniger als 2 Minuten",
+        bonusHint: "Finish in less than 2 minutes",
+        bonusHintDE: "In weniger als 2 Minuten abschließen",
         bonusType: "fast",
         bonusParam: 120,
         grid: G(
@@ -929,8 +929,8 @@ const W4 = [
         reveal: "This is the transformation formula for the expected value of a discrete random variable",
         revealDE: "Dies ist die Transformationsformel für den Erwartungswert einer diskreten Zufallsvariable",
         timer: 1800,
-        bonusHint: "Finish within 15 Minutes",
-        bonusHintDE: "Beende das Level in weniger als 15 Minuten",
+        bonusHint: "Finish in less than 15 minutes",
+        bonusHintDE: "In weniger als 15 Minuten abschließen",
         bonusType: "fast",
         bonusParam: 900,
         grid: G(
@@ -1027,10 +1027,236 @@ const W4 = [
 ];
 
 
-
-
 const W5 = [
 
+    {   //5x5
+        hint: "Lambda",
+        hintDE: "Lambda",
+        reveal: "Typical notation for lambda",
+        revealDE: "Typische Notation für Lambda",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [1, 0, 0, 0, 0], [0, 1, 0, 0, 0], [0, 0, 1, 0, 0],
+            [0, 1, 0, 1, 0], [1, 0, 0, 0, 1]
+        )
+    },
+
+    {   //5x5
+        hint: "Normal",
+        hintDE: "Normal",
+        reveal: "Notation for the distribution function of a normal distribution",
+        revealDE: "Notation für die Verteilungsfunktion einer Normalverteilung",
+        timer: 1800,
+        bonusHint: "Finish in less than 30 seconds",
+        bonusHintDE: "In weniger als 30 Sekunden abschließen",
+        bonusType: "fast",
+        bonusParam: 30,
+        grid: G(
+            [0, 0, 1, 0, 0], [0, 1, 1, 1, 0], [1, 0, 1, 0, 1],
+            [0, 1, 1, 1, 0], [0, 0, 1, 0, 0]
+        )
+    },
+
+    {   //5x5
+        hint: "Factorial",
+        hintDE: "Fakultät",
+        reveal: "k! = k * (k-1) * (k-2) * ... * 1",
+        revealDE: "k! = k * (k-1) * (k-2) * ... * 1",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [0, 0, 0, 0, 1], [1, 0, 1, 0, 1], [1, 1, 0, 0, 1],
+            [1, 0, 1, 0, 0], [0, 0, 0, 0, 1]
+        )
+    },
+
+    {   //5x20
+        hint: "Standard Normal",
+        hintDE: "Standard Normalverteilung",
+        reveal: "Standard-Normaldistribution has expectation 0 and variance 1",
+        revealDE: "Standard Normalverteilungen haben Erwartungswert 0 und Varianz 1",
+        timer: 1800,
+        bonusHint: "Finish without using items",
+        bonusHintDE: "Beende das Level ohne Items zu nutzen",
+        bonusType: "noitem",
+        bonusParam: 0,
+        grid: G(
+            [1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1], [1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1], [1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1],
+            [1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1], [1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1]
+        )
+    },
+
+    {   //5x25
+        hint: "Exponential Distribution",
+        hintDE: "Exponentialverteilung",
+        reveal: "Notation for an exponential distribution with parameter lambda",
+        revealDE: "Notation für eine Exponentialverteilung mit Parameter lambda",
+        timer: 1800,
+        bonusHint: "Finish with at most 3 mistakes",
+        bonusHintDE: "Beende das Level mit höchstens 3 Fehlern",
+        bonusType: "lowmiss",
+        bonusParam: 3,
+        grid: G(
+            [1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1], [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1], [1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1], [1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1]
+        )
+    },
+
+    {   //5x35
+        hint: "Poisson Limit Theorem",
+        hintDE: "Poisson-Grenzwertsatz",
+        reveal: "A binomial distribution converges to a Poisson distribution",
+        revealDE: "Eine Binomialverteilung konvergiert gegen eine Poissonverteilung",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0], [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0], [0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0],
+            [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0], [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0]
+        )
+    },
+
+
+    {   //10x5
+        hint: "Geometric Expectation",
+        hintDE: "Geometrische Erwartung",
+        reveal: "E(X) = 1/p when X ~ Geo(p)",
+        revealDE: "E(X) = 1/p wenn X ~ Geo(p)",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [0, 0, 1, 0, 0], [0, 1, 1, 0, 0], [0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0], [1, 1, 1, 1, 1], [0, 1, 1, 1, 0],
+            [0, 1, 0, 1, 0], [0, 1, 1, 1, 0], [0, 1, 0, 0, 0],
+            [0, 1, 0, 0, 0]
+        )
+    },
+
+    {   //10x10
+        hint: "Uniform Distribution",
+        hintDE: "Stetige Gleichverteilung",
+        reveal: "1/(b-a) is the density of X ~ U[a,b]",
+        revealDE: "1/(b-a) ist die Dichte von X~U[a,b]",
+        timer: 1800,
+        bonusHint: "Finish in less than 5 minutes",
+        bonusHintDE: "In weniger als 5 Minuten abschließen",
+        bonusType: "fast",
+        bonusParam: 300,
+        grid: G(
+            [0, 0, 0, 0, 0, 1, 0, 0, 0, 0], [0, 0, 0, 0, 1, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 1, 1, 0, 1, 1, 0, 1, 1, 1], [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+            [1, 1, 1, 0, 0, 0, 0, 1, 1, 1]
+        )
+    },
+
+
+    {   //10x15
+        hint: "Poisson-Distribution",
+        hintDE: "Poissonverteilung",
+        reveal: "This is the density of a Poisson - Distribution",
+        revealDE: "Dies ist die Zähldichte einer Poissonverteilung",
+        timer: 1800,
+        bonusHint: "Finish without using items",
+        bonusHintDE: "Beende das Level ohne Items zu nutzen",
+        bonusType: "noitem",
+        bonusParam: 0,
+        grid: G(
+            [0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0], [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0], [0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1],
+            [1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0], [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0], [1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        )
+    },
+
+    {   //10x40
+        hint: "Standardized",
+        hintDE: "Standardisiert",
+        reveal: "Standardizing a normally distributed random variable X makes it standard normal distributed",
+        revealDE: "Wenn eine normalverteilte Zufallsvariable X standardisiert wird, dann ist sie Standard - Normalverteilt",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0],
+            [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0], [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], [0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        )
+    },
+
+
+    {   //10x45
+        hint: "Poisson Convolution",
+        hintDE: "Poisson Faltung",
+        reveal: "If X~Poi(3) and Y~Poi(2) are independent, then X+Y~Poi(3+2)=Poi(5)",
+        revealDE: "Wenn X~Poi(3) und Y~Poi(2) unabhängig sind, dann ist X+Y~Poi(3+2)=Poi(5)",
+        timer: 1800,
+        bonusHint: "Finish with at most 10 mistakes",
+        bonusHintDE: "Beende das Level mit höchstens 10 Fehlern",
+        bonusType: "lowmiss",
+        bonusParam: 10,
+        grid: G(
+            [0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0], [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0], [0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0], [0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        )
+    },
+
+
+    {   //5x25
+        hint: "Geometric Distribution",
+        hintDE: "Geometrische Verteilung",
+        reveal: "This is the (discrete) density of a geometric distribution with parameter p",
+        revealDE: "Dies ist die Zähldichte einer geometrischen Verteilung mit Parameter p",
+        timer: 1800,
+        bonusHint: "Finish with at most 1 mistakes",
+        bonusHintDE: "Beende das Level mit höchstens 1 Fehlern",
+        bonusType: "lowmiss",
+        bonusParam: 1,
+        grid: G(
+            [1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1], [1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1], [1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0]
+        )
+    },
+
+
+
+    {   //20x25
+        hint: "Hypergeometric Distribution",
+        hintDE: "Hypergeometrische Verteilung",
+        reveal: "This is the probability of drawing r red balls from an urn with N = R+B balls",
+        revealDE: "Dies ist die Wahrscheinlichkeit genau r Kugeln aus einer Urne mit N = R+B zu ziehen",
+        timer: 1800,
+        bonusHint: "Finish in less than 20 minutes",
+        bonusHintDE: "In weniger als 20 Minuten abschließen",
+        bonusType: "fast",
+        bonusParam: 1200,
+        grid: G(
+            [0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0], [0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0], [0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0], [0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0], [0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0],
+            [0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0], [0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0], [0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        )
+    },
 
 ];
 

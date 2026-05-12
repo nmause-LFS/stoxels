@@ -251,8 +251,8 @@ function ac(row, col) {
                     mistakes: mistakeCount,
                 });
 
-
-
+                // bounceback: record this as a failed level
+                window._lastFailedGi = cur.gIdx;
 
                 document.getElementById('lose-title').textContent = t('hc_fail_title');
                 document.getElementById('lose-sub').textContent = t('hc_fail_sub');
@@ -306,8 +306,15 @@ function applyPenalty() {
     const pen = pens[Math.min(mistakeCount - 1, pens.length - 1)];
 
     // Deduct penalty seconds and refresh the clock display
+    const timerBefore = timerSecs;
     timerSecs = Math.max(0, timerSecs - Math.round(pen * penMult));
     updTimer();
+
+    // penalty_clutch: flag if this penalty pushed the timer below 60s (and player
+    // was above 60s before), so scoring.js can award the achievement on win.
+    if (timerBefore >= 60 && timerSecs < 60 && timerSecs > 0) {
+        window._hadPenaltyClutch = true;
+    }
 
     // Show the penalty amount in the HUD, then clear it after 2.2 s
     const pi = document.getElementById('pen-info');

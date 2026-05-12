@@ -297,3 +297,40 @@
         color: var(--accent);
         font-style: normal;
     }
+
+
+
+/* ── Category sections ── */
+.ach-category {
+    margin-bottom: 28px;
+}
+
+.ach-category-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    background: var(--panel);
+    border-left: 3px solid var(--accent2);
+    border-bottom: 1px solid var(--border);
+}
+
+.ach-category-icon {
+    font-size: 16px;
+}
+
+.ach-category-name {
+    font-family: var(--PX);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    flex: 1;
+}
+
+.ach-category-count {
+    font-family: var(--PX);
+    font-size: 9px;
+    color: var(--accent2);
+    opacity: 0.7;
+}

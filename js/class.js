@@ -68,24 +68,24 @@ const CLASS_DEFS = {
             nameDE: 'Arkane Enthüllung',
             descCursorEn: 'Click a cell to reveal it and its neighbours',
             descCursorDE: 'Klicke eine Zelle, um sie und ihre Nachbarn zu enthüllen',
-            cooldownSeconds: 1200, // 1200,
+            cooldownSeconds: 420, // 1200,
             levels: [
                 {
                     level: 1,
-                    descEn: 'Click a cell to reveal the correct state of all cells within 1 step. Cooldown: 20 minutes.',
-                    descDE: 'Klicke eine Zelle, um alle Zellen im Umkreis von 1 Schritt zu enthüllen. Abklingzeit: 20 Minuten.',
+                    descEn: 'Click a cell to reveal the correct state of all cells within 1 step. Cooldown: 7 minutes.',
+                    descDE: 'Klicke eine Zelle, um alle Zellen im Umkreis von 1 Schritt zu enthüllen. Abklingzeit: 7 Minuten.',
                     effect: { radius: 1 }
                 },
                 {
                     level: 2,
-                    descEn: 'Click a cell to reveal the correct state of all cells within 2 steps. Cooldown: 20 minutes.',
-                    descDE: 'Klicke eine Zelle, um alle Zellen im Umkreis von 2 Schritten zu enthüllen. Abklingzeit: 20 Minuten.',
+                    descEn: 'Click a cell to reveal the correct state of all cells within 2 steps. Cooldown: 7 minutes.',
+                    descDE: 'Klicke eine Zelle, um alle Zellen im Umkreis von 2 Schritten zu enthüllen. Abklingzeit: 7 Minuten.',
                     effect: { radius: 2 }
                 },
                 {
                     level: 3,
-                    descEn: 'Click a cell to reveal the correct state of all cells within 3 steps. Cooldown: 20 minutes.',
-                    descDE: 'Klicke eine Zelle, um alle Zellen im Umkreis von 3 Schritten zu enthüllen. Abklingzeit: 20 Minuten.',
+                    descEn: 'Click a cell to reveal the correct state of all cells within 3 steps. Cooldown: 7 minutes.',
+                    descDE: 'Klicke eine Zelle, um alle Zellen im Umkreis von 3 Schritten zu enthüllen. Abklingzeit: 7 Minuten.',
                     effect: { radius: 3 }
                 },
             ]
@@ -96,24 +96,24 @@ const CLASS_DEFS = {
             nameDE: 'Absoluter Nullpunkt',
             descCursorEn: 'Click a cell to freeze time and click without causing mistakes',
             descCursorDE: 'Klicke eine Zelle zum Einfrieren der Zeit und klicke danach schnell ohne Fehler zu verursachen',
-            cooldownSeconds: 900,
+            cooldownSeconds: 300,
             levels: [
                 {
                     level: 1,
-                    descEn: 'Freeze the timer for 1s. Mistakes cause no penalties. Cooldown: 15 minutes.',
-                    descDE: 'Friere die Zeit für 1s ein. Fehler verursachen keine Strafen. Abklingzeit: 15 Minuten.',
+                    descEn: 'Freeze the timer for 1s. Mistakes cause no penalties. Cooldown: 5 minutes.',
+                    descDE: 'Friere die Zeit für 1s ein. Fehler verursachen keine Strafen. Abklingzeit: 5 Minuten.',
                     effect: { freezeDuration: 1000 }
                 },
                 {
                     level: 2,
-                    descEn: 'Freeze the timer for 1.5s. Mistakes cause no penalties. Cooldown: 15 minutes.',
-                    descDE: 'Friere die Zeit für 1.5 ein. Fehler verursachen keine Strafen. Abklingzeit: 15 Minuten.',
+                    descEn: 'Freeze the timer for 1.5s. Mistakes cause no penalties. Cooldown: 5 minutes.',
+                    descDE: 'Friere die Zeit für 1.5 ein. Fehler verursachen keine Strafen. Abklingzeit: 5 Minuten.',
                     effect: { freezeDuration: 1500 }
                 },
                 {
                     level: 3,
-                    descEn: 'Freeze the timer for 2s. Mistakes cause no penalties. Cooldown: 15 minutes.',
-                    descDE: 'Friere die Zeit für 2s ein. Fehler verursachen keine Strafen. Abklingzeit: 15 Minuten.',
+                    descEn: 'Freeze the timer for 2s. Mistakes cause no penalties. Cooldown: 5 minutes.',
+                    descDE: 'Friere die Zeit für 2s ein. Fehler verursachen keine Strafen. Abklingzeit: 5 Minuten.',
                     effect: { freezeDuration: 2000 }
                 },
             ]
@@ -144,15 +144,15 @@ const CLASS_DEFS = {
                 },
                 {
                     level: 2,
-                    descEn: 'Every 7 correct fills in a row grant +15 seconds added to the timer.',
-                    descDE: '7 korrekte Klicks hintereinander geben +15 Sekunden mehr Zeit.',
-                    effect: { streakForBonus: 7, bonusSeconds: 15 }
+                    descEn: 'Every 9 correct fills in a row grant +15 seconds added to the timer.',
+                    descDE: '9 korrekte Klicks hintereinander geben +15 Sekunden mehr Zeit.',
+                    effect: { streakForBonus: 9, bonusSeconds: 15 }
                 },
                 {
                     level: 3,
-                    descEn: 'Every 5 correct fills in a row grant +20 seconds added to the timer.',
-                    descDE: '5 korrekte Klicks hintereinander geben +20 Sekunden mehr Zeit.',
-                    effect: { streakForBonus: 5, bonusSeconds: 20 }
+                    descEn: 'Every 8 correct fills in a row grant +20 seconds added to the timer.',
+                    descDE: '8 korrekte Klicks hintereinander geben +20 Sekunden mehr Zeit.',
+                    effect: { streakForBonus: 8, bonusSeconds: 20 }
                 },
             ]
         },
@@ -162,24 +162,24 @@ const CLASS_DEFS = {
             nameDE: 'Datenhieb',
             descCursorEn: 'Click a cell to make your choice between row or column.',
             descCursorDE: 'Klicke auf eine Zelle um deine Wahl zwischen Zeile oder Spalte zu treffen.',
-            cooldownSeconds: 900,
+            cooldownSeconds: 300,
             levels: [
                 {
                     level: 1,
-                    descEn: 'Choose between instantly solving 1 random unsolved row or column. Cooldown: 15 minutes.',
-                    descDE: 'Wähle zwischen dem sofortigen Lösen einer ungelösten Zeile oder Spalte. Abklingzeit: 15 Minuten.',
+                    descEn: 'Choose between instantly solving 1 random unsolved row or column. Cooldown: 5 minutes.',
+                    descDE: 'Wähle zwischen dem sofortigen Lösen einer ungelösten Zeile oder Spalte. Abklingzeit: 5 Minuten.',
                     effect: { solveCount: 1 }
                 },
                 {
                     level: 2,
-                    descEn: 'Choose between instantly solving 2 random unsolved row or column. Cooldown: 15 minutes.',
-                    descDE: 'Wähle zwischen dem sofortigen Lösen von 2 ungelösten Zeilen oder Spalten. Abklingzeit: 15 Minuten.',
+                    descEn: 'Choose between instantly solving 2 random unsolved row or column. Cooldown: 5 minutes.',
+                    descDE: 'Wähle zwischen dem sofortigen Lösen von 2 ungelösten Zeilen oder Spalten. Abklingzeit: 5 Minuten.',
                     effect: { solveCount: 2 }
                 },
                 {
-                    level: 3, 
-                    descEn: 'Choose between instantly solving 3 random unsolved row or column. Cooldown: 15 minutes.',
-                    descDE: 'Wähle zwischen dem sofortigen Lösen von 3 ungelösten Zeilen oder Spalten. Abklingzeit: 15 Minuten.',
+                    level: 3,
+                    descEn: 'Choose between instantly solving 3 random unsolved row or column. Cooldown: 5 minutes.',
+                    descDE: 'Wähle zwischen dem sofortigen Lösen von 3 ungelösten Zeilen oder Spalten. Abklingzeit: 5 Minuten.',
                     effect: { solveCount: 3 }
                 },
             ]
@@ -190,24 +190,24 @@ const CLASS_DEFS = {
             nameDE: 'Diagonalschlag',
             descCursorEn: 'Select a cell to strike.',
             descCursorDE: 'Wähle eine Zelle zum Zuschlagen aus.',
-            cooldownSeconds: 1200,
+            cooldownSeconds: 180,
             levels: [
                 {
                     level: 1,
-                    descEn: 'Strike diagonally through a cell. Cooldown: 20 minutes.',
-                    descDE: 'Gehe diagonal durch eine Zelle. Abklingzeit: 20 Minuten.',
+                    descEn: 'Strike diagonally through a cell. Cooldown: 3 minutes.',
+                    descDE: 'Gehe diagonal durch eine Zelle. Abklingzeit: 3 Minuten.',
                     effect: { diagonals: 1 }
                 },
                 {
                     level: 2,
-                    descEn: 'Strike diagonally through a cell. Covers both diagonals. Cooldown: 20 minutes.',
-                    descDE: 'Gehe diagonal durch eine Zelle. Erfasst beide Diagonalen. Abklingzeit: 20 Minuten.',
+                    descEn: 'Strike diagonally through a cell. Covers both diagonals. Cooldown: 3 minutes.',
+                    descDE: 'Gehe diagonal durch eine Zelle. Erfasst beide Diagonalen. Abklingzeit: 3 Minuten.',
                     effect: { diagonals: 2 }
                 },
                 {
                     level: 3,  // should be both diagonals + horizontally + vertically
-                    descEn: 'Strike diagonally, horicontally and vertically through a cell. Cooldown: 20 minutes.',
-                    descDE: 'Gehe diagonal, horizontal und vertikal durch eine Zelle. Abklingzeit: 20 Minuten.',
+                    descEn: 'Strike diagonally, horicontally and vertically through a cell. Cooldown: 3 minutes.',
+                    descDE: 'Gehe diagonal, horizontal und vertikal durch eine Zelle. Abklingzeit: 3 Minuten.',
                     effect: { diagonals: 4 }
                 },
             ]
@@ -256,24 +256,24 @@ const CLASS_DEFS = {
             nameDE: 'Präzisionsmarkierung',
             descCursorEn: 'Click a cell to mark all wrong cells in its row and column with ✕',
             descCursorDE: 'Klicke eine Zelle, um alle falschen Zellen in Zeile und Spalte mit ✕ zu markieren',
-            cooldownSeconds: 1200,
+            cooldownSeconds: 300,
             levels: [
                 {
                     level: 1,
-                    descEn: 'Click a cell to mark all wrong cells in that row and column with ✕. Cooldown: 20 minutes.',
-                    descDE: 'Klicke eine Zelle um alle falschen Zellen in dieser Zeile und Spalte mit einem ✕ zu markieren. Abklingzeit: 20 Minuten.',
+                    descEn: 'Click a cell to mark all wrong cells in that row and column with ✕. Cooldown: 5 minutes.',
+                    descDE: 'Klicke eine Zelle um alle falschen Zellen in dieser Zeile und Spalte mit einem ✕ zu markieren. Abklingzeit: 5 Minuten.',
                     effect: { crossMark: true, extraLines: 0 }
                 },
                 {
                     level: 2,
-                    descEn: 'Click a cell to mark all wrong cells in that row, column and 1 adjacent row and column with ✕. Cooldown: 20 minutes.',
-                    descDE: 'Klicke eine Zelle um alle falschen Zellen in dieser Zeile, Spalte, und 1 angrenzende Zeile und Spalte mit ✕ zu markieren. Abklingzeit: 20 Minuten',
+                    descEn: 'Click a cell to mark all wrong cells in that row, column and 1 adjacent row and column with ✕. Cooldown: 5 minutes.',
+                    descDE: 'Klicke eine Zelle um alle falschen Zellen in dieser Zeile, Spalte, und 1 angrenzende Zeile und Spalte mit ✕ zu markieren. Abklingzeit: 5 Minuten',
                     effect: { crossMark: true, extraLines: 1 }
                 },
                 {
                     level: 3,
-                    descEn: 'Click a cell to mark all wrong cells in that row, column and 2 adjacent rows and columns with ✕. Cooldown: 20 minutes.',
-                    descDE: 'Klicke eine Zelle um alle falschen Zellen in dieser Zeile, Spalte, und 2 angrenzenden Zeilen und Spalten mit ✕ zu markieren. Abklingzeit: 20 Minuten',
+                    descEn: 'Click a cell to mark all wrong cells in that row, column and 2 adjacent rows and columns with ✕. Cooldown: 5 minutes.',
+                    descDE: 'Klicke eine Zelle um alle falschen Zellen in dieser Zeile, Spalte, und 2 angrenzenden Zeilen und Spalten mit ✕ zu markieren. Abklingzeit: 5 Minuten',
                     effect: { crossMark: true, extraLines: 2 }
                 },
             ]
@@ -284,25 +284,25 @@ const CLASS_DEFS = {
             nameDE: 'Feldscan',
             descCursorEn: 'Click a cell to scan a random region',
             descCursorDE: 'Klicke eine Zelle zum Scannen einer zufälligen Region!',
-            cooldownSeconds: 900,
+            cooldownSeconds: 120,
             levels: [
                 {
                     level: 1,
-                    descEn: 'Reveals a random 4×4 region for 0.5 seconds — correct tiles glow green, empty tiles show ✕. Cooldown: 15 minutes.',
-                    descDE: 'Enthüllt eine zufällige 4×4-Region für 0.5 Sekunden — richtige Felder leuchten grün, leere zeigen ✕. Abklingzeit: 15 Minuten.',
-                    effect: { scanSize: 4, scanDuration: 500 }
+                    descEn: 'Reveals a random 4×4 region for 1 second — correct tiles glow green, empty tiles show ✕. Cooldown: 2 minutes.',
+                    descDE: 'Enthüllt eine zufällige 4×4-Region für 1 Sekunde — richtige Felder leuchten grün, leere zeigen ✕. Abklingzeit: 2 Minuten.',
+                    effect: { scanSize: 4, scanDuration: 1000 }
                 },
                 {
                     level: 2,
-                    descEn: 'Reveals a random 6×6 region for 1 second — correct tiles glow green, empty tiles show ✕. Cooldown: 15 minutes.',
-                    descDE: 'Enthüllt eine zufällige 6×6-Region für 1 Sekunde — richtige Felder leuchten grün, leere zeigen ✕. Abklingzeit: 15 Minuten.',
-                    effect: { scanSize: 6, scanDuration: 1000 }
+                    descEn: 'Reveals a random 6×6 region for 2 seconds — correct tiles glow green, empty tiles show ✕. Cooldown: 2 minutes.',
+                    descDE: 'Enthüllt eine zufällige 6×6-Region für 2 Sekunden — richtige Felder leuchten grün, leere zeigen ✕. Abklingzeit: 2 Minuten.',
+                    effect: { scanSize: 6, scanDuration: 2000 }
                 },
                 {
                     level: 3,
-                    descEn: 'Reveals a random 8×8 region for 1.5 seconds — correct tiles glow green, empty tiles show ✕. Cooldown: 15 minutes.',
-                    descDE: 'Enthüllt eine zufällige 8×8-Region für 1.5 Sekunden — richtige Felder leuchten grün, leere zeigen ✕. Abklingzeit: 15 Minuten.',
-                    effect: { scanSize: 8, scanDuration: 1500 }
+                    descEn: 'Reveals a random 8×8 region for 3 seconds — correct tiles glow green, empty tiles show ✕. Cooldown: 2 minutes.',
+                    descDE: 'Enthüllt eine zufällige 8×8-Region für 3 Sekunden — richtige Felder leuchten grün, leere zeigen ✕. Abklingzeit: 2 Minuten.',
+                    effect: { scanSize: 8, scanDuration: 3000 }
                 },
             ]
         },
@@ -1252,6 +1252,12 @@ function _executeFieldScan(scanSize, durationMs) {
     _playScanBeamEffect(startRow, startCol, scanSize, durationMs);
     showToast(`🎯 Field Scan! Memorize the ${scanSize}×${scanSize} region!`);
 
+    // probabilist_big_scan: count correct cells shown in this scan
+    const correctInScan = prevStates.filter(({ r, c }) => sol[r][c] === 1).length;
+    if (correctInScan >= 20) {
+        trackAchStat('probabilistBigScan');
+    }
+
     setTimeout(() => {
         // Restore all cells to their actual userGrid state
         prevStates.forEach(({ r, c }) => {
@@ -1714,6 +1720,7 @@ function resetActiveCooldown() {
 function applyClassPassiveOnLevelStart() {
     correctFillStreak = 0;
     nextPenaltyHalved = false;
+    window._momentumThisLevel = 0; // reset per-level momentum counter
 
     if (!STATE.playerClass) return;
     const def = CLASS_DEFS[STATE.playerClass];
@@ -1771,6 +1778,12 @@ function onCorrectFill() {
         showToast(`⚔️ Momentum! +${effect.bonusSeconds}s`);
         trackAchStat('timeAdded', effect.bonusSeconds);
         trackAchStat('momentumTriggered');
+
+        // statistician_momentum_level: count triggers within a single level
+        window._momentumThisLevel = (window._momentumThisLevel || 0) + 1;
+        if (window._momentumThisLevel === 3) {
+            trackAchStat('statistician3MomentumOneLevel');
+        }
     }
 }
 
