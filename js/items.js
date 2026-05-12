@@ -203,7 +203,7 @@ const ITEM_DEFS = {
         nameEn: 'Codex of Completion', nameDE: 'Kodex der Fertigstellung',
         descEn: 'Instantly solves the entire puzzle.',
         descDE: 'Löst das gesamte Puzzle sofort.',
-        scoreCost: 0, sellVal: 500, rarity: 'artifact', weight: 1
+        scoreCost: 0, sellVal: 500, rarity: 'artifact', weight: 0
     },
 
     scoutPrimer: {
@@ -273,7 +273,7 @@ const ITEM_DEFS = {
 
 // Lucky drops: same pool but with a small artifact chance on top
 function pickLuckyItem() {
-    if (Math.random() < 0.05) return 'artifactComplete';
+    if (Math.random() < 0.01) return 'artifactComplete';
     return pickRandomItem();
 }
 

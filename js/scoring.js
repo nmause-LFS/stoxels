@@ -70,6 +70,10 @@ function checkWin() {
 
     const gi = cur.gIdx;
     const isFirstClear = !STATE.done.includes(gi);   // ← check BEFORE pushing
+    // ── Ascension level: last level in the world — guaranteed Codex on first clear ──
+    const worldData = WORLDS[cur.world - 1];
+    const isAscensionLevel = cur.li === worldData.data.length;
+
     if (!STATE.done.includes(gi)) STATE.done.push(gi);
 
     const baseScore = 100 + (rows + cols) * 2;
@@ -217,6 +221,17 @@ function checkWin() {
         STATE.bonusDone.push(gi); // always record — regardless of ironman
         save();
     }
+
+    // ── Ascension reward: Codex of Completion on first clear of the last level in a world ──
+    if (isAscensionLevel && isFirstClear && !curMods.ironman) {
+        const codexDef = ITEM_DEFS['artifactComplete'];
+        STATE.inventory.push({ defId: 'artifactComplete', uid: `item_${Date.now()}_${Math.random().toString(36).slice(2)}` });
+        save();
+        const rc = rarityColors(codexDef.rarity);
+        irz.innerHTML = `<div class="item-reward" style="border-color:${rc.border};color:${rc.color};">
+            🌟 ${LANG === 'de' ? 'Aufstiegsbonus' : 'Ascension Reward'}: ${codexDef.icon} <strong>${itemName(codexDef)}</strong>
+        </div>`;
+    }   
 
     if (bonusMet && !curMods.ironman && !bonusAlreadyDone && !isQuizBonus) {
         const defId = pickRandomItem();

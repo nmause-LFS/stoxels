@@ -165,12 +165,21 @@
 
 
 /* ── RESHUFFLE COUNTER (next to INVENTORY label) ── */
+.inv-strip-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 18px;
+}
+
+
 #reshuffle-counter {
     font-family: var(--PX);
     font-size: 11px;
     color: #aaa;
-    padding: 0 18px 4px;
+    padding: 7px 0 4px;   /* remove left padding since it's now in the flex row */
     letter-spacing: 0.5px;
+    white-space: nowrap;
 }
 
 /* ── RESHUFFLE MODAL OVERLAY ── */
