@@ -406,7 +406,7 @@ function renderCell(row, col) {
     if (!el) return; // safety guard — cell might not exist yet
 
     // Clear all state classes before re-applying the correct one
-    el.classList.remove('filled', 'marked', 'wrong-mark', 'revealed', 'questioned');
+    el.classList.remove('filled', 'marked', 'wrong-mark', 'revealed', 'questioned', 'cell-lucky');
 
     // Priority 1: wrong fill (red ✕) — overrides everything else
     if (wrongGrid[row][col]) {
@@ -425,5 +425,8 @@ function renderCell(row, col) {
     if (v === 1) el.classList.add('filled');
     else if (v === 2) el.classList.add('marked');
     else if (v === 3) el.classList.add('questioned');
-    // v === 0: empty — no class needed (default appearance)
+    // v === 0: empty — check if this is a lucky tile (subtle shimmer hint)
+    if (v === 0 && luckyTiles && luckyTiles.has(`${row}-${col}`)) {
+        el.classList.add('cell-lucky');
+    }
 }

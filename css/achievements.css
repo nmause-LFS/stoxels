@@ -77,7 +77,7 @@
 /* ── Achievement card grid ── */
 .ach-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
     gap: 12px;
 }
 
@@ -152,14 +152,14 @@
 }
 
 .ach-card-desc {
-    font-size: 11px;
+    font-size: 15px;
     color: var(--accent2);
     line-height: 1.5;
 }
 
 .ach-card-earned {
     font-family: var(--PX);
-    font-size: 9px;
+    font-size: 15px;
     color: var(--yellow);
     margin-top: 5px;
     letter-spacing: 1px;
@@ -218,7 +218,7 @@
 
 .ach-card-progress-label {
     font-family: var(--PX);
-    font-size: 9px;
+    font-size: 15px;
     color: var(--accent2);
     line-height: 1.4;
 }

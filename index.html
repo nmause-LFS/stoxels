@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STOXELS - v0.15 BETA</title>
+    <title>STOXELS - v0.16 BETA</title>
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/screens.css">
     <link rel="stylesheet" href="css/components.css">
@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="css/modals.css">
     <link rel="stylesheet" href="css/class.css">
     <link rel="stylesheet" href="css/achievements.css">
+    <link rel="stylesheet" href="css/item_effects.css">
 
     <script>
         !function (t, e) { var o, n, p, r; e.__SV || (window.posthog = e, e._i = [], e.init = function (i, s, a) { function g(t, e) { var o = e.split("."); 2 == o.length && (t = t[o[0]], e = o[1]), t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } } (p = t.createElement("script")).type = "text/javascript", p.crossOrigin = "anonymous", p.async = !0, p.src = s.api_host + "/static/array.js", (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r); var u = e; for (void 0 !== a ? u = e[a] = [] : a = "posthog", u.people = u.people || [], u.toString = function (t) { var e = "posthog"; return "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e }, u.people.toString = function () { return u.toString(1) + " (stub)" }, o = "capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchGroups earlyAccessFeatureEnabled".split(" "), n = 0; n < o.length; n++)g(u, o[n]); e._i.push([i, s, a]) }, e.__SV = 1) }(document, window.posthog || []);
@@ -30,7 +31,7 @@
 </head>
 <body>
     <div id="screen-title" class="screen active">
-        <h1 class="title-glow">STOXELS<br><span style="font-size:0.35em;opacity:0.5;letter-spacing:3px;">v0.15 BETA</span></h1>
+        <h1 class="title-glow">STOXELS<br><span style="font-size:0.35em;opacity:0.5;letter-spacing:3px;">v0.16 BETA</span></h1>
         <p class="title-tag" data-t="tagline">STOCHASTICS &amp; STATISTICS NONOGRAMS</p>
         <div class="lang-switch">
             <button class="lang-btn active" onclick="setLang('en')">EN</button>
@@ -198,14 +199,14 @@
                     <div class="bonus-sidebar-hint" id="bonus-sidebar-hint"></div>
                 </div>
             </div>
-                <div class="inv-strip">
-                    <div class="item-use-toast" id="item-toast"></div>
-                    <div class="inv-strip-header-row">
-                        <div class="inv-strip-header" data-t="inv_strip_header">🎒 INVENTORY - Left Click to use an item - Right Click to reshuffle</div>
-                        <div id="reshuffle-counter" class="reshuffle-counter-bar">♻ 0/5</div>
-                    </div>
-                    <div class="inv-strip-list" id="inv-list"></div>
+            <div class="inv-strip">
+                <div class="item-use-toast" id="item-toast"></div>
+                <div class="inv-strip-header-row">
+                    <div class="inv-strip-header" data-t="inv_strip_header">🎒 INVENTORY - Left Click to use an item - Right Click to reshuffle</div>
+                    <div id="reshuffle-counter" class="reshuffle-counter-bar">♻ 0/5</div>
                 </div>
+                <div class="inv-strip-list" id="inv-list"></div>
+            </div>
         </div>
     </div>
 
@@ -378,8 +379,8 @@
 
         </div>
         <div class="ach-body" id="ach-body">
-            </div>
         </div>
+    </div>
     </div>
 
 
@@ -404,6 +405,7 @@
     <script src="js/analytics.js"></script>
     <script src="js/class.js"></script>
     <script src="js/achievements.js"></script>
+    <script src="js/item_effects.js"></script>
     <script src="main.js"></script>
 </body>
 </html>

@@ -54,6 +54,7 @@ function rarityColors(rarity) {
 //   6.  Builds the reveal mini-grid, fills the overlay text, and shows
 //       either the quiz (if bonus type is 'quiz' and bonus was met) or
 //       the win overlay directly.
+
 function checkWin() {
     const sol = cur.grid;
     const rows = sol.length, cols = sol[0].length;
@@ -253,7 +254,7 @@ function checkWin() {
             const luckyCount = Math.floor(Math.random() * 3) + 1; // 1–3 items
             let luckyHtml = '';
             for (let i = 0; i < luckyCount; i++) {
-                const defId = pickLuckyItem();
+                const defId = pickRandomItem();//pickLuckyItem();
                 const def = ITEM_DEFS[defId];
                 if (def) {
                     STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
@@ -270,7 +271,7 @@ function checkWin() {
             const luckyCount = Math.floor(Math.random() * 3) + 1; // 1–3 items
             let luckyHtml = '';
             for (let i = 0; i < luckyCount; i++) {
-                const defId = pickLuckyItem();
+                const defId = pickRandomItem();
                 const def = ITEM_DEFS[defId];
                 if (def) {
                     STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });

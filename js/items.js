@@ -177,7 +177,7 @@ const ITEM_DEFS = {
     rowSolve: {
         id: 'rowSolve', icon: '📐',
         nameEn: 'Set Square', nameDE: 'Geodreieck',
-        descEn: 'Reveals a full random unsolved row', descDE: 'Enthüllt eine zufällige ungelöste Zeile',
+        descEn: 'Fully reveals a random unsolved row', descDE: 'Enthüllt eine zufällige ungelöste Zeile',
         scoreCost: 110, sellVal: 70, rarity: 'legendary', weight: 4
     },
 
@@ -185,7 +185,7 @@ const ITEM_DEFS = {
     colSolve: {
         id: 'colSolve', icon: '📏',
         nameEn: 'Ruler', nameDE: 'Lineal',
-        descEn: 'Reveals a full random unsolved column', descDE: 'Enthüllt eine zufällige ungelöste Spalte',
+        descEn: 'Fully reveals a random unsolved column', descDE: 'Enthüllt eine zufällige ungelöste Spalte',
         scoreCost: 110, sellVal: 70, rarity: 'legendary', weight: 4
     },
 
@@ -217,49 +217,47 @@ const ITEM_DEFS = {
 
 
 
-    // ── CURSED items — powerful but risky; locked for the first 3 minutes ─
-    // scoreCost is 0 for all cursed items (they are free to use — the risk
-    // IS the cost). They are also excluded from the noitem bonus check.
+    // ── CURSED items — powerful but risky
     cursedReveal: {
         id: 'cursedReveal', icon: '☠️',
         nameEn: 'Cursed Lens', nameDE: 'Verfluchte Linse',
-        descEn: '✅ Reveals 6 cells  ·  ⚠️ Resets all wrong marks',
-        descDE: '✅ Enthüllt 6 Zellen  ·  ⚠️ Setzt alle ✕-Markierungen zurück',
+        descEn: 'Reveals 6 cells  \n  ⚠️ Resets all wrong marks',
+        descDE: 'Enthüllt 6 Zellen \n  ⚠️ Setzt alle ✕-Markierungen zurück',
         scoreCost: 0, sellVal: 20, rarity: 'cursed', weight: 4
     },
     cursedTime: {
         id: 'cursedTime', icon: '💀',
         nameEn: 'Cursed Clock', nameDE: 'Verfluchte Uhr',
-        descEn: '✅ +20 minutes  ·  ⚠️ Blackouts row & column clues for s',
-        descDE: '✅ +20 Minuten  ·  ⚠️ Versteckt Zeilen - und Spaltenhinweise für 30s',
+        descEn: 'Increase the timer by 20 minutes  \n  ⚠️ Blackouts row & column clues for 30s',
+        descDE: 'Erhöht die Zeit um 20 Minuten \n  ⚠️ Versteckt Zeilen - und Spaltenhinweise für 30s',
         scoreCost: 0, sellVal: 20, rarity: 'cursed', weight: 4
     },
     cursedShield: {
         id: 'cursedShield', icon: '👁️',
         nameEn: 'Demon Eye', nameDE: 'Dämonenauge',
-        descEn: '✅ Shield + reveals 2 cells  ·  ⚠️ Blackouts row clues 30s',
-        descDE: '✅ Schild + enthüllt 2 Zellen  ·  ⚠️ Versteckt Zeilenhinweise 30s',
+        descEn: 'Shields the next mistake and reveals 2 cells \n  ⚠️ Blackouts row clues for 30s',
+        descDE: 'Schild für den nächsten Fehler und enthüllt 2 Zellen \n  ⚠️ Versteckt Zeilenhinweise für 30s',
         scoreCost: 0, sellVal: 20, rarity: 'cursed', weight: 4
     },
     cursedRowSolve: {
         id: 'cursedRowSolve', icon: '🌊',
         nameEn: 'Tidal Wave', nameDE: 'Flutwelle',
-        descEn: '✅ Reveals 3 rows · ⚠️ Erases 1 other row',
-        descDE: '✅ 3 Zeilen enthüllen  ·  ⚠️ 1 andere Zeile löschen',
+        descEn: 'Reveals 3 rows \n ⚠️ Erases 1 other row',
+        descDE: 'Enthüllt 3 Zeilen \n  ⚠️ Löscht 1 andere Zeile',
         scoreCost: 0, sellVal: 25, rarity: 'cursed', weight: 3
     },
     cursedColSolve: {
         id: 'cursedColSolve', icon: '🌪️',
         nameEn: 'Vortex', nameDE: 'Wirbelwind',
-        descEn: '✅ Reveals 3 columns · ⚠️ Erases 1 other column',
-        descDE: '✅ 3 Spalten enthüllen  ·  ⚠️ 1 andere Spalte löschen',
+        descEn: 'Reveals 3 columns \n ⚠️ Erases 1 other column',
+        descDE: '3 Spalten enthüllen \n ⚠️ 1 andere Spalte löschen',
         scoreCost: 0, sellVal: 25, rarity: 'cursed', weight: 3
     },
     cursedRowCol: {
         id: 'cursedRowCol', icon: '💥',
         nameEn: 'Chaos Grid', nameDE: 'Chaos-Gitter',
-        descEn: '✅ Reveals 4 rows + 4 cols  ·  ⚠️ Blackouts all col clues 45s',
-        descDE: '✅ 4 Zeilen + 4 Spalten enthüllen  ·  ⚠️ Alle Spaltenhinweise 45s ausgeblendet',
+        descEn: 'Reveals 4 rows and 4 cols  \n  ⚠️ Blackouts all column clues for 45s',
+        descDE: 'Enthüllt 4 Zeilen und 4 Spalten \n ⚠️ Alle Spaltenhinweise werden für 45s ausgeblendet',
         scoreCost: 0, sellVal: 30, rarity: 'cursed', weight: 2
     },
 

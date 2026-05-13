@@ -22,14 +22,8 @@ const MATH_GATE_RULES = [
     { world: 4, level: 7 },   // W4-L7 (if it exists)
     { world: 4, level: 9 },   // W4-L9 (if it exists)
     { world: 5, level: 1 },   // all of W5
-    { world: 5, level: 2 },
-    { world: 5, level: 3 },
     { world: 5, level: 4 },
-    { world: 5, level: 5 },
-    { world: 5, level: 6 },
-    { world: 5, level: 7 },
     { world: 5, level: 8 },
-    { world: 5, level: 9 },
     { world: 5, level: 10 },
 ];
 
@@ -2009,6 +2003,41 @@ function submitMathGate() {
     const correct = diff <= currentGateQuestion.tolerance;
 
     if (correct) {
+
+
+        if (!STATE.mathGatePassed.includes(pendingGateGi)) {
+            STATE.mathGatePassed.push(pendingGateGi);
+
+            // 1. Pick a random item ID (using the lucky version for excitement)
+            const rewardId = pickLuckyItem();
+            const def = ITEM_DEFS[rewardId];
+
+            // 2. Create the item object and push to inventory
+            // (This unique ID logic is taken from your inventory.js reshuffle system)
+            STATE.inventory.push({
+                uid: `item_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+                defId: rewardId
+            });
+
+            // 3. Show feedback with the item name and icon
+            const name = LANG === 'de' ? def.nameDE : def.nameEn;
+            showMgFeedback(`${t('mg_correct')} + ${def.icon} ${name}!`, true);
+
+            save();
+            buildInventoryPanel(); // Rebuild the UI so the new item appears
+
+            const rewardMsg = `Probability Gate passed, Item reward received!`;
+
+            // Show immediate feedback in the math modal
+            showMgFeedback(`${t('mg_correct')} + ${def.icon} ${name}!`, true);
+
+            // 4. Trigger the delayed toast to show during level launch
+            setTimeout(() => {
+                showToast(rewardMsg);
+            }, 1000);
+
+        }
+
         // Mark gate as passed persistently
         if (!STATE.mathGatePassed) STATE.mathGatePassed = [];
         if (!STATE.mathGatePassed.includes(pendingGateGi)) {

@@ -243,12 +243,14 @@ function useItem(uid) {
         // Parse the tile count from the id suffix (e.g. 'reveal3' → 3)
         const count = parseInt(id.replace('reveal', '')) || 1;
         revealTiles(count);
+        playItemEffect(id);
         msg = `${def.icon} ${count > 1 ? t('item_revealed_pl').replace('{n}', count) : t('item_revealed').replace('{n}', count)}`;
 
         // ── MARK-WRONG items (markWrong2–8) ───────────────────────────────────
     } else if (id.startsWith('markWrong')) {
         const count = parseInt(id.replace('markWrong', '')) || 2;
         markWrongTiles(count);
+        playItemEffect(id);
         msg = `${def.icon} ${t('item_marked').replace('{n}', count)}`;
 
         // ── ADD-TIME items (addTime30–180) ────────────────────────────────────
@@ -256,6 +258,7 @@ function useItem(uid) {
         const secs = parseInt(id.replace('addTime', '')) || 30;
         timerSecs += secs;
         updTimer();
+        playItemEffect(id);
         msg = `${def.icon} ${t('item_time_added').replace('{n}', secs)}`;
 
         // ── FREEZE ────────────────────────────────────────────────────────────
@@ -265,6 +268,7 @@ function useItem(uid) {
         shieldActive = true; // reuse shield flag to block penalty cost during freeze
         window._freezeActive = true;
         updTimer();
+        playItemEffect(id);
         msg = `${def.icon} ${t('item_freeze_msg')}`;
 
         // freeze_clutch: used a freeze with 10 seconds or less on the clock
@@ -290,17 +294,20 @@ function useItem(uid) {
         // ── SHIELD ────────────────────────────────────────────────────────────
     } else if (id === 'shield') {
         shieldActive = true; // consumed in input.js ac() on next wrong fill
+        playItemEffect(id);
         msg = `${def.icon} ${t('item_shield_msg')}`;
 
         // ── ROW-SOLVE ─────────────────────────────────────────────────────────
     } else if (id === 'rowSolve') {
         const n = solveRows(1);
+        playItemEffect(id);
         msg = n > 0 ? `${def.icon} ${t('item_row_solved')}` : `${def.icon} ${t('item_row_solved_none')}`;
         if (n > 0) checkWin();
 
         // ── COL-SOLVE ─────────────────────────────────────────────────────────
     } else if (id === 'colSolve') {
         const n = solveCols(1);
+        playItemEffect(id);
         msg = n > 0 ? `${def.icon} ${t('item_col_solved')}` : `${def.icon} ${t('item_col_solved_none')}`;
         if (n > 0) checkWin();
 
@@ -308,6 +315,7 @@ function useItem(uid) {
     } else if (id === 'mistakeEraser') {
         const before = mistakeCount;
         mistakeCount = Math.max(0, mistakeCount - 2);
+        playItemEffect(id);
         const removed = before - mistakeCount;
         const mcEl = document.getElementById('mistake-counter');
         if (mcEl) mcEl.textContent = `✗ ${mistakeCount}`;
@@ -328,6 +336,7 @@ function useItem(uid) {
                 }
             }
         }
+        playItemEffect(id);
         msg = `🌟 ${t('item_artifact_complete')}`;
         checkWin();
 
@@ -338,6 +347,7 @@ function useItem(uid) {
     } else if (id === 'scoutPrimer') {
         STATE.primerPending = true;
         save();
+        playItemEffect(id);
         msg = `📜 ${t('item_primer_activated')}`;
 
         // ═══════════════════════════════════════════
@@ -356,6 +366,7 @@ function useItem(uid) {
     } else if (id === 'cursedReveal') {
         // Positive effect first
         revealTiles(6);
+        playItemEffect(id);
         // Negative effect: wipe all player ✕ marks (userGrid === 2) back to 0
         const rows = cur.grid.length, cols = cur.grid[0].length;
         const unmarked = [];
@@ -377,6 +388,7 @@ function useItem(uid) {
     } else if (id === 'cursedTime') {
         timerSecs += 1200;                          // +10 min
         updTimer();
+        playItemEffect(id);
         applyCursedRowBlackout(30000);
         applyCursedColBlackout(30000);
 
@@ -391,6 +403,7 @@ function useItem(uid) {
         revealTiles(2);
         // Negative effect
         applyCursedRowBlackout(); // 30s fixed duration (defined above)
+        playItemEffect(id);
         msg = `👁️ ${t('item_cursed_shield_both')}`;
 
         // ── CURSED ROW-SOLVE ──────────────────────────────────────────────
@@ -409,6 +422,7 @@ function useItem(uid) {
         const revealed = solveRows(3);
         // Negative effect — only erase rows that existed BEFORE the reveal
         const erased = unsolveRowsExcluding(1, preFilledRows);
+        playItemEffect(id);
         msg = `🌊 ${t('item_cursed_row_both').replace('{r}', revealed).replace('{e}', erased)}`;
         if (revealed > 0) checkWin();
 
@@ -426,6 +440,7 @@ function useItem(uid) {
         }
         // Positive effect
         const revealed = solveCols(3);
+        playItemEffect(id);
         // Negative effect — only erase cols that existed BEFORE the reveal
         const erased = unsolveColsExcluding(1, preFilledCols);
         msg = `🌪️ ${t('item_cursed_col_both').replace('{r}', revealed).replace('{e}', erased)}`;
@@ -440,6 +455,7 @@ function useItem(uid) {
         const c = solveCols(4);
         // Negative effect: blackout all column clues for 45s
         applyCursedColBlackout(45000);
+        playItemEffect(id);
         msg = `💥 ${t('item_cursed_rowcol_both').replace('{r}', r).replace('{c}', c)}`;
         checkWin();
     }

@@ -82,7 +82,7 @@
         transform: translate(-50%, -50%);
 
         font-size: 100px;            /* Large watermark size */
-        opacity: 0.25;                /* Faint enough to stay in the background */
+        opacity: 0.2;                /* Faint enough to stay in the background */
         pointer-events: none;        /* Ensures the icon doesn't block clicks on the card */
         z-index: 0;                  /* Sits behind the text */
     }
@@ -112,6 +112,7 @@
     color: #ffffff; /*var(--yellow); */
     line-height: 1.45;
     font-weight: bold;
+    white-space: pre-line;
 }
 
 

@@ -498,6 +498,34 @@ function _doStartLevel(gi) {
     timerFrozen = false;
     quizAnsweredCorrectly = false;
 
+    // ── Lucky tiles ───────────────────────────────────────────────────────
+    // Pick a handful of wrong cells as "lucky tiles" — right-clicking them
+    // to mark ✕ awards a free random item (once per level).
+    luckyTiles = new Set();
+    luckyRewardClaimed = false;
+
+    const _lcCells = rows * cols;
+    // 0 lucky for ≤25 cells, 1 for ≤75, 2 for ≤200, 3 for anything larger
+    const _lcMax = _lcCells <= 25 ? 0 : _lcCells <= 75 ? 1 : _lcCells <= 200 ? 2 : 3;
+    // Randomise: 0 to _lcMax tiles (so not every level of a given size has one)
+    const _lcCount = _lcMax === 0 ? 0 : Math.floor(Math.random() * (_lcMax + 1));
+
+    if (_lcCount > 0) {
+        // Only wrong cells (not filled in the solution) can be lucky tiles
+        const _lcPool = [];
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                if (cur.grid[r][c] !== 1) _lcPool.push(`${r}-${c}`);
+            }
+        }
+        shuffle(_lcPool);
+        for (let i = 0; i < Math.min(_lcCount, _lcPool.length); i++) {
+            luckyTiles.add(_lcPool[i]);
+        }
+    }
+
+
+
     //   timetrial : timer is halved (50% of difficulty/level default); +20 % score bonus
     const cfg = DIFF_CFG[curDiff];
     const baseTimer = cur.timer || cfg.timerStart;

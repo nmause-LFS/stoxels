@@ -898,8 +898,8 @@ const ACHIEVEMENT_DEFS = [
         icon: '💰',
         nameEn: 'Merchant',
         nameDE: 'Händler',
-        descEn: 'Sell items from your inventory.',
-        descDE: 'Verkaufe Items aus deinem Inventar.',
+        descEn: 'Reshuffle items from your inventory.',
+        descDE: 'Tausche Items aus deinem Inventar.',
         stat: 'itemsSold',
         tiers: [
             { threshold: 5,   labelEn: 'Bargain Hunter', labelDE: 'Schnäppchenjäger' },
@@ -923,6 +923,26 @@ const ACHIEVEMENT_DEFS = [
             { threshold: 100, labelEn: 'Connoisseur',     labelDE: 'Kenner' },
         ]
     },
+
+    // ── LUCKY TILES FOUND ────────────────────────────
+    {
+        id: 'lucky_tiles_found',
+        category: 'items',
+        icon: '🍀',
+        nameEn: 'Lucky Charm',
+        nameDE: 'Glücksbringer',
+        descEn: 'Find lucky tiles by marking incorrect cells with ✕.',
+        descDE: 'Finde Glücksfelder, indem du falsche Zellen mit ✕ markierst.',
+        stat: 'luckyTilesFound',
+        tiers: [
+            { threshold: 1, labelEn: 'First Find', labelDE: 'Erster Fund' },
+            { threshold: 25, labelEn: 'Lucky Streak', labelDE: 'Glückssträhne' },
+            { threshold: 50, labelEn: 'Fortune Hunter', labelDE: 'Glücksjäger' },
+            { threshold: 100, labelEn: 'Four-Leaf Expert', labelDE: 'Kleeblatt-Experte' },
+        ]
+    },
+
+
 
     // ── SCORE ─────────────────────────────────────
     {

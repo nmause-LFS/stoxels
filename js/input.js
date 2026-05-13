@@ -263,6 +263,29 @@ function ac(row, col) {
     }
 
     // Valid move: update the data, refresh the display, and check for a win
+    // Lucky tile check: right-clicking to mark ✕ on an unspent lucky tile
+    if (pval === 2 && !luckyRewardClaimed && luckyTiles && luckyTiles.has(`${row}-${col}`)) {
+        luckyRewardClaimed = true;
+        trackAchStat('luckyTilesFound');
+        luckyTiles.delete(`${row}-${col}`);
+
+        const _wonItemId = pickLuckyItem(); // This returns the string ID (e.g., 'shield')
+
+        // CHANGE: Construct the object the inventory expects
+        const _newItem = {
+            uid: `item_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+            defId: _wonItemId
+        };
+
+        STATE.inventory.push(_newItem);
+        save();
+        buildInventoryPanel();
+
+        // Update the toast to use the defId from our new object
+        const _def = ITEM_DEFS[_newItem.defId];
+        showToast(`🍀 Lucky Tile! You found: ${_def.icon} ${itemName(_def)}`, 3500);
+    }
+
     userGrid[row][col] = pval;
     if (pval === 1 && cur.grid[row][col] === 1) onCorrectFill(); // class.js
     renderCell(row, col);   // grid.js — re-draws the cell visual

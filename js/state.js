@@ -32,6 +32,11 @@ let levelStartTime = 0;
 let shieldActive = false, timerFrozen = false;
 let quizAnsweredCorrectly = false;
 
+// luckyTiles        — Set of "row-col" keys for lucky tiles this level
+// luckyRewardClaimed— true once the lucky item reward has been given this level
+let luckyTiles = new Set();
+let luckyRewardClaimed = false;
+
 // screenHistory — a stack of screen IDs; push when navigating forward so
 //                 the Escape key / Back button can pop back to the right screen
 let screenHistory = [];
