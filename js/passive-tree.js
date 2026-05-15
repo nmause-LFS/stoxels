@@ -297,7 +297,7 @@ const PT = (() => {
             position: fixed;
             z-index: 9999;
             pointer-events: none;
-            max-width: 260px;
+            max-width: 350px;
             background: rgba(10,10,20,0.97);
             border: 1px solid rgba(184,154,80,0.5);
             border-radius: 6px;
@@ -358,8 +358,10 @@ const PT = (() => {
                 : `<div style="margin-top:7px;font-size:11px;color:#555;">🔒 Locked</div>`;
         }
 
+
+        // Title and Skill Description inside the Tooltip 
         _tooltip.innerHTML = `
-            <div style="font-size:13px;font-weight:bold;color:#f0d080;margin-bottom:5px;">${name}</div>
+            <div style="font-size:13px;font-weight:bold;color:#66fcf1;margin-bottom:5px;">${name}</div>
             ${desc ? `<div style="color:#bba870;">${desc}</div>` : ''}
             ${statusHtml}
         `;
@@ -766,6 +768,16 @@ const PT = (() => {
             _skills.forEach(s => { _skillMap[s.id] = s; });
         },
 
+        hasSkill(statKey) {
+            const alloc = _allocated();
+            for (const id of alloc) {
+                const def = (typeof PT_SKILL_DEFS !== 'undefined') ? PT_SKILL_DEFS[id] : null;
+                if (def && def.statKey === statKey) return true;
+            }
+            return false;
+        },
+
+
         get data() { return _data; },
     };
 })();
@@ -800,3 +812,19 @@ async function buildPassiveTreeScreen() {
     }
     PT.reload();
 }
+
+
+
+
+
+
+
+
+
+/*
+
+if (PT.hasSkill('tutor_enable')) {
+    // player has the Tutor node allocated — show tutor button, etc.
+}
+
+*/

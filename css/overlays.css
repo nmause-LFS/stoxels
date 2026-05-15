@@ -426,3 +426,23 @@
     ::-webkit-scrollbar-thumb:hover {
         background: var(--scrollbar-thumb-hover);
     }
+
+
+
+
+
+    .quiz-tutor-btn {
+    font-family: var(--PX);
+    font-size: 12px;
+    background: transparent;
+    border: 1px solid var(--yellow);
+    color: var(--yellow);
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: all .12s;
+}
+
+.quiz-tutor-btn:hover {
+    background: var(--yellow);
+    color: var(--bg);
+}

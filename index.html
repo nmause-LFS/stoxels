@@ -262,6 +262,7 @@
         </div>
         <div class="mg-hint-box" id="quiz-input-hint" style="display:none; margin-top:8px;"></div>
         <div class="quiz-result" id="quiz-result"></div>
+        <button id="quiz-tutor-btn" class="quiz-tutor-btn" onclick="quizUseTutor()" style="display:none;">🎓 USE TUTOR</button>
         <button class="quiz-skip" id="quiz-continue" onclick="finishQuiz()" style="display:none" data-t="quiz_continue">CONTINUE ▶</button>
         <button class="quiz-skip" onclick="skipQuiz()" data-t="quiz_skip">SKIP (no bonus)</button>
     </div>
@@ -336,6 +337,9 @@
                 <button class="mg-submit-btn" id="mg-submit-btn" onclick="submitMathGate()" data-t="mg_submit">
                     CHECK ▶
                 </button>
+                <button id="mg-tutor-btn" class="mg-tutor-btn" onclick="mgUseTutor()" style="display:none;">
+    🎓 USE TUTOR
+</button>
             </div>
 
             <!-- Feedback line (correct / wrong) -->

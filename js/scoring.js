@@ -419,6 +419,8 @@ function showQuiz(worldNum) {
 
     document.getElementById('quiz-overlay').classList.add('show');
     if (q.type === 'input') setTimeout(() => inputEl && inputEl.focus(), 120);
+
+    _quizRefreshTutorButton();
 }
 
 // answerQuiz(correct, optsEl, clickedBtn) — handles a multiple-choice answer.
@@ -600,5 +602,78 @@ function buildReveal() {
             d.style.cssText = `width:${csz}px; height:${csz}px;`;
             ct.appendChild(d);
         }
+    }
+}
+
+
+
+
+
+
+
+
+function _quizRefreshTutorButton() {
+    const btn = document.getElementById('quiz-tutor-btn');
+    if (!btn) return;
+    const hasTutorSkill = PT.hasSkill('tutor_enable');
+    const tutorItem = STATE.inventory.find(i => i.defId === 'mistakeEraser');
+    btn.style.display = (hasTutorSkill && tutorItem) ? 'inline-block' : 'none';
+}
+
+function quizUseTutor() {
+    const tutorItem = STATE.inventory.find(i => i.defId === 'mistakeEraser');
+    if (!tutorItem) return;
+
+    // Build success chance from passive tree
+    let chance = 0.10;
+    if (PT.hasSkill('tutor_chance_10')) chance += 0.10;
+    if (PT.hasSkill('tutor_chance_20')) chance += 0.10;
+    if (PT.hasSkill('tutor_chance_30')) chance += 0.10;
+    if (PT.hasSkill('tutor_professor')) chance += 0.20;
+
+    // Build no-consume chance
+    let noConsumeChance = 0;
+    if (PT.hasSkill('tutor_no_consume_1')) noConsumeChance += 0.10;
+    if (PT.hasSkill('tutor_no_consume_2')) noConsumeChance += 0.10;
+    if (PT.hasSkill('tutor_no_consume_3')) noConsumeChance += 0.10;
+    if (PT.hasSkill('tutor_professor'))    noConsumeChance += 0.20;
+
+    const consumed = Math.random() >= noConsumeChance;
+    if (consumed) {
+        STATE.inventory = STATE.inventory.filter(i => i.uid !== tutorItem.uid);
+        save();
+        buildInventoryPanel();
+    }
+
+    // Hide button regardless of outcome
+    document.getElementById('quiz-tutor-btn').style.display = 'none';
+
+    const resEl = document.getElementById('quiz-result');
+
+    if (Math.random() < chance) {
+        // ── Tutor succeeds ────────────────────────────────────────────────
+        resEl.textContent = LANG === 'de' ? '🎓 Tutor hat die Frage gelöst!' : '🎓 Tutor solved it!';
+        resEl.className = 'quiz-result ok';
+
+        if (currentQuizQuestion.type === 'mc') {
+            // Lock all buttons and highlight the correct one
+            const optsEl = document.getElementById('quiz-opts');
+            Array.from(optsEl.children).forEach(btn => {
+                btn.onclick = null;
+                if (btn.dataset.isCorrect === '1') btn.classList.add('correct');
+            });
+        } else {
+            // Input question — disable the input and submit
+            document.getElementById('quiz-input').disabled = true;
+            document.getElementById('quiz-input-submit').disabled = true;
+        }
+
+        _resolveQuizAnswer(true);
+
+    } else {
+        // ── Tutor fails ───────────────────────────────────────────────────
+        resEl.textContent = LANG === 'de' ? '🎓 Tutor konnte die Frage nicht lösen…' : '🎓 Tutor couldn\'t solve it…';
+        resEl.className = 'quiz-result bad';
+        // Leave the question active so the player can still answer
     }
 }

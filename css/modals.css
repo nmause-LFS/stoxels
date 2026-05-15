@@ -262,6 +262,25 @@
 
 
 
+.mg-tutor-btn {
+    background: transparent;
+    border: 1px solid var(--yellow);
+    color: var(--yellow);
+    font-family: var(--PX);
+    font-size: 12px;
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    margin-left: 8px;
+}
+
+.mg-tutor-btn:hover {
+    background: var(--yellow);
+    color: #000;
+}
+
+
+
 
 
 

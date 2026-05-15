@@ -1963,6 +1963,7 @@ function showMathGate(gi, launchFn) {
     unitEl.style.display = currentGateQuestion.unit ? 'inline' : 'none';
 
     showModal('mg-modal');
+    _mgRefreshTutorButton();
 
     // Focus the input after a short delay (modal animation)
     setTimeout(() => {
@@ -2126,3 +2127,64 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+
+
+
+function _mgRefreshTutorButton() {
+    const btn = document.getElementById('mg-tutor-btn');
+    if (!btn) return;
+
+    const hasTutorSkill = PT.hasSkill('tutor_enable');
+    const tutorItem = STATE.inventory.find(i => i.defId === 'mistakeEraser');
+
+    // Show button only if player has the passive node AND the item
+    btn.style.display = (hasTutorSkill && tutorItem) ? 'inline-block' : 'none';
+}
+
+function mgUseTutor() {
+    if (!currentGateQuestion) return;
+
+    const tutorItem = STATE.inventory.find(i => i.defId === 'mistakeEraser');
+    if (!tutorItem) return;
+
+    // Build tutor success chance from passive tree
+    let chance = 0.10;
+    if (PT.hasSkill('tutor_chance_10')) chance += 0.10;
+    if (PT.hasSkill('tutor_chance_20')) chance += 0.10;
+    if (PT.hasSkill('tutor_chance_30')) chance += 0.10;
+    if (PT.hasSkill('tutor_professor')) chance += 0.20;
+
+    // Consume item unless no-consume passive saves it
+    let noConsumeChance = 0;
+    if (PT.hasSkill('tutor_no_consume_1')) noConsumeChance += 0.10;
+    if (PT.hasSkill('tutor_no_consume_2')) noConsumeChance += 0.10;
+    if (PT.hasSkill('tutor_no_consume_3')) noConsumeChance += 0.10;
+    if (PT.hasSkill('tutor_professor'))    noConsumeChance += 0.20;
+
+    const consumed = Math.random() >= noConsumeChance;
+    if (consumed) {
+        STATE.inventory = STATE.inventory.filter(i => i.uid !== tutorItem.uid);
+        save();
+        buildInventoryPanel();
+    }
+
+    if (Math.random() < chance) {
+        // Tutor succeeds — auto-pass the gate
+        showMgFeedback(LANG === 'de' ? '🎓 Tutor hat die Frage gelöst!' : '🎓 Tutor solved it!', true);
+        document.getElementById('mg-tutor-btn').style.display = 'none';
+        document.getElementById('mg-submit-btn').disabled = true;
+
+        if (!STATE.mathGatePassed) STATE.mathGatePassed = [];
+        if (!STATE.mathGatePassed.includes(pendingGateGi)) {
+            STATE.mathGatePassed.push(pendingGateGi);
+            save();
+        }
+        const giToLaunch = pendingGateGi;
+        setTimeout(() => { hideMathGate(); startLevel(giToLaunch); }, 1200);
+    } else {
+        // Tutor fails
+        showMgFeedback(LANG === 'de' ? '🎓 Tutor konnte die Frage nicht lösen…' : '🎓 Tutor couldn\'t solve it…', false);
+        document.getElementById('mg-tutor-btn').style.display = 'none';
+    }
+}
