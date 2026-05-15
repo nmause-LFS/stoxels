@@ -82,6 +82,31 @@ function buildLS() {
         classEl.style.opacity = '0.7';
     }
 
+
+    // ── Probability Tree button in top bar ────────────────────────────────
+    let ptBtn = document.getElementById('ls-tree-btn');
+    if (!ptBtn) {
+        ptBtn = document.createElement('button');
+        ptBtn.id = 'ls-tree-btn';
+        ptBtn.className = 'gtb-btn';
+        ptBtn.style.cssText = 'border-color:var(--green);color:var(--green);font-size:11px;padding:5px 12px;';
+        ptBtn.onclick = showPassiveTree;
+        document.querySelector('.ls-topbar').appendChild(ptBtn);
+    }
+    const treePoints = STATE.passiveTreePoints || 0;
+    ptBtn.textContent = (LANG === 'de' ? '🌿 Wahrsch.-Baum' : '🌿 Probability Tree') +
+        (treePoints > 0 ? ` (${treePoints})` : '');
+    ptBtn.style.borderColor = treePoints > 0 ? 'var(--yellow)' : 'var(--green)';
+    ptBtn.style.color = treePoints > 0 ? 'var(--yellow)' : 'var(--green)';
+
+
+
+
+
+
+
+
+
     // ── World blocks ───────────────────────────────────────────────────────
     const body = document.getElementById('ls-body');
     body.innerHTML = ''; // clear previous render
@@ -139,12 +164,31 @@ function buildLS() {
             const card = document.createElement('div');
 
             const isMathGated = isGatedLevel(gi) && !isMathGatePassed(gi);
+
             const isLastInWorld = li === w.data.length - 1;
+
+            // Calculate 33% and 66% points (using 0-based indices) for Convergence levels
+            const c1 = Math.floor((w.data.length - 1) / 3);
+            const c2 = Math.floor((w.data.length - 1) * 2 / 3);
+
+            // Update: A level is a convergence point if it's at index c1 or c2 
+            // (provided the world is long enough and it's not the final level)
+            const isConvergenceLevel = w.data.length > 2 && (li === c1 || li === c2) && !isLastInWorld;
+
+            /*
+
+            // Convergence = halfway point (rounds up for even-length worlds)
+            const convergenceIdx = Math.floor((w.data.length - 1) / 2); // 0-based
+            const isConvergenceLevel = w.data.length > 1 && li === convergenceIdx && !isLastInWorld;
+
+            */
+
             card.className = 'level-card' +
                 (isUnlocked ? '' : ' locked') +
                 (isDone ? ' done' : '') +
                 (isMathGated && isUnlocked ? ' math-gated' : '') +
                 (isLastInWorld && w.data.length > 1 ? ' ascension' : '') +
+                (isConvergenceLevel ? ' convergence' : '') +
                 (isMaxCleared(gi) ? ' max-cleared' : '');
 
             // Star rating (only shown if the level has been completed)
@@ -208,6 +252,13 @@ function buildLS() {
                 ? `<div class="lc-ascension-badge">${LANG === 'de' ? '⚗️ AUFSTIEG' : '⚗️ ASCENSION'}</div>`
                 : '';
 
+            const convergencePointClaimed = STATE.convergenceDone && STATE.convergenceDone.includes(gi);
+            const convergenceBadge = isConvergenceLevel
+                ? `<div class="lc-convergence-badge">${convergencePointClaimed
+                    ? (LANG === 'de' ? '🌿 KONVERGENZ ✓' : '🌿 CONVERGENCE ✓')
+                    : (LANG === 'de' ? '🌿 KONVERGENZ' : '🌿 CONVERGENCE')}</div>`
+                : '';
+
             const maxBadge = isMaxCleared(gi)
                 ? `<div class="lc-max-badge">👑</div>`
                 : '';
@@ -216,7 +267,7 @@ function buildLS() {
                 <div class="lc-num">${wi + 1}-${li + 1}</div>
                 <div class="lc-hint">${isUnlocked ? lvText(p, 'hint') : '???'}</div>
                 <div class="lc-sz">${szStr}</div>
-                ${maxBadge}${ascensionBadge}${bonusText}${hsText}${modTagsHtml}
+                ${maxBadge}${ascensionBadge}${convergenceBadge}${bonusText}${hsText}${modTagsHtml}
                 <div class="lc-stars">${stars}</div>`;
 
             // Only attach click handler to unlocked cards

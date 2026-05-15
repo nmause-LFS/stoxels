@@ -489,6 +489,19 @@ function useItem(uid) {
         trackAchStat('cursedFirstAttempts');
     }
 
+
+    if (id === 'freeze') trackAchStat('freezeUsed');
+    if (id === 'mistakeEraser') trackAchStat('eraserUsed');
+    if (id === 'cursedReveal') trackAchStat('cursedLensUsed');
+    if (id === 'cursedTime') trackAchStat('cursedClockUsed');
+    if (id === 'cursedShield') trackAchStat('demonEyeUsed');
+    if (id === 'cursedRowSolve') trackAchStat('tidalWaveUsed');
+    if (id === 'cursedColSolve') trackAchStat('vortexUsed');
+    if (id === 'cursedRowCol') trackAchStat('chaosGridUsed');
+
+
+
+
     // item_hoarder: check if current inventory size (post-use) still qualifies,
     // but we also check on add — the real trigger is reaching 10 while holding.
     // Re-check here in case an item was just used to drop below threshold and

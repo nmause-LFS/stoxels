@@ -372,14 +372,48 @@ function lstat(line, clue) {
     return 'p'; // still valid, keep going
 }
 
-// updClues(row, col) — hook called after every cell change.
-//   Currently a no-op: clue number colouring (green when done, red when
-//   over) is disabled in this version to keep the UI clean.
-//   To re-enable it: add logic here that calls lstat() for the affected
-//   row and column and applies CSS classes to the clue <span> elements
-//   (ids: rn-{row}-{i} for row clues, cn-{col}-{d} for column clues).
+// updClues(row, col) — called after every cell change.
+//   Checks whether the affected row and column are now fully solved
+//   (all correct cells filled, no wrong marks on correct cells) and
+//   toggles the CSS class 'clue-done' (strikethrough) on the clue
+//   number spans accordingly.
 function updClues(row, col) {
-    // Intentionally empty — clue colours are static in the current build
+    if (!cur) return;
+    const sol = cur.grid;
+    const rows = sol.length;
+    const cols = sol[0].length;
+
+    // ── Check the affected row ────────────────────────────────────────────
+    // A row is "done" when every cell that should be filled (sol === 1)
+    // is currently filled by the player (userGrid === 1 or revealedGrid)
+    // AND has no wrong mark on it.
+    const rowDone = sol[row].every((v, c) => {
+        if (v !== 1) return true;                          // empty-solution cell: irrelevant
+        if (wrongGrid[row][c]) return false;               // wrong mark on a correct cell
+        return userGrid[row][c] === 1 || revealedGrid[row][c]; // must be filled
+    });
+
+    // Apply or remove strikethrough on every row clue span for this row
+    // Span ids: rn-{row}-{i}  (one per clue number in the row)
+    const RC = sol.map(r => clues(r));
+    RC[row].forEach((_, i) => {
+        const span = document.getElementById(`rn-${row}-${i}`);
+        if (span) span.classList.toggle('clue-done', rowDone);
+    });
+
+    // ── Check the affected column ─────────────────────────────────────────
+    const colDone = sol.every((r, ro) => {
+        if (r[col] !== 1) return true;
+        if (wrongGrid[ro][col]) return false;
+        return userGrid[ro][col] === 1 || revealedGrid[ro][col];
+    });
+
+    // Apply or remove strikethrough on every column clue span for this col.
+    // Column clue spans have ids: cn-{col}-{d}
+    // We don't know mcd here so we just query all matching spans.
+    document.querySelectorAll(`[id^="cn-${col}-"]`).forEach(span => {
+        span.classList.toggle('clue-done', colDone);
+    });
 }
 
 

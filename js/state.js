@@ -81,6 +81,8 @@ function initState() {
         // Normalise classActiveChoice — old saves stored number 1, needs to be string
         if (!s.classActiveChoice || typeof s.classActiveChoice === 'number') s.classActiveChoice = 'active1';
         if (!s.achStats) s.achStats = {};
+        if (!s.convergenceDone) s.convergenceDone = [];
+        if (s.passiveTreePoints === undefined) s.passiveTreePoints = 0;
         return s;
     }
     // Fresh save structure — add new persistent fields here in the future
@@ -102,6 +104,8 @@ function initState() {
         classUpgradesAvailable: 0,
         classWorldsCompleted: [],
         classActiveChoice: 'active1',
+        convergenceDone: [],   // gIdx values where convergence point was already awarded
+        passiveTreePoints: 0,  // unspent points for the Probability Tree
     };
 }
 

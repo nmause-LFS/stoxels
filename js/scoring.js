@@ -223,6 +223,54 @@ function checkWin() {
         save();
     }
 
+    // ── Convergence reward: +1 Probability Tree point on first clear ──────
+    const worldData2 = WORLDS[cur.world - 1];
+
+    // Calculate the two threshold indices (0-based) at 33% and 66% of all levels in a world
+    const c1 = Math.floor((worldData2.data.length - 1) / 3);
+    const c2 = Math.floor((worldData2.data.length - 1) * 2 / 3);
+
+    // cur.li is 1-based, so we subtract 1 to compare against our 0-based indices
+    const currentIdx = cur.li - 1;
+
+    const isConvergenceLevel = worldData2.data.length > 2 &&
+        (currentIdx === c1 || currentIdx === c2) &&
+        !isAscensionLevel;
+
+    if (isConvergenceLevel && isFirstClear) {
+        if (!STATE.convergenceDone) STATE.convergenceDone = [];
+        STATE.convergenceDone.push(gi);
+
+        // Award the points
+        STATE.passiveTreePoints = (STATE.passiveTreePoints || 0) + 100;
+        save();
+
+        showToast(LANG === 'de'
+            ? '🌿 Konvergenz! 1 Punkt für den Wahrscheinlichkeitsbaum erhalten!'
+            : '🌿 Convergence! 1 Passive Tree point received!');
+    }
+
+    /*
+
+
+    const convergenceIdx = Math.floor((worldData2.data.length - 1) / 2);
+    const isConvergenceLevel = worldData2.data.length > 1 &&
+        (cur.li - 1) === convergenceIdx &&   // cur.li is 1-based, convergenceIdx is 0-based
+        !isAscensionLevel;
+    if (isConvergenceLevel && isFirstClear) {
+        if (!STATE.convergenceDone) STATE.convergenceDone = [];
+        STATE.convergenceDone.push(gi);
+        STATE.passiveTreePoints = (STATE.passiveTreePoints || 0) + 100 // + 1;
+        save();
+        showToast(LANG === 'de'
+            ? '🌿 Konvergenz! 1 Punkt für den Wahrscheinlichkeitsbaum erhalten!'
+            : '🌿 Convergence! 1 Probability Tree point received!');
+    }
+
+
+    */
+
+
     // ── Ascension reward: Codex of Completion on first clear of the last level in a world ──
     if (isAscensionLevel && isFirstClear && !curMods.ironman) {
         const codexDef = ITEM_DEFS['artifactComplete'];

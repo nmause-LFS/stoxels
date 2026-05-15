@@ -1145,6 +1145,152 @@ const ACHIEVEMENT_DEFS = [
             { threshold: 50,  labelEn: 'Omniscient',    labelDE: 'Allwissend' },
         ]
     },
+
+
+    // ── FREEZE ITEMS USED ────────────────────────
+    {
+        id: 'freeze_used',
+        category: 'items',
+        icon: '❄️',
+        nameEn: 'Time Stopper',
+        nameDE: 'Zeitanhalter',
+        descEn: 'Use Time Freeze items.',
+        descDE: 'Nutze Zeitfrieren-Items.',
+        stat: 'freezeUsed',
+        tiers: [
+            { threshold: 5, labelEn: 'First Freeze', labelDE: 'Erstes Einfrieren' },
+            { threshold: 25, labelEn: 'Cold Shoulder', labelDE: 'Kalte Schulter' },
+            { threshold: 75, labelEn: 'Permafrost', labelDE: 'Permafrost' },
+        ]
+    },
+
+    // ── MISTAKE ERASER USED ──────────────────────
+    {
+        id: 'eraser_used',
+        category: 'items',
+        icon: '🎓',
+        nameEn: 'The Tutor\'s Way',
+        nameDE: 'Des Tutors Weg',
+        descEn: 'Use Mistake Eraser items to reduce your mistake count.',
+        descDE: 'Nutze Fehlerradierer-Items, um deine Fehleranzahl zu reduzieren.',
+        stat: 'eraserUsed',
+        tiers: [
+            { threshold: 5, labelEn: 'Second Chance', labelDE: 'Zweite Chance' },
+            { threshold: 20, labelEn: 'Clean Record', labelDE: 'Saubere Akte' },
+            { threshold: 50, labelEn: 'Revisionist', labelDE: 'Revisionist' },
+        ]
+    },
+
+    // ── INDIVIDUAL CURSED ITEM ACHIEVEMENTS ──────
+
+    // cursedReveal
+    {
+        id: 'cursed_lens_used',
+        category: 'items',
+        icon: '☠️',
+        nameEn: 'Cursed Lens',
+        nameDE: 'Verfluchte Linse',
+        descEn: 'Use the Cursed Lens item.',
+        descDE: 'Nutze das Verfluchte-Linse-Item.',
+        stat: 'cursedLensUsed',
+        tiers: [
+            { threshold: 5, labelEn: 'Dark Sight', labelDE: 'Dunkle Sicht' },
+            { threshold: 20, labelEn: 'Blind Bargain', labelDE: 'Blinder Handel' },
+            { threshold: 50, labelEn: 'Eyes of Shadow', labelDE: 'Schattenaugen' },
+        ]
+    },
+
+    // cursedTime
+    {
+        id: 'cursed_clock_used',
+        category: 'items',
+        icon: '💀',
+        nameEn: 'Cursed Clock',
+        nameDE: 'Verfluchte Uhr',
+        descEn: 'Use the Cursed Clock item.',
+        descDE: 'Nutze die Verfluchte-Uhr.',
+        stat: 'cursedClockUsed',
+        tiers: [
+            { threshold: 5, labelEn: 'Warped Time', labelDE: 'Verzerrte Zeit' },
+            { threshold: 20, labelEn: 'Time Gambler', labelDE: 'Zeit-Spieler' },
+            { threshold: 50, labelEn: 'Temporal Pact', labelDE: 'Zeitpakt' },
+        ]
+    },
+
+    // cursedShield
+    {
+        id: 'demon_eye_used',
+        category: 'items',
+        icon: '👁️',
+        nameEn: 'Demon Eye',
+        nameDE: 'Dämonenauge',
+        descEn: 'Use the Demon Eye item.',
+        descDE: 'Nutze das Dämonenauge-Item.',
+        stat: 'demonEyeUsed',
+        tiers: [
+            { threshold: 5, labelEn: 'Dark Ward', labelDE: 'Dunkle Wacht' },
+            { threshold: 20, labelEn: 'Infernal Guard', labelDE: 'Höllenwacht' },
+            { threshold: 50, labelEn: 'Abyssal Sight', labelDE: 'Abyssaler Blick' },
+        ]
+    },
+
+    // cursedRowSolve
+    {
+        id: 'tidal_wave_used',
+        category: 'items',
+        icon: '🌊',
+        nameEn: 'Tidal Wave',
+        nameDE: 'Flutwelle',
+        descEn: 'Use the Tidal Wave item.',
+        descDE: 'Nutze das Flutwelle-Item.',
+        stat: 'tidalWaveUsed',
+        tiers: [
+            { threshold: 5, labelEn: 'Ripple', labelDE: 'Kräuselung' },
+            { threshold: 20, labelEn: 'High Tide', labelDE: 'Flut' },
+            { threshold: 50, labelEn: 'Tsunami', labelDE: 'Tsunami' },
+        ]
+    },
+
+    // cursedColSolve
+    {
+        id: 'vortex_used',
+        category: 'items',
+        icon: '🌪️',
+        nameEn: 'Vortex',
+        nameDE: 'Wirbelwind',
+        descEn: 'Use the Vortex item.',
+        descDE: 'Nutze das Wirbelwind-Item.',
+        stat: 'vortexUsed',
+        tiers: [
+            { threshold: 5, labelEn: 'Whirlpool', labelDE: 'Strudel' },
+            { threshold: 20, labelEn: 'Cyclone', labelDE: 'Zyklon' },
+            { threshold: 50, labelEn: 'Eye of the Storm', labelDE: 'Auge des Sturms' },
+        ]
+    },
+
+    // cursedRowCol
+    {
+        id: 'chaos_grid_used',
+        category: 'items',
+        icon: '💥',
+        nameEn: 'Chaos Grid',
+        nameDE: 'Chaos-Gitter',
+        descEn: 'Use the Chaos Grid item.',
+        descDE: 'Nutze das Chaos-Gitter-Item.',
+        stat: 'chaosGridUsed',
+        tiers: [
+            { threshold: 5, labelEn: 'Anarchy', labelDE: 'Anarchie' },
+            { threshold: 20, labelEn: 'Mayhem', labelDE: 'Chaos' },
+            { threshold: 50, labelEn: 'Total Chaos', labelDE: 'Totales Chaos' },
+        ]
+    },
+
+
+
+
+
+
+
 ];
 
 

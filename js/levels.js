@@ -43,8 +43,8 @@ const W1 = [
         // 5x5
         hint: "Result",
         hintDE: "Ergebnis",
-        reveal: "omega is a possible result in a random experiment",
-        revealDE: "omega ist ein mögliches Ergebnis eines Zufallsexperiments",
+        reveal: "ω is a possible result in a random experiment",
+        revealDE: "ω ist ein mögliches Ergebnis eines Zufallsexperiments",
         timer: 1800,
         bonusHint: "Finish in less than 20 seconds",
         bonusHintDE: "In weniger als 20 Sekunden abschließen",
@@ -145,8 +145,8 @@ const W1 = [
         //5x25
         hint: "Event Algebra",
         hintDE: "Ereignisalgebra",
-        reveal: "This is the typical sigma-Algebra for a countable Omega",
-        revealDE: "Dies ist die typische sigma - Algebra bei einem abzählbaren Omega",
+        reveal: "This is the typical sigma-Algebra for a countable Ω",
+        revealDE: "Dies ist die typische sigma - Algebra bei einem abzählbaren Ω",
         timer: 1800,
         bonusHint: "Finish without mistakes",
         bonusHintDE: "Beende das Level ohne Fehler zu machen",

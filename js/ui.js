@@ -162,6 +162,7 @@ function confirmReset() {
         unlockedCodes: [],
         done: [],
         bonusDone: [],
+        mathGatePassed: [],
     };
     // already handled by initState() since we call it again,
     // but explicitly clear them for safety:
@@ -280,4 +281,14 @@ function showAchievements() {
 
     // Switch to the achievement screen
     ss('screen-achievements');
+}
+
+
+
+// showPassiveTree — opens the Probability Tree screen.
+//   Rebuilds the tree display so newly earned points are reflected.
+function showPassiveTree() {
+    buildPassiveTreeScreen();
+    screenHistory.push('screen-levels');
+    ss('screen-passive-tree');
 }

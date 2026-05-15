@@ -19,28 +19,57 @@
 //   newly unlocked codes.
 //   Called from: checkWin() and finishQuiz() in scoring.js.
 function checkWorldCodes() {
-    const newCodes = []; // codes unlocked during THIS call
+    const newCodes = [];
+    const lockedCodes = []; // met score but not enough achievements yet
+
+    // Total number of achievement tiers across all defs
+    const totalTiers = ACHIEVEMENT_DEFS.reduce((s, d) => s + d.tiers.length, 0);
+    const unlockedTiers = ACH_STATE.unlocked.length;
+    const achPctDone = totalTiers > 0 ? unlockedTiers / totalTiers : 0;
 
     WORLD_CODES.forEach(wc => {
         // Skip codes the player already has
         if (STATE.unlockedCodes.includes(wc.code)) return;
 
-        // Check if total score meets or exceeds the threshold
-        if (STATE.totalScore >= wc.threshold) {
+        const scoreOk = STATE.totalScore >= wc.threshold;
+        const achOk = achPctDone >= (wc.achPct || 0);
+
+        if (scoreOk && achOk) {
             STATE.unlockedCodes.push(wc.code);
-            newCodes.push(wc); // queue for display
+            newCodes.push(wc);
             trackEvent('achievement_unlocked', {
-            code_title: LANG === 'de' ? wc.titleDE : wc.titleEn,
-            threshold: wc.threshold,
-            total_score: STATE.totalScore,
-        });
+                code_title: LANG === 'de' ? wc.titleDE : wc.titleEn,
+                threshold: wc.threshold,
+                total_score: STATE.totalScore,
+            });
+        } else if (scoreOk && !achOk) {
+            // Score is enough but achievements aren't — show a hint
+            lockedCodes.push({ wc, needed: Math.ceil(wc.achPct * totalTiers), have: unlockedTiers });
         }
     });
 
-    save(); // persist the updated unlockedCodes array
+    save();
 
-    if (newCodes.length) showPwModal(newCodes); // only show modal if something new was earned
+    if (newCodes.length) showPwModal(newCodes);
+    if (lockedCodes.length) showLockedCodeHint(lockedCodes);
 }
+
+
+
+function showLockedCodeHint(lockedCodes) {
+    // Only show the hint for the lowest-tier locked code (avoid spam)
+    const { wc, needed, have } = lockedCodes[0];
+    const title = LANG === 'de' ? wc.titleDE : wc.titleEn;
+    const msg = LANG === 'de'
+        ? `🔒 "${title}": Punktzahl erreicht! Noch ${needed - have} Achievements benötigt.`
+        : `🔒 "${title}": Score reached! ${needed - have} more achievement tiers needed.`;
+
+    if (typeof showToast === 'function') showToast(msg, 4000);
+}
+
+
+
+
 
 // showPwModal — builds and displays the password/code modal.
 //   Receives an array of newly unlocked world-code objects (each has
