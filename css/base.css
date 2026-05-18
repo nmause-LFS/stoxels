@@ -1,0 +1,120 @@
+/* Import external fonts: pixel-style font for retro aesthetics*/
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap');
+
+
+/* CSS Variables to be used in other files */
+
+:root {
+    /* Backgrounds & Surfaces */
+    --bg: #464646;              /* main background      */
+    --panel: #222630;           /* used for sidebars and containers */
+    --surface: #303648;         /* used for cards or items sitting on top of panels */
+    
+    /* Borders */
+    --border: #4a5475;  /* Standard border color              */
+    --border2: #656f96; /* A lighter border for hover effects */
+
+    /* Accent / brand colours */
+    --accent: #66fcf1;      /* signature bright cyan/teal of the game */
+    --accent2: #ffffff;     /* pure white, mostly used for text readability */
+    
+    /* Semantic colours (Red for errors, Green for success) */
+    --red: #f70808;
+    --yellow: #f5c518;
+    --green: #3ddc84;
+    --orange: #ff8c42;
+    --purple: #b06cff;
+    --pink: #ff6cbb;
+    --white: #ffffff;
+
+    /* Puzzle grid: Nonogram gameplay cells */
+    --cell-empty: #242b3d;              /* Color of a cell that has not been clicked yet */
+    --cell-filled: #66fcf1;             /* Color of a correctly filled cell              */
+    --cell-filled-border: #40c8c0;
+    --cell-border: #2c3854;             
+    --cell-wrong-bg: #2d1414;           /* Color if the player makes a mistake          */
+    --cell-wrong-border: #802424;   
+    --cell-revealed-bg: #1d4a1d;        /* Color when cell is automatically revealed by an item or skill effect */
+    --cell-revealed-border: #45a045; 
+    --cell-hover-row-col: #1e2c45;      /* Faint highlight when mouse is in the same row/column */
+    --cell-hover-intersect: #243552;    /* Brightest highlight exactly where the mouse is */
+    --cell-hover-intersect-border: rgba(102,252,241,.4);
+    --cell-group-divider: rgba(102,252,241,.25);
+
+    /* UI Specifics (Inventory, Modals, Timer) */
+
+    /* Row & Column Clue Numbers  */
+    --clue-col: #ffffff; 
+    --clue-done: #3ddc84;   /* unused  */
+    --clue-over: #ff4545;   /* unused  */
+
+    /* — Title screen — */
+    --title-tag: #e53939; /* PROBABILITY THEORY & STATISTICS NONOGRAMS tagline on title  */
+    --lang-btn: #5fa5c9;  /* Language Selection buttons  */
+
+    /* — Inventory — */
+    --inv-item-desc: #FFFFFF;       /* Description of items in inventory   */
+    --inv-item-empty: #666; 
+    --inv-cursed-lock: #770000;     /* Color of LOCKED text for cursed items in inventory in the first 3 minutes of a level */
+    --rarity-common: #aaaaaa;   
+    --rarity-uncommon: #3ddc84;
+    --rarity-rare: #5c99ff;     
+
+    /* — Timer — */
+    --timer-frozen: #66ccff;
+    
+    
+    /* Overlays & modals */
+    --overlay-bg: rgba(0,0,0,.88);      /* background color for overlays  */
+    --modal-bg: rgba(12,15,22,.90); 
+    --ov-sub: #a3a3a3; 
+    --penalty-flash: rgba(255,69,69,.25); /* color of Flash that occurs when player does a mistake   */
+
+
+    /* Misc / UI Text  */
+    --scrollbar-thumb: #656f96; 
+    --scrollbar-thumb-hover: #7882ab;
+    --hs-row-text: #b8b8b8; 
+    --hs-divider: #262c3b; 
+    --modal-body-text: #c8d0e6; 
+    --clue-legend-text: #9696ab; 
+    --puzzle-hint-text: #b4bbdb; 
+    --level-card-hover-bg: #3D6C7394; 
+    --setup-opt-inactive: #8892a3; 
+    --item-reward-bg: rgba(176,108,255,.18);
+    --pw-anim-shadow-lo: rgba(245,197,24,.4);
+    --pw-anim-shadow-hi: rgba(245,197,24,.7);
+
+
+    /* — Fonts — */
+    --F: 'Share Tech Mono',monospace;   /* Tech font for general text         */
+    --PX: 'Press Start 2P',monospace;   /* Pixel Font for titles and buttons  */
+}
+
+
+/* RESET & BASE: Clears out the browser's default settings 
+to make sure the game looks the same on Chrome, Firefox,... */
+
+*, *::before, *::after {
+    box-sizing: border-box; /* Makes sure padding doesnt accidently make elements too large   */
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;   /*Prevents the whole website from scrolling such that the game fits perfectly in the window */
+}
+
+
+body {
+    background: var(--bg);      /* General Background   */
+    color: var(--accent2);      /* Default text color   */
+    font-family: var(--F);      /* Default font         */
+    font-size: 14px;
+}
+
+
+
+

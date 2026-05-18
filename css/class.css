@@ -1,0 +1,951 @@
+﻿/*
+    ------------------------------------------------------------------------
+    -------------------------CLASS SELECTION & UPGRADE PANEL----------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+
+#class-selection-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 2500;
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+    #class-selection-overlay.show {
+        display: flex;
+    }
+
+#class-selection-content {
+    max-width: 960px;
+    width: 100%;
+}
+
+.cs-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+/* CHOOSE YOUR CLASS Title Text */
+.cs-title {
+    font-family: var(--PX);
+    font-size: 22px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-shadow: 0 0 18px var(--accent);
+    margin-bottom: 8px;
+}
+
+/* You completed a world! Text */
+.cs-subtitle {
+    font-family: var(--PX);
+    font-size: 15px;
+    color: var(--accent2);
+    opacity: 0.8;
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.8;
+    font-weight: bold;
+}
+
+/* Class Selection: 3 cards side by side */
+
+.cs-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+@media (max-width: 700px) {
+    .cs-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+.cs-card {
+    background: var(--surface);
+    border: 2px solid var(--cls-color, var(--border));
+    border-left-width: 4px;
+    padding: 18px 16px;
+    cursor: pointer;
+    transition: background 0.18s, box-shadow 0.18s, transform 0.1s;
+    position: relative;
+    overflow: hidden;
+}
+
+    .cs-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255,255,255,0.02) 0%, transparent 60%);
+        pointer-events: none;
+    }
+
+    .cs-card:hover {
+        background: color-mix(in srgb, var(--cls-color, #9b59b6) 8%, var(--surface));
+        box-shadow: 0 0 22px -4px var(--cls-color, var(--accent));
+        transform: translateY(-2px);
+    }
+
+.cs-card-icon {
+    font-size: 36px;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.cs-card-name {
+    font-family: var(--PX);
+    font-size: 20px;
+    letter-spacing: 2px;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.cs-card-desc {
+    font-size: 15px;
+    color: #888;
+    text-align: center;
+    line-height: 1.6;
+    margin-bottom: 14px;
+    font-style: italic;
+}
+
+.cs-card-abilities {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.cs-ability {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+/* Passive / Active Text */
+.cs-ability-tag {
+    font-family: var(--PX);
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+}
+
+    .cs-ability-tag.passive {
+        color: #f39c12;
+    }
+
+    .cs-ability-tag.active {
+        color: #3498db;
+    }
+
+.cs-ability-name {
+    font-family: var(--PX);
+    font-size: 15px;
+    color: var(--accent2);
+}
+
+
+/* Ability Description Text in Class Selection / Upgrade Selection */
+.cs-ability-desc {
+    font-size: 15px;
+    color: #00ff90;   /* #aaa; */
+    line-height: 1.6;
+}
+
+/* SELECT Button Text */
+.cs-card-cta {
+    font-family: var(--PX);
+    font-size: 15px;
+    text-align: center;
+    color: var(--cls-light, var(--accent));
+    border: 1px solid var(--cls-color, var(--accent));
+    padding: 6px;
+    letter-spacing: 1px;
+    transition: background 0.15s;
+}
+
+.cs-card:hover .cs-card-cta {
+    background: var(--cls-color, var(--accent));
+    color: #000;
+}
+
+
+/* ── Class Upgrade Screen ───────────────────────── */
+
+.cs-upgrade-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 18px;
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+    .cs-upgrade-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.cs-upgrade-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 2px solid var(--border2);
+    border-left: 4px solid var(--purple);
+    padding: 18px 16px;
+    cursor: pointer;
+    transition: background 0.18s, box-shadow 0.18s, transform 0.1s;
+}
+
+    .cs-upgrade-card:not(.maxed):hover {
+        background: rgba(155, 89, 182, 0.1);
+        box-shadow: 0 0 18px -4px var(--purple);
+        transform: translateY(-2px);
+    }
+
+    .cs-upgrade-card.maxed {
+        opacity: 0.5;
+        cursor: default;
+        border-left-color: #444;
+    }
+
+/* Passive or Active Text*/
+.cs-upgrade-tag {
+    font-family: var(--PX);
+    font-size: 15px;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    display: block;
+}
+
+    .cs-upgrade-tag.passive {
+        color: #f39c12;
+    }
+
+    .cs-upgrade-tag.active {
+        color: #3498db;
+    }
+
+/* Skill Name */
+.cs-upgrade-name {
+    font-family: var(--PX);
+    font-size: 20px;
+    color: var(--accent2);
+    margin-bottom: 10px;
+}
+
+/* Current Skill Rank Description */
+.cs-upgrade-current {
+    font-size: 15px;
+    color: #888;
+    line-height: 1.5;
+    margin-bottom: 6px;
+    padding: 6px 8px;
+    background: rgba(0,0,0,0.25);
+    border-left: 2px solid #444;
+}
+
+/* New Skill Rank Description */
+
+.cs-upgrade-new {
+    font-size: 15px;
+    color: var(--accent2);
+    line-height: 1.5;
+    margin-bottom: 10px;
+    padding: 6px 8px;
+    background: rgba(46, 213, 115, 0.06);
+    border-left: 2px solid var(--green);
+}
+
+.cs-upgrade-maxed {
+    font-family: var(--PX);
+    font-size: 15px;
+    color: var(--green);
+    margin-top: 8px;
+    letter-spacing: 1px;
+}
+
+
+/* Upgrade Button Text */
+.cs-upgrade-cta {
+    font-family: var(--PX);
+    font-size: 15px;
+    color: var(--purple);
+    border: 1px solid var(--purple);
+    padding: 5px 8px;
+    text-align: center;
+    letter-spacing: 1px;
+    margin-top: auto; /*  8px; */
+    transition: background 0.15s, color 0.15s;
+}
+
+.cs-upgrade-card:not(.maxed):hover .cs-upgrade-cta {
+    background: var(--purple);
+    color: #fff;
+}
+
+.cs-skip-btn {
+    font-family: var(--PX);
+    font-size: 10px;
+    background: transparent;
+    border: 1px solid #444;
+    color: #666;
+    padding: 8px 20px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+    .cs-skip-btn:hover {
+        border-color: var(--accent2);
+        color: var(--accent2);
+    }
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------INGAME CLASS HUD-------------------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Replace the existing #class-hud-panel rule */
+#class-hud-panel {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    width: 300px;
+    min-width: 158px;
+    padding: 0 0 10px 0; /* top padding moved to handle */
+    margin-left: 0;
+    position: fixed; /* fixed so it stays on screen during scroll/zoom */
+    left: 150px;
+    top: 80px;
+    z-index: 200; /* above puzzle */
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-size: 9px;
+    flex-shrink: 0;
+    align-self: flex-start;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    user-select: none;
+}
+
+/* Drag handle bar at the top of the HUD */
+#class-hud-drag-handle {
+    width: 100%;
+    padding: 6px 10px 4px;
+    background: rgba(255,255,255,0.04);
+    border-bottom: 1px solid var(--border);
+    cursor: grab;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--PX);
+    font-size: 8px;
+    color: #555;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    box-sizing: border-box;
+}
+
+    #class-hud-drag-handle:active {
+        cursor: grabbing;
+    }
+
+    #class-hud-drag-handle::before {
+        content: '⠿';
+        font-size: 12px;
+        opacity: 0.4;
+    }
+
+
+#class-hud-minimize-btn {
+    margin-left: auto;
+    background: transparent;
+    border: 1px solid #444;
+    color: #666;
+    font-size: 9px;
+    padding: 1px 5px;
+    cursor: pointer;
+    font-family: var(--PX);
+    letter-spacing: 1px;
+    line-height: 1.4;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+    #class-hud-minimize-btn:hover {
+        border-color: var(--accent2);
+        color: var(--accent2);
+    }
+
+
+
+
+.chud-icon {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 2px;
+}
+
+/* Class name on class hud */
+.chud-name {
+    font-family: var(--PX);
+    font-size: 9px;
+    text-align: center;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+}
+
+
+.chud-section {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--border);
+    padding: 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+
+/* Passive & Active Text */
+.chud-label {
+    font-family: var(--PX);
+    font-size: 8px;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+    .chud-label.passive {
+        color: #f39c12;
+    }
+
+    .chud-label.active-lbl {
+        color: #3498db;
+    }
+
+.chud-lv {
+    font-size: 8px;
+    opacity: 0.7;
+    background: rgba(255,255,255,0.08);
+    padding: 1px 3px;
+}
+
+.chud-skill-name {
+    font-family: var(--PX);
+    font-size: 10px;
+    color: var(--accent2);
+}
+
+.chud-skill-desc {
+    font-size: 12px;
+    color: #00ff90; /*  #999; */
+    line-height: 1.6;
+}
+
+.chud-cooldown {
+    font-family: var(--PX);
+    font-size: 10px;
+    color: #e67e22;
+    text-align: center;
+    margin: 2px 0;
+}
+
+
+/* Clickable active skill section */
+.chud-active-section {
+    transition: background 0.15s, box-shadow 0.15s;
+    user-select: none;
+}
+
+    .chud-active-section:not(.on-cooldown):hover {
+        background: rgba(52, 152, 219, 0.12) !important;
+        box-shadow: 0 0 8px -2px #3498db;
+    }
+
+    .chud-active-section.armed:not(.on-cooldown):hover {
+        background: rgba(231, 76, 60, 0.18) !important;
+        box-shadow: 0 0 8px -2px #e74c3c;
+    }
+
+@keyframes armPulse {
+    from {
+        box-shadow: 0 0 4px #e74c3c;
+    }
+
+    to {
+        box-shadow: 0 0 12px #e74c3c, 0 0 24px rgba(231,76,60,0.4);
+    }
+}
+
+.chud-active-section.armed {
+    animation: armPulse 0.8s ease-in-out infinite alternate;
+}
+
+/* Armed hint line */
+.chud-armed-hint {
+    font-family: var(--PX);
+    font-size: 8px;
+    color: #e74c3c;
+    margin-top: 5px;
+    letter-spacing: 0.5px;
+    opacity: 0.9;
+}
+
+/* Cooldown overlay over the description */
+.chud-cd-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 10, 20, 0.82);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    pointer-events: none;
+}
+
+.chud-cd-timer {
+    font-family: var(--PX);
+    font-size: 16px;
+    color: #e67e22;
+    letter-spacing: 1px;
+}
+
+.chud-cd-label {
+    font-family: var(--PX);
+    font-size: 8px;
+    color: #888;
+    letter-spacing: 1px;
+}
+
+/* Rank suffix inside skill name */
+.chud-rank {
+    font-family: var(--PX);
+    font-size: 8px;
+}
+
+
+
+
+
+/*
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+
+
+/* ═══════════════════════════════════════════════
+   CLASS SYSTEM STYLES  (class.css)
+   Covers: class selection overlay, upgrade screen,
+   in-game class HUD panel.
+   Uses the same CSS variables as the main game.
+═══════════════════════════════════════════════ */
+
+
+
+/* ── Crosshair cursor overlay hint ─────────────── */
+#puzzle-scaler-wrap.ability-armed {
+    cursor: crosshair !important;
+}
+
+/* ── Mobile / small screen adjustments ─────────── */
+@media (max-width: 700px) {
+    #class-hud-panel {
+        width: 100%;
+        min-width: unset;
+        border-right: 1px solid var(--border);
+        border-bottom: none;
+        flex-direction: row;
+        flex-wrap: wrap;
+        max-height: none;
+    }
+
+    .chud-icon, .chud-name {
+        width: 100%;
+    }
+
+    .chud-section {
+        flex: 1;
+        min-width: 120px;
+    }
+}
+
+
+
+/*
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+
+
+
+/*
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+
+
+
+/*
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+
+
+/* ═══════════════════════════════════════════════
+   ACTIVE ABILITY VISUAL EFFECTS
+═══════════════════════════════════════════════ */
+
+/* ── Absolute Zero: blizzard overlay ── */
+#ability-blizzard-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 350;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(160,220,255,0.08) 0%, rgba(100,180,255,0.04) 100%);
+    overflow: hidden;
+}
+
+.blizzard-flake {
+    position: absolute;
+    top: -20px;
+    color: #cceeff;
+    font-size: 14px;
+    opacity: 0;
+    animation: blizzard-fall linear forwards;
+    user-select: none;
+    pointer-events: none;
+    text-shadow: 0 0 6px #9de3ff;
+}
+
+@keyframes blizzard-fall {
+    0% {
+        opacity: 0;
+        transform: translateY(0) translateX(0) rotate(0deg);
+    }
+
+    10% {
+        opacity: 0.9;
+    }
+
+    90% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(110vh) translateX(40px) rotate(360deg);
+    }
+}
+
+/* Icy tint on the game screen */
+#ability-ice-tint {
+    position: fixed;
+    inset: 0;
+    z-index: 349;
+    pointer-events: none;
+    background: rgba(100, 200, 255, 0.07);
+    border: 3px solid rgba(100, 200, 255, 0.25);
+    animation: ice-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes ice-pulse {
+    0%, 100% {
+        box-shadow: inset 0 0 40px rgba(100,200,255,0.12);
+    }
+
+    50% {
+        box-shadow: inset 0 0 80px rgba(100,200,255,0.25);
+    }
+}
+
+
+/* ── Data Strike: horizontal slash ── */
+#ability-slash-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    z-index: 300;
+    height: 6px;
+    background: linear-gradient(90deg, transparent 0%, #e74c3c 30%, #fff 50%, #e74c3c 70%, transparent 100%);
+    box-shadow: 0 0 18px 4px rgba(231,76,60,0.7), 0 0 40px 8px rgba(231,76,60,0.35);
+    border-radius: 3px;
+    opacity: 0;
+    animation: slash-sweep 1s ease-out forwards;
+}
+
+@keyframes slash-sweep {
+    0% {
+        opacity: 0;
+        transform: scaleX(0) translateX(-100%);
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    60% {
+        opacity: 1;
+        transform: scaleX(1) translateX(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scaleX(1.05) translateX(0);
+    }
+}
+
+
+/* ── Diagonal Strike: diagonal slash ── */
+#ability-diag-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 300;
+    overflow: hidden;
+    border-radius: 2px;
+}
+
+.diag-slash {
+    position: absolute;
+    background: linear-gradient(transparent 0%, #e74c3c 45%, #fff 50%, #e74c3c 55%, transparent 100%);
+    box-shadow: 0 0 14px 3px rgba(231,76,60,0.6);
+    opacity: 0;
+    animation: diag-slash-anim 1s ease-out forwards;
+    transform-origin: center;
+}
+
+@keyframes diag-slash-anim {
+    0% {
+        opacity: 0;
+        clip-path: inset(0 100% 0 0);
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    65% {
+        opacity: 1;
+        clip-path: inset(0 0 0 0);
+    }
+
+    100% {
+        opacity: 0;
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+
+/* ── Arcane Reveal: sparkle burst ── */
+.arcane-sparkle {
+    position: absolute;
+    pointer-events: none;
+    z-index: 310;
+    font-size: 16px;
+    opacity: 0;
+    animation: sparkle-burst 0.7s ease-out forwards;
+    user-select: none;
+}
+
+@keyframes sparkle-burst {
+    0% {
+        opacity: 1;
+        transform: scale(0.5) translateY(0);
+    }
+
+    60% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1.4) translateY(-28px);
+    }
+}
+
+
+/* ── Precision Mark: crosshair pulse ── */
+.precision-line-h,
+.precision-line-v {
+    position: absolute;
+    pointer-events: none;
+    z-index: 305;
+    background: linear-gradient(90deg, transparent, #27ae60 20%, #27ae60 80%, transparent);
+    height: 3px;
+    left: 0;
+    right: 0;
+    box-shadow: 0 0 10px 2px rgba(39,174,96,0.6);
+    opacity: 0;
+    animation: precision-sweep 1s ease-out forwards;
+}
+
+.precision-line-v {
+    background: linear-gradient(180deg, transparent, #27ae60 20%, #27ae60 80%, transparent);
+    width: 3px;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    left: unset;
+    right: unset;
+}
+
+@keyframes precision-sweep {
+    0% {
+        opacity: 0;
+        transform: scaleX(0);
+    }
+
+    20% {
+        opacity: 1;
+        transform: scaleX(1);
+    }
+
+    70% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.precision-line-v {
+    animation-name: precision-sweep-v;
+}
+
+@keyframes precision-sweep-v {
+    0% {
+        opacity: 0;
+        transform: scaleY(0);
+    }
+
+    20% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+
+    70% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+
+/* ── Field Scan: scanning beam ── */
+#ability-scan-beam {
+    position: absolute;
+    pointer-events: none;
+    z-index: 308;
+    background: linear-gradient(180deg, rgba(39,174,96,0) 0%, rgba(39,174,96,0.55) 45%, rgba(150,255,200,0.85) 50%, rgba(39,174,96,0.55) 55%, rgba(39,174,96,0) 100% );
+    box-shadow: 0 0 24px 6px rgba(39,174,96,0.4);
+    left: 0;
+    right: 0;
+    height: 40px;
+    opacity: 0;
+    animation: scan-beam-move linear forwards;
+}
+
+@keyframes scan-beam-move {
+    0% {
+        opacity: 0;
+        top: 0%;
+    }
+
+    8% {
+        opacity: 1;
+    }
+
+    92% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        top: calc(100% - 40px);
+    }
+}
+
+
+
+@keyframes diag-fade-in-out {
+    0% {
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    70% {
+        opacity: 0.85;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+
+
+
+
+
+
+
+#chud-mini-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px; /*0.78em; */
+    flex: 1;
+    justify-content: center;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.chud-mini-ready {
+    color: #2ecc71;
+    font-weight: bold;
+}
+
+.chud-mini-cd {
+    color: #e67e22;
+}
+
+.chud-mini-sep {
+    color: var(--border);
+    opacity: 0.5;
+    padding: 0 2px;
+}

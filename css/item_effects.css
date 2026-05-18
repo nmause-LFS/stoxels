@@ -1,0 +1,1328 @@
+/* ═══════════════════════════════════════════════
+   ITEM VISUAL EFFECTS  (inventory_effects.css)
+   All CSS keyframes and classes for item-use
+   animations defined in inventory_effects.js.
+   Mirrors the structure of class.css for the
+   class ability effects.
+═══════════════════════════════════════════════ */
+
+
+/* ────────────────────────────────────────────────
+   SHARED UTILITY CLASSES
+──────────────────────────────────────────────── */
+
+/* Generic floating particle — subclasses override the animation */
+.fx-particle-generic {
+    position: absolute;
+    pointer-events: none;
+    z-index: 322;
+    user-select: none;
+    opacity: 0;
+    animation: fx-particle-float 900ms ease-out forwards;
+}
+
+@keyframes fx-particle-float {
+    0% {
+        opacity: 1;
+        transform: translate(0,0) scale(1);
+    }
+
+    60% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(0,-40px) scale(.6);
+    }
+}
+
+/* Icon pop used by many effects */
+@keyframes fx-icon-pop {
+    0% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(0.3);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translate(-50%,-50%) scale(1.25);
+    }
+
+    70% {
+        opacity: 1;
+        transform: translate(-50%,-50%) scale(0.95);
+    }
+
+    85% {
+        opacity: 0.9;
+        transform: translate(-50%,-50%) scale(1.05);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(1);
+    }
+}
+
+
+/* ────────────────────────────────────────────────
+   REVEAL ITEMS
+──────────────────────────────────────────────── */
+
+/* 🕯️ Candle — warm amber bloom */
+.fx-candle-glow {
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(255, 180, 60, 0);
+    animation: fx-candle-bloom 1.6s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes fx-candle-bloom {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255,180,60,0.0);
+    }
+
+    25% {
+        box-shadow: 0 0 80px 60px rgba(255,180,60,0.25);
+    }
+
+    65% {
+        box-shadow: 0 0 140px 100px rgba(255,140,20,0.18);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(255,180,60,0.0);
+    }
+}
+
+.fx-candle-flame {
+    font-size: 42px;
+    position: absolute;
+    pointer-events: none;
+    z-index: 326;
+    transform: translateX(-50%);
+    animation: fx-candle-flicker 1.8s ease-out forwards;
+}
+
+@keyframes fx-candle-flicker {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.5) translateY(10px);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1.2) translateY(0px);
+    }
+
+    50% {
+        opacity: 0.9;
+        transform: translateX(-52%) scale(1.0) translateY(-5px);
+    }
+
+    75% {
+        opacity: 0.8;
+        transform: translateX(-48%) scale(1.1) translateY(-8px);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.6) translateY(-20px);
+    }
+}
+
+
+/* 🔍 Magnifier — slides across */
+.fx-magnifier-lens {
+    pointer-events: none;
+    z-index: 325;
+    font-size: 48px;
+    position: absolute;
+}
+
+@keyframes fx-magnifier-slide {
+    0% {
+        opacity: 0;
+        left: calc(var(--slide-end) * -0.1);
+        transform: scale(0.7) rotate(-15deg);
+    }
+
+    15% {
+        opacity: 1;
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    70% {
+        opacity: 1;
+        left: calc(var(--slide-end) * 0.5);
+        transform: scale(1) rotate(-3deg);
+    }
+
+    100% {
+        opacity: 0;
+        left: var(--slide-end);
+        transform: scale(0.8) rotate(10deg);
+    }
+}
+
+
+/* 🔭 Spyglass — concentric rings */
+.fx-spyglass-ring {
+    width: var(--ring-size);
+    height: var(--ring-size);
+    border-radius: 50%;
+    border: 3px solid rgba(80, 200, 255, 0.7);
+    box-shadow: 0 0 12px 3px rgba(80,200,255,0.35);
+    pointer-events: none;
+}
+
+@keyframes fx-ring-expand {
+    0% {
+        transform: translate(-50%,-50%) scale(0);
+        opacity: 0.9;
+    }
+
+    60% {
+        opacity: 0.6;
+    }
+
+    100% {
+        transform: translate(-50%,-50%) scale(1);
+        opacity: 0;
+    }
+}
+
+
+/* 📡 Scanner — green horizontal scan bar */
+.fx-scanner-bar {
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent 0%, rgba(39,174,96,0.6) 20%, rgba(150,255,200,0.9) 50%, rgba(39,174,96,0.6) 80%, transparent 100%);
+    box-shadow: 0 0 16px 4px rgba(39,174,96,0.5);
+    border-radius: 2px;
+}
+
+@keyframes fx-scanner-sweep {
+    0% {
+        opacity: 0;
+        transform: translateY(0);
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 0.85;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(var(--scan-distance));
+    }
+}
+
+
+/* ────────────────────────────────────────────────
+   MARK-WRONG ITEMS
+──────────────────────────────────────────────── */
+
+/* ✏️ Eraser — pink rubber wipe */
+.fx-eraser-streak {
+    pointer-events: none;
+    border-radius: 4px;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,182,193,0.75) 30%, rgba(255,150,180,0.9) 50%, rgba(255,182,193,0.75) 70%, transparent 100%);
+    box-shadow: 0 0 10px 3px rgba(255,130,160,0.4);
+}
+
+@keyframes fx-eraser-wipe {
+    0% {
+        opacity: 0;
+        transform: scaleX(0) translateX(-30px);
+        transform-origin: left;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    75% {
+        opacity: 0.8;
+        transform: scaleX(1) translateX(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scaleX(1) translateX(10px);
+    }
+}
+
+
+/* 🧹 Sweeper — broom slide */
+.fx-sweeper-icon {
+    pointer-events: none;
+    z-index: 325;
+}
+
+@keyframes fx-sweeper-broom {
+    0% {
+        opacity: 0;
+        left: var(--broom-start);
+        transform: scaleX(-1) rotate(-15deg);
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    80% {
+        opacity: 1;
+        left: var(--broom-end);
+        transform: scaleX(-1) rotate(10deg);
+    }
+
+    100% {
+        opacity: 0;
+        left: var(--broom-end);
+        transform: scaleX(-1) rotate(20deg);
+    }
+}
+
+/* Dust particles */
+.fx-dust-particle {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(200,180,140,0.7);
+    position: absolute;
+    pointer-events: none;
+    animation: fx-dust-puff 0.7s ease-out forwards;
+}
+
+@keyframes fx-dust-puff {
+    0% {
+        opacity: 0.9;
+        transform: scale(0.5) translateY(0);
+    }
+
+    60% {
+        opacity: 0.5;
+        transform: scale(1.4) translateY(-14px) translateX(8px);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(2) translateY(-28px) translateX(16px);
+    }
+}
+
+
+/* 🧲 Error Magnet */
+.fx-magnet-icon {
+    pointer-events: none;
+    z-index: 326;
+    font-size: 52px;
+    position: absolute;
+    transform: translateX(-50%);
+}
+
+@keyframes fx-magnet-drop {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-30px) scale(0.7);
+    }
+
+    40% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(4px) scale(1.15);
+    }
+
+    65% {
+        transform: translateX(-50%) translateY(-3px) scale(0.97);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+    }
+}
+
+.fx-magnet-cross {
+    position: absolute;
+    pointer-events: none;
+    font-size: 18px;
+    color: #f44;
+    font-weight: bold;
+    text-shadow: 0 0 6px #f44;
+    animation: fx-cross-fly 0.55s ease-in forwards;
+}
+
+@keyframes fx-cross-fly {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+
+    70% {
+        opacity: 0.8;
+        transform: translate(calc(var(--dx)*0.7), calc(var(--dy)*0.7)) scale(0.7);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(var(--dx), var(--dy)) scale(0.2);
+    }
+}
+
+
+/* 💎 Error Gem */
+.fx-gem-pulse {
+    position: absolute;
+    pointer-events: none;
+    z-index: 326;
+}
+
+@keyframes fx-gem-burst {
+    0% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(0.4) rotate(-10deg);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translate(-50%,-50%) scale(1.35) rotate(5deg);
+    }
+
+    55% {
+        opacity: 0.9;
+        transform: translate(-50%,-50%) scale(1.0) rotate(0deg);
+    }
+
+    80% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(0.8) rotate(-5deg);
+    }
+}
+
+.fx-gem-spark {
+    position: absolute;
+    pointer-events: none;
+    z-index: 323;
+    opacity: 0;
+    animation: fx-gem-spark-fall 1100ms ease-out forwards;
+}
+
+@keyframes fx-gem-spark-fall {
+    0% {
+        opacity: 0.9;
+        transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: translate(0, 30px) scale(0.8);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(0, 90px) scale(0.4);
+    }
+}
+
+
+/* ────────────────────────────────────────────────
+   ADD-TIME ITEMS
+──────────────────────────────────────────────── */
+
+/* ⏳ Hourglass spin */
+.fx-hourglass-icon {
+    pointer-events: none;
+    z-index: 326;
+    position: absolute;
+}
+
+@keyframes fx-hourglass-spin {
+    0% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(0.5) rotate(0deg);
+    }
+
+    25% {
+        opacity: 1;
+        transform: translate(-50%,-50%) scale(1.2) rotate(90deg);
+    }
+
+    60% {
+        opacity: 1;
+        transform: translate(-50%,-50%) scale(1.0) rotate(180deg);
+    }
+
+    85% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(0.8) rotate(180deg);
+    }
+}
+
+.fx-sand-grain {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #d4a853;
+    position: absolute;
+    pointer-events: none;
+    animation: fx-sand-fall 0.6s ease-in forwards;
+}
+
+@keyframes fx-sand-fall {
+    0% {
+        opacity: 0.9;
+        transform: translateY(0) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(var(--fall-dist)) scale(0.5);
+    }
+}
+
+
+/* ⏱️ Stopwatch — time rings */
+.fx-time-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 200, 50, 0.8);
+    box-shadow: 0 0 8px 2px rgba(255,200,50,0.35);
+    width: var(--ring-max);
+    height: var(--ring-max);
+    pointer-events: none;
+}
+
+@keyframes fx-time-ring-expand {
+    0% {
+        transform: translate(-50%,-50%) scale(0);
+        opacity: 0.9;
+    }
+
+    55% {
+        opacity: 0.6;
+    }
+
+    100% {
+        transform: translate(-50%,-50%) scale(1);
+        opacity: 0;
+    }
+}
+
+
+/* 🕰️ Clock — golden rays */
+.fx-clock-burst {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ffd700;
+    box-shadow: 0 0 20px 10px rgba(255,215,0,0.5);
+    animation: fx-clock-core-pulse 1.4s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes fx-clock-core-pulse {
+    0% {
+        transform: translate(-50%,-50%) scale(0);
+        opacity: 1;
+    }
+
+    40% {
+        transform: translate(-50%,-50%) scale(4);
+        opacity: 0.6;
+    }
+
+    100% {
+        transform: translate(-50%,-50%) scale(8);
+        opacity: 0;
+    }
+}
+
+.fx-clock-ray {
+    width: var(--ray-len);
+    height: 3px;
+    position: absolute;
+    background: linear-gradient(90deg, #ffd700 0%, rgba(255,215,0,0) 100%);
+    box-shadow: 0 0 6px 2px rgba(255,215,0,0.4);
+    border-radius: 2px;
+    pointer-events: none;
+    transform-origin: left center;
+}
+
+@keyframes fx-clock-ray-shoot {
+    0% {
+        opacity: 0;
+        width: 0;
+    }
+
+    30% {
+        opacity: 1;
+        width: var(--ray-len);
+    }
+
+    70% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+        width: var(--ray-len);
+    }
+}
+
+
+/* ⚡ Chronobolt — lightning + flash */
+.fx-chronobolt-flash {
+    background: rgba(255, 240, 80, 0.15);
+    animation: fx-bolt-flash 0.6s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes fx-bolt-flash {
+    0% {
+        opacity: 0;
+    }
+
+    8% {
+        opacity: 1;
+        background: rgba(255,240,80,0.35);
+    }
+
+    20% {
+        opacity: 0;
+    }
+
+    32% {
+        opacity: 1;
+        background: rgba(255,240,80,0.20);
+    }
+
+    60% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes fx-bolt-strike {
+    0% {
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    60% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.fx-lightning-bolt {
+    position: absolute;
+    pointer-events: none;
+    z-index: 329;
+}
+
+@keyframes fx-bolt-icon {
+    0% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(0.2);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translate(-50%,-50%) scale(1.4);
+    }
+
+    50% {
+        opacity: 0.9;
+        transform: translate(-50%,-50%) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(0.7);
+    }
+}
+
+
+/* ────────────────────────────────────────────────
+   UTILITY ITEMS
+──────────────────────────────────────────────── */
+
+/* 🛡️ Shield — gold hex rings */
+.fx-shield-overlay {
+    pointer-events: none;
+    border: 3px solid rgba(255, 215, 0, 0);
+    border-radius: 4px;
+}
+
+@keyframes fx-shield-pulse {
+    0% {
+        border-color: rgba(255,215,0,0);
+        box-shadow: none;
+    }
+
+    25% {
+        border-color: rgba(255,215,0,0.7);
+        box-shadow: inset 0 0 30px rgba(255,215,0,0.2), 0 0 20px rgba(255,215,0,0.4);
+    }
+
+    70% {
+        border-color: rgba(255,215,0,0.4);
+    }
+
+    100% {
+        border-color: rgba(255,215,0,0);
+        box-shadow: none;
+    }
+}
+
+.fx-shield-hex {
+    font-size: 80px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: fx-shield-icon 1.3s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes fx-shield-icon {
+    0% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(0.4);
+    }
+
+    35% {
+        opacity: 1;
+        transform: translate(-50%,-50%) scale(1.2);
+    }
+
+    60% {
+        opacity: 0.8;
+        transform: translate(-50%,-50%) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(1.4);
+    }
+}
+
+.fx-shield-ring {
+    position: absolute;
+    width: var(--ring-max);
+    height: var(--ring-max);
+    border-radius: 50%;
+    border: 2px solid rgba(255, 215, 0, 0.6);
+    box-shadow: 0 0 10px 3px rgba(255,215,0,0.3);
+    pointer-events: none;
+}
+
+@keyframes fx-shield-ring-expand {
+    0% {
+        transform: translate(-50%,-50%) scale(0);
+        opacity: 1;
+    }
+
+    65% {
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: translate(-50%,-50%) scale(1);
+        opacity: 0;
+    }
+}
+
+
+/* 📐 Row Solve — horizontal gold sweep bars */
+.fx-rowsolve-bar {
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,215,0,0.55) 25%, rgba(255,245,100,0.85) 50%, rgba(255,215,0,0.55) 75%, transparent 100%);
+    box-shadow: 0 0 8px 2px rgba(255,215,0,0.4);
+    border-radius: 2px;
+}
+
+@keyframes fx-rowsolve-sweep {
+    0% {
+        opacity: 0;
+        transform: scaleX(0);
+        transform-origin: left;
+    }
+
+    20% {
+        opacity: 1;
+        transform: scaleX(1);
+    }
+
+    75% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+
+/* 📏 Col Solve — vertical gold sweep bars */
+.fx-colsolve-bar {
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent 0%, rgba(255,215,0,0.55) 25%, rgba(255,245,100,0.85) 50%, rgba(255,215,0,0.55) 75%, transparent 100%);
+    box-shadow: 0 0 8px 2px rgba(255,215,0,0.4);
+    border-radius: 2px;
+}
+
+@keyframes fx-colsolve-sweep {
+    0% {
+        opacity: 0;
+        transform: scaleY(0);
+        transform-origin: top;
+    }
+
+    20% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+
+    75% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+
+/* 🎓 Mistake Eraser — chalk smear */
+.fx-chalk-smear {
+    width: 80px;
+    height: 18px;
+    border-radius: 6px;
+    background: rgba(200, 200, 200, 0.55);
+    box-shadow: 0 0 10px 4px rgba(200,200,200,0.3);
+    pointer-events: none;
+}
+
+@keyframes fx-chalk-wipe {
+    0% {
+        opacity: 0;
+        transform: scaleX(0) rotate(-2deg);
+        transform-origin: left;
+    }
+
+    30% {
+        opacity: 1;
+        transform: scaleX(1) rotate(1deg);
+    }
+
+    70% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+        transform: scaleX(1.1) rotate(-1deg);
+    }
+}
+
+
+/* 📜 Scout's Primer — compass arrows */
+.fx-primer-arrow {
+    position: absolute;
+    pointer-events: none;
+    z-index: 323;
+    font-size: 22px;
+    transform: translate(-50%, -50%);
+    animation: fx-primer-shoot 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes fx-primer-shoot {
+    0% {
+        opacity: 0;
+        transform: translate(-50%,-50%) translate(0,0) scale(0.5);
+    }
+
+    25% {
+        opacity: 1;
+        transform: translate(-50%,-50%) translate(calc(var(--dx)*0.3), calc(var(--dy)*0.3)) scale(1.2);
+    }
+
+    70% {
+        opacity: 0.8;
+        transform: translate(-50%,-50%) translate(calc(var(--dx)*0.85), calc(var(--dy)*0.85)) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%,-50%) translate(var(--dx), var(--dy)) scale(0.5);
+    }
+}
+
+
+/* 🌟 Artifact Complete — gold fill + rays */
+.fx-artifact-fill {
+    pointer-events: none;
+    border-radius: 3px;
+    animation: fx-artifact-fill-flash 1.8s ease-out forwards;
+}
+
+@keyframes fx-artifact-fill-flash {
+    0% {
+        background: rgba(255,215,0,0);
+        box-shadow: none;
+    }
+
+    15% {
+        background: rgba(255,215,0,0.35);
+        box-shadow: inset 0 0 60px rgba(255,215,0,0.4);
+    }
+
+    45% {
+        background: rgba(255,215,0,0.15);
+    }
+
+    100% {
+        background: rgba(255,215,0,0);
+        box-shadow: none;
+    }
+}
+
+.fx-artifact-ray {
+    height: 4px;
+    width: var(--ray-len);
+    position: absolute;
+    background: linear-gradient(90deg, rgba(255,215,0,0.9) 0%, rgba(255,215,0,0) 100%);
+    box-shadow: 0 0 8px 2px rgba(255,215,0,0.5);
+    border-radius: 2px;
+    pointer-events: none;
+    transform-origin: left center;
+}
+
+@keyframes fx-artifact-ray-shoot {
+    0% {
+        opacity: 0;
+        width: 0;
+    }
+
+    25% {
+        opacity: 1;
+        width: var(--ray-len);
+    }
+
+    70% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.fx-artifact-star {
+    position: absolute;
+    pointer-events: none;
+    z-index: 323;
+    opacity: 0;
+    animation: fx-artifact-star-burst 1.4s ease-out forwards;
+}
+
+@keyframes fx-artifact-star-burst {
+    0% {
+        opacity: 1;
+        transform: translate(0,0) scale(1) rotate(0deg);
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(0,-60px) scale(0.3) rotate(180deg);
+    }
+}
+
+@keyframes fx-artifact-icon {
+    0% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(0.2) rotate(-20deg);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translate(-50%,-50%) scale(1.3) rotate(5deg);
+    }
+
+    60% {
+        opacity: 0.9;
+        transform: translate(-50%,-50%) scale(1) rotate(0deg);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(0.8) rotate(-5deg);
+    }
+}
+
+
+/* ────────────────────────────────────────────────
+   CURSED ITEMS
+──────────────────────────────────────────────── */
+
+/* ☠️ Cursed Reveal — toxic green tint */
+.fx-cursed-tint {
+    pointer-events: none;
+    border-radius: 3px;
+    animation: fx-cursed-green-flash 1.4s ease-out forwards;
+}
+
+@keyframes fx-cursed-green-flash {
+    0% {
+        background: rgba(50,200,50,0);
+        box-shadow: none;
+    }
+
+    20% {
+        background: rgba(50,200,50,0.2);
+        box-shadow: inset 0 0 40px rgba(50,200,50,0.3);
+    }
+
+    60% {
+        background: rgba(50,200,50,0.08);
+    }
+
+    100% {
+        background: rgba(50,200,50,0);
+        box-shadow: none;
+    }
+}
+
+/* Dissolving ✕ particles */
+.fx-cursed-cross {
+    position: absolute;
+    pointer-events: none;
+    z-index: 323;
+    font-weight: bold;
+    opacity: 0;
+    animation: fx-cross-dissolve 900ms ease-out forwards;
+}
+
+@keyframes fx-cross-dissolve {
+    0% {
+        opacity: 1;
+        transform: translate(-50%,-50%) scale(1);
+    }
+
+    50% {
+        opacity: 0.6;
+        transform: translate(-50%,-50%) scale(0.7) translateY(-20px);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(0.3) translateY(-40px);
+    }
+}
+
+
+/* 💀 Cursed Time — dark fog blobs */
+.fx-cursed-fog {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(50,0,80,0.6) 0%, rgba(20,0,40,0.35) 50%, transparent 100%);
+    position: absolute;
+    transform: translate(-50%,-50%);
+    pointer-events: none;
+    animation: fx-fog-bloom 1.2s ease-out forwards;
+}
+
+@keyframes fx-fog-bloom {
+    0% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(0.2);
+    }
+
+    35% {
+        opacity: 0.85;
+        transform: translate(-50%,-50%) scale(1.3);
+    }
+
+    65% {
+        opacity: 0.5;
+        transform: translate(-50%,-50%) scale(1.6);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(2.2);
+    }
+}
+
+
+/* ☠️ / 💀 Skull rise */
+@keyframes fx-skull-rise {
+    0% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(0.3) translateY(20px);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translate(-50%,-50%) scale(1.2) translateY(-5px);
+    }
+
+    60% {
+        opacity: 0.9;
+        transform: translate(-50%,-50%) scale(1) translateY(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(0.7) translateY(-20px);
+    }
+}
+
+
+/* 👁️ Cursed Shield — demon eye */
+@keyframes fx-eye-open {
+    0% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scaleY(0.05);
+        filter: blur(4px);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translate(-50%,-50%) scaleY(1.2) scale(1.1);
+        filter: blur(0);
+    }
+
+    50% {
+        opacity: 0.9;
+        transform: translate(-50%,-50%) scale(1);
+    }
+
+    80% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(1.4);
+    }
+}
+
+.fx-eye-scanline {
+    pointer-events: none;
+    animation: fx-scanline-darken 0.5s ease-in forwards;
+    opacity: 0;
+}
+
+@keyframes fx-scanline-darken {
+    0% {
+        opacity: 0;
+        background: rgba(180,0,0,0);
+    }
+
+    50% {
+        opacity: 1;
+        background: rgba(180,0,0,0.2);
+    }
+
+    100% {
+        opacity: 0;
+        background: rgba(180,0,0,0);
+    }
+}
+
+
+/* 🌊 Tidal Wave */
+.fx-tidal-wave {
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent 0%, rgba(41,128,185,0.6) 15%, rgba(100,180,255,0.8) 40%, rgba(200,240,255,0.9) 50%, rgba(100,180,255,0.8) 60%, rgba(41,128,185,0.5) 80%, transparent 100%);
+    box-shadow: 0 0 20px 6px rgba(41,128,185,0.4);
+    border-radius: 4px;
+}
+
+@keyframes fx-wave-sweep {
+    0% {
+        opacity: 0;
+        transform: translateX(0);
+    }
+
+    12% {
+        opacity: 1;
+    }
+
+    85% {
+        opacity: 0.9;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(var(--wave-dist));
+    }
+}
+
+
+/* 🌪️ Vortex */
+.fx-vortex-debris {
+    position: absolute;
+    pointer-events: none;
+    z-index: 323;
+    opacity: 0;
+    animation: fx-vortex-swirl 1400ms ease-out forwards;
+}
+
+@keyframes fx-vortex-swirl {
+    0% {
+        opacity: 0.8;
+        transform: translate(-50%,-50%) rotate(0deg) translateX(0) scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: translate(-50%,-50%) rotate(180deg) translateX(20px) scale(0.7);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%,-50%) rotate(360deg) translateX(0) scale(0.2);
+    }
+}
+
+@keyframes fx-vortex-spin {
+    0% {
+        opacity: 0;
+        transform: translate(-50%,-50%) rotate(0deg) scale(0.4);
+    }
+
+    25% {
+        opacity: 1;
+        transform: translate(-50%,-50%) rotate(90deg) scale(1.2);
+    }
+
+    65% {
+        opacity: 0.8;
+        transform: translate(-50%,-50%) rotate(270deg) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%,-50%) rotate(420deg) scale(0.6);
+    }
+}
+
+.fx-vortex-strip {
+    pointer-events: none;
+    animation: fx-vortex-strip-swirl 0.9s ease-in forwards;
+    opacity: 0;
+}
+
+@keyframes fx-vortex-strip-swirl {
+    0% {
+        opacity: 0;
+        transform: scaleX(1);
+        background: rgba(150,150,200,0);
+    }
+
+    30% {
+        opacity: 0.4;
+        background: rgba(100,100,180,0.25);
+        transform: scaleX(0.95);
+    }
+
+    70% {
+        opacity: 0.2;
+    }
+
+    100% {
+        opacity: 0;
+        transform: scaleX(0.1);
+    }
+}
+
+
+/* 💥 Chaos Grid — random explosions */
+.fx-chaos-blast {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(-50%,-50%);
+    background: var(--blast-color);
+    box-shadow: 0 0 0 0 var(--blast-color);
+    pointer-events: none;
+    animation: fx-chaos-explode 0.5s ease-out forwards;
+}
+
+@keyframes fx-chaos-explode {
+    0% {
+        transform: translate(-50%,-50%) scale(0);
+        opacity: 1;
+        box-shadow: 0 0 0 0 var(--blast-color);
+    }
+
+    40% {
+        transform: translate(-50%,-50%) scale(3);
+        opacity: 0.9;
+        box-shadow: 0 0 20px 12px var(--blast-color);
+    }
+
+    100% {
+        transform: translate(-50%,-50%) scale(6);
+        opacity: 0;
+        box-shadow: 0 0 0 0 transparent;
+    }
+}
+
+.fx-chaos-shard {
+    position: absolute;
+    pointer-events: none;
+    z-index: 324;
+    opacity: 0;
+    animation: fx-chaos-shard-fly 600ms ease-out forwards;
+}
+
+@keyframes fx-chaos-shard-fly {
+    0% {
+        opacity: 1;
+        transform: translate(-50%,-50%) translate(0,0) scale(1);
+    }
+
+    60% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%,-50%) translate( calc((random() - 0.5) * 60px), calc(-30px - random() * 30px) ) scale(0.3);
+    }
+}
