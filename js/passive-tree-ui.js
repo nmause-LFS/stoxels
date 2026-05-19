@@ -129,18 +129,18 @@ function _ptCreateTooltip() {
 function _ptShowTooltip(id, mouseX, mouseY) {
     if (!_pt_tooltip) _pt_tooltip = _ptCreateTooltip();
 
-    const def = (typeof PT_SKILL_DEFS !== 'undefined') ? PT_SKILL_DEFS[id] : null;
     const skill = _pt_skillMap[id];
+    const def = skill ? skill._def : null;   // _def is the raw node from new JSON
     const lang = _ptLang();
     const state = _ptGetNodeVisualState(id);
 
     const name = def
-        ? (lang === 'de' ? def.nameDe : def.nameEn)
+        ? (lang === 'de' ? (def.nameDe || def.nameEn) : def.nameEn)
         : (skill ? skill.name : `Skill ${id}`);
 
     const rawDesc = def
-        ? (lang === 'de' ? def.descDe : def.descEn)
-        : (skill ? skill.description : '');
+        ? (lang === 'de' ? (def.descDe || def.descEn) : def.descEn)
+        : '';
     const desc = rawDesc ? rawDesc.replace(/\n/g, '<br>') : '';
 
     // Status line
@@ -301,7 +301,7 @@ function _ptDrawNodes(bounds) {
         `;
 
         // Resolve icon: prefer PT_SKILL_DEFS, fall back to layout data
-        const def = (typeof PT_SKILL_DEFS !== 'undefined') ? PT_SKILL_DEFS[skill.id] : null;
+        const def = skill._def || null;
         const icon = (def && def.icon) ? def.icon : skill.image;
 
         const isImageUrl = icon && (icon.startsWith('/') || icon.startsWith('http'));

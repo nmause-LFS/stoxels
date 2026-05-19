@@ -140,6 +140,19 @@ function showPrimerModal(streak = 0) {
             btn.onclick = () => submitPrimerMCQ(opt.isCorrect, optsEl, btn);
             optsEl.appendChild(btn);
         });
+
+        // Passive tree: chance to auto-remove one wrong answer
+        const elimChance = _quizCalcEliminationChance();
+        if (elimChance > 0 && Math.random() < elimChance) {
+            const wrongBtns = Array.from(optsEl.children).filter(b => b.dataset.isCorrect !== '1');
+            if (wrongBtns.length > 0) {
+                const toRemove = wrongBtns[Math.floor(Math.random() * wrongBtns.length)];
+                toRemove.disabled = true;
+                toRemove.style.opacity = '0.35';
+                toRemove.style.textDecoration = 'line-through';
+                toRemove.onclick = null;
+            }
+        }
     }
 
     setTimeout(() => {
@@ -195,10 +208,15 @@ function submitPrimerAnswer() {
     }
     const correct = Math.abs(entered - primerQuestion.answer) <= primerQuestion.tolerance;
     if (!correct) {
-        const hintBox = document.getElementById('primer-hint');
-        const hint = (LANG === 'de' && primerQuestion.hintDE) ? primerQuestion.hintDE : primerQuestion.hintEn;
-        hintBox.innerHTML = '💡 ' + hint;
-        hintBox.style.display = 'block';
+        // Hints only available if the player has wisdom_through_failure,
+        // and the primer only ever shows one attempt so threshold must be 1
+        const hintThreshold = mgCalcHintThreshold();
+        if (hintThreshold !== null && hintThreshold <= 1) {
+            const hintBox = document.getElementById('primer-hint');
+            const hint = (LANG === 'de' && primerQuestion.hintDE) ? primerQuestion.hintDE : primerQuestion.hintEn;
+            hintBox.innerHTML = '💡 ' + hint;
+            hintBox.style.display = 'block';
+        }
     }
     showPrimerResult(correct);
 }
@@ -223,6 +241,13 @@ function showPrimerResult(correct) {
     if (correct) {
         const newStreak = primerStreak + 1;
         fb.className = 'mg-feedback mg-ok';
+
+        // Passive tree bonus item rolls (MC and input nodes both apply)
+        if (primerQuestion.isMultiChoice) {
+            _quizRollMcBonusItemReward();
+        } else {
+            mgRollBonusItemRewards();
+        }
 
         if (newStreak >= PRIMER_MAX) {
             // Answered all 5 correctly
@@ -315,12 +340,48 @@ function closePrimerModal() {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
+
+// Rolls bonus extra rows from passive tree nodes (each rolls independently).
+function _primerCalcBonusRows() {
+    let bonus = 0;
+    if (PT.hasSkill('expanding_front') && Math.random() < 0.50) bonus += 1;
+    if (PT.hasSkill('widened_formation') && Math.random() < 0.25) bonus += 2;
+    if (PT.hasSkill('extended_horizon') && Math.random() < 0.125) bonus += 3;
+    if (PT.hasSkill('total_coverage') && Math.random() < 0.05) bonus += 4;
+    return bonus;
+}
+
+// Rolls bonus extra columns from passive tree nodes (each rolls independently).
+function _primerCalcBonusCols() {
+    let bonus = 0;
+    if (PT.hasSkill('vertical_insight') && Math.random() < 0.50) bonus += 1;
+    if (PT.hasSkill('rising_structure') && Math.random() < 0.25) bonus += 2;
+    if (PT.hasSkill('elevated_scope') && Math.random() < 0.125) bonus += 3;
+    if (PT.hasSkill('total_survey') && Math.random() < 0.05) bonus += 4;
+    return bonus;
+}
+
+
 function applyPrimerHeadstart(count) {
     if (!cur || count <= 0) return;
     const sol = cur.grid;
     const rows = sol.length, cols = sol[0].length;
 
-    const rowIdxs = shuffle(Array.from({ length: rows }, (_, i) => i)).slice(0, count);
+    // Base count + passive tree bonus rolls
+    let totalRows = count + _primerCalcBonusRows();
+    let totalCols = count + _primerCalcBonusCols();
+
+    // Primed Scout: double everything
+    if (PT.hasSkill('primed_scout')) {
+        totalRows *= 2;
+        totalCols *= 2;
+    }
+
+    // Clamp to grid size
+    totalRows = Math.min(totalRows, rows);
+    totalCols = Math.min(totalCols, cols);
+
+    const rowIdxs = shuffle(Array.from({ length: rows }, (_, i) => i)).slice(0, totalRows);
     rowIdxs.forEach(r => {
         for (let c = 0; c < cols; c++) {
             if (sol[r][c] === 1) {
@@ -334,7 +395,7 @@ function applyPrimerHeadstart(count) {
         }
     });
 
-    const colIdxs = shuffle(Array.from({ length: cols }, (_, i) => i)).slice(0, count);
+    const colIdxs = shuffle(Array.from({ length: cols }, (_, i) => i)).slice(0, totalCols);
     colIdxs.forEach(c => {
         for (let r = 0; r < rows; r++) {
             if (sol[r][c] === 1) {
@@ -349,14 +410,13 @@ function applyPrimerHeadstart(count) {
     });
 
     const msg = LANG === 'de'
-        ? `📜 ${count} Zeile(n) + ${count} Spalte(n) vorgelöst!`
-        : `📜 ${count} row(s) + ${count} column(s) pre-solved!`;
+        ? `📜 ${totalRows} Zeile(n) + ${totalCols} Spalte(n) vorgelöst!`
+        : `📜 ${totalRows} row(s) + ${totalCols} column(s) pre-solved!`;
     showToast(msg);
     checkWin();
 
     if (dead) trackAchStat('primerSolvedAll');
 }
-
 
 
 //------------------------------------------------------------------------

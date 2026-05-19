@@ -151,6 +151,24 @@ const ITEM_DEFS = {
         descEn: 'Reduces your mistake count by 2', descDE: 'Reduziert deine Fehleranzahl um 2',
         rarity: 'rare', weight: 5
     },
+    mistakeEraser4: {
+        id: 'mistakeEraser4', icon: '📚',
+        nameEn: 'Professor', nameDE: 'Professor',
+        descEn: 'Reduces your mistake count by 4', descDE: 'Reduziert deine Fehleranzahl um 4',
+        rarity: 'epic', weight: 3
+    },
+    mistakeEraser6: {
+        id: 'mistakeEraser6', icon: '🏛️',
+        nameEn: 'Scholar', nameDE: 'Gelehrter',
+        descEn: 'Reduces your mistake count by 6', descDE: 'Reduziert deine Fehleranzahl um 6',
+        rarity: 'legendary', weight: 2
+    },
+    mistakeEraserAll: {
+        id: 'mistakeEraserAll', icon: '🧿',
+        nameEn: 'Grand Mentor', nameDE: 'Großer Mentor',
+        descEn: 'Resets your mistake count to 0', descDE: 'Setzt deine Fehleranzahl auf 0 zurück',
+        rarity: 'legendary', weight: 1
+    },
 
 
     freeze: {

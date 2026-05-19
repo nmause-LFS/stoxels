@@ -146,11 +146,9 @@ function handleSpecialRewards({ gi, isFirstClear, isAscensionLevel, irz }) {
     if (isConvergenceLevel && isFirstClear) {
         if (!STATE.convergenceDone) STATE.convergenceDone = [];
         STATE.convergenceDone.push(gi);
-        STATE.passiveTreePoints = (STATE.passiveTreePoints || 0) + 1;
+        STATE.passiveTreePoints = (STATE.passiveTreePoints || 0) + 100;        // +1
         save();
-        showToast(LANG === 'de'
-            ? '🌿 Konvergenz! 1 Punkt für den Wahrscheinlichkeitsbaum erhalten!'
-            : '🌿 Convergence! 1 Probability Tree point received!');
+        window._pendingConvergenceModal = true;
     }
 
     // Ascension: Codex of Completion on first clear of the last world level
@@ -313,6 +311,8 @@ function checkWin() {
 
     fireAchievements({ gi, rows, cols, elapsed, pts, ptsAwarded, prevBest, mult, isFirstClear });
 
+    _ptApplyLevelCompleteRewards();   // ← gear_of_the_statistician & improved_gear nodes
+
     const bonusMet = evaluateBonusObjective(elapsed);
 
     buildReveal();
@@ -326,7 +326,13 @@ function checkWin() {
     if (bonusMet && cur.bonusType === 'quiz') {
         setTimeout(() => showQuiz(cur.world), 1500);
     } else {
-        setTimeout(() => document.getElementById('ov-win').classList.add('show'), 600);
+        setTimeout(() => {
+            document.getElementById('ov-win').classList.add('show');
+            if (window._pendingConvergenceModal) {
+                window._pendingConvergenceModal = false;
+                setTimeout(() => showConvergenceModal(), 800);
+            }
+        }, 600);
     }
 }
 

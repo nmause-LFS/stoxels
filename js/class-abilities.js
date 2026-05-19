@@ -124,7 +124,7 @@ function executeActiveAbility(row, col) {
 
     _dispatchActiveAbility(activeKey, STATE.playerClass, row, col, effect);
 
-    const cdSeconds = def[activeKey].cooldownSeconds;
+    const cdSeconds = getEffectiveCooldown(activeKey, def[activeKey].cooldownSeconds);
     startSlotCooldown(activeKey, cdSeconds);
     buildClassHUD();
 }
@@ -235,11 +235,31 @@ function _dataStrikeRemoveOverlay() {
 }
 
 // _dataStrikeResolve — called by modal buttons; solves the chosen line type.
+// Respects passive tree nodes: monte_carlo, correlation_matrix,
+// advanced_data_strike, god_of_statistics.
 function _dataStrikeResolve(type) {
     _dataStrikeRemoveOverlay();
 
-    const count = window._dataStrikePendingCount || 1;
+    let count = window._dataStrikePendingCount || 1;
     window._dataStrikePendingCount = null;
+
+    // god_of_statistics: each Data Strike beyond the first this level gets +1 extra solve
+    if (ptHasSkill('god_of_statistics')) {
+        const uses = window._dataStrikeUsesThisLevel || 0;
+        if (uses > 0) count += uses;
+    }
+    window._dataStrikeUsesThisLevel = (window._dataStrikeUsesThisLevel || 0) + 1;
+
+    // Each node below gives an independent 25% chance at one extra solve
+    let extraChances = 0;
+    if (ptHasSkill('monte_carlo')) extraChances++;
+    if (ptHasSkill('correlation_matrix')) extraChances++;
+    if (ptHasSkill('advanced_data_strike')) extraChances++;
+    // god_of_statistics contributes an effective 50% (= two independent 25% rolls)
+    if (ptHasSkill('god_of_statistics')) extraChances += 2;
+    for (let i = 0; i < extraChances; i++) {
+        if (Math.random() < 0.25) count++;
+    }
 
     const solved = type === 'rows' ? solveRows(count) : solveCols(count);
     const typeName = type === 'rows'
@@ -274,7 +294,8 @@ function _dataStrikeCancel() {
 
 
 // _executeDiagonalStrike — resolves cells along diagonal directions through (row, col).
-//   At rank 3 (diagonalCount >= 4), also covers the full row and column.
+// Respects passive tree nodes: diagonally_wrong, random_diagonal,
+// diagonal_witch, god_of_statistics.
 function _executeDiagonalStrike(row, col, diagonalCount) {
     if (!cur) return;
     const sol = cur.grid;
@@ -289,6 +310,11 @@ function _executeDiagonalStrike(row, col, diagonalCount) {
         _diagonalStrikeProcessCol(col, rows, sol, affected);
     }
 
+    // diagonally_wrong: mark incorrectly-filled cells along the strike path
+    if (ptHasSkill('diagonally_wrong')) {
+        _diagonalStrikeMarkWrong(affected, sol);
+    }
+
     _playDiagonalSlashEffect(row, col, diagonalCount);
     _applyCellEffect(affected, 'reveal');
 
@@ -296,6 +322,19 @@ function _executeDiagonalStrike(row, col, diagonalCount) {
     if (diagRevealed > 0) trackAchStat('tilesRevealed', diagRevealed);
 
     showToast(`⚔️ Diagonal Strike! ${affected.length} cell(s) affected.`);
+
+    // Repeat chances — each node is an independent 25% roll
+    // god_of_statistics gives 50% effective = two independent 25% rolls
+    let repeatChances = 0;
+    if (ptHasSkill('random_diagonal')) repeatChances++;
+    if (ptHasSkill('diagonal_witch')) repeatChances++;
+    if (ptHasSkill('god_of_statistics')) repeatChances += 2;
+    for (let i = 0; i < repeatChances; i++) {
+        if (Math.random() < 0.25) {
+            _diagonalStrikeBonusRepeat(diagonalCount, rows, cols, sol);
+        }
+    }
+
     checkWin();
 }
 
@@ -333,6 +372,7 @@ function _diagonalStrikeProcessRow(row, cols, sol, affected) {
     }
 }
 
+
 // _diagonalStrikeProcessCol — resolves all cells in the given column (rank 3 bonus).
 function _diagonalStrikeProcessCol(col, rows, sol, affected) {
     for (let r = 0; r < rows; r++) {
@@ -342,6 +382,44 @@ function _diagonalStrikeProcessCol(col, rows, sol, affected) {
 }
 
 
+
+// _diagonalStrikeMarkWrong — marks wrongly-filled cells (user filled but should be empty)
+// along the already-computed affected path. Used by the 'diagonally_wrong' node.
+function _diagonalStrikeMarkWrong(affected, sol) {
+    affected.forEach(id => {
+        const [, r, c] = id.split('-').map(Number);
+        if (sol[r][c] === 0 && userGrid[r][c] === 1) {
+            userGrid[r][c] = 3; // wrong-mark state
+            renderCell(r, c);
+        }
+    });
+}
+
+// _diagonalStrikeBonusRepeat — fires a Diagonal Strike on a random unrevealed filled cell.
+// Used by random_diagonal / diagonal_witch / god_of_statistics.
+function _diagonalStrikeBonusRepeat(diagonalCount, rows, cols, sol) {
+    const candidates = [];
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            if (sol[r][c] === 1 && !revealedGrid[r][c]) candidates.push([r, c]);
+        }
+    }
+    if (!candidates.length) return;
+    const [r, c] = candidates[Math.floor(Math.random() * candidates.length)];
+
+    const bonusAffected = [];
+    _diagonalStrikeWalkDiagonals(r, c, diagonalCount, rows, cols, sol, bonusAffected);
+    _diagonalStrikeProcessCell(r, c, sol, bonusAffected);
+    if (diagonalCount >= 4) {
+        _diagonalStrikeProcessRow(r, cols, sol, bonusAffected);
+        _diagonalStrikeProcessCol(c, rows, sol, bonusAffected);
+    }
+
+    if (ptHasSkill('diagonally_wrong')) _diagonalStrikeMarkWrong(bonusAffected, sol);
+
+    _applyCellEffect(bonusAffected, 'reveal');
+    showToast(`⚔️ Bonus Strike! ${bonusAffected.length} more cell(s)!`);
+}
 
 
 
@@ -581,6 +659,7 @@ function applyClassPassiveOnLevelStart() {
     correctFillStreak = 0;
     nextPenaltyHalved = false;
     window._momentumThisLevel = 0;
+    window._dataStrikeUsesThisLevel = 0;
 
     if (!STATE.playerClass) return;
     const effect = _getPassiveEffect();
@@ -624,20 +703,45 @@ function onCorrectFill() {
 }
 
 // _statisticianTriggerMomentum — awards bonus time and tracks momentum achievements.
+// Respects passive tree nodes: chain_reaction, precise_momentum,
+// exponential_growth, god_of_statistics.
 function _statisticianTriggerMomentum(bonusSeconds) {
     correctFillStreak = 0;
-    timerSecs = Math.min(timerSecs + bonusSeconds, 3600);
+
+    let bonus = bonusSeconds;
+    if (ptHasSkill('chain_reaction')) bonus += 2;
+    if (ptHasSkill('precise_momentum')) bonus += 3;
+
+    // exponential_growth: each prior Momentum this level adds +1s
+    if (ptHasSkill('exponential_growth')) {
+        bonus += (window._momentumThisLevel || 0);
+    }
+
+    // god_of_statistics doubles the total Momentum bonus
+    if (ptHasSkill('god_of_statistics')) bonus *= 2;
+
+    timerSecs = Math.min(timerSecs + bonus, 3600);
     updTimer();
-    showToast(`⚔️ Momentum! +${bonusSeconds}s`);
-    trackAchStat('timeAdded', bonusSeconds);
+    showToast(`⚔️ Momentum! +${bonus}s`);
+    trackAchStat('timeAdded', bonus);
     trackAchStat('momentumTriggered');
 
     window._momentumThisLevel = (window._momentumThisLevel || 0) + 1;
     if (window._momentumThisLevel === 3) trackAchStat('statistician3MomentumOneLevel');
 }
 
-// onMistake — called on any wrong fill; resets the Statistician streak.
+// onMistake — called on any wrong fill.
+// Resets or reduces the Statistician streak depending on passive tree nodes.
 function onMistake() {
+    if (STATE.playerClass === 'statistician') {
+        let reduction = 0;
+        if (ptHasSkill('learning_from_mistakes')) reduction += 3;
+        if (ptHasSkill('mistakes_no_matter')) reduction += 3;
+        if (reduction > 0) {
+            correctFillStreak = Math.max(0, correctFillStreak - reduction);
+            return;
+        }
+    }
     correctFillStreak = 0;
 }
 

@@ -1447,7 +1447,67 @@ A thin meta-bar sits at the very top of the game content (inside the scroll area
 */
 
 
+#convergence-modal.show {
+    display: flex;
+}
 
+.convergence-modal-box {
+    text-align: center;
+    max-width: 420px;
+    padding: 36px 32px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+.convergence-modal-icon {
+    font-size: 48px;
+    line-height: 1;
+    filter: drop-shadow(0 0 12px rgba(109,191,64,0.6));
+}
+
+.convergence-modal-title {
+    font-family: var(--PX, monospace);
+    font-size: 22px;
+    color: var(--green, #6dbf40);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.convergence-modal-desc {
+    font-family: var(--PX, monospace);
+    font-size: 13px;
+    color: var(--accent2, #aaa);
+    line-height: 1.6;
+    max-width: 320px;
+}
+
+.convergence-modal-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.convergence-btn-tree {
+    border-color: var(--green, #6dbf40);
+    color: var(--green, #6dbf40);
+    background: rgba(109, 191, 64, 0.08); 
+}
+
+.convergence-btn-next {
+    border-color: var(--accent, #b89a50);
+    color: var(--accent, #b89a50);
+    background: rgba(184, 154, 80, 0.08); 
+}
+
+.convergence-btn-levels {
+    border-color: var(--border2, #555);
+    color: var(--accent2, #aaa);
+    background: rgba(255, 255, 255, 0.04);
+}
 
 
 

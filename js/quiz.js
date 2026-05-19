@@ -68,6 +68,31 @@ function getQuizQuestion(worldNum) {
 //------------------------------------------------------------------------
 
 
+// Returns the total chance of auto-removing a wrong answer (stacks additively).
+function _quizCalcEliminationChance() {
+    let chance = 0;
+    if (PT.hasSkill('predictive_intelligence')) chance += 0.10;
+    if (PT.hasSkill('elimination_clue')) chance += 0.10;
+    if (PT.hasSkill('narrowed_options')) chance += 0.20;
+    if (PT.hasSkill('logical_deductions')) chance += 0.20;
+    if (PT.hasSkill('multiple_choice_mastery')) chance += 0.40;
+    return chance;
+}
+
+// Returns the total bonus item chance on a correct MC answer (stacks additively).
+function _quizCalcMcBonusItemChance() {
+    let chance = 0;
+    if (PT.hasSkill('predictive_intelligence')) chance += 0.10;
+    if (PT.hasSkill('bonus_acquisition')) chance += 0.10;
+    if (PT.hasSkill('enhanced_rewards')) chance += 0.10;
+    if (PT.hasSkill('overflowing_spoils')) chance += 0.10;
+    if (PT.hasSkill('multiple_choice_mastery')) chance += 0.10;
+    return chance;
+}
+
+
+
+
 function showQuiz(worldNum) {
     const q = getQuizQuestion(worldNum);
     currentQuizQuestion = q;
@@ -116,6 +141,19 @@ function showQuiz(worldNum) {
             btn.onclick = () => answerQuiz(opt.isCorrect, optsEl, btn);
             optsEl.appendChild(btn);
         });
+
+        // Passive tree: chance to auto-remove one wrong answer
+        const elimChance = _quizCalcEliminationChance();
+        if (elimChance > 0 && Math.random() < elimChance) {
+            const wrongBtns = Array.from(optsEl.children).filter(b => b.dataset.isCorrect !== '1');
+            if (wrongBtns.length > 0) {
+                const toRemove = wrongBtns[Math.floor(Math.random() * wrongBtns.length)];
+                toRemove.disabled = true;
+                toRemove.style.opacity = '0.35';
+                toRemove.style.textDecoration = 'line-through';
+                toRemove.onclick = null;
+            }
+        }
     }
 
     document.getElementById('quiz-overlay').classList.add('show');
@@ -193,6 +231,39 @@ function answerQuizInput() {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
+// Rolls the passive-tree bonus item chance after a correct MC answer.
+function _quizRollMcBonusItemReward() {
+    if (curMods && curMods.ironman) return;
+
+    const chance = _quizCalcMcBonusItemChance();
+    if (chance <= 0) return;
+
+    if (Math.random() < chance) {
+        const defId = pickRandomItem();
+        const def = ITEM_DEFS[defId];
+        if (!def) return;
+
+        STATE.inventory.push({
+            uid: `item_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+            defId,
+        });
+        save();
+        buildInventoryPanel();
+
+        const name = LANG === 'de' ? def.nameDE : def.nameEn;
+        const irz = document.getElementById('item-reward-zone');
+        const rc = rarityColors(def.rarity);
+        if (irz) {
+            irz.innerHTML += `<div class="item-reward" style="border-color:${rc.border};color:${rc.color};margin-top:4px;">
+                🎁 ${def.icon} <strong>${name}</strong>
+            </div>`;
+        }
+    }
+}
+
+
+
+
 
 function _resolveQuizAnswer(correct) {
 
@@ -239,6 +310,7 @@ function _resolveQuizAnswer(correct) {
             }
             save();
         }
+        _quizRollMcBonusItemReward();
     } else {
         resEl.className = 'quiz-result bad';
         resEl.textContent = t('quiz_wrong');
@@ -329,27 +401,30 @@ function _quizRefreshTutorButton() {
     const btn = document.getElementById('quiz-tutor-btn');
     if (!btn) return;
     const hasTutorSkill = PT.hasSkill('tutor_enable');
-    const tutorItem = STATE.inventory.find(i => i.defId === 'mistakeEraser');
+    const tutorItem = STATE.inventory.find(i => i.defId.startsWith('mistakeEraser'));
     btn.style.display = (hasTutorSkill && tutorItem) ? 'inline-block' : 'none';
 }
 
 function quizUseTutor() {
-    const tutorItem = STATE.inventory.find(i => i.defId === 'mistakeEraser');
+    const TUTOR_TIER_ORDER = ['mistakeEraser', 'mistakeEraser4', 'mistakeEraser6', 'mistakeEraserAll'];
+    const tutorItem = TUTOR_TIER_ORDER
+        .flatMap(id => STATE.inventory.filter(i => i.defId === id))
+        .find(Boolean);
     if (!tutorItem) return;
 
     // Build success chance from passive tree
     let chance = 0.10;
-    if (PT.hasSkill('tutor_chance_10')) chance += 0.10;
-    if (PT.hasSkill('tutor_chance_20')) chance += 0.10;
-    if (PT.hasSkill('tutor_chance_30')) chance += 0.10;
-    if (PT.hasSkill('tutor_professor')) chance += 0.20;
+    if (PT.hasSkill('stochastics_tutor')) chance += 0.10;
+    if (PT.hasSkill('statistics_tutor')) chance += 0.10;
+    if (PT.hasSkill('maths_tutor')) chance += 0.10;
+    if (PT.hasSkill('professor_tutor')) chance += 0.20;
 
     // Build no-consume chance
     let noConsumeChance = 0;
-    if (PT.hasSkill('tutor_no_consume_1')) noConsumeChance += 0.10;
-    if (PT.hasSkill('tutor_no_consume_2')) noConsumeChance += 0.10;
-    if (PT.hasSkill('tutor_no_consume_3')) noConsumeChance += 0.10;
-    if (PT.hasSkill('tutor_professor')) noConsumeChance += 0.20;
+    if (PT.hasSkill('careful_study')) noConsumeChance += 0.10;
+    if (PT.hasSkill('efficient_tutoring')) noConsumeChance += 0.15;
+    if (PT.hasSkill('endless_instructions')) noConsumeChance += 0.20;
+    if (PT.hasSkill('professor_tutor')) noConsumeChance += 0.20;
 
     const consumed = Math.random() >= noConsumeChance;
     if (consumed) {

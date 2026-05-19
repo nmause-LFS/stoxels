@@ -236,9 +236,14 @@ function _ptGetNodeVisualState(id) {
  Example:  if (ptHasSkill('tutor_enable')) { ... }
  */
 function ptHasSkill(statKey) {
+    // Ensure tree data is loaded even if the player never opened the PT screen
+    if (!_pt_skills.length && typeof TALENT_TREE_DATA !== 'undefined') {
+        PT.loadInline(TALENT_TREE_DATA);
+    }
     const alloc = _ptAllocated();
     for (const id of alloc) {
-        const def = (typeof PT_SKILL_DEFS !== 'undefined') ? PT_SKILL_DEFS[id] : null;
+        const skill = _pt_skillMap[id];
+        const def = skill ? skill._def : null;
         if (def && def.statKey === statKey) return true;
     }
     return false;

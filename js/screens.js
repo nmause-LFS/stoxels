@@ -158,7 +158,15 @@ function replayLvl() {
 
 
 
+function showConvergenceModal() {
+    const modal = document.getElementById('convergence-modal');
+    if (modal) modal.classList.add('show');
+}
 
+function hideConvergenceModal() {
+    const modal = document.getElementById('convergence-modal');
+    if (modal) modal.classList.remove('show');
+}
 
 
 

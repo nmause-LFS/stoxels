@@ -30,9 +30,6 @@ const PT_CONN_LOCKED = 'rgba(80,70,110,0.3)';
 const PT_CONN_UNLOCKED = 'rgba(160,130,80,0.45)';
 const PT_CONN_ALLOCATED = 'rgba(109,191,64,0.7)';
 
-// Special node IDs 
-// The Start node is always considered reachable / pre-allocated.
-const PT_START_ID = 11;
 
 
 
@@ -44,33 +41,55 @@ const PT_START_ID = 11;
 
 
 
-// PT module (public facade) 
+// Special node IDs 
+// The Start node is always considered reachable / pre-allocated.
+// Set this to match the "id" of your Start node in Probability Tree Data.json
+const PT_START_ID = 1;
+
+
+//------------------------------------------------------------------------
+//--------------PASSIVE TREE PT MODULE------------------------------------
+//------------------------------------------------------------------------
+
 const PT = (() => {
 
-    let _data = null;
+    let _data = null;   // raw parsed JSON from new format
 
     return {
 
-        // Load tree data from the inline TALENT_TREE_DATA object
+        // Load tree data from the new Probability Tree Data JSON format.
+        // Expects:  { nodes: [...], connections: [...] }
+        // Each node: { id, x, y, nameEn, nameDe, descEn, descDe, icon, statKey }
+        // Each conn: { id, from, to, dotted }
         loadInline(json) {
-            _data = json.FullData;
-            // Populate the shared arrays used by passive-tree-state-points.js and passive-tree-ui.js
-            _pt_skills = _data.skills || [];
-            _pt_conns = _data.connections || [];
+            _data = json;
+
+            // Map nodes → internal skill objects
+            _pt_skills = (json.nodes || []).map(n => ({
+                id:    n.id,
+                x:     n.x,
+                y:     n.y,
+                name:  n.nameEn,          // fallback display name
+                image: n.icon || '',
+                // keep the full node def so tooltip can read it
+                _def:  n,
+            }));
+
+            _pt_conns = (json.connections || []).map(c => ({
+                id:     c.id,
+                from:   c.from,
+                to:     c.to,
+                dotted: !!c.dotted,
+            }));
+
             _pt_skillMap = {};
             _pt_skills.forEach(s => { _pt_skillMap[s.id] = s; });
         },
 
-        // Re-render the tree (call after loadInline, or to refresh after state changes)
+        // Re-render the tree
         reload: _ptRender,
 
-        /**
-         * Returns true if the player has a skill with the given statKey allocated.
-         * Delegates to the function in passive-tree-state-points.js.
-         *
-         * Example:
-         *   if (PT.hasSkill('tutor_enable')) { ... }
-         */
+        // Returns true if the player has allocated the node with the given statKey
         hasSkill: ptHasSkill,
 
         get data() { return _data; },
@@ -78,7 +97,36 @@ const PT = (() => {
 })();
 
 
+//------------------------------------------------------------------------
+//------------------BUILD PASSIVE TREE------------------------------------
+//------------------------------------------------------------------------
 
+async function buildPassiveTreeScreen() {
+    const lang = (typeof LANG !== 'undefined') ? LANG : 'en';
+    const points = (typeof STATE !== 'undefined' && STATE.passiveTreePoints) || 0;
+
+    const pointsEl = document.getElementById('pt-points');
+    if (pointsEl) {
+        pointsEl.textContent = lang === 'de'
+            ? `Verfügbare Punkte: ${points}`
+            : `Available points: ${points}`;
+    }
+
+    const canvas = document.getElementById('pt-canvas');
+    if (canvas) {
+        canvas.innerHTML = `
+            <div style="display:flex;align-items:center;justify-content:center;
+                height:100%;font-family:var(--PX,monospace);font-size:12px;
+                color:var(--accent2,#aaa);letter-spacing:2px;opacity:0.6;">
+                ${lang === 'de' ? 'LADE BAUM…' : 'LOADING TREE…'}
+            </div>`;
+    }
+
+    if (!PT.data) {
+        PT.loadInline(TALENT_TREE_DATA);   // ← new constant name (see below)
+    }
+    PT.reload();
+}
 
 
 //------------------------------------------------------------------------
@@ -152,7 +200,50 @@ function showPassiveTree() {
 //------------------------------------------------------------------------
 
 
+//------------------------------------------------------------------------
+//----------PASSIVE TREE SKILL EFFECTS — STATISTICIAN--------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
 
+
+// _ptGrantItem — adds one item to the player's inventory by defId.
+function _ptGrantItem(defId) {
+    const def = ITEM_DEFS[defId];
+    if (!def) return;
+    STATE.inventory.push({
+        uid: `item_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+        defId: defId
+    });
+    save();
+    buildInventoryPanel();
+}
+
+
+//------------------------------------------------------------------------
+// _ptApplyLevelCompleteRewards
+// Call this from your level-complete / checkWin flow (after the win is confirmed).
+// Handles gear nodes that grant bonus item drops on level completion.
+//------------------------------------------------------------------------
+
+function _ptApplyLevelCompleteRewards() {
+    if (STATE.playerClass !== 'statistician') return;
+
+    // gear_of_the_statistician: 33% chance for a bonus Magnifier (reveal2)
+    if (ptHasSkill('gear_of_the_statistician') && Math.random() < 0.33) {
+        _ptGrantItem('reveal2');
+        showToast(LANG === 'de'
+            ? '🔍 Bonus-Lupe! (Ausrüstung des Statistikers)'
+            : '🔍 Bonus Magnifier! (Gear of the Statistician)');
+    }
+
+    // improved_gear_of_the_statistician: 33% chance for a bonus Error Gem (markWrong8)
+    if (ptHasSkill('improved_gear_of_the_statistician') && Math.random() < 0.33) {
+        _ptGrantItem('markWrong8');
+        showToast(LANG === 'de'
+            ? '💎 Bonus-Fehlerstein! (Verbesserte Ausrüstung)'
+            : '💎 Bonus Error Gem! (Improved Gear)');
+    }
+}
 
 
 

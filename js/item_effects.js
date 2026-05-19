@@ -198,7 +198,7 @@ function playItemEffect(defId) {
     if (defId === 'shield') return _fxShield();
     if (defId === 'rowSolve') return _fxRowSolve();
     if (defId === 'colSolve') return _fxColSolve();
-    if (defId === 'mistakeEraser') return _fxMistakeEraser();
+    if (defId === 'mistakeEraser' || defId === 'mistakeEraser4' || defId === 'mistakeEraser6' || defId === 'mistakeEraserAll') return _fxMistakeEraser();
     if (defId === 'scoutPrimer') return _fxScoutPrimer();
     if (defId === 'artifactComplete') return _fxArtifact();
 

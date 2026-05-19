@@ -554,8 +554,12 @@ function _useShield(id, def) {
 //------------------------------------------------------------------------
 
 function _useMistakeEraser(id, def) {
+    const reduceBy = id === 'mistakeEraserAll'
+        ? mistakeCount
+        : (parseInt(id.replace('mistakeEraser', '')) || 2);
+
     const before = mistakeCount;
-    mistakeCount = Math.max(0, mistakeCount - 2);
+    mistakeCount = Math.max(0, mistakeCount - reduceBy);
     playItemEffect(id);
     const removed = before - mistakeCount;
     const mcEl = document.getElementById('mistake-counter');
@@ -701,6 +705,9 @@ const ITEM_EFFECT_HANDLERS = {
     rowSolve: _useRowSolve,
     colSolve: _useColSolve,
     mistakeEraser: _useMistakeEraser,
+    mistakeEraser4: _useMistakeEraser,
+    mistakeEraser6: _useMistakeEraser,
+    mistakeEraserAll: _useMistakeEraser,
     artifactComplete: _useArtifactComplete,
     scoutPrimer: _useScoutPrimer,
     cursedReveal: _useCursedReveal,
@@ -747,7 +754,7 @@ function _trackItemAchievements(id, def) {
     if (id === 'shield') trackAchStat('shieldsUsed');
     if (id === 'artifactComplete') trackAchStat('artifactUsed');
     if (id === 'freeze') trackAchStat('freezeUsed');
-    if (id === 'mistakeEraser') trackAchStat('eraserUsed');
+    if (id === 'mistakeEraser' || id === 'mistakeEraser4' || id === 'mistakeEraser6' || id === 'mistakeEraserAll') trackAchStat('eraserUsed');
     if (id === 'cursedReveal') trackAchStat('cursedLensUsed');
     if (id === 'cursedTime') trackAchStat('cursedClockUsed');
     if (id === 'cursedShield') trackAchStat('demonEyeUsed');

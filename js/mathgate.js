@@ -207,27 +207,82 @@ function mgGrantGateReward(gi) {
 //------------------------------------------------------------------------
 
 
+
+
+// Rolls all passive-tree bonus item chances on exercise completion.
+// Each node's chance is rolled independently and stacks additively in total odds.
+function mgRollBonusItemRewards() {
+    if (curMods && curMods.ironman) return;
+
+    let bonusChance = 0;
+    if (PT.hasSkill('wisdom_through_failure')) bonusChance += 0.10;
+    if (PT.hasSkill('promising_answers')) bonusChance += 0.20;
+    if (PT.hasSkill('rewarding_insight')) bonusChance += 0.20;
+    if (PT.hasSkill('scholars_fortune')) bonusChance += 0.20;
+    if (PT.hasSkill('probability_gate_mastery')) bonusChance += 0.30;
+
+    if (bonusChance <= 0) return;
+
+    if (Math.random() < bonusChance) {
+        const defId = pickRandomItem();
+        const def = ITEM_DEFS[defId];
+        if (!def) return;
+
+        STATE.inventory.push({
+            uid: `item_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+            defId,
+        });
+        save();
+        buildInventoryPanel();
+
+        const name = LANG === 'de' ? def.nameDE : def.nameEn;
+        showToast(`🎁 ${def.icon} ${name}`);
+    }
+}
+
+
+
+
+
+
 // Handles everything that should happen when the player gives a correct answer.
 function mgHandleCorrectAnswer() {
     const gi = pendingGateGi;
 
-    // Grant item reward on first-time pass, then mark the gate as passed.
     const isFirstPass = !isMathGatePassed(gi);
     if (isFirstPass) mgGrantGateReward(gi);
     mgMarkGatePassed(gi);
 
-    // Show plain correct feedback if we didn't already show the reward message.
     if (!isFirstPass) showMgFeedback(t('mg_correct'), true);
 
     document.getElementById('mg-submit-btn').disabled = true;
     trackAchStat('questionsCorrect');
 
-    // Brief celebration, then close the modal and launch the level.
+    // Passive tree bonus item rolls (stack additively)
+    mgRollBonusItemRewards();
+
     setTimeout(() => {
         hideMathGate();
         startLevel(gi);
     }, 1500);
 }
+
+
+
+// Returns the attempt count at which the hint should appear,
+// or null if the player has no hint node allocated at all.
+function mgCalcHintThreshold() {
+    if (!PT.hasSkill('wisdom_through_failure')) return null; // hints locked
+
+    let threshold = 5; // base: show after 5 failures
+    if (PT.hasSkill('quick_study')) threshold -= 1;
+    if (PT.hasSkill('accelerated_insight')) threshold -= 1;
+    if (PT.hasSkill('instant_comprehension')) threshold -= 1;
+    if (PT.hasSkill('probability_gate_mastery')) threshold -= 1;
+    return Math.max(1, threshold); // never below 1
+}
+
+
 
 // Handles everything that should happen when the player gives a wrong answer.
 function mgHandleWrongAnswer() {
@@ -235,7 +290,8 @@ function mgHandleWrongAnswer() {
     trackAchStat('gateRejections');
     showMgFeedback(t('mg_wrong').replace('{n}', gateAttempts), false);
 
-    if (gateAttempts >= 2) mgShowHint();
+    const hintThreshold = mgCalcHintThreshold();
+    if (hintThreshold !== null && gateAttempts >= hintThreshold) mgShowHint();
     if (gateAttempts >= 3) mgShowNewQuestionButton();
 }
 
@@ -393,7 +449,7 @@ function _mgRefreshTutorButton() {
     if (!btn) return;
 
     const hasTutorSkill = PT.hasSkill('tutor_enable');
-    const hasTutorItem = !!STATE.inventory.find(i => i.defId === 'mistakeEraser');
+    const hasTutorItem = !!STATE.inventory.find(i => i.defId.startsWith('mistakeEraser'));
 
     btn.style.display = (hasTutorSkill && hasTutorItem) ? 'inline-block' : 'none';
 }
@@ -401,20 +457,20 @@ function _mgRefreshTutorButton() {
 // Calculates the tutor's base success chance from passive skill nodes.
 function mgCalcTutorChance() {
     let chance = 0.10;
-    if (PT.hasSkill('tutor_chance_10')) chance += 0.10;
-    if (PT.hasSkill('tutor_chance_20')) chance += 0.10;
-    if (PT.hasSkill('tutor_chance_30')) chance += 0.10;
-    if (PT.hasSkill('tutor_professor')) chance += 0.20;
+    if (PT.hasSkill('stochastics_tutor')) chance += 0.10;
+    if (PT.hasSkill('statistics_tutor')) chance += 0.10;
+    if (PT.hasSkill('maths_tutor')) chance += 0.10;
+    if (PT.hasSkill('professor_tutor')) chance += 0.20;
     return chance;
 }
 
 // Calculates the chance that the tutor item is NOT consumed after use.
 function mgCalcNoConsumeChance() {
     let chance = 0;
-    if (PT.hasSkill('tutor_no_consume_1')) chance += 0.10;
-    if (PT.hasSkill('tutor_no_consume_2')) chance += 0.10;
-    if (PT.hasSkill('tutor_no_consume_3')) chance += 0.10;
-    if (PT.hasSkill('tutor_professor')) chance += 0.20;
+    if (PT.hasSkill('careful_study')) chance += 0.10;
+    if (PT.hasSkill('efficient_tutoring')) chance += 0.15;
+    if (PT.hasSkill('endless_instructions')) chance += 0.20;
+    if (PT.hasSkill('professor_tutor')) chance += 0.20;
     return chance;
 }
 
@@ -455,7 +511,10 @@ function mgHandleTutorFailure() {
 function mgUseTutor() {
     if (!currentGateQuestion) return;
 
-    const tutorItem = STATE.inventory.find(i => i.defId === 'mistakeEraser');
+    const TUTOR_TIER_ORDER = ['mistakeEraser', 'mistakeEraser4', 'mistakeEraser6', 'mistakeEraserAll'];
+    const tutorItem = TUTOR_TIER_ORDER
+        .flatMap(id => STATE.inventory.filter(i => i.defId === id))
+        .find(Boolean);
     if (!tutorItem) return;
 
     const tutorChance = mgCalcTutorChance();

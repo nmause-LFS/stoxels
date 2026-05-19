@@ -381,6 +381,31 @@
     </div>
 
 
+    <div class="modal-bg" id="convergence-modal">
+        <div class="modal convergence-modal-box">
+            <div class="convergence-modal-icon">🌿</div>
+            <div class="convergence-modal-title" data-en="Convergence!" data-de="Konvergenz!">Convergence!</div>
+            <div class="convergence-modal-desc"
+                 data-en="You've reached a milestone and earned 1 Probability Tree point."
+                 data-de="Du hast einen Meilenstein erreicht und 1 Wahrscheinlichkeitsbaum-Punkt erhalten.">
+                You've reached a milestone and earned 1 Probability Tree point.
+            </div>
+            <div class="convergence-modal-btns">
+                <button class="btn convergence-btn-tree" onclick="hideConvergenceModal(); hideOv(); showPassiveTree();">
+                    🌿 <span data-en="Open Probability Tree" data-de="Wahrscheinlichkeitsbaum öffnen">Open Probability Tree</span>
+                </button>
+                <button class="btn convergence-btn-next" onclick="hideConvergenceModal(); nextLvl();">
+                    ▶ <span data-en="Next Level" data-de="Nächstes Level">Next Level</span>
+                </button>
+                <button class="btn convergence-btn-levels" onclick="hideConvergenceModal(); goLevels();">
+                    ☰ <span data-en="Level Select" data-de="Levelauswahl">Level Select</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+
     <!-- SCRIPTS -->
     <script src="js/translations-strings.js"></script>
     <script src="js/translations.js"></script>
@@ -426,7 +451,6 @@
     <script src="js/achievements-ui.js"></script>
     <script src="js/passive-tree-data.js"></script>
     <script src="js/passive-tree-state-points.js"></script>
-    <script src="js/passive-tree-skills.js"></script>
     <script src="js/passive-tree-ui.js"></script>
     <script src="js/passive-tree-viewport.js"></script>
     <script src="js/passive-tree.js"></script>
