@@ -49,6 +49,35 @@ function getEffectiveCooldown(slot, baseSeconds) {
         }
     }
 
+
+    if (STATE.playerClass === 'mathmagician') {
+        if (slot === 'active1') {
+            // Arcane Reveal cooldown reductions
+            if (ptHasSkill('rapid_revelation')) reduction += 30;
+            if (ptHasSkill('accelerated_revelation')) reduction += 30;
+        }
+        if (slot === 'active2') {
+            // Absolute Zero cooldown reductions
+            if (ptHasSkill('hastened_zero')) reduction += 30;
+            if (ptHasSkill('accelerated_zero')) reduction += 30;
+        }
+    }
+
+    if (STATE.playerClass === 'probabilist') {
+        if (slot === 'active1') {
+            // Precision Mark cooldown reductions
+            if (ptHasSkill('swift_marking')) reduction += 30;
+            if (ptHasSkill('accelerated_marking')) reduction += 30;
+        }
+        if (slot === 'active2') {
+            // Field Scan cooldown reductions
+            if (ptHasSkill('swift_scan')) reduction += 30;
+            if (ptHasSkill('accelerated_scan')) reduction += 30;
+        }
+    }
+
+
+
     return Math.max(0, baseSeconds - reduction);
 }
 

@@ -227,6 +227,65 @@ const ITEM_DEFS = {
         descDE: 'Enthüllt 4 Zeilen und 4 Spalten, aber alle Spaltenhinweise werden für 45s ausgeblendet',
         rarity: 'cursed', weight: 2
     },
+
+
+    // ----------------------------------------------------------------------------------------
+
+    // PASSIVE-TREE-UNLOCKED ITEMS (weight: 0 — only obtainable when node is active)
+
+    // Pearl of Haste — reduces active1 cooldown to 1 s
+    pearlOfHaste: {
+        id: 'pearlOfHaste', icon: '🔵',
+        nameEn: 'Pearl of Haste', nameDE: 'Perle der Schnelligkeit',
+        descEn: 'Reduces the cooldown of your first active class skill to 1 second.',
+        descDE: 'Reduziert die Abklingzeit deiner ersten aktiven Klassenfähigkeit auf 1 Sekunde.',
+        rarity: 'epic', weight: 0
+    },
+
+    // Pearl of Swiftness — reduces active2 cooldown to 1 s
+    pearlOfSwiftness: {
+        id: 'pearlOfSwiftness', icon: '🟣',
+        nameEn: 'Pearl of Swiftness', nameDE: 'Perle der Gewandtheit',
+        descEn: 'Reduces the cooldown of your second active class skill to 1 second.',
+        descDE: 'Reduziert die Abklingzeit deiner zweiten aktiven Klassenfähigkeit auf 1 Sekunde.',
+        rarity: 'epic', weight: 0
+    },
+
+    // Grand Pearl — reduces both cooldowns to 1 s
+    grandPearl: {
+        id: 'grandPearl', icon: '⚪',
+        nameEn: 'Grand Pearl', nameDE: 'Große Perle',
+        descEn: 'Reduces the cooldowns of both active class skills to 1 second.',
+        descDE: 'Setzt die Abklingzeit beider aktiver Klassenfähigkeiten auf 1 Sekunde.',
+        rarity: 'legendary', weight: 0
+    },
+
+    // The Witch — cursed immunity 60 s, -10 min timer
+    theWitch: {
+        id: 'theWitch', icon: '🧙',
+        nameEn: 'The Witch', nameDE: 'Die Hexe',
+        descEn: 'Grants immunity to all cursed item downsides for 60 seconds, but reduces the timer by 10 minutes.',
+        descDE: 'Gewährt 60 Sekunden Immunität gegen negative Effekte verfluchter Gegenstände, reduziert aber den Timer um 10 Minuten.',
+        rarity: 'cursed', weight: 0
+    },
+
+    // Golden Clock — stops timer decrease, timer items 100% more effective, max 3 more mistakes
+    goldenClock: {
+        id: 'goldenClock', icon: '🕰️',
+        nameEn: 'Golden Clock', nameDE: 'Goldene Uhr',
+        descEn: 'The timer can no longer decrease. Timer items are 100% more effective. However, only 3 more mistakes are allowed.',
+        descDE: 'Der Timer kann nicht mehr sinken. Timer-Gegenstände sind 100% effektiver. Allerdings sind nur noch 3 weitere Fehler erlaubt.',
+        rarity: 'legendary', weight: 0
+    },
+
+    // Shadow Seal — hides all clues, marks 75% wrong tiles, sets timer to 5 min
+    shadowSeal: {
+        id: 'shadowSeal', icon: '🌑',
+        nameEn: 'Shadow Seal', nameDE: 'Schattensiegel',
+        descEn: 'Permanently hides all row and column clues. Instantly marks 75% of all wrong empty tiles. Reduces the timer to 5 minutes.',
+        descDE: 'Versteckt dauerhaft alle Zeilen- und Spaltenhinweise. Markiert sofort 75% aller falschen leeren Felder. Reduziert die Zeit auf 5 Minuten.',
+        rarity: 'cursed', weight: 0
+    },
 };
 
 

@@ -84,6 +84,12 @@ function _ensureCellEffectCSS() {
             animation: cellUnmarkPulse 1.4s ease-out forwards;
             pointer-events: none;
         }
+
+        @keyframes fx-shadow-seal-veil {
+            0%   { background: rgba(0,0,0,0); }
+            60%  { background: rgba(0,0,0,0.55); }
+            100% { background: rgba(0,0,0,0); }
+        }
     `;
     document.head.appendChild(style);
 }
@@ -209,6 +215,16 @@ function playItemEffect(defId) {
     if (defId === 'cursedRowSolve') return _fxTidalWave();
     if (defId === 'cursedColSolve') return _fxVortex();
     if (defId === 'cursedRowCol') return _fxChaosGrid();
+
+    // ── PEARLS ────────────────────────────────────────────────────────────
+    if (defId === 'pearlOfHaste') return _fxPearl('#88aaff');
+    if (defId === 'pearlOfSwiftness') return _fxPearl('#cc88ff');
+    if (defId === 'grandPearl') return _fxPearl('#e0e0e0');
+
+    // ── KEYSTONES ─────────────────────────────────────────────────────────
+    if (defId === 'theWitch') return _fxTheWitch();
+    if (defId === 'goldenClock') return _fxGoldenClock();
+    if (defId === 'shadowSeal') return _fxShadowSeal();
 }
 
 
@@ -1070,4 +1086,101 @@ function _fxChaosGrid() {
     icon.style.cssText = `position:absolute;left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;transform:translate(-50%,-50%);font-size:80px;pointer-events:none;z-index:330;animation:fx-artifact-icon 1.2s ease-out forwards;`;
     r.wrap.appendChild(icon);
     setTimeout(() => icon.remove(), 1600);
+}
+
+
+
+
+
+// ════════════════════════════════════════════════════════════════
+//  PEARL / GOLDEN CLOCK / THE WITCH / SHADOW SEAL EFFECTS
+// ════════════════════════════════════════════════════════════════
+
+// 🔵 Pearl of Haste / 🟣 Pearl of Swiftness / ⚪ Grand Pearl — iridescent ripple burst
+function _fxPearl(color) {
+    const r = _fxGetPuzzleRect();
+    if (!r) return;
+    const overlay = _fxOverlay(r.wrap, 1400);
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+
+    for (let i = 0; i < 5; i++) {
+        const ring = document.createElement('div');
+        ring.className = 'fx-shield-ring'; // reuse shield ring CSS
+        ring.style.cssText = `
+            position:absolute; left:${cx}px; top:${cy}px;
+            transform:translate(-50%,-50%) scale(0);
+            border-color:${color};
+            box-shadow:0 0 8px ${color};
+            animation:fx-shield-ring-expand 0.9s ease-out ${i * 0.14}s forwards;
+            --ring-max:${Math.max(r.width, r.height) * 0.7}px;
+        `;
+        overlay.appendChild(ring);
+    }
+    const icon = document.createElement('div');
+    icon.textContent = color === '#88aaff' ? '🔵' : color === '#cc88ff' ? '🟣' : '⚪';
+    icon.style.cssText = `position:absolute;left:${cx}px;top:${cy}px;transform:translate(-50%,-50%);font-size:64px;pointer-events:none;z-index:327;animation:fx-icon-pop 0.6s ease-out forwards;`;
+    r.wrap.appendChild(icon);
+    setTimeout(() => icon.remove(), 1000);
+}
+
+// 🧙 The Witch — purple smoky swirl
+function _fxTheWitch() {
+    const r = _fxGetPuzzleRect();
+    if (!r) return;
+    const overlay = _fxOverlay(r.wrap, 2000, 'z-index:325;');
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+
+    _fxSpawnParticles({
+        count: 24, chars: ['✦', '◆', '★', '·'],
+        colors: ['#9b59b6', '#c39bd3', '#6c3483', '#d7bde2', '#fff'],
+        sizeMin: 12, sizeMax: 22,
+        container: overlay,
+        startX: cx, startY: cy,
+        spreadX: r.width * 0.9, spreadY: r.height * 0.9,
+        duration: 1400, cssClass: 'fx-artifact-star',
+    });
+
+    const icon = document.createElement('div');
+    icon.textContent = '🧙';
+    icon.style.cssText = `position:absolute;left:${cx}px;top:${cy}px;transform:translate(-50%,-50%);font-size:80px;pointer-events:none;z-index:327;animation:fx-skull-rise 1.2s ease-out forwards;`;
+    r.wrap.appendChild(icon);
+    setTimeout(() => icon.remove(), 1600);
+}
+
+// 🕰️ Golden Clock — gold radial burst + clock glow
+function _fxGoldenClock() {
+    const r = _fxGetPuzzleRect();
+    if (!r) return;
+    _fxClock(); // reuse existing clock effect but then add a gold tint overlay
+    const overlay = _fxOverlay(r.wrap, 2000, 'z-index:324;');
+    const fill = document.createElement('div');
+    fill.style.cssText = `position:absolute;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;background:rgba(255,215,0,0.12);border:2px solid rgba(255,215,0,0.4);animation:fx-artifact-fill 2s ease-out forwards;`;
+    overlay.appendChild(fill);
+}
+
+// 🌑 Shadow Seal — dark void engulfs the puzzle
+function _fxShadowSeal() {
+    const r = _fxGetPuzzleRect();
+    if (!r) return;
+    const overlay = _fxOverlay(r.wrap, 2200, 'z-index:325;');
+
+    const veil = document.createElement('div');
+    veil.style.cssText = `position:absolute;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;background:rgba(0,0,0,0);animation:fx-shadow-seal-veil 1.5s ease-in forwards;`;
+    overlay.appendChild(veil);
+
+    _fxSpawnParticles({
+        count: 20, chars: ['●', '◯', '·', '▪'],
+        colors: ['#111', '#333', '#222', '#444'],
+        sizeMin: 8, sizeMax: 18,
+        container: overlay,
+        startX: r.left + r.width / 2, startY: r.top + r.height / 2,
+        spreadX: r.width, spreadY: r.height,
+        duration: 1600, cssClass: 'fx-cursed-cross',
+    });
+
+    const icon = document.createElement('div');
+    icon.textContent = '🌑';
+    icon.style.cssText = `position:absolute;left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;transform:translate(-50%,-50%);font-size:88px;pointer-events:none;z-index:330;animation:fx-artifact-icon 1.8s ease-out forwards;`;
+    r.wrap.appendChild(icon);
+    setTimeout(() => icon.remove(), 2200);
 }

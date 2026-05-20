@@ -46,8 +46,15 @@ function ac(row, col) {
                 return;
             }
             if (shieldActive) {
-                shieldActive = false;
                 absorbedMistakes++;
+                // Reinforced Ward extra charges are stored in _shieldExtraCharges.
+                // Each absorbed hit consumes one extra charge before the base shield.
+                if ((window._shieldExtraCharges || 0) > 0) {
+                    window._shieldExtraCharges--;
+                    // Shield itself stays active until extra charges are gone
+                } else {
+                    shieldActive = false;
+                }
                 showToast(t('pen_shield'));
                 return;
             }
@@ -69,6 +76,24 @@ function ac(row, col) {
             wrongGrid[row][col] = true;
             renderCell(row, col);   // show the red ✕ 
             applyPenalty();         // deduct time, show flash
+
+            // Golden Clock: track remaining allowed mistakes
+            if (window._goldenClockActive) {
+                window._goldenClockMistakesLeft = (window._goldenClockMistakesLeft || 0) - 1;
+                const mcEl = document.getElementById('mistake-counter');
+                if (mcEl) mcEl.textContent = `✗ ${mistakeCount} 🕰️${window._goldenClockMistakesLeft}`;
+                if (window._goldenClockMistakesLeft <= 0) {
+                    window._goldenClockActive = false;
+                    dead = true;
+                    stopTimer();
+                    window._lastFailedGi = cur.gIdx;
+                    document.getElementById('lose-title').textContent = t('ov_lose');
+                    document.getElementById('lose-sub').textContent =
+                        `${LANG === 'de' ? 'Goldene Uhr: Fehlerlimit erreicht!' : 'Golden Clock: mistake limit reached!'}`;
+                    document.getElementById('ov-lose').classList.add('show');
+                    return;
+                }
+            }
 
             // Hardcore mode: one mistake = instant game over
             if (curMods.hardcore) {
@@ -111,7 +136,7 @@ function ac(row, col) {
     }
 
     userGrid[row][col] = pval;
-    if (pval === 1 && cur.grid[row][col] === 1) onCorrectFill(); // class.js
+    if (pval === 1 && cur.grid[row][col] === 1) onCorrectFill(row, col); // class.js
     renderCell(row, col);   // re-draws the cell visual
     updClues(row, col);     // refreshes clue number colours
     checkWin();             // tests whether the puzzle is solved

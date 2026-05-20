@@ -226,22 +226,55 @@ function _ptGrantItem(defId) {
 //------------------------------------------------------------------------
 
 function _ptApplyLevelCompleteRewards() {
-    if (STATE.playerClass !== 'statistician') return;
 
-    // gear_of_the_statistician: 33% chance for a bonus Magnifier (reveal2)
-    if (ptHasSkill('gear_of_the_statistician') && Math.random() < 0.33) {
-        _ptGrantItem('reveal2');
-        showToast(LANG === 'de'
-            ? '🔍 Bonus-Lupe! (Ausrüstung des Statistikers)'
-            : '🔍 Bonus Magnifier! (Gear of the Statistician)');
+    // ── Statistician ──────────────────────────────────────────────
+    if (STATE.playerClass === 'statistician') {
+        if (ptHasSkill('gear_of_the_statistician') && Math.random() < 0.33) {
+            _ptGrantItem('reveal2');
+            showToast(LANG === 'de'
+                ? '🔍 Bonus-Lupe! (Ausrüstung des Statistikers)'
+                : '🔍 Bonus Magnifier! (Gear of the Statistician)');
+        }
+        if (ptHasSkill('improved_gear_of_the_statistician') && Math.random() < 0.33) {
+            _ptGrantItem('markWrong8');
+            showToast(LANG === 'de'
+                ? '💎 Bonus-Fehlerstein! (Verbesserte Ausrüstung)'
+                : '💎 Bonus Error Gem! (Improved Gear)');
+        }
     }
 
-    // improved_gear_of_the_statistician: 33% chance for a bonus Error Gem (markWrong8)
-    if (ptHasSkill('improved_gear_of_the_statistician') && Math.random() < 0.33) {
-        _ptGrantItem('markWrong8');
-        showToast(LANG === 'de'
-            ? '💎 Bonus-Fehlerstein! (Verbesserte Ausrüstung)'
-            : '💎 Bonus Error Gem! (Improved Gear)');
+    // ── Mathmagician ──────────────────────────────────────────────
+    if (STATE.playerClass === 'mathmagician') {
+        if (ptHasSkill('gear_of_the_mathmagician') && Math.random() < 0.10) {
+            _ptGrantItem('mistakeEraser4');
+            showToast(LANG === 'de'
+                ? '📚 Bonus-Professor! (Ausrüstung des Mathemagiers)'
+                : '📚 Bonus Professor! (Gear of the Mathmagician)');
+        }
+        if (ptHasSkill('improved_gear_of_the_mathmagician') && Math.random() < 0.05) {
+            _ptGrantItem('addTime900');
+            showToast(LANG === 'de'
+                ? '⚡ Bonus-Chronoblitz! (Verbesserte Ausrüstung)'
+                : '⚡ Bonus Chronobolt! (Improved Gear)');
+        }
+    }
+
+    // ── Probabilist ───────────────────────────────────────────────
+    if (STATE.playerClass === 'probabilist') {
+        // gear_of_the_probabilist: placeholder — 25% chance for a Sweeper (markWrong4)
+        if (ptHasSkill('gear_of_the_probabilist') && Math.random() < 0.25) {
+            _ptGrantItem('markWrong4');
+            showToast(LANG === 'de'
+                ? '🧹 Bonus-Besen! (Ausrüstung des Probabilisten)'
+                : '🧹 Bonus Sweeper! (Gear of the Probabilist)');
+        }
+        // improved_gear_of_the_probabilist: placeholder — 15% chance for an Error Magnet (markWrong6)
+        if (ptHasSkill('improved_gear_of_the_probabilist') && Math.random() < 0.15) {
+            _ptGrantItem('markWrong6');
+            showToast(LANG === 'de'
+                ? '🧲 Bonus-Fehlermagnet! (Verbesserte Ausrüstung)'
+                : '🧲 Bonus Error Magnet! (Improved Gear)');
+        }
     }
 }
 

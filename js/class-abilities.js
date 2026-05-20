@@ -441,13 +441,34 @@ function _executeArcaneReveal(row, col, radius) {
     const sol = cur.grid;
     const rows = sol.length, cols = sol[0].length;
 
-    const affected = _arcaneRevealCollectCells(row, col, radius, rows, cols, sol);
+    // god_of_math increases radius by 1
+    const effectiveRadius = radius + (ptHasSkill('god_of_math') ? 1 : 0);
+
+    const affected = _arcaneRevealCollectCells(row, col, effectiveRadius, rows, cols, sol);
+
+    // arcane_exposure: also mark empty cells in the area as ✕
+    if (ptHasSkill('arcane_exposure')) {
+        _filterMarkedIds(affected, sol).forEach(id => {
+            const [, r, c] = id.split('-').map(Number);
+            if (userGrid[r][c] === 0) {
+                userGrid[r][c] = 2;
+                renderCell(r, c);
+            }
+        });
+    }
 
     _applyCellEffect(_filterRevealedIds(affected, sol), 'reveal');
     _applyCellEffect(_filterMarkedIds(affected, sol), 'mark');
 
     const revealedIds = _filterRevealedIds(affected, sol);
     if (revealedIds.length > 0) trackAchStat('tilesRevealed', revealedIds.length);
+
+    // arcane_echo and resonant_reveal: each is an independent 25% chance at 1 bonus reveal
+    ['arcane_echo', 'resonant_reveal'].forEach(skill => {
+        if (ptHasSkill(skill) && Math.random() < 0.25) {
+            _arcaneRevealBonusCell(sol, rows, cols);
+        }
+    });
 
     checkWin();
     _spawnArcaneSparkles(revealedIds);
@@ -467,22 +488,53 @@ function _arcaneRevealCollectCells(row, col, radius, rows, cols, sol) {
 }
 
 
+// _arcaneRevealBonusCell — reveals 1 random unrevealed filled cell (used by arcane_echo / resonant_reveal)
+function _arcaneRevealBonusCell(sol, rows, cols) {
+    const candidates = [];
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            if (sol[r][c] === 1 && !revealedGrid[r][c] && userGrid[r][c] !== 1) {
+                candidates.push([r, c]);
+            }
+        }
+    }
+    if (!candidates.length) return;
+    const [r, c] = candidates[Math.floor(Math.random() * candidates.length)];
+    revealedGrid[r][c] = true;
+    userGrid[r][c] = 1;
+    renderCell(r, c);
+    updClues(r, c);
+    trackAchStat('tilesRevealed', 1);
+    showToast('🔮 Arcane Echo! Bonus cell revealed!');
+}
+
+
+
+
+
+
+
 // Absolute Zero
 
 // _executeArcaneFreeze — freezes the timer for durationMs.
 //   During the window, wrong fills cost zero time (window._freezeActive flag).
 function _executeArcaneFreeze(durationMs) {
+    // prolonged_frost and deep_freeze each add 500ms
+    let effectiveDuration = durationMs;
+    if (ptHasSkill('prolonged_frost')) effectiveDuration += 500;
+    if (ptHasSkill('deep_freeze')) effectiveDuration += 500;
+
     timerFrozen = true;
     window._freezeActive = true;
-    _startBlizzardEffect(durationMs);
+    window._freezeCorrFills = 0;   // for frozen_resilience tracking
+    _startBlizzardEffect(effectiveDuration);
     updTimer();
 
-    const secs = Math.ceil(durationMs / 1000);
+    const secs = Math.ceil(effectiveDuration / 1000);
     showToast(`🔮 Absolute Zero! ${secs}s!`);
 
     const tick = _arcaneFreezeStartCountdown(secs);
-
-    setTimeout(() => _arcaneFreezeEnd(tick), durationMs);
+    setTimeout(() => _arcaneFreezeEnd(tick), effectiveDuration);
 }
 
 // _arcaneFreezeStartCountdown — ticks the freeze timer display every second.
@@ -530,9 +582,24 @@ function _executePrecisionMark(row, col, extraLines) {
     const { targetRows, targetCols } = _precisionMarkBuildTargets(row, col, extraLines, rows, cols);
     const affected = _precisionMarkApply(targetRows, targetCols, rows, cols, sol);
 
+    // probabilistic_sweep, expanded_inference, god_of_probabilities:
+    // each is an independent 25% chance to mark one additional random row or column
+    const sweepSkills = ['probabilistic_sweep', 'expanded_inference'];
+    if (ptHasSkill('god_of_probabilities')) sweepSkills.push('god_of_probabilities');
+    sweepSkills.forEach(skill => {
+        if (ptHasSkill(skill) && Math.random() < 0.25) {
+            _precisionMarkBonusLine(rows, cols, sol, affected);
+        }
+    });
+
     _playPrecisionMarkEffect(row, col);
     _applyCellEffect(affected, 'mark');
     showToast(`🎯 ${affected.length} ${LANG === 'de' ? 'Zellen markiert!' : 'cells marked!'}`);
+
+    // momentum_of_certainty: +3 min if a cell in the affected area is correctly filled within 10s
+    if (ptHasSkill('momentum_of_certainty') && affected.length > 0) {
+        _precisionMarkStartMomentumWindow(affected);
+    }
 }
 
 // _precisionMarkBuildTargets — computes the set of rows and columns to mark.
@@ -574,6 +641,56 @@ function _precisionMarkApply(targetRows, targetCols, rows, cols, sol) {
 }
 
 
+// _precisionMarkBonusLine — marks all empty cells in a random unsolved row or column.
+function _precisionMarkBonusLine(rows, cols, sol, affected) {
+    // Collect rows and cols that still have unmarked empty cells
+    const unsolvedRows = [], unsolvedCols = [];
+    for (let r = 0; r < rows; r++) {
+        if ([...Array(cols).keys()].some(c => sol[r][c] === 0 && userGrid[r][c] === 0))
+            unsolvedRows.push(r);
+    }
+    for (let c = 0; c < cols; c++) {
+        if ([...Array(rows).keys()].some(r => sol[r][c] === 0 && userGrid[r][c] === 0))
+            unsolvedCols.push(c);
+    }
+    const pool = [...unsolvedRows.map(r => ({ type: 'row', idx: r })),
+    ...unsolvedCols.map(c => ({ type: 'col', idx: c }))];
+    if (!pool.length) return;
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    if (pick.type === 'row') {
+        for (let c = 0; c < cols; c++) {
+            if (sol[pick.idx][c] === 0 && userGrid[pick.idx][c] === 0) {
+                userGrid[pick.idx][c] = 2;
+                renderCell(pick.idx, c);
+                affected.push(`g-${pick.idx}-${c}`);
+            }
+        }
+    } else {
+        for (let r = 0; r < rows; r++) {
+            if (sol[r][pick.idx] === 0 && userGrid[r][pick.idx] === 0) {
+                userGrid[r][pick.idx] = 2;
+                renderCell(r, pick.idx);
+                affected.push(`g-${r}-${pick.idx}`);
+            }
+        }
+    }
+    showToast(`🎯 ${LANG === 'de' ? 'Bonus-Linie markiert!' : 'Bonus line marked!'}`);
+}
+
+// _precisionMarkStartMomentumWindow — sets a 10s window where the next correct fill
+// in the affected cells grants +3 minutes. Clears itself after the window expires.
+function _precisionMarkStartMomentumWindow(affected) {
+    const affectedSet = new Set(affected);
+    window._pmMomentumActive = true;
+    window._pmMomentumSet = affectedSet;
+    window._pmMomentumTimeout = setTimeout(() => {
+        window._pmMomentumActive = false;
+        window._pmMomentumSet = null;
+    }, 10000);
+}
+
+
+
 // Field Scan
 
 // _executeFieldScan — temporarily reveals a random region of the grid for durationMs.
@@ -583,14 +700,23 @@ function _executeFieldScan(scanSize, durationMs) {
     const sol = cur.grid;
     const rows = sol.length, cols = sol[0].length;
 
-    const { startRow, startCol } = _fieldScanPickOrigin(scanSize, rows, cols);
-    const { scanned, prevStates } = _fieldScanRevealRegion(startRow, startCol, scanSize, rows, cols, sol);
+    // wider_lens and panoramic_view each add 1 to scan size
+    let effectiveSize = scanSize;
+    if (ptHasSkill('wider_lens')) effectiveSize += 1;
+    if (ptHasSkill('panoramic_view')) effectiveSize += 1;
 
-    _playScanBeamEffect(startRow, startCol, scanSize, durationMs);
-    showToast(`🎯 Field Scan! Memorize the ${scanSize}×${scanSize} region!`);
+    // photographic_memory adds 5s to the scan duration
+    let effectiveDuration = durationMs;
+    if (ptHasSkill('photographic_memory')) effectiveDuration += 5000;
+
+    const { startRow, startCol } = _fieldScanPickOrigin(effectiveSize, rows, cols);
+    const { scanned, prevStates } = _fieldScanRevealRegion(startRow, startCol, effectiveSize, rows, cols, sol);
+
+    _playScanBeamEffect(startRow, startCol, effectiveSize, effectiveDuration);
+    showToast(`🎯 Field Scan! Memorize the ${effectiveSize}×${effectiveSize} region!`);
     _fieldScanCheckBigScanAchievement(prevStates, sol);
 
-    setTimeout(() => _fieldScanRestore(scanned, prevStates), durationMs);
+    setTimeout(() => _fieldScanRestore(scanned, prevStates), effectiveDuration);
 }
 
 // _fieldScanPickOrigin — picks a random top-left corner that keeps the region in bounds.
@@ -634,7 +760,17 @@ function _fieldScanCheckBigScanAchievement(prevStates, sol) {
 
 // _fieldScanRestore — restores all scanned cells to their real state after the timer expires.
 function _fieldScanRestore(scanned, prevStates) {
-    prevStates.forEach(({ r, c }) => renderCell(r, c));
+    prevStates.forEach(({ r, c }) => {
+        // god_of_probabilities: if the cell was filled during the scan, keep it revealed
+        if (ptHasSkill('god_of_probabilities') && userGrid[r][c] === 1 && !revealedGrid[r][c]) {
+            revealedGrid[r][c] = true;
+            updClues(r, c);
+            trackAchStat('tilesRevealed', 1);
+            // don't re-render to default; leave as filled
+        } else {
+            renderCell(r, c);
+        }
+    });
     scanned.forEach(el => el.classList.remove('scan-reveal'));
     showToast('🎯 Scan faded — play from memory!');
     buildClassHUD();
@@ -653,6 +789,36 @@ function _fieldScanRestore(scanned, prevStates) {
 //------------------------------------------------------------------------
 
 
+
+
+// _bayesianRevealOneCell — reveals 1 random unrevealed filled cell at level start.
+// Used by confirmed_hypothesis and god_of_probabilities.
+function _bayesianRevealOneCell() {
+    if (!cur) return;
+    const sol = cur.grid;
+    const rows = sol.length, cols = sol[0].length;
+    const candidates = [];
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            if (sol[r][c] === 1 && !revealedGrid[r][c] && userGrid[r][c] !== 1) {
+                candidates.push([r, c]);
+            }
+        }
+    }
+    if (!candidates.length) return;
+    const [r, c] = candidates[Math.floor(Math.random() * candidates.length)];
+    revealedGrid[r][c] = true;
+    userGrid[r][c] = 1;
+    renderCell(r, c);
+    updClues(r, c);
+    trackAchStat('tilesRevealed', 1);
+}
+
+
+
+
+
+
 // applyClassPassiveOnLevelStart — called at the start of each level
 //   to apply the passive effect before play begins.
 function applyClassPassiveOnLevelStart() {
@@ -660,17 +826,39 @@ function applyClassPassiveOnLevelStart() {
     nextPenaltyHalved = false;
     window._momentumThisLevel = 0;
     window._dataStrikeUsesThisLevel = 0;
+    window._veiled_cursedUsed = false;
+    window._goldenClockActive = false;
+    window._goldenClockMistakesLeft = null;
+    window._cursedImmune = false;
+    window._shieldExtraCharges = 0;
 
     if (!STATE.playerClass) return;
     const effect = _getPassiveEffect();
 
     if (STATE.playerClass === 'mathmagician') {
-        window._classFreeMistakes = effect.freeMistakes || 0;
+        let freeMistakes = effect.freeMistakes || 0;
+        if (ptHasSkill('reinforced_shield')) freeMistakes += 1;
+        if (ptHasSkill('fortified_shield')) freeMistakes += 1;
+        window._classFreeMistakes = freeMistakes;
     }
 
     if (STATE.playerClass === 'probabilist' && effect.autoMarkCount) {
-        // Delay until the grid DOM is ready
-        setTimeout(() => markWrongTiles(effect.autoMarkCount), 300);
+        setTimeout(() => {
+            let markCount = effect.autoMarkCount;
+            if (ptHasSkill('prior_knowledge')) markCount += 2;
+            if (ptHasSkill('updated_beliefs')) markCount += 2;
+            if (ptHasSkill('posterior_insight')) markCount += 2;
+            if (ptHasSkill('convergent_evidence')) markCount += 2;
+            markWrongTiles(markCount);
+
+            // confirmed_hypothesis and god_of_probabilities each reveal 1 correct filled cell
+            let bonusReveals = 0;
+            if (ptHasSkill('confirmed_hypothesis')) bonusReveals += 1;
+            if (ptHasSkill('god_of_probabilities')) bonusReveals += 1;
+            for (let i = 0; i < bonusReveals; i++) {
+                _bayesianRevealOneCell();
+            }
+        }, 300);
     }
 }
 
@@ -684,17 +872,70 @@ function getClassPenaltyMultiplier() {
         window._classFreeMistakes--;
         absorbedMistakes++;
         trackAchStat('mistakesAbsorbed');
+
+        // Bonus time for absorbed mistakes
+        let bonus = 0;
+        if (ptHasSkill('calculated_error') && Math.random() < 0.50) bonus += 5;
+        if (ptHasSkill('error_dividend') && Math.random() < 0.25) bonus += 3;
+        if (ptHasSkill('lucky_lapse') && Math.random() < 0.25) bonus += 3;
+
+        // god_of_math doubles the absorbed-mistake timer bonuses
+        if (ptHasSkill('god_of_math') && bonus > 0) bonus *= 2;
+
+        if (bonus > 0) {
+            timerSecs = Math.min(timerSecs + bonus, 3600);
+            updTimer();
+            showToast(`🔮 Absorbed! +${bonus}s`);
+            trackAchStat('timeAdded', bonus);
+        }
+
         return 0.0;
     }
 
     return 1.0;
 }
 
-// onCorrectFill — called from ac() in input.js when a correct cell is filled.
+// onCorrectFill — called from ac() in mouse-button-handlers.js when a correct cell is filled.
 //   Tracks the Statistician fill streak and awards bonus time on threshold.
-function onCorrectFill() {
+function onCorrectFill(row, col) {
     if (STATE.playerClass !== 'statistician') return;
     const effect = _getPassiveEffect();
+
+    // frozen_resilience: every 5 correct fills during Absolute Zero → +1 free mistake
+    // god_of_math: each correct fill during AZ reduces Arcane Reveal cooldown by 1s
+    if (STATE.playerClass === 'mathmagician' && window._freezeActive) {
+        if (ptHasSkill('frozen_resilience')) {
+            window._freezeCorrFills = (window._freezeCorrFills || 0) + 1;
+            if (window._freezeCorrFills % 5 === 0) {
+                window._classFreeMistakes = (window._classFreeMistakes || 0) + 1;
+                showToast('🔮 Frozen Resilience! +1 shield charge!');
+            }
+        }
+        if (ptHasSkill('god_of_math')) {
+            const cd = cooldownState['active1'];
+            if (cd.remaining > 0) {
+                cd.remaining = Math.max(0, cd.remaining - 1);
+                _patchCooldownButton('active1');
+            }
+        }
+    }
+
+
+    // momentum_of_certainty: +3 min if this fill is in the Precision Mark window
+    if (STATE.playerClass === 'probabilist' && window._pmMomentumActive && window._pmMomentumSet) {
+        const id = `g-${arguments[0]}-${arguments[1]}`; // see note below
+        if (window._pmMomentumSet.has(id)) {
+            window._pmMomentumActive = false;
+            clearTimeout(window._pmMomentumTimeout);
+            window._pmMomentumSet = null;
+            timerSecs = Math.min(timerSecs + 180, 3600);
+            updTimer();
+            showToast(LANG === 'de' ? '🎯 Schwung der Gewissheit! +3 Min!' : '🎯 Momentum of Certainty! +3 min!');
+            trackAchStat('timeAdded', 180);
+        }
+    }
+
+
 
     correctFillStreak++;
     if (correctFillStreak >= effect.streakForBonus) {

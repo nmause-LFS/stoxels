@@ -146,7 +146,7 @@ function handleSpecialRewards({ gi, isFirstClear, isAscensionLevel, irz }) {
     if (isConvergenceLevel && isFirstClear) {
         if (!STATE.convergenceDone) STATE.convergenceDone = [];
         STATE.convergenceDone.push(gi);
-        STATE.passiveTreePoints = (STATE.passiveTreePoints || 0) + 100;        // +1
+        STATE.passiveTreePoints = (STATE.passiveTreePoints || 0) + 2;        // Grant Passive Points, in total players should get 26 from convergence and 26 from quests
         save();
         window._pendingConvergenceModal = true;
     }
@@ -174,10 +174,24 @@ function handleSpecialRewards({ gi, isFirstClear, isAscensionLevel, irz }) {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-// Generates 1–3 random lucky-drop items and appends them to irz. Returns html string.
 function rollLuckyDrops() {
-    if (Math.random() >= 0.33) return '';   // Adjust this to change drop rate
-    const luckyCount = Math.floor(Math.random() * 3) + 1;
+    // Lucky Drops node must be allocated — no drops without it
+    if (!ptHasSkill('lucky_drops')) return '';
+
+    // Base 20% chance, +10% per bonus_replay node
+    let chance = 0.20;
+    if (ptHasSkill('bonus_replay_1')) chance += 0.10;
+    if (ptHasSkill('bonus_replay_2')) chance += 0.10;
+    if (ptHasSkill('bonus_replay_3')) chance += 0.10;
+    if (Math.random() >= chance) return '';
+
+    // How many items: base 1, lucky_replay nodes each add 10% chance for a second
+    let luckyCount = 1;
+    const extraChance = (ptHasSkill('lucky_replay_1') ? 0.10 : 0)
+        + (ptHasSkill('lucky_replay_2') ? 0.10 : 0)
+        + (ptHasSkill('lucky_replay_3') ? 0.10 : 0);
+    if (Math.random() < extraChance) luckyCount = 2;
+
     let html = '';
     for (let i = 0; i < luckyCount; i++) {
         const defId = pickRandomItem();

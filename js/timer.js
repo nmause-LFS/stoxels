@@ -109,7 +109,7 @@ function startTimer() {
     timerInterval = setInterval(() => {
         if (dead || timerFrozen) return; // pause ticking while frozen or game over
 
-        timerSecs--;
+        if (!window._goldenClockActive) timerSecs--;
         updTimer();
 
         const elapsed = Math.floor((Date.now() - levelStartTime) / 1000);
