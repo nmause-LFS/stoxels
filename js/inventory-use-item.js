@@ -1094,6 +1094,7 @@ function _consumeItem(idx, def, msg) {
         // Item is not consumed — skip the splice, just track and show toast
         itemsUsedThisLevel++;
         _trackItemAchievements(def.id, def);
+        updateQuestStats('itemUsed', { defId: def.id, rarity: def.rarity });
         save();
         showToast(msg + (LANG === 'de' ? ' ♻ Nicht verbraucht!' : ' ♻ Not consumed!'));
         buildInventoryPanel();
@@ -1103,6 +1104,7 @@ function _consumeItem(idx, def, msg) {
     STATE.inventory.splice(idx, 1);
     itemsUsedThisLevel++;
     _trackItemAchievements(def.id, def);
+    updateQuestStats('itemUsed', { defId: def.id, rarity: def.rarity });
     save();
     showToast(msg);
     buildInventoryPanel();

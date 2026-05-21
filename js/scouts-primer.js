@@ -255,6 +255,7 @@ function showPrimerResult(correct) {
                 ? `✓ Perfekt! ${newStreak}/${PRIMER_MAX} richtig — maximaler Vorsprung!`
                 : `✓ Perfect! ${newStreak}/${PRIMER_MAX} correct — maximum headstart!`;
             trackAchStat('primerCorrect');
+            updateQuestStats('questionCorrect', { source: 'primer' });
             setTimeout(() => {
                 closePrimerModal();
                 applyPrimerHeadstart(newStreak);
@@ -265,6 +266,7 @@ function showPrimerResult(correct) {
                 ? `✓ Richtig! ${newStreak}/${PRIMER_MAX} — nächste Frage…`
                 : `✓ Correct! ${newStreak}/${PRIMER_MAX} — next question…`;
             trackAchStat('primerCorrect');
+            updateQuestStats('questionCorrect', { source: 'primer' });
             setTimeout(() => {
                 closePrimerModal();
                 showPrimerModal(newStreak); // chain: open next question
@@ -416,6 +418,7 @@ function applyPrimerHeadstart(count) {
     checkWin();
 
     if (dead) trackAchStat('primerSolvedAll');
+    if (dead) updateQuestStats('primerFullSolve', {});
 }
 
 

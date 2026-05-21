@@ -243,6 +243,9 @@ const T = {
         item_freeze_msg: '❄️ TIME FREEZE!',
         item_freeze_ended: '❄️ Freeze ended',
 
+
+        btn_inference: 'INFERENCE',
+
     },
 
     de: {
@@ -470,7 +473,7 @@ const T = {
         mg_new_q: '🔄 ANDERE AUFGABE VERSUCHEN',
         mg_footer: 'Löse es einmal und das Level bleibt dauerhaft freigeschaltet.',
 
-        ls_to_next: 'Pkt. bis nächster Code',
+        ls_to_next: 'Punkte bis zum nächsten Code',
         ls_all_codes: 'Alle Codes freigeschaltet!',
 
         reset_close: '✕ SCHLIESSEN',
@@ -481,6 +484,8 @@ const T = {
 
         item_freeze_msg: '❄️ ZEITFRIEREN!',
         item_freeze_ended: '❄️ Zeitfrieren vorbei!',
+
+        btn_inference: 'INFERENZ',
 
     }
 };

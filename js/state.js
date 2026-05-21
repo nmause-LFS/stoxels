@@ -98,6 +98,7 @@ function initState() {
         } else {
             s.passiveTreeAllocated = new Set(s.passiveTreeAllocated);
         }
+        migrateQuestState(s);
         return s;
     }
     // Fresh save structure 
@@ -122,6 +123,8 @@ function initState() {
         convergenceDone: [],   
         passiveTreePoints: 0,  
         passiveTreeAllocated: new Set(),
+        questStats: {},
+        questsClaimed: [],
     };
 }
 

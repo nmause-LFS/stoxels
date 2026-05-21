@@ -91,6 +91,7 @@ function checkSingleAchievementDef(def) {
             ACH_STATE.unlocked.push(unlockKey);
             _achToastQueue.push({ def, tier });
             anyNewTier = true;
+            if (typeof updateQuestStats === 'function') updateQuestStats('achievementUnlocked', {});
         }
     });
     return anyNewTier;

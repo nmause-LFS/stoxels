@@ -45,7 +45,7 @@ function _ptFitToView(bounds) {
 
     const sx = cW / treeW;
     const sy = cH / treeH;
-    _pt_scale = Math.max(Math.min(sx, sy, 1.0), PT_ZOOM_MIN);
+    _pt_scale = 1.1;
 
     const offsetY = PT_PADDING + PT_NODE_RADIUS - bounds.minY;
     const scaledW = treeW * _pt_scale;
@@ -55,8 +55,8 @@ function _ptFitToView(bounds) {
     _pt_ty = (cH - scaledH) / 2;
 
     // Horizontal offset carried over from original code
-    _pt_tx += 500;
-    _pt_ty += offsetY * _pt_scale;
+    _pt_tx += -400; 
+    _pt_ty += offsetY * _pt_scale - 1350;
 
     _ptApplyTransform();
 }

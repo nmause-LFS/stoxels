@@ -103,6 +103,7 @@ function confirmClassSelection(cid) {
     showToast(`${def.icon} ${t(def.nameEn, def.nameDE)} ${t('selected!', 'gewählt!')}`);
     closeClassOverlay();
     buildClassHUD();
+    updateQuestStats('classChosen', {})
 }
 
 

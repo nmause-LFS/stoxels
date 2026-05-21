@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STOXELS - v0.18 BETA</title>
+    <title>STOXELS - v0.19 BETA</title>
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/screens.css">
     <link rel="stylesheet" href="css/components.css">
@@ -21,7 +21,7 @@
 
     <!-- TITLE SCREEN -->
     <div id="screen-title" class="screen active">
-        <h1 class="title-glow">STOXELS<br><span class="title-version">v0.18 BETA</span></h1>
+        <h1 class="title-glow">STOXELS<br><span class="title-version">v0.19 BETA</span></h1>
         <p class="title-tag" data-t="tagline">STOCHASTICS &amp; STATISTICS NONOGRAMS</p>
         <div class="lang-switch">
             <button class="lang-btn active" data-lang="en">EN</button>
@@ -158,6 +158,9 @@
                 <span class="ls-title" data-t="ls_title">SELECT LEVEL</span>
                 <div class="ls-topbar-right">
                     <span class="ls-class-status" id="ls-class-status"></span>
+                    <button class="gtb-btn gtb-btn-inference" id="btn-quest-log">
+                        📋 <span data-t="btn_inference">INFERENCE</span> <span id="quest-log-badge" class="quest-badge" style="display:none;">!</span>
+                    </button>
                     <button class="gtb-btn" id="btn-go-passive-tree">🌿 SKILL TREE</button>
                 </div>
             </div>
@@ -409,6 +412,7 @@
     <!-- SCRIPTS -->
     <script src="js/translations-strings.js"></script>
     <script src="js/translations.js"></script>
+    <script src="js/quests.js"></script>
     <script src="js/state.js"></script>
     <script src="js/difficulty-modifiers.js"></script>
     <script src="js/level-world-data.js"></script>

@@ -66,6 +66,10 @@ document.addEventListener('DOMContentLoaded', () => {
     onClick('btn-go-passive-tree', () => showPassiveTree());
 
 
+    document.getElementById('btn-quest-log')
+    ?.addEventListener('click', () => showQuestLog());
+
+
 
     // ── In-game ──────────────────────────────────────────────
 

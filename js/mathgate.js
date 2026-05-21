@@ -257,6 +257,7 @@ function mgHandleCorrectAnswer() {
 
     document.getElementById('mg-submit-btn').disabled = true;
     trackAchStat('questionsCorrect');
+    updateQuestStats('questionCorrect', { source: 'gate' });
 
     // Passive tree bonus item rolls (stack additively)
     mgRollBonusItemRewards();

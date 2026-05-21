@@ -49,6 +49,9 @@ function _ptSpendPoint() {
         STATE.passiveTreePoints = Math.max(0, _ptPoints() - 1);
     }
     _ptRefreshPointsDisplay();
+
+    if (typeof updateQuestStats === 'function') updateQuestStats('passivePointSpent', {});
+
 }
 
 // Refund one point and refresh the on-screen counter

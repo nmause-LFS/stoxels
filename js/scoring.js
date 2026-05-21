@@ -146,7 +146,7 @@ function handleSpecialRewards({ gi, isFirstClear, isAscensionLevel, irz }) {
     if (isConvergenceLevel && isFirstClear) {
         if (!STATE.convergenceDone) STATE.convergenceDone = [];
         STATE.convergenceDone.push(gi);
-        STATE.passiveTreePoints = (STATE.passiveTreePoints || 0) + 2;        // Grant Passive Points, in total players should get 26 from convergence and 26 from quests
+        STATE.passiveTreePoints = (STATE.passiveTreePoints || 0) + 1;        // Grant Passive Points, in total players should get 26 from convergence and 26 from quests
         save();
         window._pendingConvergenceModal = true;
     }
@@ -192,6 +192,9 @@ function rollLuckyDrops() {
         + (ptHasSkill('lucky_replay_3') ? 0.10 : 0);
     if (Math.random() < extraChance) luckyCount = 2;
 
+    STATE.questStats = STATE.questStats || {};
+    STATE.questStats.luckyDropsClaimed = (STATE.questStats.luckyDropsClaimed || 0) + 1;
+
     let html = '';
     for (let i = 0; i < luckyCount; i++) {
         const defId = pickRandomItem();
@@ -203,7 +206,9 @@ function rollLuckyDrops() {
             ${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong>
         </div>`;
     }
-    if (html) save();
+    if (html) {
+        save();
+    }
     return html;
 }
 
@@ -325,6 +330,21 @@ function checkWin() {
 
     fireAchievements({ gi, rows, cols, elapsed, pts, ptsAwarded, prevBest, mult, isFirstClear });
 
+    // Quest stat tracking
+    const _worldData = WORLDS[cur.world - 1];
+    const _isConvergenceLevel = (() => {
+        const c1 = Math.floor((_worldData.data.length - 1) / 3);
+        const c2 = Math.floor((_worldData.data.length - 1) * 2 / 3);
+        const idx = cur.li - 1;
+        return _worldData.data.length > 2 && (idx === c1 || idx === c2) && !isAscensionLevel;
+    })();
+    const _worldJustCompleted = (() => {
+        const start = WORLD_START_GI[cur.world - 1];
+        return _worldData.data.every((_, li) => STATE.done.includes(start + li));
+    })();
+
+
+
     _ptApplyLevelCompleteRewards();   // ← gear_of_the_statistician & improved_gear nodes
 
     const bonusMet = evaluateBonusObjective(elapsed);
@@ -348,6 +368,23 @@ function checkWin() {
             }
         }, 600);
     }
+
+    updateQuestStats('levelComplete', {
+        gi,
+        world: cur.world,
+        diff: curDiff,
+        mods: { ...curMods },
+        mistakeCount,
+        itemsUsed: itemsUsedThisLevel,
+        playerClass: STATE.playerClass,
+        elapsed,
+        bonusMet,
+        isConvergence: _isConvergenceLevel && isFirstClear,
+        worldJustCompleted: _worldJustCompleted,
+        luckyDropTriggered: false, // lucky drops are tracked separately via updateQuestStats('luckyDropTriggered')
+    });
+
+
 }
 
 

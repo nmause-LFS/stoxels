@@ -294,6 +294,7 @@ function _resolveQuizAnswer(correct) {
             resEl.textContent = t('quiz_correct');
             STATE.totalScore += 50;
             trackAchStat('questionsCorrect');
+            updateQuestStats('questionCorrect', { source: 'quiz' });
             document.getElementById('sc-disp').textContent = STATE.totalScore;
             // Always mark the bonus as claimed on a correct first-time answer,
             // regardless of Ironman mode or whether an item reward is available.

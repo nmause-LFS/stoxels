@@ -146,6 +146,7 @@ function _dispatchActiveAbility(activeKey, playerClass, row, col, effect) {
                 trackAchStat('skillPrecisionMarkUsed');
                 break;
         }
+        updateQuestStats('classAbilityUsed', {});
     } else {
         switch (playerClass) {
             case 'mathmagician':
@@ -161,6 +162,7 @@ function _dispatchActiveAbility(activeKey, playerClass, row, col, effect) {
                 trackAchStat('skillFieldScanUsed');
                 break;
         }
+        updateQuestStats('classAbilityUsed', {});
     }
 }
 
@@ -460,8 +462,13 @@ function _executeArcaneReveal(row, col, radius) {
     _applyCellEffect(_filterRevealedIds(affected, sol), 'reveal');
     _applyCellEffect(_filterMarkedIds(affected, sol), 'mark');
 
+    if (revealedIds.length > 0) updateQuestStats('tilesRevealed', { count: revealedIds.length });
+
     const revealedIds = _filterRevealedIds(affected, sol);
-    if (revealedIds.length > 0) trackAchStat('tilesRevealed', revealedIds.length);
+    if (revealedIds.length > 0) {
+        trackAchStat('tilesRevealed', revealedIds.length);
+    }
+
 
     // arcane_echo and resonant_reveal: each is an independent 25% chance at 1 bonus reveal
     ['arcane_echo', 'resonant_reveal'].forEach(skill => {
@@ -966,6 +973,7 @@ function _statisticianTriggerMomentum(bonusSeconds) {
     showToast(`⚔️ Momentum! +${bonus}s`);
     trackAchStat('timeAdded', bonus);
     trackAchStat('momentumTriggered');
+    updateQuestStats('momentumTriggered', {});
 
     window._momentumThisLevel = (window._momentumThisLevel || 0) + 1;
     if (window._momentumThisLevel === 3) trackAchStat('statistician3MomentumOneLevel');
