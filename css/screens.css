@@ -788,7 +788,7 @@
     }
 
     .level-card.done {
-        border-color: var(--green);
+        border-color: var(--accent);
     }
 
         .level-card.done::after {
@@ -1491,22 +1491,79 @@ A thin meta-bar sits at the very top of the game content (inside the scroll area
     margin-top: 8px;
 }
 
+/* REPLACE the three convergence-btn rules with: */
+
+.convergence-btn-tree,
+.convergence-btn-next,
+.convergence-btn-levels {
+    font-family: var(--PX);
+    font-size: 11px;
+    padding: 12px 28px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    border: 1px solid;
+    background: transparent;
+    position: relative;
+    overflow: hidden;
+    transition: color .15s;
+    width: 100%;
+}
+
+.convergence-btn-tree,
+.convergence-btn-next,
+.convergence-btn-levels {
+    &::before
+
+{
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .2s;
+    z-index: -1;
+}
+
+&:hover::before {
+    transform: scaleX(1);
+}
+
+&:hover {
+    color: var(--bg);
+}
+
+}
+
 .convergence-btn-tree {
-    border-color: var(--green, #6dbf40);
-    color: var(--green, #6dbf40);
-    background: rgba(109, 191, 64, 0.08); 
+    border-color: var(--green);
+    color: var(--green);
+    &::before
+
+{
+    background: var(--green);
+}
+
 }
 
 .convergence-btn-next {
-    border-color: var(--accent, #b89a50);
-    color: var(--accent, #b89a50);
-    background: rgba(184, 154, 80, 0.08); 
+    border-color: var(--accent);
+    color: var(--accent);
+    &::before
+
+{
+    background: var(--accent);
+}
+
 }
 
 .convergence-btn-levels {
-    border-color: var(--border2, #555);
-    color: var(--accent2, #aaa);
-    background: rgba(255, 255, 255, 0.04);
+    border-color: var(--border2);
+    color: var(--accent2);
+    &::before
+
+{
+    background: var(--border2);
+}
 }
 
 

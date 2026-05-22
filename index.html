@@ -244,15 +244,17 @@
 
     <!-- WIN OVERLAY -->
     <div class="overlay" id="ov-win">
-        <div class="ov-title win" data-t="ov_win">PUZZLE SOLVED!</div>
         <div id="ov-reveal" class="ov-reveal"></div>
-        <div class="ov-sub" id="ov-sub"></div>
-        <div class="bonus-list" id="bonus-list"></div>
-        <div id="item-reward-zone"></div>
-        <div class="ov-btns">
-            <button class="ob p" id="btn-next-lvl" data-t="btn_next">NEXT ▶</button>
-            <button class="ob s" id="btn-win-retry" data-t="btn_retry">RETRY</button>
-            <button class="ob s" id="btn-win-levels" data-t="btn_levels">LEVELS</button>
+        <div class="ov-win-content" style="position:relative; z-index:402; display:flex; flex-direction:column; align-items:center; gap:12px; width:100%;">
+            <div class="ov-title win" data-t="ov_win">STOXEL SOLVED!</div>
+            <div class="ov-sub" id="ov-sub"></div>
+            <div class="bonus-list" id="bonus-list"></div>
+            <div id="item-reward-zone"></div>
+            <div class="ov-btns">
+                <button class="ob p" id="btn-next-lvl" data-t="btn_next">NEXT ▶</button>
+                <button class="ob s" id="btn-win-retry" data-t="btn_retry">RETRY</button>
+                <button class="ob s" id="btn-win-levels" data-t="btn_levels">LEVELS</button>
+            </div>
         </div>
     </div>
 

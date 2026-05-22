@@ -9,17 +9,17 @@
 
 /* STOXEL SOLVED overlay (winning screen)  */
 .overlay {
-    display: none;      /*Hidden by default, toggled active when player finishes a level*/
+    display: none; /*Hidden by default, toggled active when player finishes a level*/
     position: fixed;
     inset: 0;
-    background: var(--overlay-bg);
+    background: rgba(10, 10, 10, 0.97);
     z-index: 400;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     gap: 12px;
     text-align: center;
-    padding: 20px; 
+    padding: 20px;
     overflow-y: auto;
 }
 
@@ -97,23 +97,31 @@
                 font-size: 20px;
             }
 
+.ov-reveal {
+    display: grid;
+    gap: 3px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* remove inset: 0 and padding */
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 401;
+    margin: 0;
+}
 
-    /* Reveal - Grid in STOXEL SOLVED Overlay  */
-    .ov-reveal {
-        display: grid;
-        gap: 2px;
-        margin: 6px auto;
+.ov-reveal-cell {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    min-width: 0;
+    min-height: 0;
+}
+
+    .ov-reveal-cell.f {
+        background: var(--accent);
     }
-
-    /* Individual cells in the reveal grid */
-    .ov-reveal-cell {
-        background: var(--surface);
-        border: 1px solid var(--border);
-    }
-
-        .ov-reveal-cell.f {
-            background: var(--accent);
-        }
 
 
     /* Container for Bottom - Buttons (Next, Retry, Levels) in STOXELS SOLVED Overlay  */

@@ -347,23 +347,61 @@ function renderCell(row, col) {
 //-------------------REVEAL MINI GRID IN WIN OVERLAY----------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
+
 function buildReveal() {
     const sol = cur.grid;
     const rows = sol.length, cols = sol[0].length;
-
-    // Scale cell size so the longest dimension fits in ~120 px
-    const csz = Math.max(4, Math.min(22, Math.floor(120 / Math.max(rows, cols))));
-
     const ct = document.getElementById('ov-reveal');
-    ct.style.gridTemplateColumns = `repeat(${cols}, ${csz}px)`;
-    ct.innerHTML = ''; // clear any previous reveal
+
+    // Base size on the viewport's smaller dimension, with some padding
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const maxSize = Math.min(vw, vh) * 0.92;
+
+    // Keep cells square: divide the max size by the larger dimension
+    const maxDim = Math.max(rows, cols);
+    const cellSize = Math.floor(maxSize / maxDim);
+
+    const gridW = cellSize * cols + (cols - 1) * 3; // 3px = gap
+    const gridH = cellSize * rows + (rows - 1) * 3;
+
+    ct.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
+    ct.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
+    ct.style.width = `${gridW}px`;
+    ct.style.height = `${gridH}px`;
+    ct.innerHTML = '';
 
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
             const d = document.createElement('div');
             d.className = 'ov-reveal-cell' + (sol[r][c] === 1 ? ' f' : '');
-            d.style.cssText = `width:${csz}px; height:${csz}px;`;
             ct.appendChild(d);
         }
     }
 }
+
+
+
+/*
+
+function buildReveal() {
+    const sol = cur.grid;
+    const rows = sol.length, cols = sol[0].length;
+
+    const ct = document.getElementById('ov-reveal');
+
+    // Fill the viewport: subtract padding (60px each side) and use fr units
+    ct.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    ct.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+    ct.innerHTML = '';
+
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            const d = document.createElement('div');
+            d.className = 'ov-reveal-cell' + (sol[r][c] === 1 ? ' f' : '');
+            ct.appendChild(d);
+        }
+    }
+}
+
+*/

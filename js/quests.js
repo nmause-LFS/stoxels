@@ -1137,7 +1137,7 @@ function _ledgerClaimToast(ms, cat) {
     const label = de ? ms.labelDE : ms.labelEn;
     const parts = [];
     if (ms.reward.ptPoints) {
-        parts.push(`+${ms.reward.ptPoints} ${de ? 'Wahrscheinlichkeitsbaum-Punkt(e)' : 'Probability Tree point(s)'}`);
+        parts.push(`+${ms.reward.ptPoints} ${de ? 'Wahrscheinlichkeitsbaum-Punkt(e)' : 'Probability Tree point'}`);
     }
     if (ms.reward.items) {
         ms.reward.items.forEach(defId => {
@@ -1324,7 +1324,7 @@ function _renderLedgerDetail(modal) {
         // Reward chips
         const rewardParts = [];
         if (ms.reward.ptPoints) {
-            rewardParts.push(`<span class="quest-reward-pt">🌳 +${ms.reward.ptPoints} ${de ? 'Baum-Punkt(e)' : 'Tree point(s)'}</span>`);
+            rewardParts.push(`<span class="quest-reward-pt">🌳 +${ms.reward.ptPoints} ${de ? 'Wahrscheinlichkeitsbaum Punkt' : 'Probability Tree Point'}</span>`);
         }
         if (ms.reward.items) {
             ms.reward.items.forEach(defId => {
