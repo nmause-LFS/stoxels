@@ -104,11 +104,11 @@ function buildGrid() {
         const rc = RC[row];
         const pad = mrw - rc.length;
 
-        for (let i = 0; i < pad; i++) h += `<td class="corner"></td>`;
+        for (let i = 0; i < pad; i++) h += `<td class="corner" style="position:sticky;left:${i * (fs + 7)}px;background:var(--bg);z-index:11"></td>`;
 
         for (let i = 0; i < rc.length; i++) {
             // Fixed: unique id per cell (rct-{row}-{i}) instead of duplicate id="rct-{row}"
-            h += `<td class="rct rct-${row}" id="rct-${row}-${i}" style="font-size:${fs}px">` +
+            h += `<td class="rct rct-${row}" id="rct-${row}-${i}" style="font-size:${fs}px;position:sticky;left:${(pad + i) * (fs + 7)}px;background:var(--bg);z-index:10">` +
                 `<div class="rcinner"><span id="rn-${row}-${i}" style="font-size:${fs}px">${rc[i]}</span></div>` +
                 `</td>`;
         }
@@ -381,27 +381,3 @@ function buildReveal() {
 }
 
 
-
-/*
-
-function buildReveal() {
-    const sol = cur.grid;
-    const rows = sol.length, cols = sol[0].length;
-
-    const ct = document.getElementById('ov-reveal');
-
-    // Fill the viewport: subtract padding (60px each side) and use fr units
-    ct.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-    ct.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-    ct.innerHTML = '';
-
-    for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-            const d = document.createElement('div');
-            d.className = 'ov-reveal-cell' + (sol[r][c] === 1 ? ' f' : '');
-            ct.appendChild(d);
-        }
-    }
-}
-
-*/

@@ -165,8 +165,93 @@ document.addEventListener('wheel', (e) => {
 //------------------------------------------------------------------------
 
 
+// ── Freeze-pane scroll sync ──────────────────────────────────────────
+// Because position:sticky doesn't work inside CSS-transformed elements,
+// we manually translate the sticky clue cells on scroll.
+
+(function () {
+    let _scrollWrap = null;
+
+
+    /*
+    function getStickyTds() {
+        return document.querySelectorAll('td.rct, td.corner');
+    }
+    */
+
+    function getStickyTds() {
+        return document.querySelectorAll('td.rct');
+    }
+
+
+    function onPuzzleScroll() {
+        const scrollX = _scrollWrap.scrollLeft;
+        getStickyTds().forEach(td => {
+            // Read the base left offset stored on the element
+            const baseLeft = parseFloat(td.dataset.baseLeft || 0);
+            td.style.transform = `translateX(${scrollX}px)`;
+        });
+    }
+
+    function attachScrollListener() {
+        _scrollWrap = document.getElementById('puzzle-scaler-wrap');
+        if (!_scrollWrap) return;
+        _scrollWrap.removeEventListener('scroll', onPuzzleScroll);
+        _scrollWrap.addEventListener('scroll', onPuzzleScroll, { passive: true });
+    }
+
+    // Re-attach after every grid build
+    const _origBuildGrid = window.buildGrid;
+    // Hook in via a slight delay after buildGrid runs
+    const observer = new MutationObserver(() => {
+        attachScrollListener();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    attachScrollListener();
+})();
 
 
 
 
 
+
+// ── Arrow-key scroll routing based on mouse position ────────────────
+// Routes left/right arrow keys to either the puzzle or inventory scroll
+// based on where the mouse cursor currently is — no click required.
+
+(function () {
+    let mouseZone = 'none'; // 'puzzle' | 'inventory' | 'none'
+
+    const puzzleWrap = document.getElementById('puzzle-scaler-wrap');
+    const getInvList = () => document.getElementById('inv-list');
+
+    // Track which zone the mouse is in
+    document.addEventListener('mousemove', (e) => {
+        if (puzzleWrap && puzzleWrap.matches(':hover')) {
+            mouseZone = 'puzzle';
+        } else if (getInvList() && getInvList().matches(':hover')) {
+            mouseZone = 'inventory';
+        } else {
+            mouseZone = 'none';
+        }
+    }, { passive: true });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+
+        const dir = e.key === 'ArrowRight' ? 1 : -1;
+        const step = 40;
+
+        if (mouseZone === 'puzzle' && puzzleWrap) {
+            e.preventDefault();
+            puzzleWrap.scrollLeft += dir * step;
+        } else if (mouseZone === 'inventory') {
+            const inv = getInvList();
+            if (inv) {
+                e.preventDefault();
+                inv.scrollLeft += dir * step;
+            }
+        }
+    });
+})();

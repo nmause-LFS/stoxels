@@ -62,6 +62,7 @@ table.ptable {
     border-collapse: collapse;
     table-layout: fixed;
     user-select: none;
+    margin-bottom: 12px;
 }
 
 .corner {
@@ -198,7 +199,7 @@ table.ptable {
     }
 
     .gc.bb {
-        border-bottom: 2px solid var(--cell-group-divider) !important;
+        border-bottom: 3px solid var(--cell-group-divider) !important;
     }
 
 
@@ -343,4 +344,42 @@ div.gc.hov-r.hov-c:not(.filled):not(.wrong-mark) {
     100% {
         background-position: 200% 200%;
     }
+}
+
+
+
+/* ── Freeze left-side clue columns (like Excel freeze panes) ────────── */
+
+/* The puzzle table needs overflow to be handled by a scrollable container */
+.puzzle-scaler-inner {
+    overflow-x: auto;
+}
+
+/* Stick every row-clue cell to the left edge */
+td.rct {
+    position: sticky;
+    left: 0; /* How far from the left to pin */
+    z-index: 10;
+    background: var(--bg); /* Must have a solid background or grid shows through */
+}
+
+/* Stick the top-left corner cells too, so they don't scroll away */
+td.corner {
+    position: sticky;
+    left: 0;
+    z-index: 11; /* Higher than rct so corners sit on top */
+    background: var(--bg);
+}
+
+
+
+.ptable-scroll {
+    overflow-x: visible; /* scroll is on the wrap, not here */
+}
+
+
+td.rct {
+    position: relative;
+    z-index: 10;
+    background: var(--bg);
 }
