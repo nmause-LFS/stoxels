@@ -1,189 +1,241 @@
-/* Inventory panel that sits at the bottom of the screen  */
+/* ═══════════════════════════════════════════════════════════════
+   NEW INVENTORY PANEL  — fixed bottom slot grid
+   ═══════════════════════════════════════════════════════════════ */
 
-.inv-strip {
-    position: relative;
-    width: 100%;
-    max-width: 1600px;
-    margin: 30px auto 0;
-    background: var(--panel); 
-    border-top: 1px solid var(--border);
-    flex-shrink: 0;
+/* ── Outer panel ── */
+
+#inv-panel {
+    position: fixed;
+    bottom: 0; /* Glue it to the very bottom edge */
+    left: 0;
+    right: 0; /* Span all the way across the screen */
+    z-index: 500;
+    background: var(--panel);
+    border-top: 1px solid var(--border); /* Only need a top border now */
+    padding: 10px 16px;
+    height: 75px; /* Compact fixed height to fit text + slots */
+
+    display: flex;
+    flex-direction: row; /* Layout child blocks horizontally */
+    align-items: center; /* Center items vertically */
+    gap: 20px; /* Add healthy spacing between groups */
+    box-shadow: 0 -4px 18px rgba(0,0,0,0.55); /* Shadow casting upwards */
+
+    overflow-x: auto; /* Enables horizontal scrolling when items overflow */
+    overflow-y: hidden; /* Prevents any weird vertical scrollbar twitching */
+    scrollbar-width: thin; /* For Firefox styling */
 }
 
-/* INVENTORY text label on the top of the inventory panel  */
+    /* Optional: Custom sleek scrollbar for Chrome/Safari/Edge */
+    #inv-panel::-webkit-scrollbar {
+        height: 6px;
+    }
 
-.inv-strip-header {
+    #inv-panel::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    #inv-panel::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+    }
+
+        #inv-panel::-webkit-scrollbar-thumb:hover {
+            background: var(--yellow);
+        }
+
+
+/* ── Top row: turned into a left-side vertical label block ── */
+.inv-panel-toprow {
+    display: flex;
+    flex-direction: column; /* Stack label over counter */
+    align-items: flex-start;
+    justify-content: center;
+    min-width: 90px; /* Give the label region some structure */
+    gap: 4px;
+    margin-bottom: 0; /* Reset old margin */
+}
+
+
+
+
+.inv-panel-label {
     font-family: var(--PX);
-    font-size: 12px;
+    font-size: 11px;
     color: var(--yellow);
-    padding: 7px 18px 4px;
     letter-spacing: 1px;
 }
 
-/* Items in the inventory panel   */
-
-.inv-strip-list {
-    display: flex;          /* Makes item appear horizontally */
-    gap: 10px;
-    padding: 6px 16px 12px;
-    overflow-x: auto;       /* Allows scrolling sideways for too many items   */
-    min-height: 100px;
-    align-items: flex-start;
-}
-
-
-/* Item Card Box for each item in the inventory that represents an item */
-
-.inv-item {
-    position: relative;          /* Anchor for the absolute icon and sell button */
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 12px;
-    cursor: pointer;
-    transition: all .12s;
-    flex-shrink: 0;
-    min-width: 150px;
-    max-width: 180px;
-    min-height: 150px;
-    
-    display: flex;               /* Use flex to stack text content */
-    flex-direction: column;
-    overflow: hidden;            /* CRITICAL: Keeps the large background icon inside the box */
-}
-
-
-
-/* Hover Effect for mouseover on an item card in inventory */
-    .inv-item:hover {
-        border-color: var(--accent);
-    }
-
-    /* Disallow item useage for Ironman players */
-    .inv-item.ironman-lock {
-        opacity: .4;
-        cursor: not-allowed;
-        pointer-events: none;
-    }
-
-    /* Disallow cursed item useage (early on in a level)  */
-    .inv-item.cursed-locked {
-        opacity: .5;
-        cursor: not-allowed;
-        pointer-events: none;
-        border-color: var(--inv-cursed-lock) !important;
-    }
-
-    /* Item Icon as background for item cards */
-
-    .inv-item-icon {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-
-        font-size: 100px;            /* Large watermark size */
-        opacity: 0.2;                /* Faint enough to stay in the background */
-        pointer-events: none;        /* Ensures the icon doesn't block clicks on the card */
-        z-index: 0;                  /* Sits behind the text */
-    }
-
-
-    /* Item Name */
-.inv-item-name {
-    font-family: var(--PX);
-    font-size: 12px;
-    color: var(--accent);
-    margin-bottom: 3px;
-}
-        /* Text colors for each item based on their rarity  */
-
-        .inv-item-name.common {color: #aaa;}
-        .inv-item-name.uncommon {color: #4fc;}
-        .inv-item-name.rare {color: #88f;}
-        .inv-item-name.epic {color: #c8f;}
-        .inv-item-name.legendary {color: #fd0;}
-        .inv-item-name.cursed {color: #f44;}
-        .inv-item-name.artifact {color: #ffd700;}
-
-
-    /*  Item Description Text */
-.inv-item-desc {
-    font-size: 15px;
-    color: #ffffff; /*var(--yellow); */
-    line-height: 1.45;
-    font-weight: bold;
-    white-space: pre-line;
-}
-
-
-/* Item Discard Button */
-.inv-sell-btn {
-    position: absolute;  /* Breaks it out of the normal layout flow */
-    top: 5px;            /* Distance from the top */
-    right: 5px;          /* Distance from the right */
-    
-    font-family: var(--PX);
-    font-size: 10px;     /* Slightly larger for the "X" */
-    line-height: 1;
-    
-    background: transparent;
-    border: none;        /* Removing the green border */
-    color: #f44;         /* Using the "cursed" red color */
-    
-    padding: 4px;
-    cursor: pointer;
-    transition: transform .1s;
-}
-
-    .inv-sell-btn:hover {
-        color: #ff6666;      /* Lighter red on hover[cite: 5] */
-        transform: scale(1.2); /* Slight pop effect[cite: 5] */
-        background: transparent; /* Keep it clean[cite: 5] */
-    }
-
-
-/* Message that occurs while the inventory is empty  */
-
-.inv-empty-msg {
-    font-size: 20px;
-    color: var(--inv-item-empty);
-    padding: 10px;
-    line-height: 1.7;
-    align-self: center;
-}
-
-
-/* LOCKED text for Cursed items for the first few minutes   */
-
-.inv-cursed-warning {
-    font-family: var(--PX);
-    font-size: 10px;
-    color: var(--red);
-    margin-top: 3px;
-}
-
-
-
-
-/* ── RESHUFFLE COUNTER (next to INVENTORY label) ── */
-.inv-strip-header-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-right: 18px;
-}
-
-
 #reshuffle-counter {
     font-family: var(--PX);
-    font-size: 11px;
+    font-size: 10px;
     color: #aaa;
-    padding: 7px 0 4px;   /* remove left padding since it's now in the flex row */
     letter-spacing: 0.5px;
     white-space: nowrap;
 }
 
-/* ── RESHUFFLE MODAL OVERLAY ── */
+/* ── Group block ── */
+
+.inv-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    height: 100%;
+    flex-shrink: 0; /* Prevents layout from squeezing slots together */
+}
+
+
+.inv-group-label {
+    font-family: var(--PX);
+    font-size: 9px;
+    color: #666;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding-bottom: 1px;
+    /* Remove the old bottom border line if it looks crowded horizontally */
+}
+
+
+.inv-group-slots {
+    display: flex;
+    flex-direction: row; /* Slots stay next to each other */
+    flex-wrap: nowrap; /* Keep them in a single strict horizontal row */
+    gap: 6px;
+}
+
+
+/* ── Prevent fixed inventory from overlapping game elements ── */
+.game-main {
+    /* 75px (inventory height) + 25px breathing room = 100px */
+    padding-bottom: 100px !important;
+}
+
+
+
+/* ── Individual slot ── */
+.inv-slot {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color .1s, transform .1s, opacity .1s;
+    flex-shrink: 0;
+}
+
+    .inv-slot:hover:not(.inv-slot-empty):not(.ironman-lock) {
+        transform: scale(1.12);
+        border-color: var(--accent) !important;
+    }
+
+    /* Empty slot: dimmed, no pointer cursor */
+    .inv-slot.inv-slot-empty {
+        opacity: 0.25;
+        cursor: default;
+        border-color: var(--border) !important;
+    }
+
+    .inv-slot.ironman-lock {
+        opacity: 0.35;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    /* Cursed-locked state (reuse existing class from game logic if needed) */
+    .inv-slot.cursed-locked {
+        opacity: 0.45;
+        cursor: not-allowed;
+        pointer-events: none;
+        border-color: #f44 !important;
+    }
+
+/* Icon inside slot */
+.inv-slot-icon {
+    font-size: 22px;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Stack count badge */
+.inv-slot-count {
+    position: absolute;
+    bottom: 1px;
+    right: 3px;
+    font-family: var(--PX);
+    font-size: 9px;
+    color: #fff;
+    line-height: 1;
+    pointer-events: none;
+    text-shadow: 0 0 3px #000, 0 0 3px #000;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   TOOLTIP
+   ═══════════════════════════════════════════════════════════════ */
+
+#inv-slot-tooltip {
+    position: fixed;
+    z-index: 9000;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    width: 220px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .1s;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+}
+
+    #inv-slot-tooltip.visible {
+        opacity: 1;
+    }
+
+.inv-tip-name {
+    font-family: var(--PX);
+    font-size: 12px;
+    margin-bottom: 2px;
+}
+
+.inv-tip-rarity {
+    font-family: var(--PX);
+    font-size: 9px;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    opacity: 0.7;
+}
+
+.inv-tip-desc {
+    font-size: 13px;
+    color: #e0e0e0;
+    line-height: 1.45;
+    margin-bottom: 7px;
+}
+
+.inv-tip-stack {
+    font-size: 11px;
+    color: #aaa;
+    margin-bottom: 5px;
+}
+
+.inv-tip-hint {
+    font-size: 10px;
+    color: #666;
+    border-top: 1px solid var(--border);
+    padding-top: 5px;
+    line-height: 1.4;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   RESHUFFLE MODAL  (unchanged visually)
+   ═══════════════════════════════════════════════════════════════ */
+
 #rshuffle-modal {
     position: fixed;
     inset: 0;
@@ -238,10 +290,10 @@
     gap: 6px;
 }
 
-.rshuffle-card:hover {
-    border-color: var(--accent);
-    transform: translateY(-3px);
-}
+    .rshuffle-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-3px);
+    }
 
 .rshuffle-card-icon {
     font-size: 42px;
@@ -253,16 +305,53 @@
     text-align: center;
 }
 
-.rshuffle-card-rarity {
-    font-size: 10px;
-    color: #777;
-    font-family: var(--PX);
-    letter-spacing: 0.5px;
-}
-
 .rshuffle-card-desc {
     font-size: 15px;
     color: #ccc;
     text-align: center;
     line-height: 1.4;
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   TOAST 
+   ═══════════════════════════════════════════════════════════════ */
+
+
+.item-use-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 95px;
+    transform: translate(-50%);
+    font-family: var(--PX);
+    font-size: 25px;
+    color: var(--bg);
+    background: var(--purple);
+    padding: 9px 18px;
+    z-index: 900;
+    display: none;
+    /*animation: toast-in 1s ease;*/
+    animation: toast-in-bottom 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Snappy pop-in animation */
+}
+
+    .item-use-toast.show {
+        display: block;
+    }
+
+@keyframes toast-in {
+    from {
+        opacity: 0;
+        /*transform: translate(-50%, -60%);*/
+        transform: translate(-50%, 15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+
+
+
+

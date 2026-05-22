@@ -49,7 +49,7 @@ function clues(line) {
 
 
 function buildGrid() {
-    manualZoomActive = false;
+    resetZoom();
 
     const sol = cur.grid;
     const rows = sol.length;

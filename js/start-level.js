@@ -745,6 +745,12 @@ function _doStartLevel(gi) {
     _applySignalToNoise();
     _applyDegreesOfFreedom();
     _applyTheOracle();
+
+    //setTimeout(() => {
+    //    _repositionInvPanel();
+    //}, 50);
+
+
 }
 
 

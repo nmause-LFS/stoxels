@@ -20,17 +20,18 @@
 
 /*  Bonus objective sidebar */
 .bonus-sidebar {
-    flex-shrink: 0;
-    width: 200px;
-    align-self: flex-start;
+    position: fixed;
+    top: 48px; /* adjust to match the height of your .game-meta bar */
+    right: 10px;
+    width: 180px;
     background: var(--panel);
     border: 1px solid var(--border);
     border-left: 3px solid var(--orange);
     padding: 14px 12px;
-    margin-left: -250px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    z-index: 50;
 }
 
 .bonus-sidebar-label {

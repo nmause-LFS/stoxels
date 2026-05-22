@@ -31,45 +31,7 @@ function _checkInventoryAchievements() {
 }
 
 
-//------------------------------------------------------------------------
-//----------------SCROLL WHEEL FUNCTIONALITY FOR INVENTORY----------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
 
-
-document.addEventListener('wheel', (e) => {
-    // Only act when the cursor is over the inventory strip (not Ctrl+wheel zoom)
-    if (e.ctrlKey) return;
-    const strip = e.target.closest('#inv-list');
-    if (!strip) return;
-    e.preventDefault();
-    // Scroll speed: 120px per notch 
-    strip.scrollLeft += e.deltaY > 0 ? 120 : -120;
-}, { passive: false });
-
-
-
-
-//------------------------------------------------------------------------
-//------------------------ITEM DISCARDING---------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-function discardItem(uid, e) {
-    e.stopPropagation(); // don't trigger useItem on the parent card
-
-    const idx = STATE.inventory.findIndex(i => i.uid === uid);
-    if (idx < 0) return;
-
-    const def = ITEM_DEFS[STATE.inventory[idx].defId];
-    STATE.inventory.splice(idx, 1);
-
-    trackAchStat('itemsSold');
-
-    save();
-    buildInventoryPanel();
-    showToast(`${def.icon} ${t('item_discarded')}`);
-}
 
 
 

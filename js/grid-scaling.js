@@ -43,7 +43,19 @@ let manualZoomActive = false;
 //   Called by: buildGrid() (after DOM paint), the resize listener (main.js),
 //   and the Ctrl+Wheel handler resets zoom via applyZoom() directly.
 
-
+// Add this new function
+function resetZoom() {
+    manualZoomActive = false;
+    currentZoom = 1;
+    baselineZoom = 1;
+    // Clear leftover wrapper dimensions from the previous level's zoom so
+    // scalePuzzle() can measure the new grid's natural size correctly.
+    const wrap = document.getElementById('puzzle-scaler-wrap');
+    if (wrap) {
+        wrap.style.height = '';
+        wrap.style.minWidth = '';
+    }
+}
 
 
 function scalePuzzle() {

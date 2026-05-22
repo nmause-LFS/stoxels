@@ -340,47 +340,6 @@
 
 
 
-/*
-    ------------------------------------------------------------------------
-    ---------------------------Toast Message--------------------------------
-    ------------------occurs on item or skill useage------------------------
-    ------------------------------------------------------------------------
-*/
-
-
-/* Small pop-up notification for item usage */
-
-
-.item-use-toast {
-    position: absolute; 
-    left: 50%;
-    top: 0; 
-    transform: translate(-50%, -60%);
-    font-family: var(--PX);
-    font-size: 25px;
-    color: var(--bg);
-    background: var(--purple);
-    padding: 9px 18px;
-    z-index: 900;
-    display: none;
-    animation: toast-in 1s ease;
-}
-
-    .item-use-toast.show {
-        display: block;
-    }
-
-@keyframes toast-in {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -60%);
-    }
-
-    to {
-        opacity: 1;
-        transform: translate(-50%, -60%);
-    }
-}
 
 
 
