@@ -461,6 +461,17 @@ function _ptRender() {
     _ptRefreshAllStyles();
     _ptFitToView(bounds);
     _ptBindEvents();
+    // Inject search bar into topbar
+    const existingWrap = document.getElementById('pt-search-wrap');
+    if (existingWrap && !existingWrap.hasChildNodes()) {
+        const searchBar = _ptCreateSearchBar();
+        // Move children into the existing wrap instead of appending the whole element
+        while (searchBar.firstChild) {
+            existingWrap.appendChild(searchBar.firstChild);
+        }
+        // Copy styles
+        existingWrap.style.cssText = searchBar.style.cssText;
+    }
 }
 
 
@@ -469,6 +480,129 @@ function _ptRender() {
 
 
 //------------------------------------------------------------------------
+//------------------------------SEARCH FUNCTIONALITY----------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
-//------------------------------------------------------------------------
+
+
+// ── Search ────────────────────────────────────────────────────────────────
+
+function _ptCreateSearchBar() {
+    const wrap = document.createElement('div');
+    wrap.id = 'pt-search-wrap';
+    wrap.style.cssText = `
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(10,10,20,0.88);
+    border: 1px solid rgba(184,154,80,0.45);
+    border-radius: 6px;
+    padding: 5px 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+`;
+
+    const icon = document.createElement('span');
+    icon.textContent = '🔍';
+    icon.style.cssText = 'font-size:14px;opacity:0.7;pointer-events:none;';
+
+    const input = document.createElement('input');
+    input.id = 'pt-search-input';
+    input.type = 'text';
+    input.placeholder = _ptLang() === 'de' ? 'Knoten suchen…' : 'Search nodes…';
+    input.style.cssText = `
+        background: transparent;
+        border: none;
+        outline: none;
+        font-family: var(--PX, monospace);
+        font-size: 12px;
+        color: #d4b870;
+        width: 200px;
+        caret-color: #d4b870;
+    `;
+    input.setAttribute('spellcheck', 'false');
+    input.setAttribute('autocomplete', 'off');
+
+    const clearBtn = document.createElement('span');
+    clearBtn.textContent = '✕';
+    clearBtn.style.cssText = `
+        font-size: 11px;
+        color: #888;
+        cursor: pointer;
+        padding: 2px 4px;
+        border-radius: 3px;
+        transition: color 0.15s;
+        display: none;
+    `;
+    clearBtn.addEventListener('mouseenter', () => clearBtn.style.color = '#d4b870');
+    clearBtn.addEventListener('mouseleave', () => clearBtn.style.color = '#888');
+    clearBtn.addEventListener('click', () => {
+        input.value = '';
+        _ptClearSearch();
+        clearBtn.style.display = 'none';
+    });
+
+    input.addEventListener('input', () => {
+        const q = input.value.trim();
+        clearBtn.style.display = q ? 'inline' : 'none';
+        _ptApplySearch(q);
+    });
+
+    // Prevent canvas pan when typing
+    input.addEventListener('mousedown', e => e.stopPropagation());
+
+    wrap.appendChild(icon);
+    wrap.appendChild(input);
+    wrap.appendChild(clearBtn);
+    return wrap;
+}
+
+function _ptApplySearch(query) {
+    const q = query.toLowerCase();
+
+    _pt_skills.forEach(skill => {
+        const el = _pt_nodeEls[skill.id];
+        if (!el) return;
+        const def = skill._def || {};
+
+        if (!q) {
+            // Clear: remove glow & dim overrides
+            el.style.filter = '';
+            el.style.opacity = '';
+            el.style.zIndex = '2';
+            return;
+        }
+
+        const haystack = [
+            def.nameEn || '',
+            def.nameDe || '',
+            def.descEn || '',
+            def.descDe || '',
+            def.statKey || '',
+        ].join(' ').toLowerCase();
+
+        const match = haystack.includes(q);
+
+        if (match) {
+            // Golden glow pulse
+            el.style.filter = 'drop-shadow(0 0 8px rgba(255,215,0,0.95)) drop-shadow(0 0 16px rgba(255,165,0,0.6))';
+            el.style.opacity = '1';
+            el.style.zIndex = '20';
+        } else {
+            // Dim non-matches
+            el.style.filter = 'brightness(0.3) saturate(0.3)';
+            el.style.opacity = '0.35';
+            el.style.zIndex = '1';
+        }
+    });
+
+    // Also dim connections when searching
+    _pt_conns.forEach(conn => {
+        const line = _pt_connEls[conn.id];
+        if (!line) return;
+        line.style.opacity = q ? '0.15' : '';
+    });
+}
+
+function _ptClearSearch() {
+    _ptApplySearch('');
+}

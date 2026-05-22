@@ -1012,13 +1012,13 @@ const ACHIEVEMENT_DEFS = [
         icon: '🚫',
         nameEn: 'Stubborn Student',
         nameDE: 'Sturrer Schüler',
-        descEn: 'Get rejected by a Math Gate 3 or more times before passing.',
-        descDE: 'Werde 3 oder mehr Mal vom Mathe-Tor abgewiesen, bevor du es passierst.',
+        descEn: 'Get rejected by a Probability Gate.',
+        descDE: 'Werde von einem Wahrscheinlichkeitstor abgewiesen.',
         stat: 'gateRejections',
         tiers: [
-            { threshold: 5, labelEn: 'Wrong Answer', labelDE: 'Falsche Antwort' },
-            { threshold: 15, labelEn: 'Persistent', labelDE: 'Ausdauernd' },
-            { threshold: 30, labelEn: 'Never Gives Up', labelDE: 'Gibt nie auf' },
+            { threshold: 15, labelEn: 'Wrong Answer', labelDE: 'Falsche Antwort' },
+            { threshold: 50, labelEn: 'Persistent', labelDE: 'Ausdauernd' },
+            { threshold: 100, labelEn: 'Never Gives Up', labelDE: 'Gibt nie auf' },
         ]
     },
     {

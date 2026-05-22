@@ -50,8 +50,6 @@ function _ptSpendPoint() {
     }
     _ptRefreshPointsDisplay();
 
-    if (typeof updateQuestStats === 'function') updateQuestStats('passivePointSpent', {});
-
 }
 
 // Refund one point and refresh the on-screen counter

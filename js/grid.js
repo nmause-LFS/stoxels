@@ -1,7 +1,4 @@
-﻿
-
-
-//------------------------------------------------------------------------
+﻿//------------------------------------------------------------------------
 //----------------------CLUE CALCULATION----------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
@@ -159,6 +156,9 @@ function updClues(row, col) {
     const rows = sol.length;
     const cols = sol[0].length;
 
+    // keystone_dead_reckoning (264): check if 25% threshold reached
+    if (typeof _deadReckoningCheckUnlock === 'function') _deadReckoningCheckUnlock();
+
     // Check the affected row 
     // A row is "done" when every cell that should be filled (sol === 1)
     // is currently filled by the player (userGrid === 1 or revealedGrid)
@@ -177,6 +177,8 @@ function updClues(row, col) {
         if (span) span.classList.toggle('clue-done', rowDone);
     });
 
+    _sparsePriorOnLineComplete(row, true);
+
     // Check the affected column 
     const colDone = sol.every((r, ro) => {
         if (r[col] !== 1) return true;
@@ -185,11 +187,106 @@ function updClues(row, col) {
     });
 
     // Apply or remove strikethrough on every column clue span for this col.
-    // Column clue spans have ids: cn-{col}-{d}
-    // We don't know mcd here so we just query all matching spans.
     document.querySelectorAll(`[id^="cn-${col}-"]`).forEach(span => {
         span.classList.toggle('clue-done', colDone);
     });
+
+    _sparsePriorOnLineComplete(col, false);
+
+    // keystone_asymptotic_mastery (266): count newly completed lines to reduce future penalties
+    if (ptHasSkill('keystone_asymptotic_mastery')) {
+        const cellJustFilledForAsymptote = (sol[row][col] === 1) && (userGrid[row][col] === 1 || revealedGrid[row][col]);
+        if (cellJustFilledForAsymptote) {
+            if (rowDone) window._asymptoticLinesCompleted = (window._asymptoticLinesCompleted || 0) + 1;
+            if (colDone) window._asymptoticLinesCompleted = (window._asymptoticLinesCompleted || 0) + 1;
+        }
+    }
+
+    _signalToNoiseCheckRestore();
+    _entropyDrainUpdateProgress(row, col);
+
+    // regression_reward (225-227): only award when this specific cell was the final piece.
+    if (ptHasSkill('regression_reward_1') || ptHasSkill('regression_reward_2') || ptHasSkill('regression_reward_3')) {
+        let bonus = 0;
+        if (ptHasSkill('regression_reward_1')) bonus += 5;
+        if (ptHasSkill('regression_reward_2')) bonus += 10;
+        if (ptHasSkill('regression_reward_3')) bonus += 15;
+
+        // A line was "just completed by this cell" only if this cell is solution=1
+        // and the line is now done. We verify the cell is the trigger (sol===1, now filled).
+        const sol = cur.grid;
+        const cellJustFilled = (sol[row][col] === 1) && (userGrid[row][col] === 1 || revealedGrid[row][col]);
+
+        if (cellJustFilled && rowDone && bonus > 0) {
+            timerSecs += bonus;
+            updTimer();
+            showToast(`📉 ${LANG === 'de' ? `+${bonus}s (Regressions-Belohnung)` : `+${bonus}s (Regression Reward)`}`);
+        }
+        if (cellJustFilled && colDone && bonus > 0) {
+            timerSecs += bonus;
+            updTimer();
+            showToast(`📉 ${LANG === 'de' ? `+${bonus}s (Regressions-Belohnung)` : `+${bonus}s (Regression Reward)`}`);
+        }
+    }
+
+    // residual_analysis (249-251): when a row/col is completed, mark wrong empty cells
+    // in an adjacent row/col. 1 cell per node (1, 2, or 3 total).
+    if (ptHasSkill('residual_analysis_1') || ptHasSkill('residual_analysis_2') || ptHasSkill('residual_analysis_3')) {
+        let markCount = 0;
+        if (ptHasSkill('residual_analysis_1')) markCount++;
+        if (ptHasSkill('residual_analysis_2')) markCount++;
+        if (ptHasSkill('residual_analysis_3')) markCount++;
+
+        const cellJustFilled = (sol[row][col] === 1) && (userGrid[row][col] === 1 || revealedGrid[row][col]);
+        if (!cellJustFilled) return; // only trigger on a correct fill, not on erasure/undo
+
+        if (rowDone) {
+            // Pick an adjacent row (row-1 or row+1) that exists and is not done
+            const adjRows = [row - 1, row + 1].filter(r => r >= 0 && r < rows);
+            // Shuffle so we don't always prefer the same direction
+            if (adjRows.length > 1 && Math.random() < 0.5) adjRows.reverse();
+            for (const adjR of adjRows) {
+                const cands = [];
+                for (let c = 0; c < cols; c++)
+                    if (sol[adjR][c] === 0 && (userGrid[adjR][c] === 0 || userGrid[adjR][c] === 3) && !wrongGrid[adjR][c])
+                        cands.push([adjR, c]);
+                if (cands.length > 0) {
+                    // shuffle and take up to markCount
+                    for (let i = cands.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [cands[i], cands[j]] = [cands[j], cands[i]];
+                    }
+                    cands.slice(0, markCount).forEach(([r, c]) => {
+                        userGrid[r][c] = 2;
+                        renderCell(r, c);
+                    });
+                    break; // only use one adjacent row
+                }
+            }
+        }
+
+        if (colDone) {
+            const adjCols = [col - 1, col + 1].filter(c => c >= 0 && c < cols);
+            if (adjCols.length > 1 && Math.random() < 0.5) adjCols.reverse();
+            for (const adjC of adjCols) {
+                const cands = [];
+                for (let r = 0; r < rows; r++)
+                    if (sol[r][adjC] === 0 && (userGrid[r][adjC] === 0 || userGrid[r][adjC] === 3) && !wrongGrid[r][adjC])
+                        cands.push([r, adjC]);
+                if (cands.length > 0) {
+                    for (let i = cands.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [cands[i], cands[j]] = [cands[j], cands[i]];
+                    }
+                    cands.slice(0, markCount).forEach(([r, c]) => {
+                        userGrid[r][c] = 2;
+                        renderCell(r, c);
+                    });
+                    break;
+                }
+            }
+        }
+    }
 }
 
 
@@ -270,7 +367,3 @@ function buildReveal() {
         }
     }
 }
-
-
-
-

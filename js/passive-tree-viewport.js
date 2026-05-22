@@ -25,7 +25,25 @@ function _ptApplyTransform() {
         _pt_world.style.transform =
             `translate(${_pt_tx}px, ${_pt_ty}px) scale(${_pt_scale})`;
     }
+    _ptUpdateZoomBar();  
 }
+
+
+//------------------------------------------------------------------------
+//--------------------------ZOOM BAR-------------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+
+function _ptUpdateZoomBar() {
+    const bar = document.getElementById('pt-zoom-bar');
+    if (!bar) return;
+    const pct = (_pt_scale - PT_ZOOM_MIN) / (PT_ZOOM_MAX - PT_ZOOM_MIN);
+    bar.value = Math.round(pct * 100);
+    const label = document.getElementById('pt-zoom-label');
+    if (label) label.textContent = Math.round(_pt_scale * 100) + '%';
+}
+
 
 
 //------------------------------------------------------------------------
@@ -45,7 +63,7 @@ function _ptFitToView(bounds) {
 
     const sx = cW / treeW;
     const sy = cH / treeH;
-    _pt_scale = 1.1;
+    _pt_scale = 1.5;
 
     const offsetY = PT_PADDING + PT_NODE_RADIUS - bounds.minY;
     const scaledW = treeW * _pt_scale;
@@ -55,8 +73,8 @@ function _ptFitToView(bounds) {
     _pt_ty = (cH - scaledH) / 2;
 
     // Horizontal offset carried over from original code
-    _pt_tx += -400; 
-    _pt_ty += offsetY * _pt_scale - 1350;
+    _pt_tx += 1200; 
+    _pt_ty += offsetY * _pt_scale - 1850;
 
     _ptApplyTransform();
 }
@@ -158,6 +176,27 @@ function _ptBindEvents() {
 
     // Click on empty canvas -> hide tooltip 
     _pt_container.addEventListener('click', () => _ptHideTooltip());
+
+    // Zoom bar slider
+    const zoomBar = document.getElementById('pt-zoom-bar');
+    if (zoomBar) {
+        zoomBar.addEventListener('mousedown', e => e.stopPropagation());
+        zoomBar.addEventListener('input', () => {
+            const pct = zoomBar.value / 100;
+            const newScale = PT_ZOOM_MIN + pct * (PT_ZOOM_MAX - PT_ZOOM_MIN);
+            // Zoom toward center of container
+            const cW = _pt_container.clientWidth / 2;
+            const cH = _pt_container.clientHeight / 2;
+            const ratio = newScale / _pt_scale;
+            _pt_tx = cW - ratio * (cW - _pt_tx);
+            _pt_ty = cH - ratio * (cH - _pt_ty);
+            _pt_scale = newScale;
+            _ptApplyTransform();
+        });
+    }
+
+
+
 }
 
 //------------------------------------------------------------------------

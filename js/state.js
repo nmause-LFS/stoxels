@@ -47,8 +47,18 @@ let luckyRewardClaimed = false;     // This is used to ensure the player can onl
 
 
 
-let screenHistory = [];     // a stack of screen IDs representing the player's navigation history, used for back navigation with the Escape key or Back button; 
-                            // push screen IDs when navigating forward, pop when going back
+let screenHistory = [];     // a stack of screen IDs representing the player's navigation history, used for back navigation with the Escape key or Back button;
+// push screen IDs when navigating forward, pop when going back
+
+
+let consecutiveCorrectFills = 0;  // sample_efficiency: resets on time-costing mistake, increments on correct fill
+let _lawOfLargeNumbersNext = null; // keystone_law_of_large_numbers: timestamp of next auto-reveal tick
+
+let _confidenceIntervalActive = false; // confidence_interval: true during the grace window after a mistake
+
+let _streakBonusFills = 0;             // streak_bonus: consecutive correct fills since last mistake
+
+
 
 
 

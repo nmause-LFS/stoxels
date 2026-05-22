@@ -1814,6 +1814,1084 @@
             "descDe": "Ermöglicht die Große Perle als Gegenstandsbelohnung. Das Benutzen einer Großen Perle setzt die Abklingzeit beider aktiver Klassenfähigkeiten auf 1 Sekunde.",
             "icon": "⚪",
             "statKey": "grand_pearl"
+        },
+        {
+            "id": 167,
+            "x": 400,
+            "y": 1,
+            "nameEn": "Grid Awareness",
+            "nameDe": "Gitterbewusstsein",
+            "descEn": "Grids are now categorized based on their sizes:\nSmall: Less than 100 cells.\nMedium: 100 to 199 cells.\nLarge: 200 to 399 cells.\nMassive: 400 or more cells.\n\nIn large and massive grids one random incorrect cell is now a Lucky Tile. Correctly marking it as incorrect grants a random item.",
+            "descDe": "Gitter werden jetzt auf Basis ihrer Größe kategorisiert:\nKlein: Weniger als 100 Zellen.\nMittel: 100 bis 199 Zellen.\nGroß: 200 bis 399 Zellen.\nMassiv: 400 oder mehr Zellen\n\nIn großen und massiven Gittern ist eine zufällige falsche Zelle ein Glücksfeld. Wer es korrekt als falsch markiert, erhält einen zufälligen Gegenstand.",
+            "icon": "🎯",
+            "statKey": "grid_awareness"
+        },
+        {
+            "id": 168,
+            "x": 1100,
+            "y": -400,
+            "nameEn": "Probabilistic Start",
+            "nameDe": "Probabilistischer Start",
+            "descEn": "10% chance to reveal 1 correct filled cell at the start of each level. Stacks multiplicatively with Stochastic Awakening and Calculated Genesis.",
+            "descDe": "10% Chance, zu Beginn jedes Levels 1 korrekte gefüllte Zelle aufzudecken.Wirkt multiplikativ mit Stochastisches Erwachen und Berechneter Ursprung zusammen.",
+            "icon": "🎲",
+            "statKey": "probabilistic_start_1"
+        },
+        {
+            "id": 169,
+            "x": 1800,
+            "y": -800,
+            "nameEn": "Stochastic Awakening",
+            "nameDe": "Stochastisches Erwachen",
+            "descEn": "15% chance to reveal 1 correct filled cell at the start of each level. Stacks multiplicatively with Probabilistic Start and Calculated Genesis.",
+            "descDe": "15% Chance, zu Beginn jedes Levels 1 korrekte gefüllte Zelle aufzudecken. Wirkt multiplikativ mit Probabilistischer Start und Berechneter Ursprung zusammen.",
+            "icon": "🎲",
+            "statKey": "probabilistic_start_2"
+        },
+        {
+            "id": 170,
+            "x": 2500,
+            "y": -1200,
+            "nameEn": "Calculated Genesis",
+            "nameDe": "Berechneter Ursprung",
+            "descEn": "20% chance to reveal 1 correct filled cell at the start of each level. Stacks multiplicatively with Probabilistic Start and Stochastic Awakening.",
+            "descDe": "20% Chance, zu Beginn jedes Levels 1 korrekte gefüllte Zelle aufzudecken. Wirkt multiplikativ mit Probabilistischer Start und Stochastisches Erwachen zusammen.",
+            "icon": "🎲",
+            "statKey": "probabilistic_start_3"
+        },
+        {
+            "id": 171,
+            "x": 1100,
+            "y": 400,
+            "nameEn": "Error Elimination",
+            "nameDe": "Fehlerelimination",
+            "descEn": "10% chance to mark 1 incorrect empty cell at the start of each level.",
+            "descDe": "10% Chance, zu Beginn jedes Levels 1 falsche leere Zelle zu markieren.",
+            "icon": "❌",
+            "statKey": "error_elimination_1"
+        },
+        {
+            "id": 172,
+            "x": 1800,
+            "y": 800,
+            "nameEn": "Error Elimination",
+            "nameDe": "Fehlerelimination",
+            "descEn": "10% chance to mark 1 incorrect empty cell at the start of each level.",
+            "descDe": "10% Chance, zu Beginn jedes Levels 1 falsche leere Zelle zu markieren.",
+            "icon": "❌",
+            "statKey": "error_elimination_2"
+        },
+        {
+            "id": 173,
+            "x": 2500,
+            "y": 1200,
+            "nameEn": "Error Elimination",
+            "nameDe": "Fehlerelimination",
+            "descEn": "10% chance to mark 1 incorrect empty cell at the start of each level.",
+            "descDe": "10% Chance, zu Beginn jedes Levels 1 falsche leere Zelle zu markieren.",
+            "icon": "❌",
+            "statKey": "error_elimination_3"
+        },
+        {
+            "id": 174,
+            "x": 1200,
+            "y": 1,
+            "nameEn": "Extended Session",
+            "nameDe": "Verlängerte Sitzung",
+            "descEn": "Gain 60 additional seconds at the start of each level.",
+            "descDe": "Erhalte zu Beginn jedes Levels 60 zusätzliche Sekunden.",
+            "icon": "⏰",
+            "statKey": "extended_session_1"
+        },
+        {
+            "id": 175,
+            "x": 2000,
+            "y": -1,
+            "nameEn": "Extended Session",
+            "nameDe": "Verlängerte Sitzung",
+            "descEn": "Gain 2 additional minutes at the start of each level.",
+            "descDe": "Erhalte zu Beginn jedes Levels 2 zusätzliche Minuten.",
+            "icon": "⏰",
+            "statKey": "extended_session_2"
+        },
+        {
+            "id": 176,
+            "x": 2800,
+            "y": 1,
+            "nameEn": "Extended Session",
+            "nameDe": "Verlängerte Sitzung",
+            "descEn": "Gain 3 additional minutes at the start of each level.",
+            "descDe": "Erhalte zu Beginn jedes Levels 3 zusätzliche Minuten.",
+            "icon": "⏰",
+            "statKey": "extended_session_3"
+        },
+        {
+            "id": 189,
+            "x": 400,
+            "y": -100,
+            "nameEn": "Fortune's Tile",
+            "nameDe": "Glücksfeld",
+            "descEn": "Large and massive grids have a 10% chance of having an additional Lucky Tile.",
+            "descDe": "Große und massive Gitter haben eine 10% Chance ein weiteres Glücksfeld zu haben.",
+            "icon": "🍀",
+            "statKey": "fortunes_tile_1"
+        },
+        {
+            "id": 190,
+            "x": 350,
+            "y": -200,
+            "nameEn": "Fortune's Tile",
+            "nameDe": "Glücksfeld ",
+            "descEn": "Large and massive grids have a 15% chance of having an additional Lucky Tile.",
+            "descDe": "Große und massive Gitter haben eine 15% Chance ein weiteres Glücksfeld zu haben.",
+            "icon": "🍀",
+            "statKey": "fortunes_tile_2"
+        },
+        {
+            "id": 191,
+            "x": 300,
+            "y": -100,
+            "nameEn": "Fortune's Tile",
+            "nameDe": "Glücksfeld",
+            "descEn": "Large and massive grids have a 25% chance of having an additional Lucky Tile.",
+            "descDe": "Große und massive Gitter haben eine 25% Chance ein weiteres Glücksfeld zu haben.",
+            "icon": "🍀",
+            "statKey": "fortunes_tile_3"
+        },
+        {
+            "id": 192,
+            "x": 400,
+            "y": 100,
+            "nameEn": "Generous Fortune",
+            "nameDe": "Großzügiges Glück",
+            "descEn": "Revealing a Lucky Tile has 10% chance of granting an additional item.",
+            "descDe": "Das Enthüllen eines Glücksfelds hat eine 10% Chance einen weiteren Gegenstand zu gewähren.",
+            "icon": "🎁",
+            "statKey": "generous_fortune_1"
+        },
+        {
+            "id": 193,
+            "x": 350,
+            "y": 200,
+            "nameEn": "Generous Fortune",
+            "nameDe": "Großzügiges Glück",
+            "descEn": "Revealing a Lucky Tile has 15% chance of granting an additional item.",
+            "descDe": "Das Enthüllen eines Glücksfelds hat eine 15% Chance einen weiteren Gegenstand zu gewähren.",
+            "icon": "🎁",
+            "statKey": "generous_fortune_2"
+        },
+        {
+            "id": 194,
+            "x": 300,
+            "y": 100,
+            "nameEn": "Generous Fortune",
+            "nameDe": "Großzügiges Glück",
+            "descEn": "Revealing a Lucky Tile has 25% chance of granting an additional item.",
+            "descDe": "Das Enthüllen eines Glücksfelds hat eine 25% Chance einen weiteren Gegenstand zu gewähren.",
+            "icon": "🎁",
+            "statKey": "generous_fortune_3"
+        },
+        {
+            "id": 195,
+            "x": 3700,
+            "y": 100,
+            "nameEn": "Timed Stasis",
+            "nameDe": "Zeitstase",
+            "descEn": "Every 10 minutes the level freezes for 1 seconds.",
+            "descDe": "Alle 10 Minuten friert das Level für 1 Sekunde ein.",
+            "icon": "⏸️",
+            "statKey": "timed_stasis_1"
+        },
+        {
+            "id": 196,
+            "x": 3575,
+            "y": 125,
+            "nameEn": "Timed Stasis",
+            "nameDe": "Zeitstase",
+            "descEn": "Increases the freeze duration by 0.5 seconds.",
+            "descDe": "Erhöt die Einfrier - Zeit um 0.5 Sekunden.",
+            "icon": "⏸️",
+            "statKey": "timed_stasis_2"
+        },
+        {
+            "id": 197,
+            "x": 3650,
+            "y": 200,
+            "nameEn": "Timed Stasis",
+            "nameDe": "Zeitstase",
+            "descEn": "Increases the freeze duration by 0.5 seconds.",
+            "descDe": "Erhöt die Einfrier - Zeit um 0.5 Sekunden.",
+            "icon": "⏸️",
+            "statKey": "timed_stasis_3"
+        },
+        {
+            "id": 201,
+            "x": 2900,
+            "y": -100,
+            "nameEn": "Emergency Scan",
+            "nameDe": "Notfall-Scan",
+            "descEn": "When the timer drops to 5 minutes or below for the first time in a level, a Field Scan of the entire grid is triggered, lasting 2 seconds.",
+            "descDe": "Wenn der Timer zum ersten Mal auf 5 Minuten oder darunter fällt, wird ein Feldscan des gesamten Gitters ausgelöst, der 2 Sekunden anhält.",
+            "icon": "🚨",
+            "statKey": "emergency_scan_1"
+        },
+        {
+            "id": 202,
+            "x": 2800,
+            "y": -200,
+            "nameEn": "Emergency Scan",
+            "nameDe": "Notfall-Scan",
+            "descEn": "Increases the Emergency Scan duration by 1 seconds.",
+            "descDe": "Erhöht die Dauer des Notfall-Scans um 1 Sekunden.",
+            "icon": "🚨",
+            "statKey": "emergency_scan_2"
+        },
+        {
+            "id": 203,
+            "x": 2700,
+            "y": -100,
+            "nameEn": "Emergency Scan",
+            "nameDe": "Notfall-Scan",
+            "descEn": "Increases the Emergency Scan duration by 2 seconds.",
+            "descDe": "Erhöht die Dauer des Notfall-Scans um 2 Sekunden.",
+            "icon": "🚨",
+            "statKey": "emergency_scan_3"
+        },
+        {
+            "id": 210,
+            "x": 2900,
+            "y": -600,
+            "nameEn": "Blackout Ward",
+            "nameDe": "Stromausfall-Schutz",
+            "descEn": "25% chance to be protected against row and column blackout effects from cursed items.",
+            "descDe": "25% Chance, gegen Effekte verfluchter Gegenstände geschützt zu sein, die Zeilen- oder Spaltenhinweise verstecken.",
+            "icon": "🌑",
+            "statKey": "blackout_ward_1"
+        },
+        {
+            "id": 211,
+            "x": 2800,
+            "y": -650,
+            "nameEn": "Blackout Ward",
+            "nameDe": "Stromausfall-Schutz",
+            "descEn": "25% chance to be protected against row and column blackout effects from cursed items.",
+            "descDe": "25% Chance, gegen Effekte verfluchter Gegenstände geschützt zu sein, die Zeilen- oder Spaltenhinweise verstecken.",
+            "icon": "🌑",
+            "statKey": "blackout_ward_2"
+        },
+        {
+            "id": 212,
+            "x": 2700,
+            "y": -600,
+            "nameEn": "Blackout Ward",
+            "nameDe": "Stromausfall-Schutz",
+            "descEn": "25% chance to be protected against row and column blackout effects from cursed items.",
+            "descDe": "50% Chance, gegen Effekte verfluchter Gegenstände geschützt zu sein, die Zeilen- oder Spaltenhinweise verstecken.",
+            "icon": "🌑",
+            "statKey": "blackout_ward_3"
+        },
+        {
+            "id": 213,
+            "x": 2900,
+            "y": 600,
+            "nameEn": "Removal Ward",
+            "nameDe": "Entfernungsschutz",
+            "descEn": "25% chance to be protected from filled row or column removal effects from cursed items.",
+            "descDe": "25% Chance, gegen Effekte verfluchter Gegenstände geschützt zu sein, die gefüllte Zeilen oder Spalten entfernen.",
+            "icon": "🔒",
+            "statKey": "removal_ward_1"
+        },
+        {
+            "id": 214,
+            "x": 2800,
+            "y": 550,
+            "nameEn": "Removal Ward",
+            "nameDe": "Entfernungsschutz",
+            "descEn": "25% chance to be protected from filled row or column removal effects from cursed items.",
+            "descDe": "25% Chance, gegen Effekte verfluchter Gegenstände geschützt zu sein, die gefüllte Zeilen oder Spalten entfernen.",
+            "icon": "🔒",
+            "statKey": "removal_ward_2"
+        },
+        {
+            "id": 215,
+            "x": 2900,
+            "y": 500,
+            "nameEn": "Removal Ward",
+            "nameDe": "Entfernungsschutz",
+            "descEn": "50% chance to be protected from filled row or column removal effects from cursed items.",
+            "descDe": "50% Chance, gegen Effekte verfluchter Gegenstände geschützt zu sein, die gefüllte Zeilen oder Spalten entfernen.",
+            "icon": "🔒",
+            "statKey": "removal_ward_3"
+        },
+        {
+            "id": 216,
+            "x": 1300,
+            "y": 100,
+            "nameEn": "Completion Glimpse",
+            "nameDe": "Abschluss-Vorschau",
+            "descEn": "For the first 30 seconds of a level the level completion text is already shown.",
+            "descDe": "Der Abschlusstext wird schon während des Levels für die ersten 30 Sekunden angezeigt.",
+            "icon": "📋",
+            "statKey": "completion_glimpse_1"
+        },
+        {
+            "id": 217,
+            "x": 1400,
+            "y": 100,
+            "nameEn": "Completion Glimpse",
+            "nameDe": "Abschluss-Vorschau",
+            "descEn": "Increases the time that the completion text is shown by another 30 seconds.",
+            "descDe": "Erhöht die Dauer, die der Abschlusstext bereits während des Levels angezeigt wird, um 30 Sekunden.",
+            "icon": "📋",
+            "statKey": "completion_glimpse_2"
+        },
+        {
+            "id": 218,
+            "x": 1350,
+            "y": 200,
+            "nameEn": "Completion Glimpse",
+            "nameDe": "Abschluss-Vorschau",
+            "descEn": "Increases the time that the completion text is shown by another 30 seconds.",
+            "descDe": "Erhöht die Dauer, die der Abschlusstext bereits während des Levels angezeigt wird, um 30 Sekunden.",
+            "icon": "📋",
+            "statKey": "completion_glimpse_3"
+        },
+        {
+            "id": 219,
+            "x": 2100,
+            "y": 100,
+            "nameEn": "Law of Large Numbers",
+            "nameDe": "Gesetz der Großen Zahlen",
+            "descEn": "Every 3 minutes, automatically reveal one row and column with fewer than 2 correct filled cells. This effect does not trigger in the last 5 minutes of a level.",
+            "descDe": "Alle 3 Minuten wird automatisch eine Zeile oder Spalte mit weniger als 2 korrekt gefüllten Zellen aufgedeckt. Dieser Effekt löst in den letzten 5 Minuten eines Levels nicht aus.",
+            "icon": "📉",
+            "statKey": "keystone_law_of_large_numbers"
+        },
+        {
+            "id": 220,
+            "x": 800,
+            "y": 300,
+            "nameEn": "Null Hypothesis",
+            "nameDe": "Nullhypothese",
+            "descEn": "At the start of each level, all incorrect empty cells in the row and column with the fewest filled cells are automatically marked. You cannot gain mistake shields of any kind.",
+            "descDe": "Zu Beginn jedes Levels werden alle falschen leeren Zellen in der Zeile und Spalte mit den wenigsten gefüllten Zellen automatisch markiert. Du kannst keine Fehlerschilde jeglicher Art erhalten.",
+            "icon": "🔬",
+            "statKey": "keystone_null_hypothesis"
+        },
+        {
+            "id": 221,
+            "x": 1350,
+            "y": -300,
+            "nameEn": "Variance Collapse",
+            "nameDe": "Varianzkollaps",
+            "descEn": "Lucky Tiles appear in all grids regardless of size. Revealing a Lucky Tile reduces the Timer by 10 minutes.",
+            "descDe": "Glücksfelder erscheinen in allen Gittern unabhängig von der Größe. Das Enthüllen eines Glücksfelds reduziert den Timer um 10 Minuten.",
+            "icon": "💥",
+            "statKey": "keystone_variance_collapse"
+        },
+        {
+            "id": 222,
+            "x": 2550,
+            "y": -1050,
+            "nameEn": "Sample Efficiency",
+            "nameDe": "Stichprobeneffizienz",
+            "descEn": "Correctly filling 20 cells in a row without a mistake reveals 1 random correctly filled cell.",
+            "descDe": "20 korrekt ausgefüllte Zellen in Folge ohne Fehler decken 1 zufällige korrekte gefüllte Zelle auf.",
+            "icon": "📈",
+            "statKey": "sample_efficiency_1"
+        },
+        {
+            "id": 223,
+            "x": 2600,
+            "y": -900,
+            "nameEn": "Improved Sample Efficiency",
+            "nameDe": "Verbesserte Stichprobeneffizienz",
+            "descEn": "Reduces the amount of required correctly filled cells without mistakes by 2.",
+            "descDe": "Reduziert die Anzahl der benötigten in Folge richtig ausgefüllten Zellen um 2.",
+            "icon": "📈",
+            "statKey": "sample_efficiency_2"
+        },
+        {
+            "id": 224,
+            "x": 2650,
+            "y": -796,
+            "nameEn": "Advanced Sample Efficiency",
+            "nameDe": "Erweiterte Stichprobeneffizienz",
+            "descEn": "Reduces the amount of required correctly filled cells without mistakes by 2.",
+            "descDe": "Reduziert die Anzahl der benötigten in Folge richtig ausgefüllten Zellen um 3.",
+            "icon": "📈",
+            "statKey": "sample_efficiency_3"
+        },
+        {
+            "id": 225,
+            "x": 2900,
+            "y": -500,
+            "nameEn": "Regression Reward",
+            "nameDe": "Regressions-Belohnung",
+            "descEn": "Each time you complete a full row or column, gain 5 seconds.",
+            "descDe": "Jedes Mal, wenn du eine vollständige Zeile oder Spalte abschließt, erhältst du 5 Sekunden.",
+            "icon": "📉",
+            "statKey": "regression_reward_1"
+        },
+        {
+            "id": 226,
+            "x": 2800,
+            "y": -450,
+            "nameEn": "Regression Reward",
+            "nameDe": "Regressions-Belohnung",
+            "descEn": "Each time you complete a full row or column, gain 10 seconds.",
+            "descDe": "Jedes Mal, wenn du eine vollständige Zeile oder Spalte abschließt, erhältst du 10 Sekunden.",
+            "icon": "📉",
+            "statKey": "regression_reward_2"
+        },
+        {
+            "id": 227,
+            "x": 2700,
+            "y": -500,
+            "nameEn": "Regression Reward",
+            "nameDe": "Regressions-Belohnung",
+            "descEn": "Each time you complete a full row or column, gain 15 seconds.",
+            "descDe": "Jedes Mal, wenn du eine vollständige Zeile oder Spalte abschließt, erhältst du 15 Sekunden.",
+            "icon": "📉",
+            "statKey": "regression_reward_3"
+        },
+        {
+            "id": 228,
+            "x": 250,
+            "y": -200,
+            "nameEn": "Outlier Detection",
+            "nameDe": "Ausreißererkennung",
+            "descEn": "One Lucky Tile is highlighted until revealed.",
+            "descDe": "Ein Glücksfeld wird markiert bis es aufgedeckt wird.",
+            "icon": "🔎",
+            "statKey": "outlier_detection_1"
+        },
+        {
+            "id": 229,
+            "x": 250,
+            "y": 200,
+            "nameEn": "Outlier Detection",
+            "nameDe": "Ausreißererkennung",
+            "descEn": "One Lucky Tile is highlighted until revealed.",
+            "descDe": "Ein Glücksfeld wird markiert bis es aufgedeckt wird.",
+            "icon": "🔎",
+            "statKey": "outlier_detection_2"
+        },
+        {
+            "id": 231,
+            "x": 3800,
+            "y": 1,
+            "nameEn": "Confidence Interval",
+            "nameDe": "Konfidenzintervall",
+            "descEn": "After making a mistake, gain a 1-second window during which your next mistake is ignored.",
+            "descDe": "Nach einem Fehler hast du ein 1-Sekunden-Fenster, in dem dein nächster Fehler ignoriert wird.",
+            "icon": "📐",
+            "statKey": "confidence_interval_1"
+        },
+        {
+            "id": 232,
+            "x": 3900,
+            "y": -100,
+            "nameEn": "Confidence Interval",
+            "nameDe": "Konfidenzintervall",
+            "descEn": "The duration, during which your next mistake is ignored, is increased by 1 second.",
+            "descDe": "Die Dauer, in dem dein nächster Fehler ignoriert wird, wird um 1 Sekunde erhöht.",
+            "icon": "📐",
+            "statKey": "confidence_interval_2"
+        },
+        {
+            "id": 233,
+            "x": 4000,
+            "y": 1,
+            "nameEn": "Confidence Interval",
+            "nameDe": "Konfidenzintervall",
+            "descEn": "The duration, during which your next mistake is ignored, is increased by 1 second.",
+            "descDe": "Die Dauer, in dem dein nächster Fehler ignoriert wird, wird um 1 Sekunde erhöht.",
+            "icon": "📐",
+            "statKey": "confidence_interval_3"
+        },
+        {
+            "id": 234,
+            "x": 1800,
+            "y": -700,
+            "nameEn": "Central Tendency",
+            "nameDe": "Zentrale Tendenz",
+            "descEn": "At the start of each level, the row and column closest to the center of the grid each have 1 correct filled cell revealed.",
+            "descDe": "Zu Beginn jedes Levels wird in der Zeile und Spalte, die der Mitte des Gitters am nächsten sind, je 1 korrekte gefüllte Zelle aufgedeckt.",
+            "icon": "🎯",
+            "statKey": "central_tendency_1"
+        },
+        {
+            "id": 235,
+            "x": 1700,
+            "y": -700,
+            "nameEn": "Central Tendency",
+            "nameDe": "Zentrale Tendenz",
+            "descEn": "At the start of each level, the row and column closest to the center of the grid each have 1 correct filled cell revealed.",
+            "descDe": "Zu Beginn jedes Levels wird in der Zeile und Spalte, die der Mitte des Gitters am nächsten sind, je 1 korrekte gefüllte Zelle aufgedeckt.",
+            "icon": "🎯",
+            "statKey": "central_tendency_2"
+        },
+        {
+            "id": 236,
+            "x": 1750,
+            "y": -600,
+            "nameEn": "Central Tendency",
+            "nameDe": "Zentrale Tendenz",
+            "descEn": "At the start of each level, the row and column closest to the center of the grid each have 1 correct filled cell revealed.",
+            "descDe": "Zu Beginn jedes Levels wird in der Zeile und Spalte, die der Mitte des Gitters am nächsten sind, je 1 korrekte gefüllte Zelle aufgedeckt.",
+            "icon": "🎯",
+            "statKey": "central_tendency_3"
+        },
+        {
+            "id": 237,
+            "x": 1102,
+            "y": 300,
+            "nameEn": "Density Mapping",
+            "nameDe": "Dichtekartierung",
+            "descEn": "At the start of each level, the row and column with the most filled cells each have 1 incorrect empty cell marked.",
+            "descDe": "Zu Beginn jedes Levels wird in der Zeile und Spalte mit den meisten gefüllten Zellen je 1 falsche leere Zelle markiert.",
+            "icon": "🗃️",
+            "statKey": "density_mapping_1"
+        },
+        {
+            "id": 238,
+            "x": 1000,
+            "y": 230,
+            "nameEn": "Density Mapping",
+            "nameDe": "Dichtekartierung",
+            "descEn": "At the start of each level, the row and column with the most filled cells each have 1 incorrect empty cell marked.",
+            "descDe": "Zu Beginn jedes Levels wird in der Zeile und Spalte mit den meisten gefüllten Zellen je 1 falsche leere Zelle markiert.",
+            "icon": "🗃️",
+            "statKey": "density_mapping_2"
+        },
+        {
+            "id": 239,
+            "x": 1160,
+            "y": 230,
+            "nameEn": "Density Mapping",
+            "nameDe": "Dichtekartierung",
+            "descEn": "At the start of each level, the two rows and two columns with the most filled cells each have 1 incorrect empty cell marked.",
+            "descDe": "Zu Beginn jedes Levels wird in den zwei Zeilen und zwei Spalten mit den meisten gefüllten Zellen je 1 falsche leere Zelle markiert.",
+            "icon": "🗃️",
+            "statKey": "density_mapping_3"
+        },
+        {
+            "id": 240,
+            "x": 900,
+            "y": 400,
+            "nameEn": "Sparse Region",
+            "nameDe": "Dünnbesiedelte Region",
+            "descEn": "At the start of each level, automatically mark 3 incorrect empty cells in the row or column with the fewest filled cells.",
+            "descDe": "Zu Beginn jedes Levels werden automatisch 3 falschen leeren Zellen in der Zeile oder Spalte mit den wenigsten gefüllten Zellen markiert.",
+            "icon": "🏜️",
+            "statKey": "sparse_region_1"
+        },
+        {
+            "id": 241,
+            "x": 1000,
+            "y": 500,
+            "nameEn": "Sparse Region",
+            "nameDe": "Dünnbesiedelte Region",
+            "descEn": "At the start of each level, automatically mark 3 incorrect empty cells in the row or column with the fewest filled cells.",
+            "descDe": "Zu Beginn jedes Levels werden automatisch 3 falschen leeren Zellen in der Zeile oder Spalte mit den wenigsten gefüllten Zellen markiert.",
+            "icon": "🏜️",
+            "statKey": "sparse_region_2"
+        },
+        {
+            "id": 242,
+            "x": 800,
+            "y": 500,
+            "nameEn": "Sparse Region",
+            "nameDe": "Dünnbesiedelte Region",
+            "descEn": "At the start of each level, automatically mark 3 incorrect empty cells in the row or column with the fewest filled cells.",
+            "descDe": "Zu Beginn jedes Levels werden automatisch 3 falschen leeren Zellen in der Zeile oder Spalte mit den wenigsten gefüllten Zellen markiert.",
+            "icon": "🏜️",
+            "statKey": "sparse_region_3"
+        },
+        {
+            "id": 243,
+            "x": 1900,
+            "y": 100,
+            "nameEn": "Streak Bonus",
+            "nameDe": "Serienbonus",
+            "descEn": "After correctly filling 15 cells in a row without a mistake, gain 30 seconds.",
+            "descDe": "Nach 15 korrekt ausgefüllten Zellen in Folge ohne Fehler erhältst du 30 Sekunden.",
+            "icon": "🔥",
+            "statKey": "streak_bonus_1"
+        },
+        {
+            "id": 244,
+            "x": 1950,
+            "y": 200,
+            "nameEn": "Streak Bonus",
+            "nameDe": "Serienbonus",
+            "descEn": "After correctly filling 15 cells in a row without a mistake, gain 30 seconds.",
+            "descDe": "Nach 15 korrekt ausgefüllten Zellen in Folge ohne Fehler erhältst du 30 Sekunden.",
+            "icon": "🔥",
+            "statKey": "streak_bonus_2"
+        },
+        {
+            "id": 245,
+            "x": 2050,
+            "y": 200,
+            "nameEn": "Streak Bonus",
+            "nameDe": "Serienbonus",
+            "descEn": "After correctly filling 15 cells in a row without a mistake, gain 45 seconds.",
+            "descDe": "Nach 15 korrekt ausgefüllten Zellen in Folge ohne Fehler erhältst du 45 Sekunden.",
+            "icon": "🔥",
+            "statKey": "streak_bonus_3"
+        },
+        {
+            "id": 246,
+            "x": 2450,
+            "y": -1050,
+            "nameEn": "Marginal Distribution",
+            "nameDe": "Randverteilung",
+            "descEn": "At the start of each level, 2 cells in the outermost row and outermost column are revealed as either filled or empty.",
+            "descDe": "Zu Beginn jedes Levels werden 2 Zellen in der äußersten Zeile und der äußersten Spalte als gefüllt oder leer enthüllt.",
+            "icon": "📦",
+            "statKey": "marginal_distribution_1"
+        },
+        {
+            "id": 247,
+            "x": 2400,
+            "y": -900,
+            "nameEn": "Marginal Distribution",
+            "nameDe": "Randverteilung",
+            "descEn": "2 additional cells are revealed in the outermost row and column at the start of each level.",
+            "descDe": "2 weitere Zellen werden zu Beginn des Levels in der äußersten Zeile und Spalte enthüllt.",
+            "icon": "📦",
+            "statKey": "marginal_distribution_2"
+        },
+        {
+            "id": 248,
+            "x": 2350,
+            "y": -762,
+            "nameEn": "Marginal Distribution",
+            "nameDe": "Randverteilung",
+            "descEn": "2 additional cells are revealed in the outermost row and column at the start of each level.",
+            "descDe": "2 weitere Zellen werden zu Beginn des Levels in der äußersten Zeile und Spalte enthüllt.",
+            "icon": "📦",
+            "statKey": "marginal_distribution_3"
+        },
+        {
+            "id": 249,
+            "x": 1900,
+            "y": 750,
+            "nameEn": "Residual Analysis",
+            "nameDe": "Residualanalyse",
+            "descEn": "Whenever you complete a row or column, 1 random incorrect empty cell in an adjacent row or column is automatically marked.",
+            "descDe": "Immer wenn du eine Zeile oder Spalte abschließt, wird 1 zufällige falsche leere Zelle in einer benachbarten Zeile oder Spalte automatisch markiert.",
+            "icon": "🔄",
+            "statKey": "residual_analysis_1"
+        },
+        {
+            "id": 250,
+            "x": 2000,
+            "y": 675,
+            "nameEn": "Residual Analysis",
+            "nameDe": "Residualanalyse",
+            "descEn": "1 additional random incorrect cell in an adjacent row or column is automatically marked when you complete a row or column.",
+            "descDe": "1 weitere zufällige falsche leere Zelle wird in einer adjazenten Zeile oder Spalte markiert, wenn du eine Zeile oder Spalte vollständig ausfüllst.",
+            "icon": "🔄",
+            "statKey": "residual_analysis_2"
+        },
+        {
+            "id": 251,
+            "x": 2075,
+            "y": 600,
+            "nameEn": "Residual Analysis",
+            "nameDe": "Residualanalyse",
+            "descEn": "1 additional random incorrect cell in an adjacent row or column is automatically marked when you complete a row or column.",
+            "descDe": "1 weitere zufällige falsche leere Zelle wird in einer adjazenten Zeile oder Spalte markiert, wenn du eine Zeile oder Spalte vollständig ausfüllst.",
+            "icon": "🔄",
+            "statKey": "residual_analysis_3"
+        },
+        {
+            "id": 252,
+            "x": 1900,
+            "y": -100,
+            "nameEn": "Expected Value",
+            "nameDe": "Erwartungswert",
+            "descEn": "At the start of each level, gain bonus seconds equal to 1 second per 10 cells in the grid.",
+            "descDe": "Zu Beginn jedes Levels erhältst du Bonussekunden in Höhe von 1 Sekunde pro 10 Zellen im Gitter.",
+            "icon": "🧮",
+            "statKey": "expected_value_1"
+        },
+        {
+            "id": 253,
+            "x": 1950,
+            "y": -200,
+            "nameEn": "Expected Value",
+            "nameDe": "Erwartungswert",
+            "descEn": "At the start of each level, gain bonus seconds equal to 1 second per 10 cells in the grid.",
+            "descDe": "Zu Beginn jedes Levels erhältst du Bonussekunden in Höhe von 1 Sekunde pro 10 Zellen im Gitter.",
+            "icon": "🧮",
+            "statKey": "expected_value_2"
+        },
+        {
+            "id": 254,
+            "x": 2050,
+            "y": -200,
+            "nameEn": "Expected Value",
+            "nameDe": "Erwartungswert",
+            "descEn": "At the start of each level, gain bonus seconds equal to 2 seconds per 10 cells in the grid.",
+            "descDe": "Zu Beginn jedes Levels erhältst du Bonussekunden in Höhe von 2 Sekunden pro 10 Zellen im Gitter.",
+            "icon": "🧮",
+            "statKey": "expected_value_3"
+        },
+        {
+            "id": 255,
+            "x": 1100,
+            "y": -500,
+            "nameEn": "Standard Deviation",
+            "nameDe": "Standardabweichung",
+            "descEn": "For every 3 mistakes made during a level, 1 random correct filled cell is revealed.",
+            "descDe": "Für je 3 Fehler während eines Levels wird 1 zufällige korrekte gefüllte Zelle aufgedeckt.",
+            "icon": "📏",
+            "statKey": "standard_deviation_1"
+        },
+        {
+            "id": 256,
+            "x": 1000,
+            "y": -500,
+            "nameEn": "Standard Deviation",
+            "nameDe": "Standardabweichung",
+            "descEn": "For every 3 mistakes made during a level, 1 random correct filled cell is revealed.",
+            "descDe": "Für je 3 Fehler während eines Levels wird 1 zufällige korrekte gefüllte Zelle aufgedeckt.",
+            "icon": "📏",
+            "statKey": "standard_deviation_2"
+        },
+        {
+            "id": 257,
+            "x": 900,
+            "y": -500,
+            "nameEn": "Standard Deviation",
+            "nameDe": "Standardabweichung",
+            "descEn": "For every 2 mistakes made during a level, 1 random correct filled cell is revealed.",
+            "descDe": "Für je 2 Fehler während eines Levels wird 1 zufällige korrekte gefüllte Zelle aufgedeckt.",
+            "icon": "📏",
+            "statKey": "standard_deviation_3"
+        },
+        {
+            "id": 258,
+            "x": 3700,
+            "y": -100,
+            "nameEn": "Interquartile Vision",
+            "nameDe": "Interquartil-Vision",
+            "descEn": "When a large grid level starts a Field Scan is applied to the center of the grid for 2 seconds.",
+            "descDe": "Wenn ein Level mit großem Gitter startet wird ein Feldscan für 2 Sekunden in der Mitte des Gitters ausgeführt.",
+            "icon": "📊",
+            "statKey": "interquartile_vision_1"
+        },
+        {
+            "id": 259,
+            "x": 3575,
+            "y": -125,
+            "nameEn": "Interquartile Vision",
+            "nameDe": "Interquartil-Vision",
+            "descEn": "Extends the Interquartile-Vision Fieldscan duration by 1 second.",
+            "descDe": "Verlängert die Interquartil-Vision Feldscan Dauer um 1 Sekunde.",
+            "icon": "📊",
+            "statKey": "interquartile_vision_2"
+        },
+        {
+            "id": 261,
+            "x": 1300,
+            "y": -100,
+            "nameEn": "Covariance Shift",
+            "nameDe": "Kovarianz-Verschiebung",
+            "descEn": "Whenever a Lucky Tile is revealed, 1 random correct filled cell in the same row is also revealed.",
+            "descDe": "Wenn ein Glücksfeld enthüllt wird, wird auch 1 zufällige korrekte gefüllte Zelle in derselben Zeile aufgedeckt.",
+            "icon": "↔️",
+            "statKey": "covariance_shift_1"
+        },
+        {
+            "id": 262,
+            "x": 1400,
+            "y": -100,
+            "nameEn": "Covariance Shift",
+            "nameDe": "Kovarianz-Verschiebung",
+            "descEn": "Whenever a Lucky Tile is revealed, 1 random correct filled cell in the same row is also revealed.",
+            "descDe": "Wenn ein Glücksfeld enthüllt wird, wird auch 1 zufällige korrekte gefüllte Zelle in derselben Zeile aufgedeckt.",
+            "icon": "↔️",
+            "statKey": "covariance_shift_2"
+        },
+        {
+            "id": 263,
+            "x": 1350,
+            "y": -200,
+            "nameEn": "Covariance Shift",
+            "nameDe": "Kovarianz-Verschiebung",
+            "descEn": "Whenever a Lucky Tile is revealed, 1 random correct filled cell in the same row and 1 in the same column are also revealed.",
+            "descDe": "Wenn ein Glücksfeld enthüllt wird, werden auch 1 zufällige korrekte gefüllte Zelle in derselben Zeile und 1 in derselben Spalte aufgedeckt.",
+            "icon": "↔️",
+            "statKey": "covariance_shift_3"
+        },
+        {
+            "id": 264,
+            "x": 2800,
+            "y": 100,
+            "nameEn": "Dead Reckoning",
+            "nameDe": "Koppelnavigation",
+            "descEn": "At the start of each level, every row and column clue is shown as the sum of the amount of filled cells in this row and column instead of the exact value. Completing 25% of the grid reveals all exact clues. Increases the Timer by 10 minutes.",
+            "descDe": "Zu Beginn jedes Levels wird jeder Zeilen- und Spaltenhinweis als Summe statt als genauen Wert angezeigt. Das Abschließen von 25% des Gitters enthüllt alle genauen Hinweise. Erhöht den Timer um 10 Minuten.",
+            "icon": "🧭",
+            "statKey": "keystone_dead_reckoning"
+        },
+        {
+            "id": 265,
+            "x": 2500,
+            "y": -700,
+            "nameEn": "Stochastic Resonance",
+            "nameDe": "Stochastische Resonanz",
+            "descEn": "Every mistake has a 50% chance to instead reveal 1 random correct filled cell rather than counting as a mistake. This effect cannot trigger twice in a row.",
+            "descDe": "Jeder Fehler hat eine 50% Chance, stattdessen 1 zufällige korrekte gefüllte Zelle aufzudecken, anstatt als Fehler gezählt zu werden. Dieser Effekt kann nicht zweimal in Folge ausgelöst werden.",
+            "icon": "〰️",
+            "statKey": "keystone_stochastic_resonance"
+        },
+        {
+            "id": 266,
+            "x": 2100,
+            "y": -100,
+            "nameEn": "Asymptotic Mastery",
+            "nameDe": "Asymptotische Meisterschaft",
+            "descEn": "Each completed row or column permanently reduces the time cost of all future mistakes in this level by 5 seconds. Shields of all kinds are disabled.",
+            "descDe": "Jede abgeschlossene Zeile oder Spalte reduziert die Zeitkosten aller zukünftigen Fehler in diesem Level dauerhaft um 5 Sekunden. Schilde jeder Art sind deaktiviert.",
+            "icon": "♾️",
+            "statKey": "keystone_asymptotic_mastery"
+        },
+        {
+            "id": 270,
+            "x": 2450,
+            "y": 1050,
+            "nameEn": "Poisson Process",
+            "nameDe": "Poisson-Prozess",
+            "descEn": "Every 60 seconds, 1 random incorrect empty cell is automatically marked.",
+            "descDe": "Alle 60 Sekunden wird 1 zufällige falsche leere Zelle automatisch markiert.",
+            "icon": "⚗️",
+            "statKey": "poisson_process_1"
+        },
+        {
+            "id": 271,
+            "x": 2450,
+            "y": 900,
+            "nameEn": "Poisson Process",
+            "nameDe": "Poisson-Prozess",
+            "descEn": "Every 60 seconds, 1 random incorrect empty cell is automatically marked.",
+            "descDe": "Alle 60 Sekunden wird 1 zufällige falsche leere Zelle automatisch markiert.",
+            "icon": "⚗️",
+            "statKey": "poisson_process_2"
+        },
+        {
+            "id": 272,
+            "x": 2450,
+            "y": 750,
+            "nameEn": "Poisson Process",
+            "nameDe": "Poisson-Prozess",
+            "descEn": "Every 45 seconds, 1 random incorrect empty cell is automatically marked.",
+            "descDe": "Alle 45 Sekunden wird 1 zufällige falsche leere Zelle automatisch markiert.",
+            "icon": "⚗️",
+            "statKey": "poisson_process_3"
+        },
+        {
+            "id": 282,
+            "x": 1750,
+            "y": 700,
+            "nameEn": "Binomial Burst",
+            "nameDe": "Binomialer Ausbruch",
+            "descEn": "Each time you fill 10 cells correctly in a single level, there is a 20% chance to instantly mark 1 random incorrect empty cell.",
+            "descDe": "Jedes Mal, wenn du 10 Zellen korrekt in einem Level ausfüllst, besteht eine 20% Chance, sofort 1 zufällige falsche leere Zelle zu markieren.",
+            "icon": "💢",
+            "statKey": "binomial_burst_1"
+        },
+        {
+            "id": 283,
+            "x": 1700,
+            "y": 600,
+            "nameEn": "Binomial Burst",
+            "nameDe": "Binomialer Ausbruch",
+            "descEn": "Each time you fill 10 cells correctly in a single level, there is a 20% chance to instantly mark 1 random incorrect empty cell.",
+            "descDe": "Jedes Mal, wenn du 10 Zellen korrekt in einem Level ausfüllst, besteht eine 20% Chance, sofort 1 zufällige falsche leere Zelle zu markieren.",
+            "icon": "💢",
+            "statKey": "binomial_burst_2"
+        },
+        {
+            "id": 284,
+            "x": 1650,
+            "y": 500,
+            "nameEn": "Binomial Burst",
+            "nameDe": "Binomialer Ausbruch",
+            "descEn": "Each time you fill 10 cells correctly in a single level, there is a 35% chance to instantly mark 1 random incorrect empty cell.",
+            "descDe": "Jedes Mal, wenn du 10 Zellen korrekt in einem Level ausfüllst, besteht eine 35% Chance, sofort 1 zufällige falsche leere Zelle zu markieren.",
+            "icon": "💢",
+            "statKey": "binomial_burst_3"
+        },
+        {
+            "id": 285,
+            "x": 3050,
+            "y": -600,
+            "nameEn": "Bayesian Update",
+            "nameDe": "Bayessches Update",
+            "descEn": "Each mistake you make during a level permanently increases the chance of the next automatic cell mark or reveal triggering by 5%, resetting after it triggers.",
+            "descDe": "Jeder Fehler während eines Levels erhöht dauerhaft die Chance des nächsten automatischen Markierens oder Aufdeckens um 5% und setzt sich danach zurück.",
+            "icon": "🔃",
+            "statKey": "bayesian_update_1"
+        },
+        {
+            "id": 286,
+            "x": 3600,
+            "y": 1,
+            "nameEn": "Bayesian Update",
+            "nameDe": "Bayessches Update",
+            "descEn": "Each mistake you make during a level permanently increases the chance of the next automatic cell mark or reveal triggering by 5%, resetting after it triggers.",
+            "descDe": "Jeder Fehler während eines Levels erhöht dauerhaft die Chance des nächsten automatischen Markierens oder Aufdeckens um 5% und setzt sich danach zurück.",
+            "icon": "🔃",
+            "statKey": "bayesian_update_2"
+        },
+        {
+            "id": 287,
+            "x": 3050,
+            "y": 600,
+            "nameEn": "Bayesian Update",
+            "nameDe": "Bayessches Update",
+            "descEn": "Each mistake you make during a level permanently increases the chance of the next automatic cell mark or reveal triggering by 8%, resetting after it triggers.",
+            "descDe": "Jeder Fehler während eines Levels erhöht dauerhaft die Chance des nächsten automatischen Markierens oder Aufdeckens um 8% und setzt sich danach zurück.",
+            "icon": "🔃",
+            "statKey": "bayesian_update_3"
+        },
+        {
+            "id": 288,
+            "x": 1250,
+            "y": 300,
+            "nameEn": "Maximum Likelihood",
+            "nameDe": "Maximale Wahrscheinlichkeit",
+            "descEn": "At the start of each level, the single row and single column with the most filled cells are fully solved automatically. You start the level with 15 minutes less on the timer.",
+            "descDe": "Zu Beginn jedes Levels werden die Zeile und die Spalte mit den meisten gefüllten Zellen automatisch vollständig gelöst. Du startest das Level mit 15 Minuten weniger auf dem Timer.",
+            "icon": "🏔️",
+            "statKey": "keystone_maximum_likelihood"
+        },
+        {
+            "id": 289,
+            "x": 3050,
+            "y": -700,
+            "nameEn": "Gambler's Ruin",
+            "nameDe": "Ruin des Spielers",
+            "descEn": "Each correct cell fill adds 3 seconds to the timer. Each mistake removes 60 seconds from the timer. Bonus time from all other sources is disabled.",
+            "descDe": "Jede korrekt ausgefüllte Zelle fügt dem Timer 3 Sekunden hinzu. Jeder Fehler entfernt 60 Sekunden vom Timer. Bonuszeit aus allen anderen Quellen ist deaktiviert.",
+            "icon": "🎰",
+            "statKey": "keystone_gamblers_ruin"
+        },
+        {
+            "id": 290,
+            "x": 3750,
+            "y": -250,
+            "nameEn": "Sparse Prior",
+            "nameDe": "Schwacher Prior",
+            "descEn": "All row and column clues are hidden at the start of the level. Each completed row or column reveals the clues of all adjacent rows and columns.",
+            "descDe": "Alle Zeilen- und Spaltenhinweise sind zu Beginn des Levels verborgen. Jede abgeschlossene Zeile oder Spalte enthüllt die Hinweise aller benachbarten Zeilen und Spalten.",
+            "icon": "🫥",
+            "statKey": "keystone_sparse_prior"
+        },
+        {
+            "id": 291,
+            "x": 3422,
+            "y": -78,
+            "nameEn": "Ergodic Field",
+            "nameDe": "Ergodisches Feld",
+            "descEn": "All automatic cell reveals and marks are disabled. Instead, every 3 minutes the entire grid briefly flashes, showing the complete solution for 1 second.",
+            "descDe": "Alle automatischen Zellen-Enthüllungen und Markierungen sind deaktiviert. Stattdessen zeigt das gesamte Gitter alle 3 Minuten kurz die vollständige Lösung für 1 Sekunde.",
+            "icon": "🌊",
+            "statKey": "keystone_ergodic_field"
+        },
+        {
+            "id": 293,
+            "x": 3150,
+            "y": -600,
+            "nameEn": "Entropy Drain",
+            "nameDe": "Entropie-Abbau",
+            "descEn": "Whenever you leave a row or column unfinished for more than 3 minutes, all revealed correct cells and all marked incorrect cells in this row and column are reverted back to the blank state . Class Ability Cooldowns are reduced by 30 seconds.",
+            "descDe": "Wenn du eine Zeile oder Spalte länger als 2 Minuten unfertig lässt, werden alle Enthüllungen und Markierungen in dieser Zeile und Spalte zurückgesetzt.  Klassenfähigkeiten haben 30 Sekunden weniger Abklingzeit.",
+            "icon": "🌡️",
+            "statKey": "keystone_entropy_drain"
+        },
+        {
+            "id": 294,
+            "x": 2450,
+            "y": 600,
+            "nameEn": "Random Walk",
+            "nameDe": "Zufällige Wanderung",
+            "descEn": "Every 30 seconds, 1 random unfilled cell on the board is automatically filled correctly or marked as incorrect. Fail the level on 2 mistakes.",
+            "descDe": "Alle 20 Sekunden wird 1 zufällige nicht ausgefüllte Zelle auf dem Spielfeld automatisch korrekt ausgefüllt oder als falsch markiert. Verliere das Level nach 2 Fehlern.",
+            "icon": "🚶",
+            "statKey": "keystone_random_walk"
+        },
+        {
+            "id": 295,
+            "x": 3549,
+            "y": -250,
+            "nameEn": "Frequentist's Burden",
+            "nameDe": "Last des Frequentisten",
+            "descEn": "No information is given at the start of the level. Every 5 correct cell fills reveal 1 random clue (row or column number).",
+            "descDe": "Zu Beginn des Levels werden keine Informationen gegeben. Alle 5 korrekt ausgefüllten Zellen enthüllen 1 zufälligen Hinweis (Zeilen- oder Spaltennummer).",
+            "icon": "📜",
+            "statKey": "keystone_frequentists_burden"
+        },
+        {
+            "id": 296,
+            "x": 1100,
+            "y": -100,
+            "nameEn": "Signal to Noise",
+            "nameDe": "Signal-Rausch-Verhältnis",
+            "descEn": "10% of all row and column clues are randomized to incorrect values at the start of each level. Completing 75% of the grid resets all clues to their true values. Class Ability Cooldowns lowered by 30 seconds.",
+            "descDe": "10% aller Zeilen- und Spaltenhinweise werden zu Beginn jedes Levels auf falsche Werte gesetzt. Das Abschließen von 75% des Gitters setzt alle Hinweise auf ihre wahren Werte zurück. Klassenfähigkeiten haben 30 Sekunden weniger Abklingzeit.",
+            "icon": "📡",
+            "statKey": "keystone_signal_to_noise"
+        },
+        {
+            "id": 298,
+            "x": 3200,
+            "y": 600,
+            "nameEn": "Degrees of Freedom",
+            "nameDe": "Freiheitsgrade",
+            "descEn": "At the start of each level, choose to hide either all row clues or all column clues. The hidden clues are replaced by the number of filled cells in each hidden row or column revealed every 3 minutes. Class Ability cooldowns are reduced by 30 seconds.",
+            "descDe": "Zu Beginn jedes Levels wählst du, ob alle Zeilen- oder alle Spaltenhinweise verborgen werden. Die verborgenen Hinweise werden alle 3 Minuten durch die Anzahl der gefüllten Zellen in jeder verborgenen Zeile oder Spalte ersetzt. Klassenfähigkeiten haben 30 Sekunden weniger Abklingzeit.",
+            "icon": "🎛️",
+            "statKey": "keystone_degrees_of_freedom"
+        },
+        {
+            "id": 299,
+            "x": 950,
+            "y": -400,
+            "nameEn": "Overfitting",
+            "nameDe": "Überanpassung",
+            "descEn": "The first 50% of cells you fill are filled for free — mistakes in this phase cost no time. After 50% completion, each mistake costs triple the normal time.",
+            "descDe": "Die ersten 50% der Zellen, die du ausfüllst, sind kostenlos — Fehler in dieser Phase kosten keine Zeit. Nach 50% Abschluss kostet jeder Fehler dreimal so viel Zeit wie normal.",
+            "icon": "📉",
+            "statKey": "keystone_overfitting"
+        },
+        {
+            "id": 300,
+            "x": 1100,
+            "y": 100,
+            "nameEn": "The Oracle",
+            "nameDe": "Das Orakel",
+            "descEn": "At the start of each level, the entire solution is revealed for 3 seconds, then hidden. No other information is shown during the level. All automatic cell reveals, marks, and clues are disabled.",
+            "descDe": "Zu Beginn jedes Levels wird die gesamte Lösung 3 Sekunden lang enthüllt und dann verborgen. Während des Levels werden keine weiteren Informationen angezeigt. Alle automatischen Enthüllungen, Markierungen und Hinweise sind deaktiviert.",
+            "icon": "👁️",
+            "statKey": "keystone_the_oracle"
+        },
+        {
+            "id": 301,
+            "x": 3650,
+            "y": -200,
+            "nameEn": "Interquartile Vision",
+            "nameDe": "Interquartil-Vision",
+            "descEn": "Extends the Interquartile-Vision Fieldscan duration by 1 second.",
+            "descDe": "Verlängert die Interquartil-Vision Feldscan Dauer um 1 Sekunde.",
+            "icon": "📊",
+            "statKey": "keystone_interquartile_vision"
         }
     ],
     "connections": [
@@ -3063,6 +4141,636 @@
             "id": 252,
             "from": 118,
             "to": 166,
+            "dotted": false
+        },
+        {
+            "id": 253,
+            "from": 1,
+            "to": 167,
+            "dotted": false
+        },
+        {
+            "id": 260,
+            "from": 167,
+            "to": 189,
+            "dotted": false
+        },
+        {
+            "id": 261,
+            "from": 189,
+            "to": 190,
+            "dotted": false
+        },
+        {
+            "id": 262,
+            "from": 190,
+            "to": 191,
+            "dotted": false
+        },
+        {
+            "id": 263,
+            "from": 167,
+            "to": 192,
+            "dotted": false
+        },
+        {
+            "id": 264,
+            "from": 192,
+            "to": 193,
+            "dotted": false
+        },
+        {
+            "id": 265,
+            "from": 193,
+            "to": 194,
+            "dotted": false
+        },
+        {
+            "id": 266,
+            "from": 167,
+            "to": 168,
+            "dotted": false
+        },
+        {
+            "id": 267,
+            "from": 167,
+            "to": 171,
+            "dotted": false
+        },
+        {
+            "id": 268,
+            "from": 168,
+            "to": 169,
+            "dotted": false
+        },
+        {
+            "id": 269,
+            "from": 169,
+            "to": 170,
+            "dotted": false
+        },
+        {
+            "id": 270,
+            "from": 171,
+            "to": 172,
+            "dotted": false
+        },
+        {
+            "id": 271,
+            "from": 172,
+            "to": 173,
+            "dotted": false
+        },
+        {
+            "id": 274,
+            "from": 167,
+            "to": 174,
+            "dotted": false
+        },
+        {
+            "id": 275,
+            "from": 175,
+            "to": 174,
+            "dotted": false
+        },
+        {
+            "id": 276,
+            "from": 176,
+            "to": 175,
+            "dotted": false
+        },
+        {
+            "id": 277,
+            "from": 191,
+            "to": 228,
+            "dotted": false
+        },
+        {
+            "id": 278,
+            "from": 194,
+            "to": 229,
+            "dotted": false
+        },
+        {
+            "id": 279,
+            "from": 173,
+            "to": 287,
+            "dotted": false
+        },
+        {
+            "id": 280,
+            "from": 287,
+            "to": 286,
+            "dotted": false
+        },
+        {
+            "id": 281,
+            "from": 176,
+            "to": 286,
+            "dotted": false
+        },
+        {
+            "id": 282,
+            "from": 170,
+            "to": 285,
+            "dotted": false
+        },
+        {
+            "id": 283,
+            "from": 285,
+            "to": 286,
+            "dotted": false
+        },
+        {
+            "id": 284,
+            "from": 174,
+            "to": 261,
+            "dotted": false
+        },
+        {
+            "id": 285,
+            "from": 261,
+            "to": 262,
+            "dotted": false
+        },
+        {
+            "id": 286,
+            "from": 262,
+            "to": 263,
+            "dotted": false
+        },
+        {
+            "id": 287,
+            "from": 263,
+            "to": 221,
+            "dotted": false
+        },
+        {
+            "id": 288,
+            "from": 168,
+            "to": 255,
+            "dotted": false
+        },
+        {
+            "id": 289,
+            "from": 255,
+            "to": 256,
+            "dotted": false
+        },
+        {
+            "id": 290,
+            "from": 256,
+            "to": 257,
+            "dotted": false
+        },
+        {
+            "id": 291,
+            "from": 170,
+            "to": 246,
+            "dotted": false
+        },
+        {
+            "id": 292,
+            "from": 246,
+            "to": 247,
+            "dotted": false
+        },
+        {
+            "id": 293,
+            "from": 247,
+            "to": 248,
+            "dotted": false
+        },
+        {
+            "id": 294,
+            "from": 169,
+            "to": 234,
+            "dotted": false
+        },
+        {
+            "id": 295,
+            "from": 234,
+            "to": 235,
+            "dotted": false
+        },
+        {
+            "id": 296,
+            "from": 235,
+            "to": 236,
+            "dotted": false
+        },
+        {
+            "id": 297,
+            "from": 170,
+            "to": 222,
+            "dotted": false
+        },
+        {
+            "id": 298,
+            "from": 222,
+            "to": 223,
+            "dotted": false
+        },
+        {
+            "id": 299,
+            "from": 223,
+            "to": 224,
+            "dotted": false
+        },
+        {
+            "id": 300,
+            "from": 171,
+            "to": 240,
+            "dotted": false
+        },
+        {
+            "id": 301,
+            "from": 240,
+            "to": 241,
+            "dotted": false
+        },
+        {
+            "id": 302,
+            "from": 241,
+            "to": 242,
+            "dotted": false
+        },
+        {
+            "id": 303,
+            "from": 171,
+            "to": 237,
+            "dotted": false
+        },
+        {
+            "id": 304,
+            "from": 237,
+            "to": 238,
+            "dotted": false
+        },
+        {
+            "id": 305,
+            "from": 238,
+            "to": 239,
+            "dotted": false
+        },
+        {
+            "id": 306,
+            "from": 173,
+            "to": 270,
+            "dotted": false
+        },
+        {
+            "id": 307,
+            "from": 270,
+            "to": 271,
+            "dotted": false
+        },
+        {
+            "id": 308,
+            "from": 271,
+            "to": 272,
+            "dotted": false
+        },
+        {
+            "id": 309,
+            "from": 172,
+            "to": 282,
+            "dotted": false
+        },
+        {
+            "id": 310,
+            "from": 282,
+            "to": 283,
+            "dotted": false
+        },
+        {
+            "id": 311,
+            "from": 283,
+            "to": 284,
+            "dotted": false
+        },
+        {
+            "id": 312,
+            "from": 172,
+            "to": 249,
+            "dotted": false
+        },
+        {
+            "id": 313,
+            "from": 249,
+            "to": 250,
+            "dotted": false
+        },
+        {
+            "id": 314,
+            "from": 250,
+            "to": 251,
+            "dotted": false
+        },
+        {
+            "id": 315,
+            "from": 285,
+            "to": 210,
+            "dotted": false
+        },
+        {
+            "id": 316,
+            "from": 210,
+            "to": 211,
+            "dotted": false
+        },
+        {
+            "id": 317,
+            "from": 211,
+            "to": 212,
+            "dotted": false
+        },
+        {
+            "id": 318,
+            "from": 287,
+            "to": 213,
+            "dotted": false
+        },
+        {
+            "id": 319,
+            "from": 213,
+            "to": 214,
+            "dotted": false
+        },
+        {
+            "id": 320,
+            "from": 214,
+            "to": 215,
+            "dotted": false
+        },
+        {
+            "id": 321,
+            "from": 285,
+            "to": 225,
+            "dotted": false
+        },
+        {
+            "id": 322,
+            "from": 225,
+            "to": 226,
+            "dotted": false
+        },
+        {
+            "id": 323,
+            "from": 226,
+            "to": 227,
+            "dotted": false
+        },
+        {
+            "id": 324,
+            "from": 286,
+            "to": 258,
+            "dotted": false
+        },
+        {
+            "id": 325,
+            "from": 258,
+            "to": 259,
+            "dotted": false
+        },
+        {
+            "id": 326,
+            "from": 259,
+            "to": 301,
+            "dotted": false
+        },
+        {
+            "id": 327,
+            "from": 286,
+            "to": 195,
+            "dotted": false
+        },
+        {
+            "id": 328,
+            "from": 195,
+            "to": 196,
+            "dotted": false
+        },
+        {
+            "id": 329,
+            "from": 196,
+            "to": 197,
+            "dotted": false
+        },
+        {
+            "id": 333,
+            "from": 174,
+            "to": 216,
+            "dotted": false
+        },
+        {
+            "id": 334,
+            "from": 216,
+            "to": 217,
+            "dotted": false
+        },
+        {
+            "id": 335,
+            "from": 217,
+            "to": 218,
+            "dotted": false
+        },
+        {
+            "id": 336,
+            "from": 286,
+            "to": 231,
+            "dotted": false
+        },
+        {
+            "id": 337,
+            "from": 231,
+            "to": 232,
+            "dotted": false
+        },
+        {
+            "id": 338,
+            "from": 232,
+            "to": 233,
+            "dotted": false
+        },
+        {
+            "id": 339,
+            "from": 175,
+            "to": 252,
+            "dotted": false
+        },
+        {
+            "id": 340,
+            "from": 252,
+            "to": 253,
+            "dotted": false
+        },
+        {
+            "id": 341,
+            "from": 253,
+            "to": 254,
+            "dotted": false
+        },
+        {
+            "id": 342,
+            "from": 175,
+            "to": 243,
+            "dotted": false
+        },
+        {
+            "id": 343,
+            "from": 243,
+            "to": 244,
+            "dotted": false
+        },
+        {
+            "id": 344,
+            "from": 244,
+            "to": 245,
+            "dotted": false
+        },
+        {
+            "id": 345,
+            "from": 176,
+            "to": 201,
+            "dotted": false
+        },
+        {
+            "id": 346,
+            "from": 201,
+            "to": 202,
+            "dotted": false
+        },
+        {
+            "id": 347,
+            "from": 202,
+            "to": 203,
+            "dotted": false
+        },
+        {
+            "id": 348,
+            "from": 174,
+            "to": 296,
+            "dotted": false
+        },
+        {
+            "id": 349,
+            "from": 176,
+            "to": 264,
+            "dotted": false
+        },
+        {
+            "id": 350,
+            "from": 257,
+            "to": 299,
+            "dotted": false
+        },
+        {
+            "id": 351,
+            "from": 272,
+            "to": 294,
+            "dotted": false
+        },
+        {
+            "id": 352,
+            "from": 174,
+            "to": 300,
+            "dotted": false
+        },
+        {
+            "id": 353,
+            "from": 285,
+            "to": 293,
+            "dotted": false
+        },
+        {
+            "id": 354,
+            "from": 175,
+            "to": 266,
+            "dotted": false
+        },
+        {
+            "id": 356,
+            "from": 298,
+            "to": 287,
+            "dotted": false
+        },
+        {
+            "id": 357,
+            "from": 224,
+            "to": 265,
+            "dotted": false
+        },
+        {
+            "id": 358,
+            "from": 301,
+            "to": 295,
+            "dotted": false
+        },
+        {
+            "id": 359,
+            "from": 301,
+            "to": 290,
+            "dotted": false
+        },
+        {
+            "id": 360,
+            "from": 245,
+            "to": 219,
+            "dotted": false
+        },
+        {
+            "id": 361,
+            "from": 286,
+            "to": 291,
+            "dotted": false
+        },
+        {
+            "id": 362,
+            "from": 242,
+            "to": 220,
+            "dotted": false
+        },
+        {
+            "id": 363,
+            "from": 285,
+            "to": 289,
+            "dotted": false
+        },
+        {
+            "id": 364,
+            "from": 239,
+            "to": 288,
+            "dotted": false
+        },
+        {
+            "id": 365,
+            "from": 131,
+            "to": 89,
+            "dotted": false
+        },
+        {
+            "id": 366,
+            "from": 39,
+            "to": 5,
+            "dotted": false
+        },
+        {
+            "id": 367,
+            "from": 12,
+            "to": 257,
+            "dotted": false
+        },
+        {
+            "id": 368,
+            "from": 242,
+            "to": 135,
+            "dotted": false
+        },
+        {
+            "id": 369,
+            "from": 248,
+            "to": 265,
             "dotted": false
         }
     ]

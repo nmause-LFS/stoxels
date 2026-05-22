@@ -30,6 +30,14 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 
+function _ptCurrentSpentCount() {
+    const alloc = (typeof _ptAllocated === 'function') ? _ptAllocated() : new Set();
+    // Subtract 1 for the start node, which is always allocated for free
+    const count = Math.max(0, alloc.size - 1);
+    return count;
+}
+
+
 // ─────────────────────────────────────────────────────────────
 //  STATE MIGRATION
 // ─────────────────────────────────────────────────────────────
@@ -913,19 +921,19 @@ const LEDGER_CATEGORIES = [
             {
                 id: 'pt_1',
                 labelEn: '5 points spent', labelDE: '5 Punkte ausgegeben',
-                check: qs => ({ current: qs.passivePointsSpent || 0, target: 5 }),
+                check: () => ({ current: _ptCurrentSpentCount(), target: 5 }),
                 reward: { items: ['reveal4', 'markWrong8'] }
             },
             {
                 id: 'pt_2',
                 labelEn: '15 points spent', labelDE: '15 Punkte ausgegeben',
-                check: qs => ({ current: qs.passivePointsSpent || 0, target: 15 }),
+                check: () => ({ current: _ptCurrentSpentCount(), target: 15 }),
                 reward: { items: ['rowSolve', 'scoutPrimer'] }
             },
             {
                 id: 'pt_3',
                 labelEn: '30 points spent', labelDE: '30 Punkte ausgegeben',
-                check: qs => ({ current: qs.passivePointsSpent || 0, target: 30 }),
+                check: () => ({ current: _ptCurrentSpentCount(), target: 30 }),
                 reward: { ptPoints: 1, items: ['rowSolve', 'colSolve', 'grandPearl'] }
             },
         ]

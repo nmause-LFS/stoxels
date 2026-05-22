@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STOXELS - v0.19 BETA</title>
+    <title>STOXELS - v0.20 BETA</title>
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/screens.css">
     <link rel="stylesheet" href="css/components.css">
@@ -21,7 +21,7 @@
 
     <!-- TITLE SCREEN -->
     <div id="screen-title" class="screen active">
-        <h1 class="title-glow">STOXELS<br><span class="title-version">v0.19 BETA</span></h1>
+        <h1 class="title-glow">STOXELS<br><span class="title-version">v0.20 BETA</span></h1>
         <p class="title-tag" data-t="tagline">STOCHASTICS &amp; STATISTICS NONOGRAMS</p>
         <div class="lang-switch">
             <button class="lang-btn active" data-lang="en">EN</button>
@@ -276,7 +276,7 @@
         <!-- Input row — shown only for numeric-input questions -->
         <div class="mg-answer-row hidden" id="quiz-input-row">
             <input type="text" id="quiz-input" class="mg-input"
-                   placeholder="your answer" autocomplete="off" spellcheck="false" />
+                   placeholder="" autocomplete="off" spellcheck="false" />
             <span class="mg-unit hidden" id="quiz-input-unit"></span>
             <button class="mg-submit-btn" id="quiz-input-submit">CHECK ▶</button>
         </div>
@@ -378,6 +378,11 @@
         <div class="pt-topbar">
             <button class="gtb-btn" id="btn-pt-back">← BACK</button>
             <span class="pt-title">🌿 <span data-t="pt_title">PROBABILITY TREE</span></span>
+            <div id="pt-search-wrap"></div>
+            <div id="pt-zoom-wrap">
+                <span id="pt-zoom-label">110%</span>
+                <input type="range" id="pt-zoom-bar" min="0" max="100" value="50" step="1">
+            </div>
             <span class="pt-points" id="pt-points"></span>
         </div>
         <div class="pt-canvas" id="pt-canvas"></div>
@@ -457,6 +462,7 @@
     <script src="js/passive-tree-state-points.js"></script>
     <script src="js/passive-tree-ui.js"></script>
     <script src="js/passive-tree-viewport.js"></script>
+    <script src="js/passive-tree-new-nodes.js"></script>
     <script src="js/passive-tree.js"></script>
     <script src="js/ui-events.js"></script>
     <script src="main.js"></script>

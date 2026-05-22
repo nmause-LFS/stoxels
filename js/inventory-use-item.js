@@ -1,8 +1,4 @@
-﻿
-
-
-
-//------------------------------------------------------------------------
+﻿//------------------------------------------------------------------------
 //-------------------GET PRE-FILLED ROWS & COLS---------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
@@ -113,6 +109,8 @@ function applyCursedColBlackout(durationMs) {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 function revealTiles(count) {
+    // keystone_ergodic_field (291) and keystone_the_oracle (300) disable all auto-reveals
+    if (ptHasSkill('keystone_ergodic_field') || window._oracleActive) return;
     const sol = cur.grid, rows = sol.length, cols = sol[0].length;
     let cands = [];
     for (let r = 0; r < rows; r++)
@@ -170,6 +168,8 @@ function revealTiles(count) {
 
 
 function markWrongTiles(count) {
+    // keystone_ergodic_field (291) and keystone_the_oracle (300) disable all auto-marks
+    if (ptHasSkill('keystone_ergodic_field') || window._oracleActive) return;
     const sol = cur.grid, rows = sol.length, cols = sol[0].length;
     let cands = [];
     for (let r = 0; r < rows; r++)
@@ -220,7 +220,7 @@ function markWrongTiles(count) {
 function shuffle(a) {
     for (let i = a.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]]; 
+        [a[i], a[j]] = [a[j], a[i]];
     }
     return a;
 }
@@ -452,6 +452,26 @@ function _cursedDownsideCount(baseCount) {
 }
 
 
+// Returns true if the blackout_ward nodes block a blackout effect this trigger.
+// Each node contributes additively: 25% + 25% + 50% = up to 100%.
+function _blackoutWardBlocks() {
+    let chance = 0;
+    if (ptHasSkill('blackout_ward_1')) chance += 0.25;
+    if (ptHasSkill('blackout_ward_2')) chance += 0.25;
+    if (ptHasSkill('blackout_ward_3')) chance += 0.50;
+    return chance > 0 && Math.random() < chance;
+}
+
+// Returns true if the removal_ward nodes block a row/col erasure effect this trigger.
+// Each node contributes additively: 25% + 25% + 50% = up to 100%.
+function _removalWardBlocks() {
+    let chance = 0;
+    if (ptHasSkill('removal_ward_1')) chance += 0.25;
+    if (ptHasSkill('removal_ward_2')) chance += 0.25;
+    if (ptHasSkill('removal_ward_3')) chance += 0.50;
+    return chance > 0 && Math.random() < chance;
+}
+
 
 
 
@@ -612,6 +632,11 @@ function _useMarkWrong(id, def) {
 //------------------------------------------------------------------------
 
 function _useAddTime(id, def) {
+    // Keystone: Gambler's Ruin — bonus time from all other sources is disabled
+    if (ptHasSkill('keystone_gamblers_ruin')) {
+        return `${def.icon} ${LANG === 'de' ? 'Blockiert durch Ruin des Spielers!' : 'Blocked by Gambler\'s Ruin!'}`;
+    }
+
     let secs = parseInt(id.replace('addTime', '')) || 30;
 
     // Passive: Extended Hour (10%, 10%, 15%)
@@ -656,11 +681,15 @@ function _useAddTime(id, def) {
 
 
 function _useShield(id, def) {
-    // Keystone: Iron Doctrine — shields blocked
     if (ptHasSkill('keystone_iron_doctrine')) {
         return `${def.icon} ${LANG === 'de' ? 'Blockiert durch Eiserne Doktrin!' : 'Blocked by Iron Doctrine!'}`;
     }
-
+    if (ptHasSkill('keystone_null_hypothesis')) {
+        return `${def.icon} ${LANG === 'de' ? 'Blockiert durch Nullhypothese!' : 'Blocked by Null Hypothesis!'}`;
+    }
+    if (ptHasSkill('keystone_asymptotic_mastery')) {
+        return `${def.icon} ${LANG === 'de' ? 'Blockiert durch Asymptotische Meisterschaft!' : 'Blocked by Asymptotic Mastery!'}`;
+    }
     shieldActive = true;
 
     // Passive: Reinforced Ward — each node adds 1 extra absorbed mistake
@@ -751,7 +780,7 @@ function _useMistakeEraser(id, def) {
 function _useFreeze(id, def) {
     const FREEZE_DURATION = 2000;
     timerFrozen = true;
-    shieldActive = true;
+    if (!ptHasSkill('keystone_null_hypothesis')) shieldActive = true;
     window._freezeActive = true;
     updTimer();
     playItemEffect(id);
@@ -790,7 +819,12 @@ function _useCursedTime(id, def) {
     updTimer();
     playItemEffect(id);
     const dur = _cursedDownsideDuration(30000);
-    if (dur > 0) { applyCursedRowBlackout(dur); applyCursedColBlackout(dur); }
+    if (dur > 0 && !_blackoutWardBlocks()) {
+        applyCursedRowBlackout(dur);
+        applyCursedColBlackout(dur);
+    } else if (dur > 0) {
+        showToast(`🌑 ${LANG === 'de' ? 'Stromausfall-Schutz! Hinweise geschützt.' : 'Blackout Ward! Clues protected.'}`);
+    }
     return `💀 ${t('item_cursed_time_both')}`;
 }
 
@@ -798,7 +832,11 @@ function _useCursedShield(id, def) {
     shieldActive = true;
     revealTiles(2);
     const dur = _cursedDownsideDuration(30000);
-    if (dur > 0) applyCursedRowBlackout(dur);
+    if (dur > 0 && !_blackoutWardBlocks()) {
+        applyCursedRowBlackout(dur);
+    } else if (dur > 0) {
+        showToast(`🌑 ${LANG === 'de' ? 'Stromausfall-Schutz! Hinweise geschützt.' : 'Blackout Ward! Clues protected.'}`);
+    }
     playItemEffect(id);
     return `👁️ ${t('item_cursed_shield_both')}`;
 }
@@ -807,7 +845,14 @@ function _useCursedRowSolve(id, def) {
     const preFilledRows = _getPreFilledRows();
     const revealed = solveRows(3);
     const eraseCount = _cursedDownsideCount(1);
-    const erased = eraseCount > 0 ? unsolveRowsExcluding(eraseCount, preFilledRows) : 0;
+    let erased = 0;
+    if (eraseCount > 0) {
+        if (_removalWardBlocks()) {
+            showToast(`🔒 ${LANG === 'de' ? 'Entfernungsschutz! Zeilen behalten.' : 'Removal Ward! Rows kept.'}`);
+        } else {
+            erased = unsolveRowsExcluding(eraseCount, preFilledRows);
+        }
+    }
     playItemEffect(id);
     if (revealed > 0) checkWin();
     return `🌊 ${t('item_cursed_row_both').replace('{r}', revealed).replace('{e}', erased)}`;
@@ -817,7 +862,14 @@ function _useCursedColSolve(id, def) {
     const preFilledCols = _getPreFilledCols();
     const revealed = solveCols(3);
     const eraseCount = _cursedDownsideCount(1);
-    const erased = eraseCount > 0 ? unsolveColsExcluding(eraseCount, preFilledCols) : 0;
+    let erased = 0;
+    if (eraseCount > 0) {
+        if (_removalWardBlocks()) {
+            showToast(`🔒 ${LANG === 'de' ? 'Entfernungsschutz! Spalten behalten.' : 'Removal Ward! Columns kept.'}`);
+        } else {
+            erased = unsolveColsExcluding(eraseCount, preFilledCols);
+        }
+    }
     playItemEffect(id);
     if (revealed > 0) checkWin();
     return `🌪️ ${t('item_cursed_col_both').replace('{r}', revealed).replace('{e}', erased)}`;
@@ -1133,49 +1185,3 @@ function useItem(uid) {
     const msg = _dispatchItemEffect(def.id, def);
     _consumeItem(idx, def, msg);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

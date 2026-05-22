@@ -1,6 +1,4 @@
-﻿
-
-let timerSecs = 0; // current seconds remaining, initialized in startLevel() when we know which mode we're in (normal vs time trial)
+﻿let timerSecs = 0; // current seconds remaining, initialized in startLevel() when we know which mode we're in (normal vs time trial)
 
 let timerInterval = null; // the ID returned by setInterval so we can cancel it with clearInterval via stopTimer()
 
@@ -104,10 +102,110 @@ function timesUp() {
 //     2. Decrements timerSecs and refreshes the displayed clock (updTimer).
 //     3. Triggers the loss screen if time has run out.
 function startTimer() {
-    stopTimer(); // clear any pre-existing interval before creating a new one
+    stopTimer();
+
+    window._emergencyScanFired = false;
+    window._timedStasisNext = null;
+    window._lawOfLargeNext = null;
+    window._poissonNext = null;
+
+    if (ptHasSkill('timed_stasis_1')) {
+        window._timedStasisNext = Date.now() + 10 * 60 * 1000;
+    }
+
+    // keystone_law_of_large_numbers (219): first trigger after 3 min
+    if (ptHasSkill('keystone_law_of_large_numbers')) {
+        window._lawOfLargeNext = Date.now() + 3 * 60 * 1000;
+    }
+
+    // poisson_process (270-272): schedule first auto-mark
+    // Node 3 fires every 45s; nodes 1-2 fire every 60s
+    if (ptHasSkill('poisson_process_1') || ptHasSkill('poisson_process_2') || ptHasSkill('poisson_process_3')) {
+        const interval = ptHasSkill('poisson_process_3') ? 45 : 60;
+        window._poissonNext = Date.now() + interval * 1000;
+    }
+
+
+    _ergodicFieldInit();
+    _randomWalkInit();
 
     timerInterval = setInterval(() => {
-        if (dead || timerFrozen) return; // pause ticking while frozen or game over
+        if (dead || timerFrozen) return;
+
+        _poissonProcessTick();
+        _ergodicFieldTick();
+        _entropyDrainTick();
+        _randomWalkTick();
+        _degreesOfFreedomTick();
+
+        // timed_stasis (195-197): auto-freeze for 1s (+0.5s per tier 2/3) every 10 min
+        if (window._timedStasisNext && Date.now() >= window._timedStasisNext) {
+            window._timedStasisNext = Date.now() + 10 * 60 * 1000; // schedule next
+            let freezeDur = 1000;
+            if (ptHasSkill('timed_stasis_2')) freezeDur += 500;
+            if (ptHasSkill('timed_stasis_3')) freezeDur += 500;
+            timerFrozen = true;
+            updTimer();
+            showToast(`⏸️ ${LANG === 'de' ? 'Zeitstase!' : 'Timed Stasis!'}`);
+            setTimeout(() => {
+                timerFrozen = false;
+                updTimer();
+            }, freezeDur);
+        }
+
+        // keystone_law_of_large_numbers (219): every 3 min, reveal 1 sparse row + 1 sparse col.
+        // Does not fire in the last 5 minutes (timerSecs <= 300).
+        if (window._lawOfLargeNext && Date.now() >= window._lawOfLargeNext && timerSecs > 300) {
+            window._lawOfLargeNext = Date.now() + 3 * 60 * 1000;
+            if (cur) {
+                const sol = cur.grid;
+                const rows = sol.length, cols = sol[0].length;
+
+                // Find row with fewer than 2 correct filled cells
+                let sparseRow = -1;
+                for (let r = 0; r < rows; r++) {
+                    const filled = sol[r].filter((v, c) => v === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])).length;
+                    const total = sol[r].filter(v => v === 1).length;
+                    if (filled < 2 && filled < total) { sparseRow = r; break; }
+                }
+
+                // Find col with fewer than 2 correct filled cells
+                let sparseCol = -1;
+                for (let c = 0; c < cols; c++) {
+                    const filled = sol.filter((row, r) => row[c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])).length;
+                    const total = sol.filter(row => row[c] === 1).length;
+                    if (filled < 2 && filled < total) { sparseCol = c; break; }
+                }
+
+                if (sparseRow >= 0) {
+                    for (let c = 0; c < cols; c++) {
+                        if (sol[sparseRow][c] === 1 && userGrid[sparseRow][c] !== 1 && !revealedGrid[sparseRow][c]) {
+                            revealedGrid[sparseRow][c] = true;
+                            userGrid[sparseRow][c] = 1;
+                            renderCell(sparseRow, c);
+                            updClues(sparseRow, c);
+                        }
+                    }
+                }
+                if (sparseCol >= 0) {
+                    for (let r = 0; r < rows; r++) {
+                        if (sol[r][sparseCol] === 1 && userGrid[r][sparseCol] !== 1 && !revealedGrid[r][sparseCol]) {
+                            revealedGrid[r][sparseCol] = true;
+                            userGrid[r][sparseCol] = 1;
+                            renderCell(r, sparseCol);
+                            updClues(r, sparseCol);
+                        }
+                    }
+                }
+
+                if (sparseRow >= 0 || sparseCol >= 0) {
+                    showToast(`📉 ${LANG === 'de' ? 'Gesetz der Großen Zahlen!' : 'Law of Large Numbers!'}`);
+                    checkWin();
+                }
+            }
+        }
+
+
 
         if (!window._goldenClockActive) timerSecs--;
         updTimer();
@@ -116,15 +214,23 @@ function startTimer() {
         const thresh = curMods.timetrial ? 60 : 180;
         if (elapsed >= thresh && elapsed - 1 < thresh) buildInventoryPanel();
 
-        // Timer reached zero — game over
+        // emergency_scan (201-203): one-shot field scan when timer first drops to ≤5 min
+        if (ptHasSkill('emergency_scan_1') && !window._emergencyScanFired && timerSecs <= 300 && timerSecs > 0) {
+            window._emergencyScanFired = true;
+            let scanDur = 2000;
+            if (ptHasSkill('emergency_scan_2')) scanDur += 1000;
+            if (ptHasSkill('emergency_scan_3')) scanDur += 2000;
+            // Use a scan size of the full grid (rows and cols) so it covers everything.
+            // _executeFieldScan expects (scanSize, durationMs); we pass the larger grid
+            // dimension so the region always covers the whole puzzle.
+            const fullSize = Math.max(cur.grid.length, cur.grid[0].length);
+            _executeFieldScan(fullSize, scanDur);
+        }
+
         if (timerSecs <= 0) {
             dead = true;
             stopTimer();
             timesUp();
         }
-    }, 1000); // fires every 1000 ms = 1 second
+    }, 1000);
 }
-
-
-
-
