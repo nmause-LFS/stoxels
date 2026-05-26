@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STOXELS - v0.20 BETA</title>
+    <title>STOXELS - v0.21 BETA</title>
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/screens.css">
     <link rel="stylesheet" href="css/components.css">
@@ -16,12 +16,13 @@
     <link rel="stylesheet" href="css/achievements.css">
     <link rel="stylesheet" href="css/item_effects.css">
     <link rel="stylesheet" href="css/probability_tree.css">
+    <link rel="stylesheet" href="css/quests.css">
 </head>
 <body>
 
     <!-- TITLE SCREEN -->
     <div id="screen-title" class="screen active">
-        <h1 class="title-glow">STOXELS<br><span class="title-version">v0.20 BETA</span></h1>
+        <h1 class="title-glow">STOXELS<br><span class="title-version">v0.21 BETA</span></h1>
         <p class="title-tag" data-t="tagline">STOCHASTICS &amp; STATISTICS NONOGRAMS</p>
         <div class="lang-switch">
             <button class="lang-btn active" data-lang="en">EN</button>
@@ -30,6 +31,10 @@
 
         <div class="title-btns">
             <button class="title-btn" id="btn-play" data-t="btn_play">▶ PLAY</button>
+        </div>
+
+        <div class="title-btns">
+            <button class="title-btn sec" id="btn-settings">⚙ SETTINGS</button>
             <button class="title-btn sec" id="btn-how-to-play" data-t="btn_howtoplay">? HOW TO PLAY</button>
             <button class="title-btn sec btn-danger btn-px" id="btn-reset">🗑 RESET</button>
         </div>
@@ -74,6 +79,10 @@
                 <p data-t="tut_s8p">Completing Ascension - Levels allows you to select one out of three possible classes. Each class has a passive ability and two active abilities, which can heavily alter the way you approach a Stoxel and help in case you get stuck. Abilities can be upgraded by playing more Ascension - Levels.</p>
             </div>
             <div class="modal-section">
+                <h3 data-t="tut_s9h">CONVERGENCE, INFERENCE &amp; PROBABILITY TREE</h3>
+                <p data-t="tut_s9p">Completing Convergence - Levels grants Convergence Points, which can be spent on the Probability Tree to customize the way you play the game. Completing Inference - Objectives rewards additional Convergence Points.</p>
+            </div>
+            <div class="modal-section">
                 <h3 data-t="tut_s6h">BONUS OBJECTIVE &amp; QUIZ</h3>
                 <p data-t="tut_s6p">Each level has a bonus objective (shown on the level card). If you <strong>meet</strong> the bonus objective, a stats multiple-choice quiz appears after a brief pause — answer correctly for +50 pts and a bonus item! If you miss the objective, no quiz appears.</p>
             </div>
@@ -113,6 +122,14 @@
                         <span class="tag tag-purple">+SCORE</span>
                         <span data-t="mod_im">🔒 IRONMAN</span>
                     </button>
+                    <button class="setup-opt" data-mod="classless">
+                        <span class="tag tag-cyan">+SCORE</span>
+                        <span data-t="mod_cl">⚗️ CLASSLESS</span>
+                    </button>
+                    <button class="setup-opt" data-mod="treeless">
+                        <span class="tag tag-green">+SCORE</span>
+                        <span data-t="mod_tl">🌿 TREELESS</span>
+                    </button>
                 </div>
                 <div class="setup-desc" id="mod-desc" data-t="mod_desc_none">No modifiers. Pure puzzle mode.</div>
             </div>
@@ -150,6 +167,54 @@
     </div>
 
 
+    <!-- SETTINGS MODAL -->
+    <div id="settings-modal" class="modal-bg">
+        <div class="modal-box settings-box">
+            <button class="modal-close" data-modal-close="settings-modal">✕ CLOSE</button>
+            <div class="modal-title">⚙ SETTINGS</div>
+
+            <!-- AUDIO -->
+            <div class="settings-section">
+                <div class="settings-section-title">🎵 AUDIO</div>
+
+                <div class="settings-row">
+                    <label class="settings-label">Background Music</label>
+                    <div class="settings-controls">
+                        <button class="settings-toggle" id="stt-bgm">ON</button>
+                        <input type="range" class="settings-slider" id="sld-bgm"
+                               min="0" max="100" value="40" step="5">
+                        <span class="settings-val" id="val-bgm">40%</span>
+                    </div>
+                </div>
+
+                <div class="settings-row">
+                    <label class="settings-label">Sound Effects</label>
+                    <div class="settings-controls">
+                        <button class="settings-toggle" id="stt-sfx">ON</button>
+                        <input type="range" class="settings-slider" id="sld-sfx"
+                               min="0" max="100" value="70" step="5">
+                        <span class="settings-val" id="val-sfx">70%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTROLS -->
+            <div class="settings-section">
+                <div class="settings-section-title">🖱 CONTROLS</div>
+
+                <div class="settings-row">
+                    <label class="settings-label">
+                        Axis Lock
+                        <span class="settings-hint">Lock drag to starting row or column</span>
+                    </label>
+                    <button class="settings-toggle" id="stt-axis">OFF</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
     <!-- LEVEL SELECT SCREEN -->
     <div id="screen-levels" class="screen">
         <div class="ls-topbar">
@@ -177,28 +242,49 @@
     <!-- GAME SCREEN -->
     <div id="screen-game" class="screen">
         <div class="game-main">
+
+            <!-- TOP META BAR -->
             <div class="game-meta">
-                <span class="gtb-lvl" id="top-id">1-1</span>
-                <span class="gtb-mistakes" id="mistake-counter">✗ 0</span>
-                <div class="gtb-spacer"></div>
-                <div class="gtb-score-wrap">
-                    <span class="gtb-score-val" id="sc-disp">0</span>
-                    <span class="gtb-score-lbl" data-t="score_lbl">SCORE</span>
+
+                <div class="game-meta-rows-left">
+                    <div class="game-meta-row1">
+                        <div class="puzzle-hint" id="top-hint"></div>
+                        <div class="mod-tags-row" id="mod-tags"></div>
+                    </div>
+                    <div class="game-meta-row2">
+                        <span class="gtb-lvl" id="top-id">1-1</span>
+                        <span class="gtb-mistakes" id="mistake-counter">✗ 0</span>
+                    </div>
+                    <div class="game-meta-row3">
+                        <div class="bonus-inline" id="bonus-sidebar">
+                            <span class="bonus-sidebar-label">🎯 BONUS</span>
+                            <span class="bonus-sidebar-hint" id="bonus-sidebar-hint"></span>
+                        </div>
+                    </div>
                 </div>
-                <button class="gtb-btn" id="btn-go-levels" data-t="btn_levels">◀ LEVELS</button>
+
+                <div class="game-meta-clock">
+                    <span class="timer-icon">⏱</span>
+                    <span class="timer-val" id="timer-val">30:00</span>
+                    <span class="gtb-pen" id="pen-info"></span>
+                </div>
+
+                <div class="game-meta-right">
+                    <div class="gtb-score-wrap">
+                        <span class="gtb-score-val" id="sc-disp">0</span>
+                        <span class="gtb-score-lbl" data-t="score_lbl">SCORE</span>
+                    </div>
+                    <button class="gtb-btn" id="btn-go-levels" data-t="btn_levels">◀ LEVELS</button>
+                </div>
+
             </div>
+
+            <!-- PUZZLE AREA: timer sits above the grid, inside puzzle-scaler -->
             <div class="puzzle-and-sidebar">
                 <div id="class-hud-panel"></div>
                 <div class="puzzle-scaler-wrap" id="puzzle-scaler-wrap">
                     <div class="puzzle-scaler" id="puzzle-scaler">
                         <div class="puzzle-hud">
-                            <div class="timer-row" style="position: relative;">
-                                <span class="timer-icon">⏱</span>
-                                <span class="timer-val" id="timer-val">15:00</span>
-                                <span class="gtb-pen" id="pen-info" style="position: absolute; left: 100%; margin-left: 12px; font-size: 16px; white-space: nowrap;"></span>
-                            </div>
-                            <div class="puzzle-hint" id="top-hint"></div>
-                            <div class="mod-tags-row" id="mod-tags"></div>
                         </div>
                         <div class="picross-wrap">
                             <div class="ptable-scroll">
@@ -208,10 +294,7 @@
                     </div>
                 </div>
             </div>
-            <div class="bonus-sidebar" id="bonus-sidebar">
-                <div class="bonus-sidebar-label">🎯 BONUS</div>
-                <div class="bonus-sidebar-hint" id="bonus-sidebar-hint"></div>
-            </div>
+
             <div class="item-use-toast" id="item-toast"></div>
             <div id="inv-panel"></div>
         </div>
@@ -392,9 +475,9 @@
             <div class="convergence-modal-icon">🌿</div>
             <div class="convergence-modal-title" data-en="Convergence!" data-de="Konvergenz!">Convergence!</div>
             <div class="convergence-modal-desc"
-                 data-en="You've reached a milestone and earned 1 Probability Tree point."
-                 data-de="Du hast einen Meilenstein erreicht und 1 Wahrscheinlichkeitsbaum-Punkt erhalten.">
-                You've reached a milestone and earned 1 Probability Tree point.
+                 data-en="You've reached a milestone and earned 1 Convergence Point."
+                 data-de="Du hast einen Meilenstein erreicht und 1 Konvergenzpunkt erhalten.">
+                You've reached a milestone and earned 1 Convergence Point.
             </div>
             <div class="convergence-modal-btns">
                 <button class="btn convergence-btn-tree" onclick="hideConvergenceModal(); hideOv(); showPassiveTree();">
@@ -413,9 +496,15 @@
 
 
     <!-- SCRIPTS -->
+    <script src="js/audio.js"></script>
+    <script src="js/settings.js"></script>
     <script src="js/translations-strings.js"></script>
     <script src="js/translations.js"></script>
-    <script src="js/quests.js"></script>
+    <script src="js/quests-data.js"></script>
+    <script src="js/quests-stats.js"></script>
+    <script src="js/quests-logic.js"></script>
+    <script src="js/quests-styles.js"></script>
+    <script src="js/quests-ui.js"></script>
     <script src="js/state.js"></script>
     <script src="js/difficulty-modifiers.js"></script>
     <script src="js/level-world-data.js"></script>
@@ -452,6 +541,11 @@
     <script src="js/class-ui.js"></script>
     <script src="js/class-hud.js"></script>
     <script src="js/class-abilities.js"></script>
+    <script src="js/class-outlier.js"></script>
+    <script src="js/class-actuary.js"></script>
+    <script src="js/class-recursionist.js"></script>
+    <script src="js/class-random-walker.js"></script>
+    <script src="js/class-markovian.js"></script>
     <script src="js/class-effects.js"></script>
     <script src="js/achievements.js"></script>
     <script src="js/achievements-data.js"></script>
@@ -462,6 +556,7 @@
     <script src="js/passive-tree-viewport.js"></script>
     <script src="js/passive-tree-new-nodes.js"></script>
     <script src="js/passive-tree.js"></script>
+
     <script src="js/ui-events.js"></script>
     <script src="main.js"></script>
 </body>

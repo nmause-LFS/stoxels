@@ -42,6 +42,9 @@ window.addEventListener('resize', () => {
 //      (defined in ui.js) to return to the previous screen
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
+        if (typeof clearActiveRandomWalkers === "function") {
+            clearActiveRandomWalkers();
+        }
         // Case 1: quiz is showing
         if (document.getElementById('quiz-overlay').classList.contains('show')) {
             skipQuiz(); // defined in scoring.js
@@ -63,3 +66,20 @@ document.addEventListener('keydown', e => {
         goBack(); // defined in ui.js
     }
 });
+
+
+
+
+// ── Audio bootstrap ──────────────────────────────────────
+// Start title music on first user interaction (browser autoplay policy).
+// { once: true } means this listener removes itself after firing once.
+function _startTitleMusic() {
+    Audio_Manager.playBGM('title');
+}
+
+document.addEventListener('click', _startTitleMusic, { once: true });
+document.addEventListener('keydown', _startTitleMusic, { once: true });
+
+
+initSettingsControls();   // wire the settings modal controls
+applySettings();          // apply saved volume/axis lock values
