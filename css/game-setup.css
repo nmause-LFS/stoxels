@@ -125,3 +125,137 @@
         padding: 1px 4px;
     }
 
+
+.tag.tag-orange {
+    background: var(--orange);
+    color: #fff;
+}
+
+.tag.tag-red {
+    background: var(--red);
+    color: #fff;
+}
+
+.tag.tag-purple {
+    background: var(--purple);
+    color: #fff;
+}
+
+
+.tag.tag-cyan {
+    background: var(--accent);
+    color: var(--bg);
+}
+
+.tag.tag-green {
+    background: var(--green);
+    color: var(--bg);
+}
+
+
+
+
+/* ── Settings Modal ──────────────────────────────────────── */
+
+.settings-box {
+    max-width: 480px;
+    width: 100%;
+}
+
+.settings-section {
+    margin-bottom: 24px;
+}
+
+.settings-section-title {
+    font-family: var(--PX);
+    font-size: 11px;
+    color: var(--yellow);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+}
+
+.settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+}
+
+.settings-label {
+    font-family: var(--PX);
+    font-size: 12px;
+    color: var(--accent2);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.settings-hint {
+    font-family: var(--PX);
+    font-size: 9px;
+    color: var(--setup-opt-inactive);
+    font-style: normal;
+}
+
+.settings-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.settings-toggle {
+    font-family: var(--PX);
+    font-size: 11px;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 5px 14px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    min-width: 52px;
+    transition: all .12s;
+}
+
+.settings-toggle-off {
+    border-color: var(--border2);
+    color: var(--setup-opt-inactive);
+}
+
+.settings-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100px;
+    height: 3px;
+    background: var(--border2);
+    outline: none;
+    cursor: pointer;
+}
+
+    .settings-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 14px;
+        height: 14px;
+        background: var(--accent);
+        cursor: pointer;
+    }
+
+    .settings-slider::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        background: var(--accent);
+        border: none;
+        cursor: pointer;
+    }
+
+.settings-val {
+    font-family: var(--PX);
+    font-size: 11px;
+    color: var(--accent2);
+    min-width: 36px;
+    text-align: right;
+}

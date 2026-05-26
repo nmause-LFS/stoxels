@@ -355,3 +355,30 @@
 
 
 
+
+
+#quest-reward-tooltip {
+    position: fixed;
+    z-index: 9999;
+    background: var(--bg2, #1a1a2e);
+    border: 1px solid var(--border2, #444);
+    border-radius: 8px;
+    padding: 8px 12px;
+    pointer-events: none;
+    max-width: 240px;
+    font-size: 0.82rem;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+    #quest-reward-tooltip.visible {
+        opacity: 1;
+    }
+
+.quest-reward-item-tip {
+    cursor: default;
+}
+
+    .quest-reward-item-tip:hover {
+        filter: brightness(1.2);
+    }

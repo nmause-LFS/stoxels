@@ -758,64 +758,92 @@
 }
 
 
-/* 📐 Row Solve — horizontal gold sweep bars */
+
+
+/* ── Row Solve: full-width golden sweep left→right ── */
 .fx-rowsolve-bar {
-    pointer-events: none;
-    background: linear-gradient(90deg, transparent 0%, rgba(255,215,0,0.55) 25%, rgba(255,245,100,0.85) 50%, rgba(255,215,0,0.55) 75%, transparent 100%);
-    box-shadow: 0 0 8px 2px rgba(255,215,0,0.4);
+    background: linear-gradient(90deg, transparent, rgba(255, 210, 60, 0.55), rgba(255, 235, 120, 0.75), rgba(255, 210, 60, 0.55), transparent);
     border-radius: 2px;
+    pointer-events: none;
+    z-index: 322;
 }
 
 @keyframes fx-rowsolve-sweep {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(var(--sweep-dist));
+        opacity: 0.3;
+    }
+}
+
+.fx-rowsolve-line {
+    background: rgba(255, 235, 100, 0.7);
+    pointer-events: none;
+    z-index: 321;
+}
+
+@keyframes fx-rowsolve-line-flash {
     0% {
         opacity: 0;
-        transform: scaleX(0);
-        transform-origin: left;
+        background: rgba(255, 255, 180, 0.9);
     }
 
-    20% {
+    40% {
         opacity: 1;
-        transform: scaleX(1);
-    }
-
-    75% {
-        opacity: 0.7;
     }
 
     100% {
         opacity: 0;
+        background: rgba(255, 210, 60, 0);
     }
 }
 
-
-/* 📏 Col Solve — vertical gold sweep bars */
+/* ── Col Solve: full-height golden sweep top→bottom ── */
 .fx-colsolve-bar {
-    pointer-events: none;
-    background: linear-gradient(180deg, transparent 0%, rgba(255,215,0,0.55) 25%, rgba(255,245,100,0.85) 50%, rgba(255,215,0,0.55) 75%, transparent 100%);
-    box-shadow: 0 0 8px 2px rgba(255,215,0,0.4);
+    background: linear-gradient(180deg, transparent, rgba(255, 210, 60, 0.55), rgba(255, 235, 120, 0.75), rgba(255, 210, 60, 0.55), transparent);
     border-radius: 2px;
+    pointer-events: none;
+    z-index: 322;
 }
 
 @keyframes fx-colsolve-sweep {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateY(var(--sweep-dist));
+        opacity: 0.3;
+    }
+}
+
+.fx-colsolve-line {
+    background: rgba(255, 235, 100, 0.7);
+    pointer-events: none;
+    z-index: 321;
+}
+
+@keyframes fx-colsolve-line-flash {
     0% {
         opacity: 0;
-        transform: scaleY(0);
-        transform-origin: top;
+        background: rgba(255, 255, 180, 0.9);
     }
 
-    20% {
+    40% {
         opacity: 1;
-        transform: scaleY(1);
-    }
-
-    75% {
-        opacity: 0.7;
     }
 
     100% {
         opacity: 0;
+        background: rgba(255, 210, 60, 0);
     }
 }
+
 
 
 /* 🎓 Mistake Eraser — chalk smear */

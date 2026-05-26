@@ -320,56 +320,41 @@
     ------------------------------------------------------------------------
 */
 
-/* Replace the existing #class-hud-panel rule */
 #class-hud-panel {
     display: none;
     flex-direction: column;
     gap: 6px;
-    width: 300px;
-    min-width: 158px;
-    padding: 0 0 10px 0; /* top padding moved to handle */
-    margin-left: 0;
-    position: fixed; /* fixed so it stays on screen during scroll/zoom */
+    width: fit-content; /* was: width: 300px; min-width: 158px; */
+    padding: 0;
+    position: fixed;
     left: 150px;
     top: 80px;
-    z-index: 200; /* above puzzle */
-    background: var(--surface);
-    border: 1px solid var(--border);
+    z-index: 200;
+    background: transparent; /* was: var(--surface) */
+    border: none; /* was: 1px solid var(--border) */
     font-size: 9px;
     flex-shrink: 0;
     align-self: flex-start;
-    max-height: calc(100vh - 40px);
-    overflow-y: auto;
     user-select: none;
 }
 
-/* Drag handle bar at the top of the HUD */
 #class-hud-drag-handle {
-    width: 100%;
-    padding: 6px 10px 4px;
-    background: rgba(255,255,255,0.04);
-    border-bottom: 1px solid var(--border);
+    width: auto; /* was: width: 100% */
+    padding: 4px 5px;
     cursor: grab;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     font-family: var(--PX);
     font-size: 8px;
     color: #555;
     letter-spacing: 1px;
-    margin-bottom: 6px;
-    box-sizing: border-box;
 }
 
     #class-hud-drag-handle:active {
         cursor: grabbing;
     }
 
-    #class-hud-drag-handle::before {
-        content: '⠿';
-        font-size: 12px;
-        opacity: 0.4;
-    }
 
 
 #class-hud-minimize-btn {
@@ -949,3 +934,496 @@
     opacity: 0.5;
     padding: 0 2px;
 }
+
+
+
+/* ── Variance Shield: stack layers on HUD ── */
+
+/* Base glow when any stacks remain */
+#class-hud-panel[data-shield-stacks]:not([data-shield-stacks="0"]) #class-hud-drag-handle {
+    border-color: rgba(155, 89, 182, 0.6);
+}
+
+/* Stack layer rings — each one is a larger box-shadow offset */
+#class-hud-panel[data-shield-stacks="1"] #class-hud-drag-handle {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 0 2px rgba(155, 89, 182, 0.55), 0 0 8px 2px rgba(155, 89, 182, 0.25);
+}
+
+#class-hud-panel[data-shield-stacks="2"] #class-hud-drag-handle {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 0 2px rgba(155, 89, 182, 0.65), 0 0 0 5px rgba(155, 89, 182, 0.30), 0 0 14px 4px rgba(155, 89, 182, 0.35);
+}
+
+#class-hud-panel[data-shield-stacks="3"] #class-hud-drag-handle,
+#class-hud-panel[data-shield-stacks="4"] #class-hud-drag-handle,
+#class-hud-panel[data-shield-stacks="5"] #class-hud-drag-handle {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 0 2px rgba(155, 89, 182, 0.75), 0 0 0 5px rgba(155, 89, 182, 0.40), 0 0 0 9px rgba(155, 89, 182, 0.18), 0 0 20px 6px rgba(155, 89, 182, 0.45);
+    animation: shield-pulse 2s ease-in-out infinite;
+}
+
+@keyframes shield-pulse {
+    0%, 100% {
+        filter: brightness(1);
+    }
+
+    50% {
+        filter: brightness(1.18);
+    }
+}
+
+/* Shield pip dots */
+.chud-shield-pips {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-left: 2px;
+}
+
+.chud-shield-pip {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #9b59b6;
+    box-shadow: 0 0 4px 1px rgba(155, 89, 182, 0.7);
+    animation: pip-glow 1.8s ease-in-out infinite;
+}
+
+    .chud-shield-pip:nth-child(2) {
+        animation-delay: 0.3s;
+    }
+
+    .chud-shield-pip:nth-child(3) {
+        animation-delay: 0.6s;
+    }
+
+@keyframes pip-glow {
+    0%, 100% {
+        opacity: 0.7;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.25);
+        box-shadow: 0 0 6px 2px rgba(155,89,182,0.9);
+    }
+}
+
+
+
+
+/* ── Ascendency selection: 2-card layout ── */
+.cs-ascendency-cards {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 680px;
+    margin: 0 auto;
+    align-items: center;
+}
+
+@media (max-width: 600px) {
+    .cs-ascendency-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Ascendency card gets a gold accent border on top */
+.cs-ascendency-card {
+    border-top: 3px solid #f1c40f;
+}
+
+/* Archetype label badge */
+.cs-archetype-tag {
+    font-family: var(--PX);
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #f1c40f;
+    background: rgba(241, 196, 15, 0.1);
+    border: 1px solid rgba(241, 196, 15, 0.35);
+    padding: 2px 8px;
+    text-align: center;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* Ascendency upgrade cards: 2-column grid */
+.cs-ascendency-upgrade-card {
+    border-left-color: #f1c40f;
+}
+
+    .cs-ascendency-upgrade-card:not(.maxed):hover {
+        background: rgba(241, 196, 15, 0.08);
+        box-shadow: 0 0 18px -4px #f1c40f;
+    }
+
+        .cs-ascendency-upgrade-card:not(.maxed):hover .cs-upgrade-cta {
+            background: #f1c40f;
+            color: #000;
+            border-color: #f1c40f;
+        }
+
+/* Separator icon between base and ascendency HUD buttons */
+.chud-asc-sep {
+    font-size: 13px;
+    opacity: 0.6;
+    line-height: 1;
+    padding: 0 2px;
+    cursor: default;
+}
+
+/* Ascendency skill buttons get a gold border instead of blue */
+.chud-asc-btn {
+    border-color: #f1c40f !important;
+}
+
+    .chud-asc-btn:hover:not(.on-cd) {
+        background: rgba(241, 196, 15, 0.15) !important;
+    }
+
+    .chud-asc-btn .chud-btn-idx {
+        color: #f1c40f;
+    }
+
+
+
+ .sig-thresh-protected {
+    // outline: 1px solid rgba(230, 126, 34, 0.55) !important;
+    // background-color: rgba(230, 126, 34, 0.07) !important;
+    //
+}
+
+
+/* Residual Totem marker */
+.residual-totem {
+    outline: 2px solid #bb8fce !important;
+    outline-offset: -2px;
+    box-shadow: 0 0 8px #8e44ad, inset 0 0 6px rgba(142, 68, 173, 0.4) !important;
+    animation: totemPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes totemPulse {
+    0%, 100% {
+        box-shadow: 0 0 8px #8e44ad, inset 0 0 6px rgba(142,68,173,0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 16px #bb8fce, inset 0 0 10px rgba(187,143,206,0.5);
+    }
+}
+
+/* Degrees of Freedom pick targets */
+.dof-pick-target {
+    outline: 2px dashed #bb8fce !important;
+    outline-offset: -2px;
+    cursor: crosshair !important;
+}
+
+.dof-pick-selected {
+    outline: 2px solid #27ae60 !important;
+    outline-offset: -2px;
+    box-shadow: 0 0 8px #27ae60 !important;
+}
+
+
+
+
+/* ── RESIDUAL TOTEM ──────────────────────────────────────────────── */
+.residual-totem {
+    outline: 2px solid #bb8fce !important;
+    outline-offset: -2px;
+    box-shadow: 0 0 10px #8e44ad, inset 0 0 6px rgba(142,68,173,0.4) !important;
+    animation: totemPulse 1.5s ease-in-out infinite;
+    position: relative;
+}
+
+@keyframes totemPulse {
+    0%, 100% {
+        box-shadow: 0 0 8px #8e44ad, inset 0 0 6px rgba(142,68,173,0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 18px #cc99ee, inset 0 0 10px rgba(187,143,206,0.5);
+    }
+}
+
+.residual-totem-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.55em;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 10;
+    filter: drop-shadow(0 0 3px #8e44ad);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.residual-totem-badge {
+    display: block;
+    font-family: var(--PX, monospace);
+    font-size: 0.5em;
+    color: #bb8fce;
+    background: rgba(10,10,20,0.85);
+    border: 1px solid #8e44ad;
+    border-radius: 3px;
+    padding: 0 2px;
+    margin-top: 1px;
+    line-height: 1.4;
+    min-width: 10px;
+    text-align: center;
+}
+
+/* ── DEGREES OF FREEDOM ──────────────────────────────────────────── */
+.dof-pick-target {
+    outline: 2px dashed #bb8fce !important;
+    outline-offset: -2px;
+    cursor: crosshair !important;
+    position: relative;
+}
+
+.dof-pick-selected {
+    outline: 2px solid #27ae60 !important;
+    outline-offset: -2px;
+    box-shadow: 0 0 8px #27ae60 !important;
+    cursor: crosshair !important;
+}
+
+/* Time recovery badge shown on each mistake cell */
+.dof-penalty-badge {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    font-family: var(--PX, monospace);
+    font-size: 10px; /* 0.28em; */
+    color: #f1c40f;
+    background: rgba(10,10,20,0.88);
+    border: 1px solid #8e44ad;
+    border-radius: 3px;
+    padding: 0 2px;
+    pointer-events: none;
+    z-index: 12;
+    line-height: 1.4;
+}
+
+/* Reverted mistake cell — faint purple ghost, not blank, not wrong */
+.dof-reverted {
+    background: rgba(142, 68, 173, 0.12) !important;
+    outline: 1px solid rgba(187, 143, 206, 0.35) !important;
+    outline-offset: -1px;
+}
+
+    .dof-reverted::after {
+        content: '↩';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 0.45em;
+        color: rgba(187, 143, 206, 0.55);
+        pointer-events: none;
+    }
+
+
+
+
+
+
+/* ---------------------------------------------------
+   ACTUARY: SIGNIFICANCE THRESHOLD SHIELD
+--------------------------------------------------- */
+
+/* The base background tint for protected cells */
+.sig-thresh-protected {
+    background-color: rgba(230, 126, 34, 0.15) !important;
+    position: relative !important;
+    animation: shieldPulse 2s infinite ease-in-out;
+}
+
+    /* Creates the "big border" effect using an inner shadow. 
+   Because the shadow is on the inside of every cell, 
+   they visually chain together to look like a thick rail.
+*/
+    .sig-thresh-protected::after {
+        content: '🛡️'; /* Inject the emoji here */
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        box-shadow: inset 0 0 8px rgba(230, 126, 34, 0.8);
+        pointer-events: none; /* Still lets you click through to the cell */
+        z-index: 5;
+        /* Center the emoji perfectly inside the cell */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* Style the emoji */
+        font-size: clamp(10px, 2vmin, 40px); /* clamp(Minimum Size, Preferred Responsive Size, Maximum Size) */
+        opacity: 0.6; /* Slightly transparent so it isn't too distracting */
+    }
+
+/* The glowing animation loop */
+@keyframes shieldPulse {
+    0% {
+        background-color: rgba(230, 126, 34, 0.10);
+    }
+
+    50% {
+        background-color: rgba(230, 126, 34, 0.25);
+    }
+
+    100% {
+        background-color: rgba(230, 126, 34, 0.10);
+    }
+}
+
+
+
+
+
+
+/* ---------------------------------------------------
+   ACTUARY: HOLY EXPLOSION V2 (REGRESSION TO PRIOR)
+--------------------------------------------------- */
+
+.holy-explosion {
+    /* The core cell flash */
+    animation: explodeCore 3s ease-out forwards !important;
+    z-index: 20 !important;
+    position: relative;
+}
+
+    /* 1. THE SHOCKWAVE RING */
+    .holy-explosion::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 100%;
+        border: 3px solid #ffffff;
+        border-radius: 50%; /* Makes it a circle */
+        pointer-events: none;
+        /* Centers it and applies the expanding animation */
+        transform: translate(-50%, -50%) scale(0.1);
+        animation: explodeShockwave 0.6s ease-out forwards;
+    }
+
+    /* 2. THE FLYING SPARKS (Using multiple box-shadows on a tiny invisible dot) */
+    .holy-explosion::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 4px;
+        height: 4px;
+        background: transparent;
+        border-radius: 50%;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        animation: explodeSparks 0.8s ease-out forwards;
+    }
+
+/* --- ANIMATION KEYFRAMES --- */
+
+@keyframes explodeCore {
+    0% {
+        background-color: #ffffff;
+        transform: scale(1);
+        box-shadow: 0 0 20px 10px #ffffff;
+    }
+
+    15% {
+        background-color: #ffd700;
+        transform: scale(1.2);
+        box-shadow: 0 0 30px 15px rgba(255, 215, 0, 0.8);
+    }
+
+    100% {
+        background-color: transparent;
+        transform: scale(1);
+        box-shadow: 0 0 0 0 transparent;
+    }
+}
+
+@keyframes explodeShockwave {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 1;
+        border-color: #ffffff;
+        border-width: 4px;
+    }
+
+    50% {
+        border-color: #ffd700;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(3);
+        opacity: 0;
+        border-width: 0px;
+    }
+}
+
+@keyframes explodeSparks {
+    0% {
+        /* All 8 sparks start in the dead center */
+        box-shadow: 0 0 0 #ffffff, 0 0 0 #ffffff, 0 0 0 #ffffff, 0 0 0 #ffffff, 0 0 0 #ffffff, 0 0 0 #ffffff, 0 0 0 #ffffff, 0 0 0 #ffffff;
+    }
+
+    30% {
+        /* Sparks shoot out in 8 directions (up, down, left, right, and diagonals) */
+        box-shadow: 0 -25px 2px #ffd700, 25px 0 2px #ffd700, 0 25px 2px #ffd700, -25px 0 2px #ffd700, 20px -20px 2px #ffffff, 20px 20px 2px #ffffff, -20px 20px 2px #ffffff, -20px -20px 2px #ffffff;
+    }
+
+    100% {
+        /* Sparks travel further and fade to transparent */
+        box-shadow: 0 -45px 0 transparent, 45px 0 0 transparent, 0 45px 0 transparent, -45px 0 0 transparent, 35px -35px 0 transparent, 35px 35px 0 transparent, -35px 35px 0 transparent, -35px -35px 0 transparent;
+    }
+}
+
+
+
+.rollback-flash {
+    animation: rollback-wave 0.5s ease-out forwards;
+}
+
+@keyframes rollback-wave {
+    0% {
+        filter: brightness(2.5) saturate(0.3) hue-rotate(180deg);
+    }
+
+    60% {
+        filter: brightness(1.4) saturate(1.2) hue-rotate(30deg);
+    }
+
+    100% {
+        filter: brightness(1) saturate(1) hue-rotate(0deg);
+    }
+}
+
+.transition-cascade-flash {
+    animation: cascade-pop 0.6s ease-out forwards;
+}
+
+@keyframes cascade-pop {
+    0% {
+        filter: brightness(2) saturate(0.5) hue-rotate(200deg);
+        transform: scale(1.15);
+    }
+
+    60% {
+        filter: brightness(1.3) saturate(1.5);
+        transform: scale(1.05);
+    }
+
+    100% {
+        filter: brightness(1) saturate(1);
+        transform: scale(1);
+    }
+}
+
+
+
