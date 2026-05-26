@@ -133,6 +133,11 @@ function toggleActiveAbility(slot) {
 //   not on a subsequent cell click. Currently: Black Swan (active4 for Outlier).
 
 function _isInstantAbility(slot) {
+
+    if (STATE.playerClass === 'probabilist' && slot === 'active2') return true;   // Field Scan
+    if (STATE.playerClass === 'statistician' && slot === 'active1') return true;  // Data Strike
+    if (STATE.playerClass === 'mathmagician' && slot === 'active2') return true;  // Freeze
+
     if (STATE.playerAscendency === 'actuary') {
         if (slot === 'active3') return true; // Regression to Prior — instant
         if (slot === 'active4') return true; // Significance Threshold — instant (shows picker immediately)
@@ -148,6 +153,46 @@ function _isInstantAbility(slot) {
 
 
 // _fireInstantAbility — executes the ability immediately and starts its cooldown.
+
+function _fireInstantAbility(slot) {
+    if (slot === 'active1' || slot === 'active2') {
+        // Handle base class skills (like Field Scan)
+        const def = CLASS_DEFS[STATE.playerClass];
+        if (!def) return;
+
+        const actData = _getActiveAbilityData(def, slot);
+        const effect = actData.effect;
+
+        // Dispatch the base ability. (0, 0 coords are ignored by _executeFieldScan anyway)
+        _dispatchActiveAbility(slot, STATE.playerClass, 0, 0, effect);
+
+        const cdSeconds = getEffectiveCooldown(slot, def[slot].cooldownSeconds);
+        startSlotCooldown(slot, cdSeconds);
+    } else {
+        // Handle ascendency skills
+        const asc = STATE.playerAscendency ? ASCENDENCY_DEFS[STATE.playerAscendency] : null;
+        if (!asc) return;
+
+        const ascSlot = slot === 'active3' ? 'active1' : 'active2';
+        const skillLv = ascSlot === 'active1'
+            ? (STATE.ascendencySkill1Level || 1)
+            : (STATE.ascendencySkill2Level || 1);
+        const actData = asc[ascSlot].levels[skillLv - 1];
+        const effect = actData.effect;
+
+        _dispatchAscendencyAbility(slot, STATE.playerAscendency, 0, 0, effect);
+
+        const cdSeconds = getEffectiveCooldown(slot, asc[ascSlot].cooldownSeconds);
+        startSlotCooldown(slot, cdSeconds);
+    }
+
+    buildClassHUD();
+}
+
+
+
+/*
+
 function _fireInstantAbility(slot) {
     const asc = STATE.playerAscendency ? ASCENDENCY_DEFS[STATE.playerAscendency] : null;
     if (!asc) return;
@@ -166,6 +211,9 @@ function _fireInstantAbility(slot) {
 
     buildClassHUD();
 }
+
+*/
+
 
 // _showAbilityArmToast — shows the cursor hint toast for the given ability slot.
 // NEW:
