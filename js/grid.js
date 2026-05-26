@@ -47,7 +47,6 @@ function clues(line) {
 //------------------------------------------------------------------------
 
 
-
 function buildGrid() {
     resetZoom();
 
@@ -75,42 +74,49 @@ function buildGrid() {
     const mcd = Math.max(...CC.map(c => c.length));
     const mrw = Math.max(...RC.map(r => r.length));
 
-    let h = `<colgroup>` +
-        Array(mrw).fill(`<col style="width:${fs + 7}px">`).join('') +
-        Array(cols).fill(`<col style="width:${csz}px">`).join('') +
-        `</colgroup><tbody>`;
+    const isAdjMatrix = ptHasSkill('adjacency_matrix');
 
-    // Column clue header rows
-    for (let d = 0; d < mcd; d++) {
-        h += `<tr>${Array(mrw).fill(`<td class="corner"></td>`).join('')}`;
-        for (let col = 0; col < cols; col++) {
-            const cl = CC[col];
-            const off = mcd - cl.length;
-            const num = d >= off ? cl[d - off] : null;
-            const isTop = (d === 0);
-            h += `<td class="cch cch-${col}" ${isTop ? `id="cchtop-${col}"` : ''} style="height:${fs + 3}px">`;
-            if (num !== null) {
-                h += `<div class="ccinner"><span id="cn-${col}-${d}" style="font-size:${fs}px">${num}</span></div>`;
+    // In adjacency matrix mode we suppress all row/col clue columns and header rows
+    let h = `<colgroup>`;
+    if (!isAdjMatrix) {
+        h += Array(mrw).fill(`<col style="width:${fs + 7}px">`).join('');
+    }
+    h += Array(cols).fill(`<col style="width:${csz}px">`).join('');
+    h += `</colgroup><tbody>`;
+
+    // Column clue header rows — hidden in adjacency matrix mode
+    if (!isAdjMatrix) {
+        for (let d = 0; d < mcd; d++) {
+            h += `<tr>${Array(mrw).fill(`<td class="corner"></td>`).join('')}`;
+            for (let col = 0; col < cols; col++) {
+                const cl = CC[col];
+                const off = mcd - cl.length;
+                const num = d >= off ? cl[d - off] : null;
+                const isTop = (d === 0);
+                h += `<td class="cch cch-${col}" ${isTop ? `id="cchtop-${col}"` : ''} style="height:${fs + 3}px">`;
+                if (num !== null) {
+                    h += `<div class="ccinner"><span id="cn-${col}-${d}" style="font-size:${fs}px">${num}</span></div>`;
+                }
+                h += `</td>`;
             }
-            h += `</td>`;
+            h += `</tr>`;
         }
-        h += `</tr>`;
     }
 
     // Puzzle rows
     for (let row = 0; row < rows; row++) {
         h += `<tr>`;
 
-        const rc = RC[row];
-        const pad = mrw - rc.length;
-
-        for (let i = 0; i < pad; i++) h += `<td class="corner" style="position:sticky;left:${i * (fs + 7)}px;background:var(--bg);z-index:11"></td>`;
-
-        for (let i = 0; i < rc.length; i++) {
-            // Fixed: unique id per cell (rct-{row}-{i}) instead of duplicate id="rct-{row}"
-            h += `<td class="rct rct-${row}" id="rct-${row}-${i}" style="font-size:${fs}px;position:sticky;left:${(pad + i) * (fs + 7)}px;background:var(--bg);z-index:10">` +
-                `<div class="rcinner"><span id="rn-${row}-${i}" style="font-size:${fs}px">${rc[i]}</span></div>` +
-                `</td>`;
+        // Row clue sticky cells — hidden in adjacency matrix mode
+        if (!isAdjMatrix) {
+            const rc = RC[row];
+            const pad = mrw - rc.length;
+            for (let i = 0; i < pad; i++) h += `<td class="corner" style="position:sticky;left:${i * (fs + 7)}px;background:var(--bg);z-index:11"></td>`;
+            for (let i = 0; i < rc.length; i++) {
+                h += `<td class="rct rct-${row}" id="rct-${row}-${i}" style="font-size:${fs}px;position:sticky;left:${(pad + i) * (fs + 7)}px;background:var(--bg);z-index:10">` +
+                    `<div class="rcinner"><span id="rn-${row}-${i}" style="font-size:${fs}px">${rc[i]}</span></div>` +
+                    `</td>`;
+            }
         }
 
         for (let col = 0; col < cols; col++) {
@@ -319,6 +325,11 @@ function renderCell(row, col) {
     // Clear all state classes before re-applying the correct one
     el.classList.remove('filled', 'marked', 'wrong-mark', 'revealed', 'questioned', 'cell-lucky');
 
+    // DoF reverted style: re-apply if this cell is in the reverted set and still empty/unfilled
+    const _dofWasReverted = window._dofRevertedCells && window._dofRevertedCells.has(`${row}-${col}`);
+    // (will be re-added below at the end of renderCell if still eligible)
+    el.classList.remove('dof-reverted');
+
     // Priority 1: wrong fill (red ✕) — overrides everything else
     if (wrongGrid[row][col]) {
         el.classList.add('wrong-mark');
@@ -340,7 +351,34 @@ function renderCell(row, col) {
     if (v === 0 && luckyTiles && luckyTiles.has(`${row}-${col}`)) {
         el.classList.add('cell-lucky');
     }
+
+    // adjacency_matrix (302): refresh this cell's overlay AND all neighbours,
+    // because filling one cell changes the count shown on surrounding cells.
+    if (ptHasSkill('adjacency_matrix')) {
+        _adjacencyMatrixUpdateOverlay(row, col);
+        if (cur) {
+            const rows = cur.grid.length, cols = cur.grid[0].length;
+            for (let dr = -1; dr <= 1; dr++)
+                for (let dc = -1; dc <= 1; dc++) {
+                    if (dr === 0 && dc === 0) continue;
+                    const nr = row + dr, nc = col + dc;
+                    if (nr >= 0 && nr < rows && nc >= 0 && nc < cols)
+                        _adjacencyMatrixUpdateOverlay(nr, nc);
+                }
+        }
+    }
+
+    // Re-apply DoF reverted ghost if this cell is tracked and still empty/uncorrected
+    if (_dofWasReverted && userGrid[row][col] === 0 && !wrongGrid[row][col] && !revealedGrid[row][col]) {
+        el.classList.add('dof-reverted');
+    } else if (_dofWasReverted) {
+        // Cell was filled or corrected — remove from tracking
+        window._dofRevertedCells.delete(`${row}-${col}`);
+    }
+
+
 }
+
 
 
 //------------------------------------------------------------------------
@@ -381,3 +419,64 @@ function buildReveal() {
 }
 
 
+
+
+//------------------------------------------------------------------------
+// adjacency_matrix (302): Minesweeper-style neighbour count overlays.
+// Each empty cell shows how many of its 8 surrounding cells are solution
+// cells (sol === 1) that have not yet been correctly filled by the player.
+// Row/column clue headers are hidden when this node is active (see buildGrid).
+//------------------------------------------------------------------------
+
+// Returns the count of unfilled solution-cells surrounding (row, col).
+// "Unfilled solution cell" = sol[r][c] === 1 AND not yet player-filled/revealed.
+function _adjacencyMatrixCount(row, col) {
+    if (!cur) return 0;
+    const sol = cur.grid;
+    const rows = sol.length, cols = sol[0].length;
+    let count = 0;
+    for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+            if (dr === 0 && dc === 0) continue;
+            const r = row + dr, c = col + dc;
+            if (r < 0 || r >= rows || c < 0 || c >= cols) continue;
+            if (sol[r][c] === 1 && userGrid[r][c] !== 1 && !revealedGrid[r][c]) count++;
+        }
+    }
+    return count;
+}
+
+// Writes (or removes) the adjacency count overlay span inside a single cell.
+// Shows on unfilled cells (userGrid !== 1, not revealed, not wrong).
+// Count 0 is shown as blank to reduce noise.
+function _adjacencyMatrixUpdateOverlay(row, col) {
+    const el = document.getElementById(`g-${row}-${col}`);
+    if (!el) return;
+
+    // Remove any existing overlay first
+    const old = el.querySelector('.adj-count');
+    if (old) old.remove();
+
+    // Only show the overlay on cells the player hasn't filled/flagged yet
+    const isFilled = userGrid[row][col] === 1 || revealedGrid[row][col];
+    const isWrong = wrongGrid[row][col];
+    if (isFilled || isWrong) return;
+
+    const count = _adjacencyMatrixCount(row, col);
+    if (count === 0) return; // blank for 0, like Minesweeper
+
+    const span = document.createElement('span');
+    span.className = `adj-count adj-count-${count}`;
+    span.textContent = count;
+    el.appendChild(span);
+}
+
+// Refreshes adjacency overlays for all cells on the board.
+// Called at level start (after grid DOM is ready) and after bulk reveals.
+function _adjacencyMatrixRefreshAll() {
+    if (!ptHasSkill('adjacency_matrix') || !cur) return;
+    const rows = cur.grid.length, cols = cur.grid[0].length;
+    for (let r = 0; r < rows; r++)
+        for (let c = 0; c < cols; c++)
+            _adjacencyMatrixUpdateOverlay(r, c);
+}

@@ -16,11 +16,12 @@
 function renderLSTopBar() {
     const modEl = document.getElementById('ls-mods');
     const active = Object.keys(curMods).filter(m => curMods[m]);
-    const modMap = { timetrial: 'TT', hardcore: 'HC', ironman: 'IM' };
+    const modMap = { timetrial: 'TT', hardcore: 'HC', ironman: 'IM', classless: 'CL', treeless: 'TR' };
+    const modClassMap = { timetrial: 'tt', hardcore: 'hc', ironman: 'im', classless: 'cl', treeless: 'tl' };
 
     modEl.innerHTML =
         active.map(m =>
-            `<span class="mod-tag ${m === 'timetrial' ? 'tt' : m === 'hardcore' ? 'hc' : 'im'}">
+            `<span class="mod-tag ${modClassMap[m] || 'diff'}">
                 ${modMap[m] || m.toUpperCase()}
             </span>`
         ).join(' ') +
@@ -41,17 +42,34 @@ function renderLSScoreRow() {
 }
 
 // Renders the player's current class (or a prompt to pick one) in #ls-class-status.
+// NEW:
 function renderLSClassStatus() {
     const classEl = document.getElementById('ls-class-status');
     if (!classEl) return;
 
     if (STATE.playerClass) {
         const def = CLASS_DEFS[STATE.playerClass];
-        classEl.textContent = def.icon + ' ' + (LANG === 'de' ? def.nameDE : def.nameEn);
-        classEl.style.borderColor = def.color;
-        classEl.style.color = def.colorLight;
-        classEl.style.border = '1px solid ' + def.color;
+        const asc = STATE.playerAscendency ? ASCENDENCY_DEFS[STATE.playerAscendency] : null;
+
+        // If an ascendency is active, show "BaseIcon BaseName · AscIcon AscName"
+        // and use the ascendency's color scheme
+        if (asc) {
+            const baseName = LANG === 'de' ? def.nameDE : def.nameEn;
+            const ascName = LANG === 'de' ? asc.nameDE : asc.nameEn;
+            classEl.textContent = `${def.icon} ${baseName} · ${asc.icon} ${ascName}`;
+            classEl.style.border = '1px solid ' + asc.color;
+            classEl.style.color = asc.colorLight;
+        } else {
+            classEl.textContent = def.icon + ' ' + (LANG === 'de' ? def.nameDE : def.nameEn);
+            classEl.style.border = '1px solid ' + def.color;
+            classEl.style.color = def.colorLight;
+        }
+
         classEl.style.padding = '3px 8px';
+        classEl.style.cursor = 'help';
+        classEl.onmouseenter = (e) => showLsClassTooltip(e);
+        classEl.onmousemove = (e) => moveLsClassTooltip(e);
+        classEl.onmouseleave = () => hideLsClassTooltip();
     } else {
         classEl.textContent = LANG === 'de'
             ? '⚗️ Absolviere ein Aufstiegs-Level um eine Klasse zu wählen'
@@ -60,6 +78,10 @@ function renderLSClassStatus() {
         classEl.style.padding = '';
         classEl.style.color = '';
         classEl.style.opacity = '1';
+        classEl.style.cursor = '';
+        classEl.onmouseenter = null;
+        classEl.onmousemove = null;
+        classEl.onmouseleave = null;
     }
 }
 
@@ -256,13 +278,14 @@ function buildBonusHtml(p, gi, isUnlocked) {
 function buildModTagsHtml(hs) {
     if (!hs || !hs.mods) return '';
 
-    const modMap = { timetrial: 'TT', hardcore: 'HC', ironman: 'IM' };
+    const modMap = { timetrial: 'TT', hardcore: 'HC', ironman: 'IM', classless: 'CL', treeless: 'TR' };
+    const modClassMap = { timetrial: 'tt', hardcore: 'hc', ironman: 'im', classless: 'cl', treeless: 'tl' };
     const ms = Object.keys(hs.mods).filter(m => hs.mods[m]);
     if (!ms.length) return '';
 
     return '<div class="lc-mods">' +
         ms.map(m =>
-            `<span class="lc-mod-tag ${m === 'timetrial' ? 'tt' : m === 'hardcore' ? 'hc' : 'im'}">
+            `<span class="lc-mod-tag ${modClassMap[m] || 'diff'}">
                 ${modMap[m] || m.slice(0, 2).toUpperCase()}
             </span>`
         ).join('') +
@@ -348,7 +371,7 @@ function getTooltipHint(gi) {
     if (!hs) return t('ls_no_score');
 
     const diffs = ['easy', 'normal', 'hard'];
-    const allMods = ['timetrial', 'hardcore', 'ironman'];
+    const allMods = ['timetrial', 'hardcore', 'ironman', 'classless', 'treeless'];
 
     const currentDiffIdx = diffs.indexOf(hs.diff || 'easy');
     const usedMods = hs.mods ? Object.keys(hs.mods).filter(m => hs.mods[m]) : [];
@@ -365,7 +388,7 @@ function getTooltipHint(gi) {
     // Suggest unused modifiers
     if (unusedMods.length) {
         const modNames = unusedMods.map(m => {
-            const keyMap = { timetrial: 'mod_tt', hardcore: 'mod_hc', ironman: 'mod_im' };
+            const keyMap = { timetrial: 'mod_tt', hardcore: 'mod_hc', ironman: 'mod_im', classless: 'mod_cl', treeless: 'mod_tl' };
             return t(keyMap[m]);
         });
         const key = modNames.length > 1 ? 'ls_tip_mods_plural' : 'ls_tip_mods';
@@ -417,7 +440,9 @@ function isMaxCleared(gi) {
         hs.mods &&
         hs.mods.timetrial &&
         hs.mods.hardcore &&
-        hs.mods.ironman;
+        hs.mods.ironman &&
+        hs.mods.classless &&
+        hs.mods.treeless;
 }
 
 

@@ -153,8 +153,7 @@ const W1 = [
 
 
 
-    {
-        // 5x30
+    {   //5x30
         hint: "Disjoint",
         hintDE: "Disjunkt",
         reveal: "Two sets are disjoint if their intersection has no elements",
@@ -165,7 +164,7 @@ const W1 = [
         bonusType: "noitem",
         bonusParam: 0,
         grid: G(
-            [1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1], [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 1], [1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1],
+            [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1], [1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 1], [1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1],
             [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1], [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1]
         )
     },
@@ -1281,6 +1280,113 @@ const W5 = [
 
 const W6 = [
 
+    {   //10x10
+        hint: "Identity Matrix",
+        hintDE: "Einheitsmatrix",
+        reveal: "This is the identity matrix.",
+        revealDE: "Dies ist die Einheitsmatrix.",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [1, 1, 0, 1, 0, 0, 0, 0, 1, 1], [1, 0, 1, 1, 0, 1, 1, 1, 0, 1], [1, 0, 0, 1, 0, 1, 0, 1, 0, 1],
+            [1, 0, 0, 1, 0, 1, 1, 1, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+            [1, 0, 1, 1, 1, 0, 1, 1, 0, 1], [1, 0, 1, 0, 1, 0, 0, 1, 0, 1], [1, 0, 1, 1, 1, 0, 0, 1, 0, 1],
+            [1, 1, 0, 0, 0, 0, 0, 0, 1, 1]
+        )
+    },
+
+    {   // 5x30
+        hint: "Conditional Expected Value",
+        hintDE: "Bedingter Erwartungswert",
+        reveal: "This is the notation for the conditional expected value.",
+        revealDE: "Dies ist die Notation für den bedingten Erwartungswert.",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1], [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1], [1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1],
+            [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1], [1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1]
+        )
+    },
+
+    {   //5x35
+        hint: "Expectation Vector",
+        hintDE: "Erwartungswertvektor",
+        reveal: "A 2-dimensional expectation vector.",
+        revealDE: "Ein 2-dimensionaler Erwartungswertvektor",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1], [1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1], [1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1],
+            [1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1], [1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1]
+        )
+    },
+
+    {   // 5x40
+        hint: "Variance of Dependent Sum",
+        hintDE: "Varianz einer abhängigen Summe",
+        reveal: "Var(X+Y) = Var(X) + Var(Y) + 2 Cov(X,Y) if X,Y are dependent",
+        revealDE: "Var(X+Y) = Var(X) + Var(Y) + 2 Cov(X,Y) wenn X,Y abhängig sind",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0], [0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0], [0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0], [0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0]
+        )
+    },
+
+
+    {   //15x20
+        hint: "Conditional Density",
+        hintDE: "Bedingte Dichte",
+        reveal: "This is the conditional density for f(y)>0.",
+        revealDE: "Dies ist die bedingte Dichte für f(y)>0",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], [0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0],
+            [0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0], [0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0], [0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0], [0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0], [0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0], [0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        )
+    },
+
+    {   //15x20
+        hint: "Criterium for Independence",
+        hintDE: "Kriterium für Unabhängigkeit",
+        reveal: "The common distribution function F_{X,Y}(x,y) is just the product of F_X(x) and F_Y(y) if X and Y are independent.",
+        revealDE: "Die gemeinsame Verteilungsfunktion F_{X,Y}(x,y) ist das Produkt von F_X(x) und F_Y(y) wenn X und Y unabhängig sind.",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], [0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0], [0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0], [0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0], [0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0],
+            [0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0], [0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0], [0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0]
+        )
+    },
+
+
+
 ];
 
 //------------------------------------------------------------------------
@@ -1290,6 +1396,24 @@ const W6 = [
 
 const W7 = [
 
+    /*
+    {
+        hint: "dev",
+        hintDE: "your hint here (DE)",
+        reveal: "your reveal here",
+        revealDE: "your reveal here (DE)",
+        timer: 300,
+        bonusHint: "Complete level",
+        bonusHintDE: "Complete level (DE)",
+        bonusType: "nomiss",
+        bonusParam: 0,
+        grid: G(
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0], [1, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0]
+        )
+    },
+
+    */
 ];
 
 //------------------------------------------------------------------------
@@ -1299,6 +1423,24 @@ const W7 = [
 
 const W8 = [
 
+    /*
+    {
+        hint: "dev",
+        hintDE: "your hint here (DE)",
+        reveal: "your reveal here",
+        revealDE: "your reveal here (DE)",
+        timer: 300,
+        bonusHint: "Complete level",
+        bonusHintDE: "Complete level (DE)",
+        bonusType: "nomiss",
+        bonusParam: 0,
+        grid: G(
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0], [1, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0]
+        )
+    },
+
+    */
 ];
 
 //------------------------------------------------------------------------
@@ -1308,6 +1450,24 @@ const W8 = [
 
 const W9 = [
 
+    /*
+    {
+        hint: "dev",
+        hintDE: "your hint here (DE)",
+        reveal: "your reveal here",
+        revealDE: "your reveal here (DE)",
+        timer: 300,
+        bonusHint: "Complete level",
+        bonusHintDE: "Complete level (DE)",
+        bonusType: "nomiss",
+        bonusParam: 0,
+        grid: G(
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0], [1, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0]
+        )
+    },
+
+    */
 ];
 
 
@@ -1318,6 +1478,24 @@ const W9 = [
 
 const W10 = [
 
+    /*
+    {
+        hint: "dev",
+        hintDE: "your hint here (DE)",
+        reveal: "your reveal here",
+        revealDE: "your reveal here (DE)",
+        timer: 300,
+        bonusHint: "Complete level",
+        bonusHintDE: "Complete level (DE)",
+        bonusType: "nomiss",
+        bonusParam: 0,
+        grid: G(
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0], [1, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0]
+        )
+    },
+
+    */
 ];
 
 
@@ -1329,6 +1507,25 @@ const W10 = [
 
 const W11 = [
 
+    /*
+    {
+
+        hint: "dev",
+        hintDE: "your hint here (DE)",
+        reveal: "your reveal here",
+        revealDE: "your reveal here (DE)",
+        timer: 300,
+        bonusHint: "Complete level",
+        bonusHintDE: "Complete level (DE)",
+        bonusType: "nomiss",
+        bonusParam: 0,
+        grid: G(
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0], [1, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0]
+        )
+    },
+
+    */
 ];
 
 
@@ -1339,6 +1536,24 @@ const W11 = [
 
 const W12 = [
 
+    /*
+    {
+        hint: "dev",
+        hintDE: "your hint here (DE)",
+        reveal: "your reveal here",
+        revealDE: "your reveal here (DE)",
+        timer: 300,
+        bonusHint: "Complete level",
+        bonusHintDE: "Complete level (DE)",
+        bonusType: "nomiss",
+        bonusParam: 0,
+        grid: G(
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0], [1, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0]
+        )
+    },
+
+    */
 ];
 
 
@@ -1350,6 +1565,25 @@ const W12 = [
 
 const W13 = [
 
+    /*
+
+    {
+        hint: "dev",
+        hintDE: "your hint here (DE)",
+        reveal: "your reveal here",
+        revealDE: "your reveal here (DE)",
+        timer: 300,
+        bonusHint: "Complete level",
+        bonusHintDE: "Complete level (DE)",
+        bonusType: "nomiss",
+        bonusParam: 0,
+        grid: G(
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0], [1, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0]
+        )
+    },
+
+    */
 ];
 
 
@@ -1370,8 +1604,8 @@ const WORLDS = [
     { label: 'WORLD 3', labelDE: 'WELT 3', data: W3 },
     { label: 'WORLD 4', labelDE: 'WELT 4', data: W4 },
     { label: 'WORLD 5', labelDE: 'WELT 5', data: W5 },
-    { label: 'World 6', labelDE: 'Welt 6', data: W6 },
-    { label: 'World 7', labelDE: 'Welt 7', data: W7 },
+    { label: 'World 6 - Work in Progress', labelDE: 'Welt 6 - Work in Progress', data: W6 },
+    { label: 'World 7 - Will be added soon', labelDE: 'Welt 7 - Wird bald hinzugefügt', data: W7 },
     { label: 'World 8', labelDE: 'Welt 8', data: W8 },
     { label: 'World 9', labelDE: 'Welt 9', data: W9 },
     { label: 'World 10', labelDE: 'Welt 10', data: W10 },

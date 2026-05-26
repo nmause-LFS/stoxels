@@ -153,11 +153,31 @@ function handleSpecialRewards({ gi, isFirstClear, isAscensionLevel, irz }) {
 
     // Ascension: Codex of Completion on first clear of the last world level
     if (isAscensionLevel && isFirstClear && !curMods.ironman) {
+        const defId = 'artifactComplete';
         const codexDef = ITEM_DEFS['artifactComplete'];
+
+        /*
+        
+        // Testing purpose code:
+        for (let i = 0; i < 100; i++) {
+            STATE.inventory.push({
+                defId: 'artifactComplete',
+                uid: `item_${Date.now()}_${i}_${Math.random().toString(36).slice(2)}`
+            });
+        }
+
+        */
+
+        // Non - testing code code:
+
         STATE.inventory.push({ defId: 'artifactComplete', uid: `item_${Date.now()}_${Math.random().toString(36).slice(2)}` });
+
+
+
+
         save();
         const rc = rarityColors(codexDef.rarity);
-        irz.innerHTML = `<div class="item-reward" style="border-color:${rc.border};color:${rc.color};">
+        irz.innerHTML = `<div class="item-reward" data-reward-defid="${defId}" style="border-color:${rc.border};color:${rc.color};cursor:default;">
             🌟 ${LANG === 'de' ? 'Aufstiegsbonus' : 'Ascension Reward'}: ${codexDef.icon} <strong>${itemName(codexDef)}</strong>
         </div>`;
     }
@@ -202,7 +222,7 @@ function rollLuckyDrops() {
         if (!def) continue;
         STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
         const rc = rarityColors(def.rarity);
-        html += `<div class="item-reward" style="border-color:${rc.border};color:${rc.color};">
+        html += `<div class="item-reward" data-reward-defid="${defId}" style="border-color:${rc.border};color:${rc.color};cursor:default;">
             ${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong>
         </div>`;
     }
@@ -248,9 +268,10 @@ function renderWinOverlay({ gi, pts, ptsAwarded, prevBest, mult, elapsed, bonusM
 
     document.getElementById('ov-sub').innerHTML =
         `<div class="ov-sub-line ov-sub-reveal">"${lvText(cur, 'reveal')}"</div>` +
-        `<div class="ov-sub-line ov-sub-pts">${pts} ${t('ov_win_pts')} (×${mult.toFixed(2)})${gainNote}</div>` +
+    `<div class="ov-sub-line ov-sub-pts">${pts} ${t('ov_win_pts')} <br> ${t('ov_win_multiplier')} ×${mult.toFixed(2)}<br>${gainNote}</div>` +
         `<div class="ov-sub-line ov-sub-time">⏱ ${mins}:${String(secs).padStart(2, '00')} ${t('ov_win_left')} · ${t('ov_win_solved_in')} ${elapsedMins}:${String(elapsedSecs).padStart(2, '00')}</div>` +
         mistakeLine;
+    
 
     document.getElementById('bonus-list').innerHTML =
         `<span class="bonus-badge ${bonusMet ? 'earned' : 'missed'}">
@@ -280,7 +301,7 @@ function renderWinOverlay({ gi, pts, ptsAwarded, prevBest, mult, elapsed, bonusM
                 STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
                 save();
                 const rc = rarityColors(def.rarity);
-                irz.innerHTML += `<div class="item-reward" style="border-color:${rc.border};color:${rc.color};">
+                irz.innerHTML += `<div class="item-reward" data-reward-defid="${defId}" style="border-color:${rc.border};color:${rc.color};cursor:default;">
                     ${t('ov_item_earned')}: ${def.icon} <strong>${itemName(def)}</strong>
                 </div>`;
             }
@@ -295,6 +316,14 @@ function renderWinOverlay({ gi, pts, ptsAwarded, prevBest, mult, elapsed, bonusM
             irz.innerHTML += rollLuckyDrops();
         }
     }
+
+    // Attach hover tooltips to all item-reward elements in the win overlay
+    setTimeout(() => {
+        irz.querySelectorAll('[data-reward-defid]').forEach(el => {
+            attachItemTooltip(el, el.dataset.rewardDefid);
+        });
+    }, 0);
+
 }
 
 
@@ -309,6 +338,10 @@ function renderWinOverlay({ gi, pts, ptsAwarded, prevBest, mult, elapsed, bonusM
 
 function checkWin() {
     if (!isPuzzleSolved()) return;
+
+    if (typeof clearActiveRandomWalkers === "function") {
+        clearActiveRandomWalkers();
+    }
 
     dead = true;
     stopTimer();
@@ -362,12 +395,9 @@ function checkWin() {
     } else {
         setTimeout(() => {
             document.getElementById('ov-win').classList.add('show');
-            if (window._pendingConvergenceModal) {
-                window._pendingConvergenceModal = false;
-                setTimeout(() => showConvergenceModal(), 800);
-            }
-        }, 600);
+        }, 1000);
     }
+    Audio_Manager.playSFX('win');
 
     updateQuestStats('levelComplete', {
         gi,
@@ -381,7 +411,12 @@ function checkWin() {
         bonusMet,
         isConvergence: _isConvergenceLevel && isFirstClear,
         worldJustCompleted: _worldJustCompleted,
-        luckyDropTriggered: false, // lucky drops are tracked separately via updateQuestStats('luckyDropTriggered')
+        luckyDropTriggered: false,
+        isLargeAdjMatrix: (() => {                          
+            const rows = cur.grid.length;
+            const cols = cur.grid[0].length;
+            return (rows * cols >= 200) && ptHasSkill('adjacency_matrix');
+        })(),
     });
 
 

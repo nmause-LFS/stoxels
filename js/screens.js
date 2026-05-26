@@ -24,6 +24,7 @@ function ss(id) {
 
 
 function showTitle() {
+    Audio_Manager.playBGM('title');
     stopTimer();
     screenHistory = [];
     ss('screen-title');
@@ -54,11 +55,14 @@ function startSetup() {
 function goLevels() {
     hideOv();
     closeQuiz();
-    if (typeof triggerClassEventIfPending === 'function') {
-        if (triggerClassEventIfPending(() => { buildLS(); ss('screen-levels'); })) return;
-    }
-    buildLS();
-    ss('screen-levels');
+    const proceed = () => {
+        if (typeof triggerClassEventIfPending === 'function') {
+            if (triggerClassEventIfPending(() => { buildLS(); ss('screen-levels'); })) return;
+        }
+        buildLS();
+        ss('screen-levels');
+    };
+    _maybeShowConvergenceModal(proceed);
 }
 
 
@@ -118,8 +122,11 @@ function nextLvl() {
         if (n < ALL.length) startLevel(n);
         else goLevels();
     };
-    if (triggerClassEventIfPending(proceed)) return;
-    proceed();
+    const afterConvergence = () => {
+        if (triggerClassEventIfPending(proceed)) return;
+        proceed();
+    };
+    _maybeShowConvergenceModal(afterConvergence);
 }
 
 
@@ -137,11 +144,16 @@ function nextLvl() {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
+
 function replayLvl() {
     hideOv();
     const gi = cur.gIdx;
-    if (triggerClassEventIfPending(() => startLevel(gi))) return;
-    startLevel(gi);
+    const proceed = () => startLevel(gi);
+    const afterConvergence = () => {
+        if (triggerClassEventIfPending(proceed)) return;
+        proceed();
+    };
+    _maybeShowConvergenceModal(afterConvergence);
 }
 
 
@@ -161,6 +173,8 @@ function replayLvl() {
 function showConvergenceModal() {
     const modal = document.getElementById('convergence-modal');
     if (modal) modal.classList.add('show');
+
+    Audio_Manager.playSFX('convergence');
 }
 
 function hideConvergenceModal() {
@@ -170,4 +184,30 @@ function hideConvergenceModal() {
 
 
 
+// Helper: if a convergence point is pending, show the modal first,
+// then run the callback when the player dismisses it.
+function _maybeShowConvergenceModal(proceed) {
+    if (!window._pendingConvergenceModal) { proceed(); return; }
+    window._pendingConvergenceModal = false;
 
+    // Wire up each button in the convergence modal to close it and then run
+    // the intended navigation (overrides the inline onclick attributes).
+    const modal = document.getElementById('convergence-modal');
+    const treeBtn = modal.querySelector('.convergence-btn-tree');
+    const nextBtn = modal.querySelector('.convergence-btn-next');
+    const levelsBtn = modal.querySelector('.convergence-btn-levels');
+
+    const finish = (extraAction) => () => {
+        hideConvergenceModal();
+        if (extraAction) extraAction();
+        else proceed();
+    };
+
+    // Tree button keeps its original behaviour (open tree), then the player
+    // navigates from there — so we just show the tree.
+    treeBtn.onclick = finish(() => { hideOv(); showPassiveTree(); });
+    nextBtn.onclick = finish(proceed);
+    levelsBtn.onclick = finish(proceed);
+
+    showConvergenceModal();
+}

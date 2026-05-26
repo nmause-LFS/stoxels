@@ -94,7 +94,9 @@ function getModColor(mod) {
     const map = {
         TT: 'var(--orange)',
         HC: 'var(--red)',
-        IM: 'var(--purple)'
+        IM: 'var(--purple)',
+        CL: 'var(--accent)',
+        TL: 'var(--green)'
     };
     return map[mod] || 'var(--accent2)';
 }
@@ -102,7 +104,7 @@ function getModColor(mod) {
 // Converts a mods object into colored <span> elements, or "—" if none active.
 function formatModsString(mods) {
     if (!mods) return '—';
-    const modMap = { timetrial: 'TT', hardcore: 'HC', ironman: 'IM' };
+    const modMap = { timetrial: 'TT', hardcore: 'HC', ironman: 'IM', classless: 'CL', treeless: 'TL' };
     const spans = Object.keys(mods)
         .filter(m => mods[m])
         .map(m => {

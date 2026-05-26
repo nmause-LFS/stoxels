@@ -46,7 +46,7 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: "Which of these CANNOT be a valid probability value?",
+            q: "Which of these CANNOT be a valid probability?",
             qDE: "Welcher dieser Werte kann KEINE gültige Wahrscheinlichkeit sein?",
             opts: ["−0.1", "0", "0.5", "1"],
             optsDE: ["−0,1", "0", "0,5", "1"],
@@ -55,8 +55,8 @@ const BONUS_QUIZ_POOLS = {
         {
             q: "The smallest possible σ-algebra on any non-empty Ω is:",
             qDE: "Die kleinste mögliche σ-Algebra auf einem nicht-leeren Ω ist:",
-            opts: ["{∅, Ω}", "The full power set of Ω", "{Ω}", "{∅}"],
-            optsDE: ["{∅, Ω}", "Die volle Potenzmenge von Ω", "{Ω}", "{∅}"],
+            opts: ["{∅, Ω}", "The power set of Ω", "{Ω}", "{∅}"],
+            optsDE: ["{∅, Ω}", "Die Potenzmenge von Ω", "{Ω}", "{∅}"],
             correct: 0
         },
         {
@@ -158,7 +158,7 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: "The union bound (Boolesche Ungleichung) states P(A ∪ B) ≤",
+            q: "The union bound (Boolean Inequality) states P(A ∪ B) ≤",
             qDE: "Die Boolesche Ungleichung besagt P(A ∪ B) ≤",
             opts: ["P(A) + P(B)", "P(A) · P(B)", "P(A) − P(B)", "min(P(A), P(B))"],
             optsDE: ["P(A) + P(B)", "P(A) · P(B)", "P(A) − P(B)", "min(P(A), P(B))"],
@@ -186,10 +186,10 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: "With replacement, order matters: drawing k items from n gives how many outcomes?",
-            qDE: "Mit Zurücklegen, Reihenfolge zählt: k Züge aus n ergeben wie viele Ergebnisse?",
-            opts: ["nᵏ", "n! / (n−k)!", "C(n,k)", "k!"],
-            optsDE: ["nᵏ", "n! / (n−k)!", "C(n,k)", "k!"],
+            q: "With replacement, order matters: drawing k items from n gives how many outcomes? (B(n,k) is the binomial coefficient)",
+            qDE: "Mit Zurücklegen, Reihenfolge zählt: k Züge aus n ergeben wie viele Ergebnisse? (B(n,k) ist der Binomialkoeffizient)",
+            opts: ["nᵏ", "n! / (n−k)!", "B(n,k)", "k!"],
+            optsDE: ["nᵏ", "n! / (n−k)!", "B(n,k)", "k!"],
             correct: 0
         },
         {
@@ -208,8 +208,8 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: "How many ways are there to arrange all 5 elements of a set in a row (permutations)?",
-            qDE: "Auf wie viele Arten lassen sich alle 5 Elemente einer Menge in einer Reihe anordnen (Permutationen)?",
+            q: "How many ways are there to arrange all 5 elements of a set in a row?",
+            qDE: "Auf wie viele Arten lassen sich alle 5 Elemente einer Menge in einer Reihe anordnen?",
             opts: ["120", "25", "5", "60"],
             optsDE: ["120", "25", "5", "60"],
             correct: 0
@@ -229,24 +229,24 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: "C(6, 2) equals:",
-            qDE: "C(6, 2) ergibt:",
+            q: "The binomial coefficient B(6, 2) equals:",
+            qDE: "Der Binomialkoeffizient B(6, 2) ergibt:",
             opts: ["15", "12", "30", "6"],
             optsDE: ["15", "12", "30", "6"],
             correct: 0
         },
         {
             q: "In a Laplace space, a bag holds 3 red and 7 blue balls. What is P(drawing a red ball)?",
-            qDE: "Im Laplace-Raum enthält ein Beutel 3 rote und 7 blaue Bälle. Wie groß ist P(rote Kugel ziehen)?",
+            qDE: "Im Laplace-Raum enthält ein Beutel 3 rote und 7 blaue Bälle. Was ist P(rote Kugel ziehen)?",
             opts: ["3/10", "7/10", "3/7", "1/3"],
             optsDE: ["3/10", "7/10", "3/7", "1/3"],
             correct: 0
         },
         {
-            q: "Drawing k items from n WITH replacement and order matters gives how many outcomes?",
-            qDE: "k Elemente aus n MIT Zurücklegen ziehen, Reihenfolge zählt: wie viele Ergebnisse?",
-            opts: ["nᵏ", "C(n,k)", "n! / (n−k)!", "k!"],
-            optsDE: ["nᵏ", "C(n,k)", "n! / (n−k)!", "k!"],
+            q: "Drawing k items from n WITH replacement and order matters gives how many outcomes? (B(n,k) is the binomial coefficient)",
+            qDE: "k Elemente aus n MIT Zurücklegen ziehen, Reihenfolge zählt. Wie viele Ergebnisse gibt es? (B(n,k) ist der Binomialkoeffizient)",
+            opts: ["nᵏ", "B(n,k)", "n! / (n−k)!", "k!"],
+            optsDE: ["nᵏ", "B(n,k)", "n! / (n−k)!", "k!"],
             correct: 0
         },
         {
@@ -270,10 +270,9 @@ const BONUS_QUIZ_POOLS = {
             optsDE: ["120", "720", "30", "1000"],
             correct: 0
         },
-
-
-
     ],
+
+    //todo continue
 
     // ── WORLD 3 — Random Variables & Distributions ────────────────────────
     // Topics: conditional probability, law of total probability, Bayes' theorem,
@@ -838,8 +837,622 @@ const BONUS_QUIZ_POOLS = {
 
     ],
 
-    // Worlds 5–13: empty for now — add questions here as you build those worlds.
-    5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: [],
+    
+    5: [
+
+        // ── Paste this into BONUS_QUIZ_POOLS[5] = [ ... ] ──────────────────────
+
+        // --- Hypergeometrische Verteilung ---
+        {
+            q: 'A box contains 10 items, 4 of which are defective. You draw 3 without replacement. What distribution models the number of defective items drawn?',
+            qDE: 'Eine Kiste enthält 10 Teile, davon 4 defekt. Man zieht 3 ohne Zurücklegen. Welche Verteilung modelliert die Anzahl defekter Teile?',
+            opts: ['Hypergeometric', 'Binomial', 'Poisson', 'Geometric'],
+            optsDE: ['Hypergeometrisch', 'Binomial', 'Poisson', 'Geometrisch'],
+            correct: 0,
+        },
+        {
+            q: 'For a hypergeometric distribution with N=20, K=8, n=5, what is the expected value E[X]?',
+            qDE: 'Für eine hypergeometrische Verteilung mit N=20, K=8, n=5: Wie lautet der Erwartungswert E[X]?',
+            opts: ['2', '2.5', '1.6', '4'],
+            optsDE: ['2', '2.5', '1.6', '4'],
+            correct: 0,
+        },
+        {
+            q: 'The hypergeometric distribution differs from the binomial distribution primarily because:',
+            qDE: 'Die hypergeometrische Verteilung unterscheidet sich von der Binomialverteilung hauptsächlich, weil:',
+            opts: ['Draws are made without replacement', 'The number of trials is unlimited', 'Success probability changes each trial independently', 'It models continuous outcomes'],
+            optsDE: ['Ziehungen ohne Zurücklegen erfolgen', 'Die Anzahl der Versuche unbegrenzt ist', 'Die Erfolgswahrscheinlichkeit unabhängig variiert', 'Stetige Ergebnisse modelliert werden'],
+            correct: 0,
+        },
+
+        // --- Geometrische Verteilung ---
+        {
+            q: 'The geometric distribution models the number of trials until the first success. If p=0.25, what is E[X]?',
+            qDE: 'Die geometrische Verteilung modelliert Versuche bis zum ersten Erfolg. Bei p=0.25: Wie groß ist E[X]?',
+            opts: ['4', '0.25', '3', '2'],
+            optsDE: ['4', '0.25', '3', '2'],
+            correct: 0,
+        },
+        {
+            q: 'What is the variance of a geometrically distributed random variable X with success probability p?',
+            qDE: 'Wie lautet die Varianz einer geometrisch verteilten Zufallsvariablen X mit Erfolgswahrscheinlichkeit p?',
+            opts: ['(1−p)/p²', 'p/(1−p)', '1/p', 'p·(1−p)'],
+            optsDE: ['(1−p)/p²', 'p/(1−p)', '1/p', 'p·(1−p)'],
+            correct: 0,
+        },
+        {
+            q: 'Which key property does the geometric distribution share with the exponential distribution?',
+            qDE: 'Welche wichtige Eigenschaft teilt die geometrische Verteilung mit der Exponentialverteilung?',
+            opts: ['Memorylessness', 'Symmetry', 'Finite support', 'Unimodality only at 0'],
+            optsDE: ['Gedächtnislosigkeit', 'Symmetrie', 'Endlicher Träger', 'Unimodalität nur bei 0'],
+            correct: 0,
+        },
+
+        // --- Bernoulli-Folge ---
+        {
+            q: 'A Bernoulli sequence consists of:',
+            qDE: 'Eine Bernoulli-Folge besteht aus:',
+            opts: ['Independent, identically distributed Bernoulli trials', 'Dependent trials with varying probabilities', 'Normally distributed random variables', 'Trials without a fixed success probability'],
+            optsDE: ['Unabhängigen, gleichverteilten Bernoulli-Versuchen', 'Abhängigen Versuchen mit wechselnden Wahrscheinlichkeiten', 'Normalverteilten Zufallsvariablen', 'Versuchen ohne feste Erfolgswahrscheinlichkeit'],
+            correct: 0,
+        },
+        {
+            q: 'In a Bernoulli sequence with n=10 and p=0.3, X counts the successes. What is Var(X)?',
+            qDE: 'In einer Bernoulli-Folge mit n=10 und p=0.3 zählt X die Erfolge. Wie groß ist Var(X)?',
+            opts: ['2.1', '3', '0.3', '0.9'],
+            optsDE: ['2.1', '3', '0.3', '0.9'],
+            correct: 0,
+        },
+        {
+            q: 'A Bernoulli sequence with fixed p underlies which distribution for the total number of successes in n trials?',
+            qDE: 'Eine Bernoulli-Folge mit festem p liegt welcher Verteilung der Gesamtzahl an Erfolgen in n Versuchen zugrunde?',
+            opts: ['Binomial distribution', 'Poisson distribution', 'Exponential distribution', 'Uniform distribution'],
+            optsDE: ['Binomialverteilung', 'Poisson-Verteilung', 'Exponentialverteilung', 'Gleichverteilung'],
+            correct: 0,
+        },
+
+        // --- Negative Binomialverteilung ---
+        {
+            q: 'The negative binomial distribution models:',
+            qDE: 'Die negative Binomialverteilung modelliert:',
+            opts: ['The number of trials until the r-th success', 'The number of successes in n trials', 'The waiting time to any event', 'The spread of a continuous variable'],
+            optsDE: ['Die Anzahl der Versuche bis zum r-ten Erfolg', 'Die Anzahl der Erfolge in n Versuchen', 'Die Wartezeit bis zu einem beliebigen Ereignis', 'Die Streuung einer stetigen Variable'],
+            correct: 0,
+        },
+        {
+            q: 'For a negative binomial distribution with r=3 and p=0.5, what is E[X] (number of trials until r-th success)?',
+            qDE: 'Für eine negative Binomialverteilung mit r=3 und p=0.5: Wie groß ist E[X] (Versuche bis zum r-ten Erfolg)?',
+            opts: ['6', '3', '1.5', '9'],
+            optsDE: ['6', '3', '1.5', '9'],
+            correct: 0,
+        },
+        {
+            q: 'The geometric distribution is a special case of the negative binomial distribution with:',
+            qDE: 'Die geometrische Verteilung ist ein Spezialfall der negativen Binomialverteilung mit:',
+            opts: ['r = 1', 'r = 0', 'p = 0.5', 'n = 1'],
+            optsDE: ['r = 1', 'r = 0', 'p = 0.5', 'n = 1'],
+            correct: 0,
+        },
+
+        // --- Poisson-Verteilung ---
+        {
+            q: 'A Poisson-distributed random variable X with parameter λ has E[X] = ?',
+            qDE: 'Eine Poisson-verteilte Zufallsvariable X mit Parameter λ hat E[X] = ?',
+            opts: ['λ', 'λ²', '1/λ', '√λ'],
+            optsDE: ['λ', 'λ²', '1/λ', '√λ'],
+            correct: 0,
+        },
+        {
+            q: 'For the Poisson distribution, which statement is true about mean and variance?',
+            qDE: 'Welche Aussage gilt für Erwartungswert und Varianz der Poisson-Verteilung?',
+            opts: ['E[X] = Var(X) = λ', 'E[X] = λ, Var(X) = λ²', 'E[X] = 1/λ, Var(X) = λ', 'E[X] = λ², Var(X) = λ'],
+            optsDE: ['E[X] = Var(X) = λ', 'E[X] = λ, Var(X) = λ²', 'E[X] = 1/λ, Var(X) = λ', 'E[X] = λ², Var(X) = λ'],
+            correct: 0,
+        },
+        {
+            q: 'The Poisson distribution is appropriate to model:',
+            qDE: 'Die Poisson-Verteilung eignet sich zur Modellierung von:',
+            opts: ['Rare events occurring at a constant average rate', 'Outcomes of a fair coin flip', 'Continuous measurements like height', 'Exactly two possible outcomes per trial'],
+            optsDE: ['Seltenen Ereignissen mit konstanter Durchschnittsrate', 'Ergebnissen eines fairen Münzwurfs', 'Stetigen Messungen wie Körpergröße', 'Genau zwei möglichen Ausgängen je Versuch'],
+            correct: 0,
+        },
+
+        // --- Poisson-Grenzwertsatz (Binomial → Poisson) ---
+        {
+            q: 'The Poisson limit theorem states that as n→∞ and p→0, the binomial distribution converges to Poisson with parameter:',
+            qDE: 'Der Poisson-Grenzwertsatz besagt: Für n→∞ und p→0 konvergiert die Binomialverteilung gegen Poisson mit Parameter:',
+            opts: ['λ = n·p', 'λ = n/p', 'λ = p/n', 'λ = n+p'],
+            optsDE: ['λ = n·p', 'λ = n/p', 'λ = p/n', 'λ = n+p'],
+            correct: 0,
+        },
+        {
+            q: 'Which rule of thumb justifies approximating Bin(n,p) by Poisson(λ)?',
+            qDE: 'Welche Faustregel rechtfertigt die Annäherung von Bin(n,p) durch Poisson(λ)?',
+            opts: ['n large and p small, so that n·p stays moderate', 'n small and p close to 0.5', 'n and p both large', 'p > 0.1 always'],
+            optsDE: ['n groß und p klein, sodass n·p moderat bleibt', 'n klein und p nahe 0.5', 'n und p beide groß', 'p > 0.1 immer'],
+            correct: 0,
+        },
+        {
+            q: 'In n=500 trials each with p=0.004, we approximate X ~ Bin(500, 0.004) by a Poisson. What is λ?',
+            qDE: 'Bei n=500 Versuchen mit p=0.004 nähern wir X ~ Bin(500, 0.004) durch Poisson an. Wie groß ist λ?',
+            opts: ['2', '0.004', '500', '0.5'],
+            optsDE: ['2', '0.004', '500', '0.5'],
+            correct: 0,
+        },
+
+        // --- Stetige Gleichverteilung ---
+        {
+            q: 'For X ~ Uniform(a, b), what is the expected value E[X]?',
+            qDE: 'Für X ~ Gleichverteilung(a, b): Wie lautet der Erwartungswert E[X]?',
+            opts: ['(a+b)/2', '(b−a)/2', 'a·b', '1/(b−a)'],
+            optsDE: ['(a+b)/2', '(b−a)/2', 'a·b', '1/(b−a)'],
+            correct: 0,
+        },
+        {
+            q: 'For X ~ Uniform(0, 6), what is Var(X)?',
+            qDE: 'Für X ~ Gleichverteilung(0, 6): Wie groß ist Var(X)?',
+            opts: ['3', '6', '36', '1'],
+            optsDE: ['3', '6', '36', '1'],
+            correct: 0,
+        },
+        {
+            q: 'The PDF of the continuous uniform distribution on [a, b] is:',
+            qDE: 'Die Dichtefunktion der stetigen Gleichverteilung auf [a, b] lautet:',
+            opts: ['1/(b−a) for x∈[a,b], else 0', '1/(b+a) for x∈[a,b], else 0', 'b−a for x∈[a,b], else 0', '2/(b−a) for x∈[a,b], else 0'],
+            optsDE: ['1/(b−a) für x∈[a,b], sonst 0', '1/(b+a) für x∈[a,b], sonst 0', 'b−a für x∈[a,b], sonst 0', '2/(b−a) für x∈[a,b], sonst 0'],
+            correct: 0,
+        },
+
+        // --- Exponentialverteilung ---
+        {
+            q: 'For X ~ Exp(λ), what is the expected value E[X]?',
+            qDE: 'Für X ~ Exp(λ): Wie lautet der Erwartungswert E[X]?',
+            opts: ['1/λ', 'λ', 'λ²', '1/λ²'],
+            optsDE: ['1/λ', 'λ', 'λ²', '1/λ²'],
+            correct: 0,
+        },
+        {
+            q: 'The exponential distribution is memoryless. This means:',
+            qDE: 'Die Exponentialverteilung ist gedächtnislos. Das bedeutet:',
+            opts: ['P(X > s+t | X > s) = P(X > t)', 'P(X > s+t) = P(X > s) + P(X > t)', 'Past waiting time increases future probability', 'The distribution resets only at integer times'],
+            optsDE: ['P(X > s+t | X > s) = P(X > t)', 'P(X > s+t) = P(X > s) + P(X > t)', 'Vergangene Wartezeit erhöht künftige Wahrscheinlichkeit', 'Die Verteilung setzt nur zu ganzzahligen Zeiten zurück'],
+            correct: 0,
+        },
+        {
+            q: 'For X ~ Exp(2), what is Var(X)?',
+            qDE: 'Für X ~ Exp(2): Wie groß ist Var(X)?',
+            opts: ['0.25', '0.5', '2', '4'],
+            optsDE: ['0.25', '0.5', '2', '4'],
+            correct: 0,
+        },
+
+        // --- Normalverteilung ---
+        {
+            q: 'The standard normal distribution N(0,1) has mean and variance:',
+            qDE: 'Die Standardnormalverteilung N(0,1) hat Erwartungswert und Varianz:',
+            opts: ['μ=0, σ²=1', 'μ=1, σ²=0', 'μ=0, σ²=0', 'μ=1, σ²=1'],
+            optsDE: ['μ=0, σ²=1', 'μ=1, σ²=0', 'μ=0, σ²=0', 'μ=1, σ²=1'],
+            correct: 0,
+        },
+        {
+            q: 'The normal distribution is symmetric around its mean. What fraction of values lies within μ ± σ (approximately)?',
+            qDE: 'Die Normalverteilung ist symmetrisch um ihren Erwartungswert. Welcher Anteil liegt in μ ± σ (ca.)?',
+            opts: ['68%', '95%', '99.7%', '50%'],
+            optsDE: ['68%', '95%', '99.7%', '50%'],
+            correct: 0,
+        },
+        {
+            q: 'To standardize X ~ N(μ, σ²), you compute Z = ?',
+            qDE: 'Um X ~ N(μ, σ²) zu standardisieren, berechnet man Z = ?',
+            opts: ['(X − μ) / σ', '(X + μ) / σ', 'X / μ', '(X − σ) / μ'],
+            optsDE: ['(X − μ) / σ', '(X + μ) / σ', 'X / μ', '(X − σ) / μ'],
+            correct: 0,
+        },
+
+        // --- Rechnen mit normalverteilten Zufallsvariablen ---
+        {
+            q: 'If X ~ N(μ₁, σ₁²) and Y ~ N(μ₂, σ₂²) are independent, what is the distribution of X + Y?',
+            qDE: 'Wenn X ~ N(μ₁, σ₁²) und Y ~ N(μ₂, σ₂²) unabhängig sind, welche Verteilung hat X + Y?',
+            opts: ['N(μ₁+μ₂, σ₁²+σ₂²)', 'N(μ₁·μ₂, σ₁²·σ₂²)', 'N(μ₁−μ₂, σ₁²−σ₂²)', 'Not normally distributed'],
+            optsDE: ['N(μ₁+μ₂, σ₁²+σ₂²)', 'N(μ₁·μ₂, σ₁²·σ₂²)', 'N(μ₁−μ₂, σ₁²−σ₂²)', 'Nicht normalverteilt'],
+            correct: 0,
+        },
+        {
+            q: 'If X ~ N(3, 4) and a = 2, b = 1, what is the distribution of a·X + b?',
+            qDE: 'Wenn X ~ N(3, 4), a = 2, b = 1: Welche Verteilung hat a·X + b?',
+            opts: ['N(7, 16)', 'N(6, 8)', 'N(7, 8)', 'N(6, 16)'],
+            optsDE: ['N(7, 16)', 'N(6, 8)', 'N(7, 8)', 'N(6, 16)'],
+            correct: 0,
+        },
+        {
+            q: 'P(X ≤ μ) for X ~ N(μ, σ²) equals:',
+            qDE: 'P(X ≤ μ) für X ~ N(μ, σ²) beträgt:',
+            opts: ['0.5', '0', '1', 'Depends on σ'],
+            optsDE: ['0.5', '0', '1', 'Hängt von σ ab'],
+            correct: 0,
+        },
+
+        // --- Zufallsvektoren ---
+        {
+            q: 'A random vector (X, Y) is characterized by its:',
+            qDE: 'Ein Zufallsvektor (X, Y) wird beschrieben durch seine:',
+            opts: ['Joint distribution', 'Marginal distribution of X only', 'Sum X + Y', 'Individual variances only'],
+            optsDE: ['Gemeinsame Verteilung', 'Nur Randverteilung von X', 'Summe X + Y', 'Nur die einzelnen Varianzen'],
+            correct: 0,
+        },
+        {
+            q: 'The covariance Cov(X, Y) = 0 implies:',
+            qDE: 'Die Kovarianz Cov(X, Y) = 0 impliziert:',
+            opts: ['X and Y are uncorrelated (but not necessarily independent)', 'X and Y are independent', 'X and Y are identical', 'Var(X+Y) = 0'],
+            optsDE: ['X und Y sind unkorreliert (aber nicht unbedingt unabhängig)', 'X und Y sind unabhängig', 'X und Y sind identisch', 'Var(X+Y) = 0'],
+            correct: 0,
+        },
+        {
+            q: 'For a random vector (X, Y), the covariance matrix is:',
+            qDE: 'Für einen Zufallsvektor (X, Y) ist die Kovarianzmatrix:',
+            opts: ['Always symmetric and positive semi-definite', 'Always diagonal', 'Always invertible', 'Defined only for independent components'],
+            optsDE: ['Stets symmetrisch und positiv semidefinit', 'Stets diagonal', 'Stets invertierbar', 'Nur für unabhängige Komponenten definiert'],
+            correct: 0,
+        },
+
+        // --- Verteilung von Zufallsvektoren ---
+        {
+            q: 'The marginal distribution of X is obtained from the joint density f(x,y) by:',
+            qDE: 'Die Randverteilung von X erhält man aus der gemeinsamen Dichte f(x,y) durch:',
+            opts: ['Integrating (or summing) over all values of y', 'Dividing by f(y)', 'Multiplying f(x) · f(y)', 'Setting y = 0'],
+            optsDE: ['Integration (bzw. Summation) über alle y-Werte', 'Division durch f(y)', 'Multiplikation f(x) · f(y)', 'Setzen von y = 0'],
+            correct: 0,
+        },
+        {
+            q: 'If (X, Y) is jointly normal with zero means, the joint density depends on:',
+            qDE: 'Wenn (X, Y) gemeinsam normalverteilt ist mit Nullmittelwerten, hängt die gemeinsame Dichte ab von:',
+            opts: ['σ_X, σ_Y, and the correlation ρ', 'Only σ_X and σ_Y', 'Only the means', 'The sum X+Y only'],
+            optsDE: ['σ_X, σ_Y und der Korrelation ρ', 'Nur σ_X und σ_Y', 'Nur den Erwartungswerten', 'Nur der Summe X+Y'],
+            correct: 0,
+        },
+        {
+            q: 'For a discrete random vector (X, Y), the joint probability mass function satisfies:',
+            qDE: 'Für einen diskreten Zufallsvektor (X, Y) gilt für die gemeinsame Zähldichte:',
+            opts: ['∑_x ∑_y P(X=x, Y=y) = 1', '∑_x P(X=x, Y=y) = P(Y=y) only if X ⊥ Y', 'P(X=x, Y=y) ≥ 1 for all x,y', 'It equals the product of CDFs'],
+            optsDE: ['∑_x ∑_y P(X=x, Y=y) = 1', '∑_x P(X=x, Y=y) = P(Y=y) nur bei X ⊥ Y', 'P(X=x, Y=y) ≥ 1 für alle x,y', 'Sie entspricht dem Produkt der Verteilungsfunktionen'],
+            correct: 0,
+        },
+
+        // --- Produktverteilung bei Unabhängigkeit ---
+        {
+            q: 'X and Y are independent if and only if their joint density satisfies:',
+            qDE: 'X und Y sind unabhängig genau dann, wenn ihre gemeinsame Dichte gilt:',
+            opts: ['f(x,y) = f_X(x) · f_Y(y)', 'f(x,y) = f_X(x) + f_Y(y)', 'f(x,y) = f_X(x) / f_Y(y)', 'f(x,y) = f_X(y) · f_Y(x)'],
+            optsDE: ['f(x,y) = f_X(x) · f_Y(y)', 'f(x,y) = f_X(x) + f_Y(y)', 'f(x,y) = f_X(x) / f_Y(y)', 'f(x,y) = f_X(y) · f_Y(x)'],
+            correct: 0,
+        },
+        {
+            q: 'If X and Y are independent, then Cov(X, Y) = ?',
+            qDE: 'Wenn X und Y unabhängig sind, dann gilt Cov(X, Y) = ?',
+            opts: ['0', '1', 'E[X]·E[Y]', 'Var(X)·Var(Y)'],
+            optsDE: ['0', '1', 'E[X]·E[Y]', 'Var(X)·Var(Y)'],
+            correct: 0,
+        },
+        {
+            q: 'If X ~ Exp(2) and Y ~ Exp(3) are independent, which statement is true?',
+            qDE: 'Wenn X ~ Exp(2) und Y ~ Exp(3) unabhängig sind, welche Aussage stimmt?',
+            opts: ['f(x,y) = 6·e^(−2x)·e^(−3y) for x,y ≥ 0', 'f(x,y) = e^(−2x−3y)/(2+3)', 'f(x,y) = f_X(x+y)', 'f(x,y) = 5·e^(−5(x+y))'],
+            optsDE: ['f(x,y) = 6·e^(−2x)·e^(−3y) für x,y ≥ 0', 'f(x,y) = e^(−2x−3y)/(2+3)', 'f(x,y) = f_X(x+y)', 'f(x,y) = 5·e^(−5(x+y))'],
+            correct: 0,
+        },
+
+        // --- Bedingte Zähldichte ---
+        {
+            q: 'The conditional probability mass function of X given Y=y is defined as:',
+            qDE: 'Die bedingte Zähldichte von X gegeben Y=y ist definiert als:',
+            opts: ['P(X=x | Y=y) = P(X=x, Y=y) / P(Y=y)', 'P(X=x | Y=y) = P(X=x) · P(Y=y)', 'P(X=x | Y=y) = P(Y=y) / P(X=x)', 'P(X=x | Y=y) = P(X=x) + P(Y=y)'],
+            optsDE: ['P(X=x | Y=y) = P(X=x, Y=y) / P(Y=y)', 'P(X=x | Y=y) = P(X=x) · P(Y=y)', 'P(X=x | Y=y) = P(Y=y) / P(X=x)', 'P(X=x | Y=y) = P(X=x) + P(Y=y)'],
+            correct: 0,
+        },
+        {
+            q: 'If X and Y are independent, then the conditional PMF of X given Y=y equals:',
+            qDE: 'Wenn X und Y unabhängig sind, gilt für die bedingte Zähldichte von X gegeben Y=y:',
+            opts: ['P(X=x)', 'P(Y=y)', 'P(X=x)·P(Y=y)', '1'],
+            optsDE: ['P(X=x)', 'P(Y=y)', 'P(X=x)·P(Y=y)', '1'],
+            correct: 0,
+        },
+        {
+            q: 'The law of total probability for the marginal PMF of Y uses the conditional PMF how?',
+            qDE: 'Das Gesetz der totalen Wahrscheinlichkeit für die Randverteilung von Y nutzt die bedingte Zähldichte wie?',
+            opts: ['P(Y=y) = ∑_x P(Y=y | X=x)·P(X=x)', 'P(Y=y) = P(Y=y | X=x) for any x', 'P(Y=y) = ∏_x P(Y=y | X=x)', 'P(Y=y) = P(Y=y | X=x) / P(X=x)'],
+            optsDE: ['P(Y=y) = ∑_x P(Y=y | X=x)·P(X=x)', 'P(Y=y) = P(Y=y | X=x) für ein beliebiges x', 'P(Y=y) = ∏_x P(Y=y | X=x)', 'P(Y=y) = P(Y=y | X=x) / P(X=x)'],
+            correct: 0,
+        },
+
+
+    ],
+
+
+    6: [
+
+        // ── Paste this into BONUS_QUIZ_POOLS[6] = [ ... ] ──────────────────────
+
+        // --- Simpsons Paradoxon ---
+        {
+            q: "Simpson's paradox occurs when a trend appears in grouped data but:",
+            qDE: "Das Simpsons Paradoxon tritt auf, wenn ein Trend in gruppierten Daten erscheint, aber:",
+            opts: ["Disappears or reverses when the groups are combined", "Strengthens when the groups are combined", "Only appears in continuous data", "Only affects the median, not the mean"],
+            optsDE: ["Verschwindet oder umgekehrt wird, wenn die Gruppen zusammengefasst werden", "Sich verstärkt, wenn die Gruppen zusammengefasst werden", "Nur bei stetigen Daten auftritt", "Nur den Median, nicht den Erwartungswert betrifft"],
+            correct: 0,
+        },
+        {
+            q: "The main cause of Simpson's paradox is typically:",
+            qDE: "Die Hauptursache des Simpsons Paradoxons ist typischerweise:",
+            opts: ["A lurking (confounding) variable that is not accounted for", "A calculation error in the marginal probabilities", "Too small a sample size in each group", "Non-normal distribution of the data"],
+            optsDE: ["Eine verborgene (konfundierende) Variable, die nicht berücksichtigt wird", "Ein Rechenfehler bei den Randwahrscheinlichkeiten", "Zu kleiner Stichprobenumfang in jeder Gruppe", "Nicht-normale Verteilung der Daten"],
+            correct: 0,
+        },
+        {
+            q: "Simpson's paradox is most relevant as a warning against:",
+            qDE: "Das Simpsons Paradoxon ist vor allem eine Warnung vor:",
+            opts: ["Naively aggregating data without controlling for confounders", "Using conditional probabilities", "Computing marginal distributions", "Applying the law of total expectation"],
+            optsDE: ["Naiver Datenaggregation ohne Kontrolle von Störvariablen", "Der Verwendung bedingter Wahrscheinlichkeiten", "Der Berechnung von Randverteilungen", "Der Anwendung des Gesetzes der totalen Erwartung"],
+            correct: 0,
+        },
+
+        // --- Bedingte Dichte ---
+        {
+            q: "The conditional density of X given Y=y is defined as:",
+            qDE: "Die bedingte Dichte von X gegeben Y=y ist definiert als:",
+            opts: ["f_{X|Y}(x|y) = f(x,y) / f_Y(y)", "f_{X|Y}(x|y) = f_X(x) · f_Y(y)", "f_{X|Y}(x|y) = f_Y(y) / f(x,y)", "f_{X|Y}(x|y) = f(x,y) − f_Y(y)"],
+            optsDE: ["f_{X|Y}(x|y) = f(x,y) / f_Y(y)", "f_{X|Y}(x|y) = f_X(x) · f_Y(y)", "f_{X|Y}(x|y) = f_Y(y) / f(x,y)", "f_{X|Y}(x|y) = f(x,y) − f_Y(y)"],
+            correct: 0,
+        },
+        {
+            q: "For the conditional density f_{X|Y}(x|y) to be valid, it must satisfy:",
+            qDE: "Damit die bedingte Dichte f_{X|Y}(x|y) gültig ist, muss gelten:",
+            opts: ["∫ f_{X|Y}(x|y) dx = 1 for each fixed y", "∫∫ f_{X|Y}(x|y) dx dy = 1", "f_{X|Y}(x|y) = f_{Y|X}(y|x)", "f_{X|Y}(x|y) ≥ f_X(x) for all x"],
+            optsDE: ["∫ f_{X|Y}(x|y) dx = 1 für jedes feste y", "∫∫ f_{X|Y}(x|y) dx dy = 1", "f_{X|Y}(x|y) = f_{Y|X}(y|x)", "f_{X|Y}(x|y) ≥ f_X(x) für alle x"],
+            correct: 0,
+        },
+        {
+            q: "The joint density f(x,y) can be recovered from the conditional density via:",
+            qDE: "Die gemeinsame Dichte f(x,y) lässt sich aus der bedingten Dichte zurückgewinnen durch:",
+            opts: ["f(x,y) = f_{X|Y}(x|y) · f_Y(y)", "f(x,y) = f_{X|Y}(x|y) + f_Y(y)", "f(x,y) = f_{X|Y}(x|y) / f_Y(y)", "f(x,y) = f_{X|Y}(x|y) · f_X(x)"],
+            optsDE: ["f(x,y) = f_{X|Y}(x|y) · f_Y(y)", "f(x,y) = f_{X|Y}(x|y) + f_Y(y)", "f(x,y) = f_{X|Y}(x|y) / f_Y(y)", "f(x,y) = f_{X|Y}(x|y) · f_X(x)"],
+            correct: 0,
+        },
+
+        // --- Kriterium für Unabhängigkeit über bedingte Dichten ---
+        {
+            q: "In the continuous case, X and Y are independent if and only if:",
+            qDE: "Im stetigen Fall sind X und Y unabhängig genau dann, wenn:",
+            opts: ["f_{X|Y}(x|y) = f_X(x) for all x, y", "f_{X|Y}(x|y) = f_Y(y) for all x, y", "f_{X|Y}(x|y) = f(x,y) for all x, y", "f_{X|Y}(x|y) = 0 for all x ≠ y"],
+            optsDE: ["f_{X|Y}(x|y) = f_X(x) für alle x, y", "f_{X|Y}(x|y) = f_Y(y) für alle x, y", "f_{X|Y}(x|y) = f(x,y) für alle x, y", "f_{X|Y}(x|y) = 0 für alle x ≠ y"],
+            correct: 0,
+        },
+        {
+            q: "In the discrete case, X ⊥ Y if and only if for all x, y:",
+            qDE: "Im diskreten Fall gilt X ⊥ Y genau dann, wenn für alle x, y:",
+            opts: ["P(X=x, Y=y) = P(X=x) · P(Y=y)", "P(X=x | Y=y) = P(Y=y)", "P(X=x, Y=y) = P(X=x) + P(Y=y)", "P(X=x | Y=y) = 0"],
+            optsDE: ["P(X=x, Y=y) = P(X=x) · P(Y=y)", "P(X=x | Y=y) = P(Y=y)", "P(X=x, Y=y) = P(X=x) + P(Y=y)", "P(X=x | Y=y) = 0"],
+            correct: 0,
+        },
+        {
+            q: "If the joint density factors as f(x,y) = g(x) · h(y), then X and Y are:",
+            qDE: "Wenn die gemeinsame Dichte faktorisiert als f(x,y) = g(x) · h(y), dann sind X und Y:",
+            opts: ["Independent", "Uncorrelated but not necessarily independent", "Identically distributed", "Jointly normally distributed"],
+            optsDE: ["Unabhängig", "Unkorreliert, aber nicht notwendig unabhängig", "Identisch verteilt", "Gemeinsam normalverteilt"],
+            correct: 0,
+        },
+
+        // --- Bedingter Erwartungswert (diskret und stetig) ---
+        {
+            q: "The conditional expectation E[X | Y=y] in the continuous case is computed as:",
+            qDE: "Der bedingte Erwartungswert E[X | Y=y] im stetigen Fall wird berechnet als:",
+            opts: ["∫ x · f_{X|Y}(x|y) dx", "∫ x · f_X(x) dx", "∫ x · f(x,y) dx", "∫ x · f_Y(y) dx"],
+            optsDE: ["∫ x · f_{X|Y}(x|y) dx", "∫ x · f_X(x) dx", "∫ x · f(x,y) dx", "∫ x · f_Y(y) dx"],
+            correct: 0,
+        },
+        {
+            q: "The tower property (law of total expectation) states:",
+            qDE: "Die Turmregel (Gesetz der totalen Erwartung) besagt:",
+            opts: ["E[X] = E[E[X | Y]]", "E[X | Y] = E[X] · E[Y]", "E[X] = E[X | Y] + E[Y]", "E[X | Y] = E[Y | X]"],
+            optsDE: ["E[X] = E[E[X | Y]]", "E[X | Y] = E[X] · E[Y]", "E[X] = E[X | Y] + E[Y]", "E[X | Y] = E[Y | X]"],
+            correct: 0,
+        },
+        {
+            q: "If X and Y are independent, then E[X | Y=y] equals:",
+            qDE: "Wenn X und Y unabhängig sind, dann gilt E[X | Y=y] =",
+            opts: ["E[X]", "E[Y]", "E[X] · E[Y]", "E[X + Y]"],
+            optsDE: ["E[X]", "E[Y]", "E[X] · E[Y]", "E[X + Y]"],
+            correct: 0,
+        },
+
+        // --- Zufallszahlen mit Box-Muller-Methode ---
+        {
+            q: "The Box–Muller transform converts which input into standard normal random numbers?",
+            qDE: "Die Box-Muller-Methode wandelt welche Eingabe in standardnormalverteilte Zufallszahlen um?",
+            opts: ["Two independent uniform random numbers on (0,1)", "One exponentially distributed random number", "Two standard normal random numbers", "One uniform and one exponential random number"],
+            optsDE: ["Zwei unabhängige gleichverteilte Zufallszahlen auf (0,1)", "Eine exponentialverteilte Zufallszahl", "Zwei standardnormalverteilte Zufallszahlen", "Eine gleichverteilte und eine exponentialverteilte Zufallszahl"],
+            correct: 0,
+        },
+        {
+            q: "In the Box–Muller method with U₁, U₂ ~ Uniform(0,1), the formula Z₁ = √(−2 ln U₁) · cos(2πU₂) produces:",
+            qDE: "Bei der Box-Muller-Methode mit U₁, U₂ ~ Gleichverteilung(0,1) erzeugt Z₁ = √(−2 ln U₁) · cos(2πU₂):",
+            opts: ["A standard normal N(0,1) random variable", "A uniform random variable", "An exponential random variable", "A chi-squared random variable"],
+            optsDE: ["Eine standardnormalverteilte N(0,1) Zufallsvariable", "Eine gleichverteilte Zufallsvariable", "Eine exponentialverteilte Zufallsvariable", "Eine chi-quadrat-verteilte Zufallsvariable"],
+            correct: 0,
+        },
+        {
+            q: "A key advantage of the Box–Muller method is that it produces normal random variables:",
+            qDE: "Ein wesentlicher Vorteil der Box-Muller-Methode ist, dass sie Normalzufallszahlen erzeugt:",
+            opts: ["Exactly, not just approximately", "Only approximately via the CLT", "Using only one uniform input", "Without any trigonometric functions"],
+            optsDE: ["Exakt, nicht nur näherungsweise", "Nur näherungsweise über den ZGS", "Mit nur einer gleichverteilten Eingabe", "Ohne trigonometrische Funktionen"],
+            correct: 0,
+        },
+
+        // --- Erwartungswertvektor ---
+        {
+            q: "The expected value vector (mean vector) of a random vector (X₁, …, Xₙ) is:",
+            qDE: "Der Erwartungswertvektor eines Zufallsvektors (X₁, …, Xₙ) ist:",
+            opts: ["The vector (E[X₁], …, E[Xₙ])", "The vector of variances (Var(X₁), …, Var(Xₙ))", "The covariance matrix diagonal", "E[X₁ + … + Xₙ] as a scalar"],
+            optsDE: ["Der Vektor (E[X₁], …, E[Xₙ])", "Der Varianzvektor (Var(X₁), …, Var(Xₙ))", "Die Diagonale der Kovarianzmatrix", "E[X₁ + … + Xₙ] als Skalar"],
+            correct: 0,
+        },
+        {
+            q: "For a linear transformation Y = AX + b, the expected value vector E[Y] equals:",
+            qDE: "Für eine lineare Transformation Y = AX + b gilt für den Erwartungswertvektor E[Y]:",
+            opts: ["A·E[X] + b", "E[X] + b", "A·E[X]", "A·b + E[X]"],
+            optsDE: ["A·E[X] + b", "E[X] + b", "A·E[X]", "A·b + E[X]"],
+            correct: 0,
+        },
+        {
+            q: "The mean vector of a sum X + Y of two random vectors equals:",
+            qDE: "Der Erwartungswertvektor einer Summe X + Y zweier Zufallsvektoren ist:",
+            opts: ["E[X] + E[Y] (always, regardless of dependence)", "E[X] + E[Y] only if X and Y are independent", "E[X] · E[Y]", "E[X] only if X and Y are identically distributed"],
+            optsDE: ["E[X] + E[Y] (stets, unabhängig von Abhängigkeit)", "E[X] + E[Y] nur bei Unabhängigkeit", "E[X] · E[Y]", "E[X], nur wenn X und Y identisch verteilt sind"],
+            correct: 0,
+        },
+
+        // --- Kovarianz ---
+        {
+            q: "The covariance of X and Y is defined as:",
+            qDE: "Die Kovarianz von X und Y ist definiert als:",
+            opts: ["Cov(X,Y) = E[(X − E[X])(Y − E[Y])]", "Cov(X,Y) = E[X] · E[Y]", "Cov(X,Y) = E[X²] − E[Y²]", "Cov(X,Y) = Var(X) + Var(Y)"],
+            optsDE: ["Cov(X,Y) = E[(X − E[X])(Y − E[Y])]", "Cov(X,Y) = E[X] · E[Y]", "Cov(X,Y) = E[X²] − E[Y²]", "Cov(X,Y) = Var(X) + Var(Y)"],
+            correct: 0,
+        },
+        {
+            q: "The computational shortcut for covariance is:",
+            qDE: "Die Verschiebungsformel für die Kovarianz lautet:",
+            opts: ["Cov(X,Y) = E[XY] − E[X]·E[Y]", "Cov(X,Y) = E[XY] + E[X]·E[Y]", "Cov(X,Y) = E[X²Y²] − E[XY]", "Cov(X,Y) = E[XY] / (E[X]·E[Y])"],
+            optsDE: ["Cov(X,Y) = E[XY] − E[X]·E[Y]", "Cov(X,Y) = E[XY] + E[X]·E[Y]", "Cov(X,Y) = E[X²Y²] − E[XY]", "Cov(X,Y) = E[XY] / (E[X]·E[Y])"],
+            correct: 0,
+        },
+        {
+            q: "Cov(X, X) equals:",
+            qDE: "Cov(X, X) ist gleich:",
+            opts: ["Var(X)", "E[X]²", "0", "E[X²]"],
+            optsDE: ["Var(X)", "E[X]²", "0", "E[X²]"],
+            correct: 0,
+        },
+
+        // --- Kovarianzmatrix ---
+        {
+            q: "The covariance matrix Σ of a random vector X has entries Σ_{ij} =",
+            qDE: "Die Kovarianzmatrix Σ eines Zufallsvektors X hat Einträge Σ_{ij} =",
+            opts: ["Cov(Xᵢ, Xⱼ)", "E[Xᵢ] · E[Xⱼ]", "Var(Xᵢ) + Var(Xⱼ)", "Corr(Xᵢ, Xⱼ)"],
+            optsDE: ["Cov(Xᵢ, Xⱼ)", "E[Xᵢ] · E[Xⱼ]", "Var(Xᵢ) + Var(Xⱼ)", "Corr(Xᵢ, Xⱼ)"],
+            correct: 0,
+        },
+        {
+            q: "For a linear transformation Y = AX, the covariance matrix of Y is:",
+            qDE: "Für eine lineare Transformation Y = AX ist die Kovarianzmatrix von Y:",
+            opts: ["A · Σ_X · Aᵀ", "A · Σ_X", "Σ_X · Aᵀ", "Aᵀ · Σ_X · A"],
+            optsDE: ["A · Σ_X · Aᵀ", "A · Σ_X", "Σ_X · Aᵀ", "Aᵀ · Σ_X · A"],
+            correct: 0,
+        },
+        {
+            q: "The covariance matrix is always:",
+            qDE: "Die Kovarianzmatrix ist stets:",
+            opts: ["Symmetric and positive semi-definite", "Diagonal", "Invertible", "An identity matrix scaled by σ²"],
+            optsDE: ["Symmetrisch und positiv semidefinit", "Diagonal", "Invertierbar", "Eine mit σ² skalierte Einheitsmatrix"],
+            correct: 0,
+        },
+
+        // --- Unkorreliert ---
+        {
+            q: "Two random variables X and Y are uncorrelated if:",
+            qDE: "Zwei Zufallsvariablen X und Y sind unkorreliert, wenn:",
+            opts: ["Cov(X,Y) = 0", "E[X] = E[Y]", "Var(X) = Var(Y)", "E[XY] = 0"],
+            optsDE: ["Cov(X,Y) = 0", "E[X] = E[Y]", "Var(X) = Var(Y)", "E[XY] = 0"],
+            correct: 0,
+        },
+        {
+            q: "Independence implies uncorrelatedness, but not vice versa. A counterexample is:",
+            qDE: "Unabhängigkeit impliziert Unkorreliertheit, aber nicht umgekehrt. Ein Gegenbeispiel ist:",
+            opts: ["X ~ Uniform(−1,1) and Y = X²", "X and Y both standard normal and independent", "X and Y with the same distribution", "X and Y both Bernoulli(0.5)"],
+            optsDE: ["X ~ Gleichverteilung(−1,1) und Y = X²", "X und Y beide standardnormalverteilt und unabhängig", "X und Y mit gleicher Verteilung", "X und Y beide Bernoulli(0.5)"],
+            correct: 0,
+        },
+        {
+            q: "For jointly normal X and Y, uncorrelatedness implies:",
+            qDE: "Für gemeinsam normalverteilte X und Y impliziert Unkorreliertheit:",
+            opts: ["Independence", "E[X] = E[Y]", "Var(X) = Var(Y)", "E[XY] = 1"],
+            optsDE: ["Unabhängigkeit", "E[X] = E[Y]", "Var(X) = Var(Y)", "E[XY] = 1"],
+            correct: 0,
+        },
+
+        // --- Korrelation ---
+        {
+            q: "The correlation coefficient of X and Y is defined as:",
+            qDE: "Der Korrelationskoeffizient von X und Y ist definiert als:",
+            opts: ["Corr(X,Y) = Cov(X,Y) / (σ_X · σ_Y)", "Corr(X,Y) = Cov(X,Y) · σ_X · σ_Y", "Corr(X,Y) = Cov(X,Y) / Var(X)", "Corr(X,Y) = E[XY] / E[X+Y]"],
+            optsDE: ["Corr(X,Y) = Cov(X,Y) / (σ_X · σ_Y)", "Corr(X,Y) = Cov(X,Y) · σ_X · σ_Y", "Corr(X,Y) = Cov(X,Y) / Var(X)", "Corr(X,Y) = E[XY] / E[X+Y]"],
+            correct: 0,
+        },
+        {
+            q: "The correlation coefficient always lies in the range:",
+            qDE: "Der Korrelationskoeffizient liegt stets im Bereich:",
+            opts: ["[−1, 1]", "[0, 1]", "[−∞, ∞]", "[0, ∞)"],
+            optsDE: ["[−1, 1]", "[0, 1]", "[−∞, ∞]", "[0, ∞)"],
+            correct: 0,
+        },
+        {
+            q: "Corr(X,Y) = 1 means:",
+            qDE: "Corr(X,Y) = 1 bedeutet:",
+            opts: ["X and Y are perfectly linearly related with positive slope", "X and Y are independent", "Var(X) = Var(Y)", "E[X] = E[Y]"],
+            optsDE: ["X und Y sind perfekt linear abhängig mit positiver Steigung", "X und Y sind unabhängig", "Var(X) = Var(Y)", "E[X] = E[Y]"],
+            correct: 0,
+        },
+
+        // --- Rechenregel für Kovarianz inkl. Cauchy-Schwarz ---
+        {
+            q: "The bilinearity rule for covariance gives Cov(aX + b, Y) =",
+            qDE: "Die Bilinearitätsregel für die Kovarianz ergibt Cov(aX + b, Y) =",
+            opts: ["a · Cov(X,Y)", "a · Cov(X,Y) + b", "Cov(X,Y) + b · Cov(1,Y)", "a · Var(X)"],
+            optsDE: ["a · Cov(X,Y)", "a · Cov(X,Y) + b", "Cov(X,Y) + b · Cov(1,Y)", "a · Var(X)"],
+            correct: 0,
+        },
+        {
+            q: "The Cauchy–Schwarz inequality for random variables states:",
+            qDE: "Die Cauchy-Schwarz-Ungleichung für Zufallsvariablen besagt:",
+            opts: ["|Cov(X,Y)|² ≤ Var(X) · Var(Y)", "Cov(X,Y) ≤ E[X] · E[Y]", "|E[XY]| ≤ E[X] + E[Y]", "Var(X+Y) ≤ Var(X) · Var(Y)"],
+            optsDE: ["|Cov(X,Y)|² ≤ Var(X) · Var(Y)", "Cov(X,Y) ≤ E[X] · E[Y]", "|E[XY]| ≤ E[X] + E[Y]", "Var(X+Y) ≤ Var(X) · Var(Y)"],
+            correct: 0,
+        },
+        {
+            q: "For independent X and Y, Var(X + Y) equals:",
+            qDE: "Für unabhängige X und Y gilt Var(X + Y) =",
+            opts: ["Var(X) + Var(Y)", "Var(X) · Var(Y)", "Var(X) + Var(Y) + 2·Cov(X,Y)", "Var(X) − Var(Y)"],
+            optsDE: ["Var(X) + Var(Y)", "Var(X) · Var(Y)", "Var(X) + Var(Y) + 2·Cov(X,Y)", "Var(X) − Var(Y)"],
+            correct: 0,
+        },
+
+        // --- Multivariate Normalverteilung ---
+        {
+            q: "A multivariate normal distribution is fully characterized by:",
+            qDE: "Eine multivariate Normalverteilung ist vollständig bestimmt durch:",
+            opts: ["The mean vector μ and the covariance matrix Σ", "Only the mean vector μ", "Only the covariance matrix Σ", "The marginal distributions alone"],
+            optsDE: ["Den Erwartungswertvektor μ und die Kovarianzmatrix Σ", "Nur den Erwartungswertvektor μ", "Nur die Kovarianzmatrix Σ", "Nur die Randverteilungen"],
+            correct: 0,
+        },
+        {
+            q: "If X ~ N(μ, Σ) and Y = AX + b, then Y follows:",
+            qDE: "Wenn X ~ N(μ, Σ) und Y = AX + b, dann folgt Y:",
+            opts: ["N(Aμ + b, AΣAᵀ)", "N(Aμ, Σ)", "N(μ + b, AΣ)", "N(Aμ + b, Σ)"],
+            optsDE: ["N(Aμ + b, AΣAᵀ)", "N(Aμ, Σ)", "N(μ + b, AΣ)", "N(Aμ + b, Σ)"],
+            correct: 0,
+        },
+        {
+            q: "For a multivariate normal vector, all marginal distributions are:",
+            qDE: "Bei einem multivariaten Normalverteilungsvektor sind alle Randverteilungen:",
+            opts: ["Univariate normal distributions", "Uniform distributions", "Exponential distributions", "Possibly non-normal"],
+            optsDE: ["Univariate Normalverteilungen", "Gleichverteilungen", "Exponentialverteilungen", "Möglicherweise nicht normalverteilt"],
+            correct: 0,
+        },
+
+
+    ],
+
+    // Worlds 7–13: empty for now — add questions here as you build those worlds.
+    7: [], 8: [], 9: [], 10: [], 11: [], 12: [],
 
 
 

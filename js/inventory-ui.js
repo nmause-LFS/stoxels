@@ -253,3 +253,24 @@ function _repositionInvPanel() {
     }
 }
 
+
+
+// -----------------------------------------------------------------------
+// PUBLIC HELPER — attach an inventory-style tooltip to any DOM element
+// that represents a reward item (win overlay, gate reward, etc.)
+// Call after the element is inserted into the DOM.
+// -----------------------------------------------------------------------
+function attachItemTooltip(el, defId) {
+    const def = ITEM_DEFS[defId];
+    if (!def || !el) return;
+    el.addEventListener('mouseenter', () => {
+        const tip = _ensureTooltip();
+        const rc = rarityColors(def.rarity);
+        tip.innerHTML = `
+            <div class="inv-tip-name" style="color:${rc.color}">${def.icon} ${itemName(def)}</div>
+            <div class="inv-tip-desc">${itemDesc(def)}</div>`;
+        tip.classList.add('visible');
+        _positionTooltip(tip, el);
+    });
+    el.addEventListener('mouseleave', _hideSlotTooltip);
+}

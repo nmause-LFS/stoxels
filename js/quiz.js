@@ -100,6 +100,7 @@ function showQuiz(worldNum) {
     document.getElementById('quiz-q').textContent = q.q;
     document.getElementById('quiz-result').textContent = '';
     document.getElementById('quiz-continue').style.display = 'none';
+    document.getElementById('btn-skip-quiz').style.display = 'block';
 
     const optsEl = document.getElementById('quiz-opts');
     optsEl.innerHTML = '';
@@ -273,6 +274,7 @@ function _resolveQuizAnswer(correct) {
     const quizAlreadyClaimed = STATE.bonusDone.includes(cur.gIdx);
 
     if (correct) {
+        Audio_Manager.playSFX('quizCorrect');
         if (quizAlreadyClaimed) {
             resEl.className = 'quiz-result ok';
             resEl.textContent = t('quiz_correct_claimed');
@@ -284,9 +286,13 @@ function _resolveQuizAnswer(correct) {
                     save();
                     const irz = document.getElementById('item-reward-zone');
                     const rc = rarityColors(def.rarity);
-                    irz.innerHTML += `<div class="item-reward" style="border-color:${rc.border};color:${rc.color};margin-top:4px;">
-                        ${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong>
-                    </div>`;
+                    const rewardEl = document.createElement('div');
+                    rewardEl.className = 'item-reward';
+                    rewardEl.dataset.rewardDefid = defId;
+                    rewardEl.style.cssText = `border-color:${rc.border};color:${rc.color};margin-top:4px;cursor:default;`;
+                    rewardEl.innerHTML = `${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong>`;
+                    irz.appendChild(rewardEl);
+                    attachItemTooltip(rewardEl, defId);
                 }
             }
         } else {
@@ -306,7 +312,14 @@ function _resolveQuizAnswer(correct) {
                     STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
                     const irz = document.getElementById('item-reward-zone');
                     const rc = rarityColors(def.rarity);
-                    irz.innerHTML += `<div class="item-reward" style="border-color:${rc.border};color:${rc.color};margin-top:4px;">${t('ov_quiz_reward')}: ${def.icon} <strong>${itemName(def)}</strong></div>`;
+                    const rewardEl = document.createElement('div');
+                    rewardEl.className = 'item-reward';
+                    rewardEl.dataset.rewardDefid = defId;
+                    rewardEl.style.cssText = `border-color:${rc.border};color:${rc.color};margin-top:4px;cursor:default;`;
+                    rewardEl.innerHTML = `${t('ov_quiz_reward')}: ${def.icon} <strong>${itemName(def)}</strong>`;
+                    irz.appendChild(rewardEl);
+                    attachItemTooltip(rewardEl, defId);
+
                 }
             }
             save();
@@ -315,6 +328,7 @@ function _resolveQuizAnswer(correct) {
     } else {
         resEl.className = 'quiz-result bad';
         resEl.textContent = t('quiz_wrong');
+        Audio_Manager.playSFX('quizWrong');
     }
 
     document.getElementById('quiz-continue').style.display = 'block';

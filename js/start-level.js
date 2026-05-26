@@ -57,6 +57,7 @@ function _resetLevelState() {
     window._deadReckoningActive = false;
     window._deadReckoningUnlocked = false;
     _resetNewNodeState();
+    resetWitchImmunityLevelCounter();
 }
 
 
@@ -85,7 +86,7 @@ function _initLuckyTiles() {
 
     // grid_awareness (167): large/massive grids now guarantee exactly 1 lucky tile
     // (without the node the old probabilistic system applies, which caps at 0 for small grids)
-    let maxTiles;
+    let maxTiles = 0;
     if (ptHasSkill('grid_awareness')) {
         // Small/Medium: no lucky tiles. Large: 1. Massive: 1 guaranteed + chance of 2.
         if (!isLargeOrMassive) {
@@ -95,10 +96,8 @@ function _initLuckyTiles() {
         } else {
             maxTiles = 2;  // up to 2 for massive
         }
-    } else {
-        // Original thresholds (unchanged for players without the node)
-        maxTiles = cellCount <= 25 ? 0 : cellCount <= 75 ? 1 : cellCount <= 200 ? 2 : 3;
-    }
+    } 
+    
 
     // fortunes_tile nodes (189-191): extra chance for an additional lucky tile on large/massive
     let extraTileChance = 0;
@@ -242,7 +241,11 @@ function _applyCentralTendency() {
         }
     }
     if (affected.length > 0) {
-        if (typeof _applyCellEffect === 'function') _applyCellEffect(affected, 'reveal');
+        if (typeof _applyCellEffect === 'function') {
+            _applyCellEffect(affected, 'reveal');
+            if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
+        }
+            
         checkWin();
     }
 }
@@ -407,8 +410,13 @@ function _applyMarginalDistribution() {
     });
 
     if (affected.length > 0) {
-        if (typeof _applyCellEffect === 'function') _applyCellEffect(affected, 'reveal');
-        checkWin();
+        if (typeof _applyCellEffect === 'function') {
+            _applyCellEffect(affected, 'reveal');
+            if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
+        }
+
+
+            checkWin();
     }
 }
 
@@ -579,6 +587,8 @@ function _updateModTags() {
     if (curMods.timetrial) mt.innerHTML += `<span class="mod-tag tt">${t('mod_tt')}</span>`;
     if (curMods.hardcore) mt.innerHTML += `<span class="mod-tag hc">${t('mod_hc')}</span>`;
     if (curMods.ironman) mt.innerHTML += `<span class="mod-tag im">${t('mod_im')}</span>`;
+    if (curMods.classless) mt.innerHTML += `<span class="mod-tag cl">${t('mod_cl')}</span>`;
+    if (curMods.treeless) mt.innerHTML += `<span class="mod-tag tl">${t('mod_tl')}</span>`;
     mt.innerHTML += `<span class="mod-tag diff">${t('diff_' + curDiff)}</span>`;
 }
 
@@ -736,6 +746,10 @@ function _doStartLevel(gi) {
     _updateHUD();
     _startSystems();
     _applyPassiveStartEffects();
+
+    // adjacency_matrix (302): populate neighbour-count overlays after grid and passives are ready
+    if (ptHasSkill('adjacency_matrix')) setTimeout(_adjacencyMatrixRefreshAll, 100);
+
     _applyCompletionGlimpse();
     _checkPrimerPending();
     _initClassSystems();
@@ -746,9 +760,7 @@ function _doStartLevel(gi) {
     _applyDegreesOfFreedom();
     _applyTheOracle();
 
-    //setTimeout(() => {
-    //    _repositionInvPanel();
-    //}, 50);
+    Audio_Manager.playBGM(Audio_Manager.trackForLevel(cur.world, cur.li));
 
 
 }

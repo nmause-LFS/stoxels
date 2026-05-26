@@ -22,23 +22,33 @@ const T = {
 
         // Tutorial modal — section headings (h) and paragraphs (p)
         tut_title: '▸ HOW TO PLAY STOXELS',
+
         tut_s1h: 'WHAT IS A NONOGRAM?',
         tut_s1p: 'A nonogram is a grid puzzle. Numbers on row and columns tell you how many consecutive filled cells exist. Reveal the full symbol to win!',
+
         tut_s2h: 'CONTROLS',
-        tut_s2p: '<strong>Left click</strong> — fill a cell<br><strong>Right click</strong> — mark a cell as empty<br><strong>Hold Left Click and Drag</strong> — fill multiple cells<br><strong>CTRL + MouseWheel</strong> — Zoom in & out to scale<br><strong>Escape</strong> — go back',
+        tut_s2p: '<strong>Left click</strong> — fill a cell<br><strong>Right click</strong> — mark a cell as empty<br><strong>Hold Left Click and Drag</strong> - fill multiple cells<br>< strong > CTRL + MouseWheel</strong> — Zoom in & out to scale <br> <strong>Left & Right Arrow Keys</strong> — Move the row clue headers towards the left/right<br> <strong>Escape</strong> — go back',
+
         tut_s3h: 'DIFFICULTY',
         tut_s3p: '<strong style="color:var(--green)">Easy</strong> — low time penalties for mistakes, 50% less Score<br><strong style="color:var(--yellow)">Normal</strong> — standard time penalties for mistakes<br><strong style="color:var(--red)">Hard</strong> — heavy time penalties for mistakes, 50% more score',
+
         tut_s4h: 'GAME MODIFIERS',
-        tut_s4p: '<strong style="color:var(--orange)">Time Trial</strong> — 50% less time per level — 20% more Score <br><strong style="color:var(--red)">Hardcore</strong> — one mistake fails the level — 30% more Score<br><strong style="color:var(--purple)">Ironman</strong> — items cannot be used — 15% more Score <br>Modifiers can be combined with each other.',
+        tut_s4p: '<strong style="color:var(--orange)">Time Trial</strong> — 50% less time per level, but 20% more Score <br><strong style="color:var(--red)">Hardcore</strong> — one mistake fails the level, but 30% more Score<br><strong style="color:var(--purple)">Ironman</strong> — items cannot be used, but 15% more Score <br><strong style="color:var(--accent)">Classless</strong> — Class Abilities cannot be used, but 20% more Score <br><strong style="color:var(--green)">Treeless</strong> — Probability Tree nodes have no effect, but 25% more Score <br>Modifiers can be combined with each other.',
+
         tut_s5h: 'ITEMS & INVENTORY',
-        tut_s5p: 'Complete a level\'s bonus objective to earn a random item. Consecutive clears of that level have a 50% of rewarding a lucky drop. Cursed items are powerful but <strong>locked for the first 3 minutes of a level (1 minute when Time Trial is active)</strong>',
+        tut_s5p: 'Complete a level\'s bonus objective to earn a random item. Cursed items are powerful but also have a negative effect.',
+
         tut_s6h: 'QUIZ & Probability Gates',
         tut_s6p: 'Some levels require answering a quiz correctly after finishing a level in order to achieve the bonus objective, and some levels have a Probability Gate that can be unlocked by solving an excercise.',
+
         tut_s7h: 'ACHIEVEMENT CODES',
         tut_s7p: 'Reach score milestones to unlock Moodle Codes. You can see your progress towards the next achievement in the Highscores tab. More score can be earned by replaying levels on higher difficulties or by adding more game modifiers.',
+
         tut_s8h: 'CLASSES & CLASS ABILITIES',
         tut_s8p: 'Completing Ascension - Levels allows you to select one out of three possible classes. Each class has a passive ability and two active abilities, which can heavily alter the way you approach a Stoxel and help in case you get stuck. Abilities can be upgraded by playing more Ascension - Levels.',
 
+        tut_s9h: 'CONVERGENCE, INFERENCE & PROBABILITY TREE',
+        tut_9p: 'Completing Convergence - Levels grants Convergence Points, which can be spent on the Probability Tree to customize the way you play the game. Completing Inference - Objectives rewards additional Convergence Points.',
 
         // Setup screen
         setup_title: '▸ GAME SETUP',
@@ -54,9 +64,9 @@ const T = {
         // Modifier button labels and descriptions
         mod_tt: '⏱ TIME TRIAL', mod_hc: '💀 HARDCORE', mod_im: '🔒 IRONMAN',
         mod_desc_none: 'No modifiers selected.',
-        mod_desc_tt: '50% less time per level, but 20% more Score',
-        mod_desc_hc: 'one mistake fails the level, but 30% more Score',
-        mod_desc_im: 'items cannot be used, but 15% more Score',
+        mod_desc_tt: '50% less time per level, but you gain 20% more Score',
+        mod_desc_hc: 'one mistake fails the level, but you gain 30% more Score',
+        mod_desc_im: 'items cannot be used, but you gain 15% more Score',
 
         // In-game HUD
         score_lbl: 'SCORE',
@@ -159,14 +169,15 @@ const T = {
         rar_legendary: 'LEGENDARY', rar_cursed: 'CURSED',
 
         // Win overlay
-        ov_win_pts: 'pts',
+        ov_win_pts: 'Score',
         ov_win_left: 'left',
+        ov_win_multiplier: 'Multiplier:',
         ov_win_solved_in: 'solved in',
         ov_win_mistake: 'mistake',
         ov_win_mistakes: 'mistakes',
         ov_win_absorbed: 'absorbed by shield/skill',
         ov_win_new: 'new',
-        ov_win_best_was: 'best was',
+        ov_win_best_was: 'Level Highscore:',
         ov_bonus_met: '🎯 BONUS MET!',
         ov_item_earned: '🎁 Item earned',
         ov_bonus_claimed_note: '✓ Bonus objective already claimed.',
@@ -175,8 +186,8 @@ const T = {
 
         // Quiz overlay
         quiz_title: '⭐ BONUS QUESTION',
-        quiz_correct: '✓ CORRECT! +50 bonus points & item!',
-        quiz_correct_claimed: '✓ Correct! (Bonus already claimed)',
+        quiz_correct: '✓ CORRECT! +50 Score & Item reward!',
+        quiz_correct_claimed: '✓ Correct!',
         quiz_wrong: '✗ Wrong answer. No bonus.',
         quiz_continue: 'CONTINUE ▶',
         quiz_skip: 'SKIP (no bonus)',
@@ -236,7 +247,7 @@ const T = {
 
         reset_close: '✕ CLOSE',
         reset_title: '⚠ RESET ALL PROGRESS',
-        reset_body: 'This will permanently erase:<br><strong style="color:var(--accent2)">· All completed levels<br>· All highscores<br>· All bonus claims<br>· All inventory items<br>· All Moodle codes<br><br>This will NOT reset your collected achievements.</strong><br><br>Your current playthrough will be gone. This cannot be undone.',
+        reset_body: 'This will permanently erase:<br><strong style="color:var(--accent2)">· All completed levels<br>· All highscores<br>· All bonus claims<br>· All inventory items<br>· All Moodle codes<br>· Your selected class <br>· Your completed Inference tasks <br>· Your collected Convergence Points<br><br>This will NOT reset your collected achievements.</strong><br><br>Your current playthrough will be gone. This cannot be undone.',
         reset_confirm: '🗑 YES, RESET EVERYTHING',
         reset_cancel: 'CANCEL',
 
@@ -245,6 +256,15 @@ const T = {
 
 
         btn_inference: 'INFERENCE',
+
+        mod_cl: '⚗️ CLASSLESS',
+        mod_tl: '🌿 TREELESS',
+        mod_desc_cl: 'No active or passive class abilities, but you gain 20% more Score.',
+        mod_desc_tl: 'All Probability Tree nodes are disabled, but you gain 25% more Score.',
+
+        setup_controls: 'CONTROLS',
+        axis_lock_label: '🔒 AXIS LOCK — Lock mouse drag direction to current row or column',
+
 
     },
 
@@ -266,20 +286,31 @@ const T = {
         tut_title: '▸ SO SPIELST DU STOXELS',
         tut_s1h: 'WAS IST EIN NONOGRAMM?',
         tut_s1p: 'Ein Nonogramm ist ein Gitterpuzzle. Zahlen an Zeilen und Spalten stellen die Anzahl aufeinanderfolgend gefüllter Zellen dar. Enthülle das gesamte Symbol um zu gewinnen!',
+
         tut_s2h: 'STEUERUNG',
-        tut_s2p: '<strong>Linksklick</strong> — Zelle füllen<br><strong>Rechtsklick</strong> — Zelle als leer markieren<br><strong>Linksklick gedrückt halten & Ziehen</strong> — Mehrere Zellen füllen<br><strong>STRG + Mausrad</strong> — Hinein- & herauszoomen zum Skalieren<br><strong>Escape</strong> — Zurück',
+        tut_s2p: '<strong>Linksklick</strong> — Zelle füllen<br><strong>Rechtsklick</strong> — Zelle als leer markieren<br><strong>Linksklick gedrückt halten & Ziehen</strong> — Mehrere Zellen füllen<br><strong>STRG + Mausrad</strong> — Hinein- & herauszoomen zum Skalieren<br><strong>Linke - und - Rechte Pfeiltaste</strong> — Zeilenhinweise nach links/rechts bewegen<br><strong>Escape</strong> — Zurück',
+
         tut_s3h: 'SCHWIERIGKEIT',
         tut_s3p: '<strong style="color:var(--green)">Leicht</strong> — geringe Zeitstrafen bei Fehlern, 50% weniger Punkte<br><strong style="color:var(--yellow)">Normal</strong> — normale Zeitstrafen bei Fehlern <br> <strong style="color:var(--red)">Schwer</strong> — schwere Zeitstrafen bei Fehlern, 50% mehr Punkte',
+
         tut_s4h: 'SPIELMODIFIKATOREN',
-        tut_s4p: '<strong style="color:var(--orange)">Time Trial</strong> — 50% weniger Zeit pro Level — 20% mehr Punkte<br><strong style="color:var(--red)">Hardcore</strong> — ein Fehler = sofort verloren — 30% mehr Punkte<br><strong style="color:var(--purple)">Ironman</strong> — Items können nicht verwendet werden — 15% mehr Punkte <br>Modifikatoren können miteinander kombiniert werden.',
+        tut_s4p: '<strong style="color:var(--orange)">Time Trial</strong> — 50% weniger Zeit pro Level — 20% mehr Punkte<br><strong style="color:var(--red)">Hardcore</strong> — ein Fehler = sofort verloren — 30% mehr Punkte<br><strong style="color:var(--purple)">Ironman</strong> — Items können nicht verwendet werden — 15% mehr Punkte <br><strong style="color:var(--accent)">Klassenlos</strong> — Keine aktiven oder passiven Klassenfähigkeiten, aber dafür 20% mehr Punkte <br><strong style="color:var(--green)">Baumlos</strong> — Probability Alle Effekte vom Wahrscheinlichkeitsbaum sind deaktiviert, aber dafür 25% mehr Punkte <br>Modifikatoren können miteinander kombiniert werden.',
+
         tut_s5h: 'ITEMS & INVENTAR',
-        tut_s5p: 'Erfülle das Bonusziel eines Levels, um ein zufälliges Item zu erhalten. Wiederholte Abschlüsse haben eine Chance auf einen Glücksfund. Verfluchte Items sind mächtig, aber auch gefährlich.',
+        tut_s5p: 'Erfülle das Bonusziel eines Levels, um ein zufälliges Item zu erhalten. Verfluchte Items sind mächtig, aber haben auch negative Effekte.',
+
         tut_s6h: 'QUIZ & WAHRSCHEINLICHKEITSTORE',
         tut_s6p: 'Manche Level erfordern nach dem Abschluss eine korrekt beantwortete Quizfrage, um das Bonusziel zu erreichen. Außerdem haben einige Level ein Wahrscheinlichkeitstor, das durch Lösen einer Aufgabe freigeschaltet werden kann.',
+
         tut_s7h: 'ACHIEVEMENT CODES',
         tut_s7p: 'Erreiche Punktemeilensteine, um Moodle-Codes freizuschalten. Deinen Fortschritt zum nächsten Achievement siehst du im Highscores-Tab. Mehr Punkte lassen sich durch Wiederholen von Levels auf höheren Schwierigkeitsstufen oder durch zusätzliche Modifikatoren verdienen.',
+
         tut_s8h: 'KLASSEN & KLASSEN FÄHIGKEITEN',
         tut_s8p: 'Nach dem Beenden eines Aufstiegs - Levels kann eine von drei möglichen Klassen ausgewählt werden. Jede Klasse hat eine passive und zwei aktive Fähigkeiten, die deine Spielweise beeinflussen können und dir helfen, wenn du nicht weiter weißt. Fähigkeiten können durch das Abschließen von weiteren Aufstieg - Levels verbessert werden.',
+
+        tut_s9h: 'KONVERGENZ, INFERENZ & WAHRSCHEINLICHKEITSBAUM',
+        tut_s9p: 'Nach dem Beenden eines Konvergenz - Levels erhältst du Konvergenzpunkte, die im Wahrscheinlichkeitsbaum ausgegeben werden können, um deine Spielweise anzupassen. Das Abschließen von Inferenz - Zielen gibt zusätzliche Konvergenzpunkte.',
+
 
 
 
@@ -312,8 +343,8 @@ const T = {
         inv_empty: '<strong style="color:var(--white)">Noch keine Items. Erfülle Bonusziele oder löse bereits abgeschlossene Levels nochmal!</strong>',
 
         // Win / lose overlays
-        ov_win: 'PUZZLE GELÖST!',
-        ov_lose: 'ZEIT UM!',
+        ov_win: 'STOXEL GELÖST!',
+        ov_lose: 'ZEIT VORBEI!',
 
         // Highscore screen
         hs_title: 'Highscores',
@@ -402,14 +433,15 @@ const T = {
         rar_legendary: 'LEGENDÄR', rar_cursed: 'VERFLUCHT',
 
         // Win overlay
-        ov_win_pts: 'Pkt.',
+        ov_win_pts: 'Punkte',
         ov_win_left: 'übrig',
+        ov_win_multiplier: 'Multiplikator:',
         ov_win_solved_in: 'gelöst in',
         ov_win_mistake: 'Fehler',
         ov_win_mistakes: 'Fehler',
         ov_win_absorbed: 'absorbiert durch Schild/Fähigkeit',
         ov_win_new: 'neu',
-        ov_win_best_was: 'Beste war',
+        ov_win_best_was: 'Level Highscore:',
         ov_bonus_met: '🎯 BONUS ERFÜLLT!',
         ov_item_earned: '🎁 Item erhalten',
         ov_bonus_claimed_note: '✓ Bonusziel bereits geschafft.',
@@ -418,8 +450,8 @@ const T = {
 
         // Quiz overlay
         quiz_title: '⭐ BONUSFRAGE',
-        quiz_correct: '✓ RICHTIG! +50 Punkte & Item!',
-        quiz_correct_claimed: '✓ Richtig! (Bonus bereits erhalten)',
+        quiz_correct: '✓ RICHTIG! +50 Punkte & Item Belohnung!',
+        quiz_correct_claimed: '✓ Richtig!',
         quiz_wrong: '✗ Falsche Antwort. Kein Bonus.',
         quiz_continue: 'WEITER ▶',
         quiz_skip: 'ÜBERSPRINGEN (kein Bonus)',
@@ -478,7 +510,7 @@ const T = {
 
         reset_close: '✕ SCHLIESSEN',
         reset_title: '⚠ RESET',
-        reset_body: 'Folgendes wird dauerhaft gelöscht:<br><strong style="color:var(--accent2)">· Alle abgeschlossenen Level<br>· Alle Highscores<br>· Alle Bonus-Erfolge<br>· Alle Inventar-Gegenstände<br>· Alle Moodle-Codes</strong><br><br>Dein aktueller Spielstand geht verloren. Dies kann nicht rückgängig gemacht werden.',
+        reset_body: 'Folgendes wird dauerhaft gelöscht:<br><strong style="color:var(--accent2)">· Alle abgeschlossenen Level<br>· Alle Highscores<br>· Alle Bonus-Erfolge<br>· Alle Inventar-Gegenstände<br>· Alle Moodle-Codes<br>· Deine ausgewählte Klasse<br>· Deine abgeschlossenen Inferenz-Aufgaben<br>· Deine gesammelten Konvergenz-Punkte</strong><br><br>Dein aktueller Spielstand geht verloren. Dies kann nicht rückgängig gemacht werden.',
         reset_confirm: '🗑 JA, ALLES LÖSCHEN',
         reset_cancel: 'ABBRECHEN',
 
@@ -487,6 +519,13 @@ const T = {
 
         btn_inference: 'INFERENZ',
 
+        mod_cl: '⚗️ KLASSENLOS',
+        mod_tl: '🌿 BAUMLOS',
+        mod_desc_cl: 'Keine aktiven oder passive Klassenfähigkeiten, aber dafür 20% mehr Punkte.',
+        mod_desc_tl: 'Alle Effekte vom Wahrscheinlichkeitsbaum  sind deaktiviert, aber dafür 25% mehr Punkte.',
+
+        setup_controls: 'STEUERUNG',
+        axis_lock_label: '🔒 ACHSENSPERRE — Maus-Zug-Richtung auf aktuelle Zeile oder Spalte beschränken',
     }
 };
 

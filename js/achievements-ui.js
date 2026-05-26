@@ -71,6 +71,8 @@ function _showAchToast(def, tier) {
 
     requestAnimationFrame(() => el.classList.add('show'));
     setTimeout(() => _dismissAchToast(el), 3500);
+
+    Audio_Manager.playSFX('achievement');
 }
 
 // _buildToastElement — creates and returns the DOM element for a toast.

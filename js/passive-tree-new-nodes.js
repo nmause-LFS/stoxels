@@ -150,7 +150,10 @@ function _applyMaximumLikelihood() {
             affected.push(`g-${r}-${bestCol}`);
         }
     }
-    if (typeof _applyCellEffect === 'function') _applyCellEffect(affected, 'reveal');
+    if (typeof _applyCellEffect === 'function') {
+        _applyCellEffect(affected, 'reveal');
+        if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
+    }
     checkWin();
     updTimer();
 }

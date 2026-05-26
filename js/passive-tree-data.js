@@ -699,8 +699,8 @@
             "y": 1,
             "nameEn": "Calculated Error",
             "nameDe": "Kalkulierter Fehler",
-            "descEn": "Absorbed mistakes have a 50% chance to add +5 seconds to the timer.",
-            "descDe": "Absorbierte Fehler haben eine 50% Chance, +5 Sekunden zum Timer hinzuzufügen.",
+            "descEn": "Absorbed mistakes have a 50% chance to add 5 minutes to the timer. Works independently from Error Dividend and Lucky Lapse.",
+            "descDe": "Absorbierte Fehler haben eine 50% Chance, 5 Minuten zum Timer hinzuzufügen. Wirkt unabhängig von Fehler-Dividende und Glücklicher Lapsus.",
             "icon": "⏳",
             "statKey": "calculated_error"
         },
@@ -710,8 +710,8 @@
             "y": 1,
             "nameEn": "Error Dividend",
             "nameDe": "Fehler-Dividende",
-            "descEn": "Absorbed mistakes have a 25% chance to add +3 seconds to the timer.",
-            "descDe": "Absorbierte Fehler haben eine 25% Chance, +3 Sekunden zum Timer hinzuzufügen.",
+            "descEn": "Absorbed mistakes have a 25% chance to add 3 minutes to the timer. Works independently from Calculated Error and Lucky Lapse.",
+            "descDe": "Absorbierte Fehler haben eine 25% Chance, 3 Minuten zum Timer hinzuzufügen. Wirkt unabhängig von Kalkulierter Fehler und Glücklicher Lapsus.",
             "icon": "💰",
             "statKey": "error_dividend"
         },
@@ -721,8 +721,8 @@
             "y": 1,
             "nameEn": "Lucky Lapse",
             "nameDe": "Glücklicher Lapsus",
-            "descEn": "Absorbed mistakes have a 25% chance to add +3 seconds to the timer.",
-            "descDe": "Absorbierte Fehler haben eine 25% Chance, +3 Sekunden zum Timer hinzuzufügen.",
+            "descEn": "Absorbed mistakes have a 25% chance to add 3 minutes to the timer. Works independently from Calculated Error and Error Dividend. ",
+            "descDe": "Absorbierte Fehler haben eine 25% Chance 3 Minuten zum Timer hinzuzufügen. Wirkt unabhängig von Kalkulierter Fehler und Fehler-Dividende.",
             "icon": "🍀",
             "statKey": "lucky_lapse"
         },
@@ -2892,6 +2892,17 @@
             "descDe": "Verlängert die Interquartil-Vision Feldscan Dauer um 1 Sekunde.",
             "icon": "📊",
             "statKey": "keystone_interquartile_vision"
+        },
+        {
+            "id": 302,
+            "x": 3900,
+            "y": 100,
+            "nameEn": "Adjacency Matrix",
+            "nameDe": "Adjazenzmatrix",
+            "descEn": "Hides row and column clues. Each empty cell instead shows how many of its 8 neighbours are solution cells.",
+            "descDe": "Blendet Zeilen- und Spaltenhinweise aus. Jede leere Zelle zeigt stattdessen, wie viele ihrer 8 Nachbarn Lösungszellen sind.",
+            "icon": "🔢",
+            "statKey": "adjacency_matrix"
         }
     ],
     "connections": [
@@ -4771,6 +4782,12 @@
             "id": 369,
             "from": 248,
             "to": 265,
+            "dotted": false
+        },
+        {
+            "id": 371,
+            "from": 302,
+            "to": 233,
             "dotted": false
         }
     ]

@@ -5,7 +5,9 @@ let pval = 0;               // the value being painted during a drag stroke: 0 =
 
 let mbtn = 0;               // which mouse button started the current stroke (0 = left, 2 = right)
 
-
+let dragStartRow = -1;   // cell where the drag began
+let dragStartCol = -1;
+let dragAxis = null;     // 'row', 'col', or null (undecided)
 
 
 
@@ -22,12 +24,22 @@ let mbtn = 0;               // which mouse button started the current stroke (0 
 
 function ac(row, col) {
 
+    // Significance Threshold: multi-pick mode intercepts left-clicks
+    if (window._sigThreshArmed && (pval === 1 || mbtn === 0)) {
+        _sigThreshPickFromCell(row, col);
+        return;
+    }
+
+
     if (activeAbilityMode) {
         if (pval === 1 || mbtn === 0) {
             executeActiveAbility(row, col); // class skill
         }
         return;
     }
+
+    // Degrees of Freedom pick intercept — must be before any other fill logic
+    if (window._dofSession && _dofHandleClick(row, col)) return;
 
     // No-op: cell already has the desired value
     if (userGrid[row][col] === pval) return;
@@ -38,6 +50,9 @@ function ac(row, col) {
     // Left-click fill: check against the solution
     if (mbtn === 0 && pval === 1) {
         if (cur.grid[row][col] !== 1) {
+            // Significance Threshold: intercept before any penalty logic
+            if (_sigThresholdIntercept(row, col)) return;
+
             if (window._freezeActive) {
                 // During freeze: mistake is cosmetically marked but costs zero time
                 wrongGrid[row][col] = true;
@@ -83,9 +98,15 @@ function ac(row, col) {
             // Mark the cell wrong and apply the time penalty
             wrongGrid[row][col] = true;
             renderCell(row, col);   // show the red ✕ 
-            applyPenalty();         // deduct time, show flash
+            Audio_Manager.playSFX('cellWrong');
+            applyPenalty(row, col);        // deduct time, show flash
             consecutiveCorrectFills = 0; // sample_efficiency: streak broken by real mistake
             _streakBonusFills = 0;       // streak_bonus: streak broken by real mistake
+
+            // Instantly banish animals upon a real mistake 
+            if (typeof clearActiveRandomWalkers === "function") {
+                clearActiveRandomWalkers();
+            }
 
             // confidence_interval (231-233): open a grace window after a real mistake
             if (ptHasSkill('confidence_interval_1')) {
@@ -212,15 +233,22 @@ function ac(row, col) {
             }
 
             if (_affected.length > 0) {
-                if (typeof _applyCellEffect === 'function') _applyCellEffect(_affected, 'reveal');
+                if (typeof _applyCellEffect === 'function') {
+                    _applyCellEffect(_affected, 'reveal');
+                    if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
+                }
                 checkWin();
             }
         }
     }
-
+    Audio_Manager.playSFX('cellMark');
 
     userGrid[row][col] = pval;
     if (pval === 1 && cur.grid[row][col] === 1) {
+        Audio_Manager.playSFX('cellFill');
+
+        if (typeof feedDrifter === "function") feedDrifter();
+
         onCorrectFill(row, col); // class.js
 
         _binomialBurstOnCorrectFill();
@@ -283,9 +311,14 @@ function cd(e, row, col) {
     mbtn = e.button;        // 0 = left button, 2 = right button
     painting = true;
 
+    dragStartRow = row;
+    dragStartCol = col;
+    dragAxis = null;   // reset — axis decided on first move
+
+
     // Decide what value to paint for the duration of this drag stroke
     if (mbtn === 0) {   // left-click: toggle fill / erase (but cannot fill revealed cells, so no toggle)
-        pval = userGrid[row][col] === 1 ? 0 : 1; // left: fill or erase
+        pval = 1;
     } else {    // right-click: mark or erase (cannot mark revealed cells, so no toggle)
         if (userGrid[row][col] === 2) {
             pval = 3; // red cross gets switched to yellow question mark
@@ -311,6 +344,9 @@ function cd(e, row, col) {
 
 function sp() {
     painting = false;
+    dragStartRow = -1;
+    dragStartCol = -1;
+    dragAxis = null;
 }
 
 

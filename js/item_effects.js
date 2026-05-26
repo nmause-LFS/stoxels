@@ -204,7 +204,7 @@ function playItemEffect(defId) {
     if (defId === 'shield') return _fxShield();
     if (defId === 'rowSolve') return _fxRowSolve();
     if (defId === 'colSolve') return _fxColSolve();
-    if (defId === 'mistakeEraser' || defId === 'mistakeEraser4' || defId === 'mistakeEraser6' || defId === 'mistakeEraserAll') return _fxMistakeEraser();
+    if (defId === 'mistakeEraser' || defId === 'mistakeEraser4' || defId === 'mistakeEraser6' || defId === 'mistakeEraserAll') return _fxMistakeEraser(defId);
     if (defId === 'scoutPrimer') return _fxScoutPrimer();
     if (defId === 'artifactComplete') return _fxArtifact();
 
@@ -217,9 +217,9 @@ function playItemEffect(defId) {
     if (defId === 'cursedRowCol') return _fxChaosGrid();
 
     // ── PEARLS ────────────────────────────────────────────────────────────
-    if (defId === 'pearlOfHaste') return _fxPearl('#88aaff');
-    if (defId === 'pearlOfSwiftness') return _fxPearl('#cc88ff');
-    if (defId === 'grandPearl') return _fxPearl('#e0e0e0');
+    if (defId === 'pearlOfHaste') return _fxPearl('#88aaff', 'pearl_of_haste');
+    if (defId === 'pearlOfSwiftness') return _fxPearl('#cc88ff', 'pearl_of_swiftness');
+    if (defId === 'grandPearl') return _fxPearl('#e0e0e0', 'grand_pearl');
 
     // ── KEYSTONES ─────────────────────────────────────────────────────────
     if (defId === 'theWitch') return _fxTheWitch();
@@ -323,6 +323,8 @@ function _fxCandle() {
     flame.style.cssText = `position:absolute;left:${r.left + r.width / 2}px;top:${r.top}px;transform:translateX(-50%);`;
     r.wrap.appendChild(flame);
     setTimeout(() => flame.remove(), 2000);
+
+    Audio_Manager.playSFX('candle');
 }
 
 // 🔍 Magnifier — a loupe slides across the grid left→right.
@@ -345,6 +347,8 @@ function _fxMagnifier() {
     `;
     r.wrap.appendChild(lens);
     setTimeout(() => lens.remove(), 1000);
+
+    Audio_Manager.playSFX('magnifier');
 }
 
 // 🔭 Spyglass — three concentric scan-rings expand from grid centre.
@@ -366,6 +370,8 @@ function _fxSpyglass() {
         `;
         overlay.appendChild(ring);
     }
+
+    Audio_Manager.playSFX('spyglass');
 }
 
 // 📡 Scanner — a horizontal green scan-bar sweeps top-to-bottom twice.
@@ -386,6 +392,7 @@ function _fxScanner() {
         `;
         overlay.appendChild(bar);
     }
+    Audio_Manager.playSFX('scanner');
 }
 
 
@@ -410,6 +417,8 @@ function _fxEraser() {
         `;
         overlay.appendChild(streak);
     }
+
+    Audio_Manager.playSFX('eraser');
 }
 
 // 🧹 Sweeper — a sweeping broom icon trails dust particles.
@@ -448,6 +457,7 @@ function _fxSweeper() {
     }
 
     setTimeout(() => broom.remove(), 1100);
+    Audio_Manager.playSFX('sweeper');
 }
 
 // 🧲 Error Magnet — a magnet swoops in, ✕ crosses fly toward it.
@@ -493,6 +503,8 @@ function _fxErrorMagnet() {
     }
 
     setTimeout(() => magnet.remove(), 1700);
+
+    Audio_Manager.playSFX('magnet');
 }
 
 // 💎 Error Gem — gem pulses, then showers coloured sparkles top-down.
@@ -527,6 +539,8 @@ function _fxErrorGem() {
     });
 
     setTimeout(() => gem.remove(), 1400);
+
+    Audio_Manager.playSFX('error_gem');
 }
 
 
@@ -569,6 +583,8 @@ function _fxHourglass() {
     }
 
     setTimeout(() => hg.remove(), 1600);
+
+    Audio_Manager.playSFX('hourglass');
 }
 
 // ⏱️ Stopwatch — timer rings ripple outward from centre.
@@ -597,6 +613,8 @@ function _fxStopwatch() {
     icon.style.cssText = `position:absolute;left:${cx}px;top:${cy}px;transform:translate(-50%,-50%);font-size:42px;pointer-events:none;z-index:327;animation:fx-icon-pop 0.6s ease-out forwards;`;
     r.wrap.appendChild(icon);
     setTimeout(() => icon.remove(), 900);
+
+    Audio_Manager.playSFX('stopwatch');
 }
 
 // 🕰️ Clock — clock hands sweep + golden radial burst.
@@ -632,6 +650,8 @@ function _fxClock() {
     icon.style.cssText = `position:absolute;left:${cx}px;top:${cy}px;transform:translate(-50%,-50%);font-size:50px;pointer-events:none;z-index:327;animation:fx-icon-pop 0.7s ease-out forwards;`;
     r.wrap.appendChild(icon);
     setTimeout(() => icon.remove(), 1100);
+
+    Audio_Manager.playSFX('clock');
 }
 
 // ⚡ Chronobolt — lightning bolts crackle across the puzzle grid.
@@ -671,6 +691,8 @@ function _fxChronobolt() {
     icon.style.cssText = `position:absolute;left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;transform:translate(-50%,-50%);font-size:72px;pointer-events:none;z-index:330;animation:fx-bolt-icon 0.5s ease-out forwards;`;
     r.wrap.appendChild(icon);
     setTimeout(() => icon.remove(), 800);
+
+    Audio_Manager.playSFX('chronobolt');
 }
 
 // Generates a zigzag SVG lightning path
@@ -699,12 +721,6 @@ function _fxGenerateLightningPath(height) {
 // ════════════════════════════════════════════════════════════════
 //  UTILITY ITEM EFFECTS
 // ════════════════════════════════════════════════════════════════
-
-// ❄️ Freeze (item) — icy blue frost creeps in from edges.
-function _fxFreeze() {
-    // Reuses the blizzard system from class.js
-    _startBlizzardEffect(2200);
-}
 
 // 🛡️ Shield — a golden hexagonal shield briefly overlays the puzzle.
 function _fxShield() {
@@ -738,52 +754,34 @@ function _fxShield() {
         `;
         overlay.appendChild(ring);
     }
+
+    Audio_Manager.playSFX('shield');
 }
 
-// 📐 Row Solve — horizontal gold bars sweep row by row.
-function _fxRowSolve() {
-    const r = _fxGetPuzzleRect();
-    if (!r) return;
-    const overlay = _fxOverlay(r.wrap, 1400);
 
-    const rows = cur?.grid?.length || 5;
-    const rowH = r.height / rows;
-    for (let i = 0; i < Math.min(rows, 6); i++) {
-        const bar = document.createElement('div');
-        bar.className = 'fx-rowsolve-bar';
-        bar.style.cssText = `
-            position:absolute;
-            left:${r.left}px; width:${r.width}px;
-            top:${r.top + rowH * i}px; height:${rowH - 2}px;
-            animation:fx-rowsolve-sweep 0.55s ease-out ${i * 0.07}s forwards;
-        `;
-        overlay.appendChild(bar);
-    }
+
+// ❄️ Time Freeze (item) — icy blue frost creeps in from edges.
+function _fxFreeze() {
+    // Reuses the blizzard system from class.js
+    _startBlizzardEffect(2200);
+    Audio_Manager.playSFX('time_freeze');
 }
 
-// 📏 Col Solve — vertical gold bars sweep column by column.
-function _fxColSolve() {
-    const r = _fxGetPuzzleRect();
-    if (!r) return;
-    const overlay = _fxOverlay(r.wrap, 1400);
 
-    const cols = cur?.grid?.[0]?.length || 5;
-    const colW = r.width / cols;
-    for (let i = 0; i < Math.min(cols, 6); i++) {
-        const bar = document.createElement('div');
-        bar.className = 'fx-colsolve-bar';
-        bar.style.cssText = `
-            position:absolute;
-            top:${r.top}px; height:${r.height}px;
-            left:${r.left + colW * i}px; width:${colW - 2}px;
-            animation:fx-colsolve-sweep 0.55s ease-out ${i * 0.07}s forwards;
-        `;
-        overlay.appendChild(bar);
-    }
-}
+
+
 
 // 🎓 Mistake Eraser — a chalkboard-eraser wipe clears a smudge from the board.
-function _fxMistakeEraser() {
+function _fxMistakeEraser(defId) {
+
+    const sfxMap = {
+        mistakeEraser: 'tutor',
+        mistakeEraser4: 'professor',
+        mistakeEraser6: 'scholar',
+        mistakeEraserAll: 'grand_mentor',
+    };
+    Audio_Manager.playSFX(sfxMap[defId] || 'tutor');
+
     const r = _fxGetPuzzleRect();
     if (!r) return;
     const overlay = _fxOverlay(r.wrap, 1300);
@@ -807,6 +805,8 @@ function _fxMistakeEraser() {
     r.wrap.appendChild(icon);
     setTimeout(() => icon.remove(), 900);
 }
+
+
 
 // 📜 Scout's Primer — golden compass-points radiate outward.
 function _fxScoutPrimer() {
@@ -837,7 +837,105 @@ function _fxScoutPrimer() {
     icon.style.cssText = `position:absolute;left:${cx}px;top:${cy}px;transform:translate(-50%,-50%);font-size:52px;pointer-events:none;z-index:327;animation:fx-icon-pop 0.6s ease-out forwards;`;
     r.wrap.appendChild(icon);
     setTimeout(() => icon.remove(), 1100);
+
+    Audio_Manager.playSFX('scouts_primer');
 }
+
+
+
+
+// 📐 Row Solve — a golden sweep flashes across the full grid height.
+function _fxRowSolve() {
+    const r = _fxGetPuzzleRect();
+    if (!r) return;
+    const overlay = _fxOverlay(r.wrap, 1600);
+
+    // Full-grid horizontal sweep bar (left → right)
+    const sweep = document.createElement('div');
+    sweep.className = 'fx-rowsolve-bar';
+    sweep.style.cssText = `
+        position:absolute;
+        top:${r.top}px; height:${r.height}px;
+        left:${r.left - r.width}px; width:${r.width}px;
+        animation:fx-rowsolve-sweep 0.65s ease-out forwards;
+        --sweep-dist:${r.width * 2}px;
+    `;
+    overlay.appendChild(sweep);
+
+    // Thin shimmer lines for every row — no cap
+    const rows = cur?.grid?.length || 5;
+    const rowH = r.height / rows;
+    for (let i = 0; i < rows; i++) {
+        const line = document.createElement('div');
+        line.className = 'fx-rowsolve-line';
+        line.style.cssText = `
+            position:absolute;
+            left:${r.left}px; width:${r.width}px;
+            top:${r.top + rowH * i + rowH / 2 - 1}px; height:2px;
+            opacity:0;
+            animation:fx-rowsolve-line-flash 0.4s ease-out ${0.1 + i * 0.03}s forwards;
+        `;
+        overlay.appendChild(line);
+    }
+
+    // 📐 icon
+    const icon = document.createElement('div');
+    icon.textContent = '📐';
+    icon.style.cssText = `position:absolute;left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;transform:translate(-50%,-50%);font-size:56px;pointer-events:none;z-index:327;animation:fx-icon-pop 0.6s ease-out forwards;`;
+    r.wrap.appendChild(icon);
+    setTimeout(() => icon.remove(), 1000);
+
+    Audio_Manager.playSFX('set_square');
+}
+
+// 📏 Col Solve — a golden sweep flashes across the full grid width.
+function _fxColSolve() {
+    const r = _fxGetPuzzleRect();
+    if (!r) return;
+    const overlay = _fxOverlay(r.wrap, 1600);
+
+    // Full-grid vertical sweep bar (top → bottom)
+    const sweep = document.createElement('div');
+    sweep.className = 'fx-colsolve-bar';
+    sweep.style.cssText = `
+        position:absolute;
+        left:${r.left}px; width:${r.width}px;
+        top:${r.top - r.height}px; height:${r.height}px;
+        animation:fx-colsolve-sweep 0.65s ease-out forwards;
+        --sweep-dist:${r.height * 2}px;
+    `;
+    overlay.appendChild(sweep);
+
+    // Thin shimmer lines for every col — no cap
+    const cols = cur?.grid?.[0]?.length || 5;
+    const colW = r.width / cols;
+    for (let i = 0; i < cols; i++) {
+        const line = document.createElement('div');
+        line.className = 'fx-colsolve-line';
+        line.style.cssText = `
+            position:absolute;
+            top:${r.top}px; height:${r.height}px;
+            left:${r.left + colW * i + colW / 2 - 1}px; width:2px;
+            opacity:0;
+            animation:fx-colsolve-line-flash 0.4s ease-out ${0.1 + i * 0.03}s forwards;
+        `;
+        overlay.appendChild(line);
+    }
+
+    // 📏 icon
+    const icon = document.createElement('div');
+    icon.textContent = '📏';
+    icon.style.cssText = `position:absolute;left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;transform:translate(-50%,-50%);font-size:56px;pointer-events:none;z-index:327;animation:fx-icon-pop 0.6s ease-out forwards;`;
+    r.wrap.appendChild(icon);
+    setTimeout(() => icon.remove(), 1000);
+
+    Audio_Manager.playSFX('ruler');
+}
+
+
+
+
+
 
 // 🌟 Artifact Complete — full golden supernova engulfs the grid.
 function _fxArtifact() {
@@ -883,6 +981,8 @@ function _fxArtifact() {
     icon.style.cssText = `position:absolute;left:${cx}px;top:${cy}px;transform:translate(-50%,-50%);font-size:88px;pointer-events:none;z-index:331;animation:fx-artifact-icon 1.8s ease-out forwards;`;
     r.wrap.appendChild(icon);
     setTimeout(() => icon.remove(), 2200);
+
+    Audio_Manager.playSFX('codex_of_completion');
 }
 
 
@@ -917,6 +1017,8 @@ function _fxCursedReveal() {
         spreadX: r.width, spreadY: r.height,
         duration: 900, cssClass: 'fx-cursed-cross',
     });
+
+    Audio_Manager.playSFX('cursed_lens');
 }
 
 // 💀 Cursed Time — dark miasma + clock hands spin wildly.
@@ -944,6 +1046,8 @@ function _fxCursedTime() {
     skull.style.cssText = `position:absolute;left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;transform:translate(-50%,-50%);font-size:68px;pointer-events:none;z-index:327;animation:fx-skull-rise 0.9s ease-out forwards;`;
     r.wrap.appendChild(skull);
     setTimeout(() => skull.remove(), 1400);
+
+    Audio_Manager.playSFX('cursed_clock');
 }
 
 // 👁️ Cursed Shield — demonic eye opens, then rows black out.
@@ -970,6 +1074,8 @@ function _fxCursedShield() {
     }
 
     setTimeout(() => eye.remove(), 1800);
+
+    Audio_Manager.playSFX('demon_eye');
 }
 
 // 🌊 Tidal Wave — waves of blue sweep across the grid multiple times.
@@ -1003,6 +1109,8 @@ function _fxTidalWave() {
     icon.style.cssText = `position:absolute;left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;transform:translate(-50%,-50%);font-size:72px;pointer-events:none;z-index:327;animation:fx-icon-pop 0.55s ease-out 0.2s forwards;opacity:0;`;
     r.wrap.appendChild(icon);
     setTimeout(() => icon.remove(), 1200);
+
+    Audio_Manager.playSFX('tidal_wave');
 }
 
 // 🌪️ Vortex — spinning tornado sweeps columns.
@@ -1044,6 +1152,8 @@ function _fxVortex() {
         `;
         overlay.appendChild(strip);
     }
+
+    Audio_Manager.playSFX('vortex');
 }
 
 // 💥 Chaos Grid — multicolour explosions detonate across the entire grid.
@@ -1086,6 +1196,8 @@ function _fxChaosGrid() {
     icon.style.cssText = `position:absolute;left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;transform:translate(-50%,-50%);font-size:80px;pointer-events:none;z-index:330;animation:fx-artifact-icon 1.2s ease-out forwards;`;
     r.wrap.appendChild(icon);
     setTimeout(() => icon.remove(), 1600);
+
+    Audio_Manager.playSFX('chaos_grid');
 }
 
 
@@ -1097,7 +1209,8 @@ function _fxChaosGrid() {
 // ════════════════════════════════════════════════════════════════
 
 // 🔵 Pearl of Haste / 🟣 Pearl of Swiftness / ⚪ Grand Pearl — iridescent ripple burst
-function _fxPearl(color) {
+function _fxPearl(color, sfxKey) {
+    Audio_Manager.playSFX(sfxKey);
     const r = _fxGetPuzzleRect();
     if (!r) return;
     const overlay = _fxOverlay(r.wrap, 1400);
@@ -1145,6 +1258,8 @@ function _fxTheWitch() {
     icon.style.cssText = `position:absolute;left:${cx}px;top:${cy}px;transform:translate(-50%,-50%);font-size:80px;pointer-events:none;z-index:327;animation:fx-skull-rise 1.2s ease-out forwards;`;
     r.wrap.appendChild(icon);
     setTimeout(() => icon.remove(), 1600);
+
+    Audio_Manager.playSFX('the_witch');
 }
 
 // 🕰️ Golden Clock — gold radial burst + clock glow
@@ -1156,6 +1271,8 @@ function _fxGoldenClock() {
     const fill = document.createElement('div');
     fill.style.cssText = `position:absolute;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;background:rgba(255,215,0,0.12);border:2px solid rgba(255,215,0,0.4);animation:fx-artifact-fill 2s ease-out forwards;`;
     overlay.appendChild(fill);
+
+    Audio_Manager.playSFX('golden_clock');
 }
 
 // 🌑 Shadow Seal — dark void engulfs the puzzle
@@ -1183,4 +1300,6 @@ function _fxShadowSeal() {
     icon.style.cssText = `position:absolute;left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;transform:translate(-50%,-50%);font-size:88px;pointer-events:none;z-index:330;animation:fx-artifact-icon 1.8s ease-out forwards;`;
     r.wrap.appendChild(icon);
     setTimeout(() => icon.remove(), 2200);
+
+    Audio_Manager.playSFX('shadow_seal');
 }

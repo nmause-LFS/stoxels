@@ -26,7 +26,10 @@ const MATH_GATE_LEVELS = [
     { world: 5, level: 1 },   
     { world: 5, level: 4 },
     { world: 5, level: 8 },
-    { world: 5, level: 10 },
+    { world: 5, level: 10},
+    { world: 6, level: 1 },
+    { world: 6, level: 3 },
+    { world: 6, level: 5},
 ];
 
 
@@ -197,6 +200,11 @@ function mgGrantGateReward(gi) {
     showMgFeedback(feedbackMsg, true);
 
     setTimeout(() => showToast('Probability Gate passed, Item reward received!'), 1000);
+
+    setTimeout(() => {
+        const el = document.getElementById('mg-reward-zone');
+        if (el) attachItemTooltip(el, rewardId);
+    }, 0);
 }
 
 
@@ -266,6 +274,8 @@ function mgHandleCorrectAnswer() {
         hideMathGate();
         startLevel(gi);
     }, 1500);
+
+    Audio_Manager.playSFX('quiz-correct');
 }
 
 
@@ -294,6 +304,8 @@ function mgHandleWrongAnswer() {
     const hintThreshold = mgCalcHintThreshold();
     if (hintThreshold !== null && gateAttempts >= hintThreshold) mgShowHint();
     if (gateAttempts >= 3) mgShowNewQuestionButton();
+
+    Audio_Manager.playSFX('quiz-wrong');
 }
 
 // Reveals the hint for the current question.
@@ -385,8 +397,13 @@ function hideMathGate() {
 
 // Called when the player submits an answer.
 // Parses the input and delegates to the correct/wrong flow.
+
+let _mgSubmitting = false;
 function submitMathGate() {
     if (!currentGateQuestion) return;
+    if (_mgSubmitting) return;       // double-fire guard
+    _mgSubmitting = true;
+    setTimeout(() => { _mgSubmitting = false; }, 100);
 
     const entered = mgParseAnswer(document.getElementById('mg-answer-input').value);
 
@@ -430,7 +447,10 @@ function mgNewQuestion() {
 document.addEventListener('DOMContentLoaded', () => {
     const inp = document.getElementById('mg-answer-input');
     if (inp) inp.addEventListener('keydown', e => {
-        if (e.key === 'Enter') submitMathGate();
+        if (e.key === 'Enter') {
+            e.preventDefault();  
+            submitMathGate();
+        }
     });
 });
 

@@ -126,12 +126,15 @@ function applyZoom() {
 
     // Scale the class HUD relative to the baseline auto-fit zoom.
     // hudScale = 1.0 at default zoom, <1 when zoomed out, >1 when zoomed in.
+
+    /*
     const hud = document.getElementById('class-hud-panel');
     if (hud) {
         const hudScale = baselineZoom > 0 ? currentZoom / baselineZoom : 1;
         hud.style.transformOrigin = 'top left';
         hud.style.transform = `scale(${hudScale})`;
     }
+    */
 }
 
 

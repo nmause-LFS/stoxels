@@ -27,6 +27,15 @@ function _getPreFilledCols() {
 
 
 
+// Tracks cursed item usage while witch immunity is active (for the quest).
+// Must be called once per cursed item use, before downside logic.
+function _trackWitchImmuneCursedUse() {
+    if (window._cursedImmune) {
+        updateQuestStats('cursedUnderImmunityUsed', {});
+    }
+}
+
+
 //------------------------------------------------------------------------
 //----------------------ROW & COL BLACKOUT--------------------------------
 //------------------------------------------------------------------------
@@ -151,6 +160,7 @@ function revealTiles(count) {
         affected.push(`g-${r}-${c}`);
     });
     _applyCellEffect(affected, 'reveal');
+    if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
     trackAchStat('tilesRevealed', affected.length);
     checkWin();
 }
@@ -255,6 +265,7 @@ function solveRows(count) {
         }
     });
     _applyCellEffect(affected, 'reveal');
+    if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
     return Math.min(count, unsolved.length);
 }
 
@@ -279,6 +290,7 @@ function solveCols(count) {
         }
     });
     _applyCellEffect(affected, 'reveal');
+    if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
     return Math.min(count, unsolved.length);
 }
 
@@ -310,6 +322,7 @@ function unsolveRows(count) {
                 userGrid[r][c] = 0;
                 revealedGrid[r][c] = false;
                 renderCell(r, c);
+                updClues(r, c);
             }
         }
     });
@@ -332,6 +345,7 @@ function unsolveCols(count) {
                 userGrid[r][c] = 0;
                 revealedGrid[r][c] = false;
                 renderCell(r, c);
+                updClues(r, c);
             }
         }
     });
@@ -375,12 +389,14 @@ function unsolveRowsExcluding(count, allowedSet) {
                 userGrid[r][c] = 0;
                 revealedGrid[r][c] = false;
                 renderCell(r, c);
+                updClues(r, c);
                 erasedCells.push(`g-${r}-${c}`);
             }
         }
     });
     // Lingering red shimmer so the player clearly sees what was erased
     _applyCellEffect(erasedCells, 'erase');
+    if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
     return targets.length;
 }
 
@@ -408,12 +424,14 @@ function unsolveColsExcluding(count, allowedSet) {
                 userGrid[r][c] = 0;
                 revealedGrid[r][c] = false;
                 renderCell(r, c);
+                updClues(r, c);
                 erasedCells.push(`g-${r}-${c}`);
             }
         }
     });
     // Lingering red shimmer so the player clearly sees what was erased
     _applyCellEffect(erasedCells, 'erase');
+    if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
     return targets.length;
 }
 
@@ -815,6 +833,7 @@ function _useFreeze(id, def) {
 //------------------------------------------------------------------------
 
 function _useCursedTime(id, def) {
+    _trackWitchImmuneCursedUse();
     timerSecs += 1200;
     updTimer();
     playItemEffect(id);
@@ -829,6 +848,7 @@ function _useCursedTime(id, def) {
 }
 
 function _useCursedShield(id, def) {
+    _trackWitchImmuneCursedUse();
     shieldActive = true;
     revealTiles(2);
     const dur = _cursedDownsideDuration(30000);
@@ -842,6 +862,7 @@ function _useCursedShield(id, def) {
 }
 
 function _useCursedRowSolve(id, def) {
+    _trackWitchImmuneCursedUse();
     const preFilledRows = _getPreFilledRows();
     const revealed = solveRows(3);
     const eraseCount = _cursedDownsideCount(1);
@@ -859,6 +880,7 @@ function _useCursedRowSolve(id, def) {
 }
 
 function _useCursedColSolve(id, def) {
+    _trackWitchImmuneCursedUse();
     const preFilledCols = _getPreFilledCols();
     const revealed = solveCols(3);
     const eraseCount = _cursedDownsideCount(1);
@@ -876,6 +898,7 @@ function _useCursedColSolve(id, def) {
 }
 
 function _useCursedRowCol(id, def) {
+    _trackWitchImmuneCursedUse();
     const r = solveRows(4);
     const c = solveCols(4);
     const dur = _cursedDownsideDuration(45000);
@@ -886,6 +909,7 @@ function _useCursedRowCol(id, def) {
 }
 
 function _useCursedReveal(id, def) {
+    _trackWitchImmuneCursedUse();
     revealTiles(6);
     playItemEffect(id);
     if (window._cursedImmune || ptHasSkill('keystone_curse_embrace')) {

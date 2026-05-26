@@ -1,7 +1,4 @@
-﻿
-
-
-let _afterClassEventCallback = null; // Used to trigger a callback (e.g. close the world completion modal) after the class event flow finishes
+﻿let _afterClassEventCallback = null; // Used to trigger a callback (e.g. close the world completion modal) after the class event flow finishes
 
 
 
@@ -53,9 +50,24 @@ function triggerClassEventIfPending(afterCallback) {
     _afterClassEventCallback = afterCallback || null;
 
     if (!STATE.playerClass) {
+        // No class yet → choose base class
         showClassSelection();
-    } else {
+    } else if (isBaseClassMaxed() && !hasAscendency()) {
+        // Base class fully upgraded and no ascendency chosen yet → pick ascendency
+        showAscendencySelection();
+    } else if (hasAscendency() && !isAscendencyMaxed()) {
+        // Ascendency chosen but not fully upgraded → upgrade ascendency skill
+        showAscendencyUpgrade();
+    } else if (!isBaseClassMaxed()) {
+        // Base class not yet maxed → normal base class upgrade
         showClassUpgrade();
+    } else {
+        // Everything maxed — nothing to do, just close
+        if (_afterClassEventCallback) {
+            const cb = _afterClassEventCallback;
+            _afterClassEventCallback = null;
+            setTimeout(cb, 120);
+        }
     }
     return true;
 }
@@ -100,6 +112,8 @@ function confirmClassSelection(cid) {
     save();
 
     const def = CLASS_DEFS[cid];
+
+    Audio_Manager.playSFX('classSelected');
     showToast(`${def.icon} ${t(def.nameEn, def.nameDE)} ${t('selected!', 'gewählt!')}`);
     closeClassOverlay();
     buildClassHUD();
@@ -303,7 +317,9 @@ function applyClassUpgrade(type) {
     markLastWorldCompleted();
     save();
 
+    Audio_Manager.playSFX('classUpgraded');
     trackAchStat('classUpgradesApplied');
+    updateQuestStats('classUpgradeApplied', {});
     closeClassOverlay();
     showUpgradeToast(type);
     buildClassHUD();
@@ -350,6 +366,198 @@ function showUpgradeToast(type) {
 
 
 
+//------------------------------------------------------------------------
+//--------------------ASCENDENCY SELECTION SCREEN-------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// showAscendencySelection — shows the 2-card ascendency picker for the player's base class.
+// Called when base class is fully maxed and no ascendency has been chosen yet.
+function showAscendencySelection() {
+    const overlay = document.getElementById('class-selection-overlay');
+    const content = document.getElementById('class-selection-content');
+    const baseDef = CLASS_DEFS[STATE.playerClass];
+    const options = ASCENDENCY_LIST[STATE.playerClass] || [];
+
+    content.innerHTML = `
+        <div class="cs-header">
+            <div class="cs-title">✨ ${t('CHOOSE YOUR ASCENDENCY', 'AUFSTIEGSKLASSE WÄHLEN')}</div>
+            <div class="cs-subtitle">${t(
+        `Your ${t(baseDef.nameEn, baseDef.nameDE)} has reached its peak. Choose an Ascendency — this decision is permanent.`,
+        `Dein ${t(baseDef.nameEn, baseDef.nameDE)} hat seinen Höhepunkt erreicht. Wähle eine Aufstiegsklasse — diese Entscheidung ist permanent.`
+    )}</div>
+        </div>
+        <div class="cs-cards cs-ascendency-cards">
+            ${options.map(aid => buildAscendencyCard(aid, 'select')).join('')}
+        </div>`;
+
+    overlay.classList.add('show');
+}
+
+// buildAscendencyCard — builds one ascendency option card (select or display mode).
+function buildAscendencyCard(aid, mode) {
+    const asc = ASCENDENCY_DEFS[aid];
+    if (!asc) return '';
+
+    const skill1Block = buildAbilityBlock(
+        `🎯 ${t('SKILL 1', 'FÄHIGKEIT 1')}`, 'active',
+        t(asc.active1.nameEn, asc.active1.nameDE),
+        t(asc.active1.levels[0].descEn, asc.active1.levels[0].descDE)
+    );
+    const skill2Block = buildAbilityBlock(
+        `🎯 ${t('SKILL 2', 'FÄHIGKEIT 2')}`, 'active',
+        t(asc.active2.nameEn, asc.active2.nameDE),
+        t(asc.active2.levels[0].descEn, asc.active2.levels[0].descDE)
+    );
+
+    const archetypeLabel = `<div class="cs-archetype-tag">${asc.archetype}</div>`;
+    const onclick = mode === 'select' ? `onclick="confirmAscendencySelection('${aid}')"` : '';
+    const cta = mode === 'select'
+        ? `<div class="cs-card-cta">${t('▶ ASCEND', '▶ AUFSTEIGEN')}</div>`
+        : '';
+
+    return `
+        <div class="cs-card cs-ascendency-card"
+             style="border-color:${asc.color};--cls-color:${asc.color};--cls-light:${asc.colorLight};"
+             ${onclick}>
+            <div class="cs-card-icon">${asc.icon}</div>
+            <div class="cs-card-name" style="color:${asc.colorLight};">${t(asc.nameEn, asc.nameDE)}</div>
+            ${archetypeLabel}
+            <div class="cs-card-desc">${t(asc.descEn, asc.descDE)}</div>
+            <div class="cs-card-abilities">
+                ${skill1Block}
+                ${skill2Block}
+            </div>
+            ${cta}
+        </div>`;
+}
+
+// confirmAscendencySelection — saves the chosen ascendency and closes the overlay.
+function confirmAscendencySelection(aid) {
+    if (!ASCENDENCY_DEFS[aid]) return;
+
+    STATE.playerAscendency = aid;
+    STATE.ascendencySkill1Level = 1;
+    STATE.ascendencySkill2Level = 1;
+    if (!STATE.classWorldsCompleted) STATE.classWorldsCompleted = [];
+    STATE.classWorldsCompleted.push(STATE._lastClassWorld);
+    save();
+
+    const asc = ASCENDENCY_DEFS[aid];
+    Audio_Manager.playSFX('classSelected');
+    showToast(`✨ ${t(asc.nameEn, asc.nameDE)} ${t('ascendency chosen!', 'Aufstiegsklasse gewählt!')}`);
+    closeClassOverlay();
+    buildClassHUD();
+}
+
+
+
+
+//------------------------------------------------------------------------
+//--------------------ASCENDENCY UPGRADE SCREEN---------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// showAscendencyUpgrade — shows the 2-card upgrade picker for the chosen ascendency's skills.
+function showAscendencyUpgrade() {
+    if (!STATE.playerAscendency) return;
+
+    const overlay = document.getElementById('class-selection-overlay');
+    const content = document.getElementById('class-selection-content');
+    const asc = ASCENDENCY_DEFS[STATE.playerAscendency];
+    const maxLv = 3;
+
+    const levels = {
+        active1: STATE.ascendencySkill1Level || 1,
+        active2: STATE.ascendencySkill2Level || 1,
+    };
+    const allMax = Object.values(levels).every(lv => lv >= maxLv);
+
+    content.innerHTML = `
+        <div class="cs-header">
+            <div class="cs-title">${asc.icon} ${t('ASCENDENCY UPGRADE', 'AUFSTIEGSKLASSEN-UPGRADE')}</div>
+            <div class="cs-subtitle">${t(
+        `Upgrade your ${t(asc.nameEn, asc.nameDE)} skills.`,
+        `Verbessere deine ${t(asc.nameEn, asc.nameDE)}-Fähigkeiten.`
+    )}</div>
+        </div>
+        <div class="cs-upgrade-grid">
+            ${buildAscendencyUpgradeCard(asc, 'active1', levels.active1, maxLv)}
+            ${buildAscendencyUpgradeCard(asc, 'active2', levels.active2, maxLv)}
+        </div>
+        ${allMax ? buildAscendencyMaxFooter() : ''}`;
+
+    overlay.classList.add('show');
+}
+
+// buildAscendencyUpgradeCard — like buildUpgradeCard but for ascendency skills.
+function buildAscendencyUpgradeCard(asc, type, currentLv, maxLv) {
+    const atMax = currentLv >= maxLv;
+    const skillDef = asc[type];
+    const nextLv = Math.min(currentLv + 1, maxLv);
+    const skillName = t(skillDef.nameEn, skillDef.nameDE);
+    const tagLabel = type === 'active1'
+        ? `🎯 ${t('SKILL 1', 'FÄHIGKEIT 1')}`
+        : `🎯 ${t('SKILL 2', 'FÄHIGKEIT 2')}`;
+
+    const body = atMax
+        ? `<div class="cs-upgrade-maxed">${t('✓ MAX LEVEL', '✓ MAX STUFE')}</div>`
+        : (() => {
+            const cur = t(skillDef.levels[currentLv - 1].descEn, skillDef.levels[currentLv - 1].descDE);
+            const next = t(skillDef.levels[currentLv].descEn, skillDef.levels[currentLv].descDE);
+            const ctaKey = type === 'active1' ? t('▶ UPGRADE SKILL 1', '▶ FÄHIGKEIT 1 VERBESSERN') : t('▶ UPGRADE SKILL 2', '▶ FÄHIGKEIT 2 VERBESSERN');
+            return `
+                <div class="cs-upgrade-current">${t('Current:', 'Aktuell:')} ${cur}</div>
+                <div class="cs-upgrade-new">${t('New:', 'Neu:')} ${next}</div>
+                <div class="cs-upgrade-cta">${ctaKey}</div>`;
+        })();
+
+    return `
+        <div class="cs-upgrade-card ${atMax ? 'maxed' : ''} cs-ascendency-upgrade-card"
+             ${!atMax ? `onclick="applyAscendencyUpgrade('${type}')"` : ''}>
+            <div class="cs-upgrade-tag active">
+                ${tagLabel} · ${t('LEVEL', 'STUFE')} ${currentLv} → ${nextLv}
+            </div>
+            <div class="cs-upgrade-name">${skillName}</div>
+            ${body}
+        </div>`;
+}
+
+function buildAscendencyMaxFooter() {
+    return `
+        <div style="text-align:center;margin-top:18px;color:#f1c40f;font-family:var(--PX);font-size:11px;">
+            ✨ ${t('Ascendency fully upgraded!', 'Aufstiegsklasse vollständig verbessert!')}
+        </div>
+        <div style="text-align:center;margin-top:12px;">
+            <button class="cs-skip-btn" onclick="closeClassOverlay()">
+                ${t('CLOSE', 'SCHLIESSEN')}
+            </button>
+        </div>`;
+}
+
+// applyAscendencyUpgrade — increments the chosen ascendency skill level and closes the overlay.
+function applyAscendencyUpgrade(type) {
+    if (type === 'active1') {
+        STATE.ascendencySkill1Level = Math.min((STATE.ascendencySkill1Level || 1) + 1, 3);
+    } else {
+        STATE.ascendencySkill2Level = Math.min((STATE.ascendencySkill2Level || 1) + 1, 3);
+    }
+    if (!STATE.classWorldsCompleted) STATE.classWorldsCompleted = [];
+    STATE.classWorldsCompleted.push(STATE._lastClassWorld);
+    save();
+
+    const asc = ASCENDENCY_DEFS[STATE.playerAscendency];
+    const skillDef = asc[type];
+    const newLv = type === 'active1' ? STATE.ascendencySkill1Level : STATE.ascendencySkill2Level;
+    Audio_Manager.playSFX('classUpgraded');
+    showToast(`✨ ${t(skillDef.nameEn, skillDef.nameDE)} → ${t('Level', 'Stufe')} ${newLv}!`);
+    closeClassOverlay();
+    buildClassHUD();
+}
+
+
+
+
 
 
 
@@ -388,10 +596,3 @@ function closeClassOverlay() {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
-
-
-
-
-
-
-

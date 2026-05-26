@@ -30,6 +30,9 @@ function confirmReset() {
         done: [],
         bonusDone: [],
         mathGatePassed: [],
+        questStats: {},          
+        questsClaimed: [],       
+        questsNotified: [],      
     };
     // already handled by initState() since we call it again,
     // but explicitly clear them for safety:

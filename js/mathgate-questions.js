@@ -757,81 +757,83 @@ const MATH_GATE_POOLS = {
             hintDE: 'Eine Verteilungsfunktion erfüllt 0 ≤ F(x) ≤ 1 für alle x'
         },
 
-        //todo continue
+        
 
         // ── 11. QUANTILFUNKTION (Quantile Function) ───────────────────────────────
 
         {
-            q: 'X has CDF: F(1)=0.2, F(2)=0.5, F(3)=1.0. What is the 0.5-quantile (median) of X?',
-            qDE: 'X hat Verteilungsfunktion: F(1)=0,2, F(2)=0,5, F(3)=1,0. Was ist das 0,5-Quantil (Median) von X?',
+            q: 'X has the distribution function F with F(1)=0.2, F(2)=0.5, F(3)=1.0. What is the 0.5-quantile (median) of X?',
+            qDE: 'X hat die Verteilungsfunktion F mit F(1)=0,2, F(2)=0,5, F(3)=1,0. Was ist das 0,5-Quantil (Median) von X?',
             answer: 2, tolerance: 0, unit: '',
-            hintEn: 'Q(p) = min{x : F(x) ≥ p}. For p=0.5: F(2)=0.5 ≥ 0.5, so Q(0.5) = 2.',
-            hintDE: 'Q(p) = min{x : F(x) ≥ p}. Für p=0,5: F(2)=0,5 ≥ 0,5, also Q(0,5) = 2.'
+            hintEn: 'Q(p) = min{x : F(x) ≥ p}. For p=0.5: F(2)=0.5 ≥ 0.5.',
+            hintDE: 'Q(p) = min{x : F(x) ≥ p}. Für p=0,5: F(2)=0,5 ≥ 0,5.'
         },
         {
-            q: 'X has CDF F(1)=0.1, F(2)=0.4, F(3)=0.8, F(4)=1.0. What is the 0.75-quantile of X?',
-            qDE: 'X hat Verteilungsfunktion F(1)=0,1, F(2)=0,4, F(3)=0,8, F(4)=1,0. Was ist das 0,75-Quantil von X?',
+            q: 'X has the distribution function F with F(1)=0.1, F(2)=0.4, F(3)=0.8, F(4)=1.0. What is the 0.75-quantile of X?',
+            qDE: 'X hat die Verteilungsfunktion F mit F(1)=0,1, F(2)=0,4, F(3)=0,8, F(4)=1,0. Was ist das 0,75-Quantil von X?',
             answer: 3, tolerance: 0, unit: '',
-            hintEn: 'Q(0.75) = min{x : F(x) ≥ 0.75}. F(2)=0.4 < 0.75, F(3)=0.8 ≥ 0.75 → Q = 3.',
-            hintDE: 'Q(0,75) = min{x : F(x) ≥ 0,75}. F(2)=0,4 < 0,75, F(3)=0,8 ≥ 0,75 → Q = 3.'
+            hintEn: 'Q(0.75) = min{x : F(x) ≥ 0.75}. F(2)=0.4 < 0.75.',
+            hintDE: 'Q(0,75) = min{x : F(x) ≥ 0,75}. F(2)=0,4 < 0,75.'
         },
         {
-            q: 'The 0.25-quantile of X is the smallest x with F(x) ≥ 0.25. Given F(1)=0.3, what is Q(0.25)?',
-            qDE: 'Das 0,25-Quantil von X ist das kleinste x mit F(x) ≥ 0,25. Gegeben F(1)=0,3, wie groß ist Q(0,25)?',
+            q: 'The 0.25-quantile of X is the smallest x with F(x) ≥ 0.25. Given F(1)=0.3, what is Q(0.25) where Q is the quantile function?',
+            qDE: 'Das 0,25-Quantil von X ist das kleinste x mit F(x) ≥ 0,25. Gegeben F(1)=0,3, was ist Q(0,25) wenn Q die Quantilfunktion ist?',
             answer: 1, tolerance: 0, unit: '',
-            hintEn: 'F(1) = 0.3 ≥ 0.25 and 1 is the smallest such value, so Q(0.25) = 1.',
-            hintDE: 'F(1) = 0,3 ≥ 0,25 und 1 ist der kleinste solche Wert, also Q(0,25) = 1.'
+            hintEn: 'F(1) = 0.3 ≥ 0.25.',
+            hintDE: 'F(1) = 0,3 ≥ 0,25.'
         },
 
         // ── 12. STETIGE ZUFALLSVARIABLE UND DICHTEFUNKTION (Continuous RV / PDF) ──
 
         {
-            q: 'X has PDF f(x) = 2x for x ∈ [0,1], 0 otherwise. What is P(0 ≤ X ≤ 1)? (This must equal what value for f to be valid?)',
-            qDE: 'X hat Dichtefunktion f(x) = 2x für x ∈ [0,1], sonst 0. Wie groß ist P(0 ≤ X ≤ 1)? (Welchen Wert muss dies für eine gültige Dichte ergeben?)',
+            q: 'X has density function f(x) = 2x for x ∈ [0,1], 0 otherwise. What is P(0 ≤ X ≤ 1)?',
+            qDE: 'X hat Dichtefunktion f(x) = 2x für x ∈ [0,1], sonst 0. Wie groß ist P(0 ≤ X ≤ 1)?',
             answer: 1, tolerance: 0.001, unit: '',
-            hintEn: '∫₀¹ 2x dx = [x²]₀¹ = 1. A valid PDF must integrate to 1 over ℝ.',
-            hintDE: '∫₀¹ 2x dx = [x²]₀¹ = 1. Eine gültige Dichtefunktion muss über ℝ auf 1 integrieren.'
+            hintEn: 'Calculate the integral.',
+            hintDE: 'Berechne das Integral.'
         },
         {
-            q: 'X has PDF f(x) = 2x for x ∈ [0,1]. What is P(0 ≤ X ≤ 0.5)? Enter as a decimal.',
-            qDE: 'X hat Dichtefunktion f(x) = 2x für x ∈ [0,1]. Wie groß ist P(0 ≤ X ≤ 0,5)? Gib als Dezimalzahl ein.',
+            q: 'X has density function f(x) = 2x for x ∈ [0,1]. What is P(0 ≤ X ≤ 0.5)? Enter as a decimal.',
+            qDE: 'X hat Dichtefunktion f(x) = 2x für x ∈ [0,1]. Was ist P(0 ≤ X ≤ 0,5)? Gib als Dezimalzahl ein.',
             answer: 0.25, tolerance: 0.001, unit: '',
-            hintEn: '∫₀^0.5 2x dx = [x²]₀^0.5 = 0.25.',
-            hintDE: '∫₀^0,5 2x dx = [x²]₀^0,5 = 0,25.'
+            hintEn: 'Calculate the integral.',
+            hintDE: 'Berechne das Integral.'
         },
         {
-            q: 'For a continuous RV, what is P(X = 3) (the probability of one exact value)?',
-            qDE: 'Für eine stetige Zufallsvariable: Wie groß ist P(X = 3) (die Wahrscheinlichkeit eines exakten Wertes)?',
+            q: 'For a continuous random variable X, what is P(X = 3)?',
+            qDE: 'Was ist P(X = 3) für eine stetige Zufallsvariable X?',
             answer: 0, tolerance: 0, unit: '',
-            hintEn: 'For continuous RVs, P(X = c) = 0 for any single point c — the integral over a single point is 0.',
-            hintDE: 'Bei stetigen ZV gilt P(X = c) = 0 für jeden einzelnen Punkt c — das Integral über einen Punkt ist 0.'
+            hintEn: 'Calculate the integral.',
+            hintDE: 'Berechne das Integral.'
         },
 
         // ── 13. EXPONENTIALVERTEILUNG (Exponential Distribution CDF) ─────────────
 
         {
-            q: 'X ~ Exp(λ=1). The CDF is F(x) = 1 − e^(−x). What is F(1)? Enter as a decimal rounded to 3 places. (Use e ≈ 2.718)',
-            qDE: 'X ~ Exp(λ=1). Die Verteilungsfunktion ist F(x) = 1 − e^(−x). Wie groß ist F(1)? Gib auf 3 Stellen gerundet an. (e ≈ 2,718)',
+            q: 'X ~ Exp(1). Calculate the value of the distribution function of X at x=1. Enter as a decimal rounded to 3 places. (Use e ≈ 2.718)',
+            qDE: 'X ~ Exp(1). Berechne den Wert der Verteilungsfunktion von X an der Stelle x=1. Gib auf 3 Stellen gerundet an. (e ≈ 2,718)',
             answer: 0.632, tolerance: 0.005, unit: '',
-            hintEn: 'F(1) = 1 − e^(−1) = 1 − 1/e ≈ 1 − 0.368 = 0.632.',
-            hintDE: 'F(1) = 1 − e^(−1) = 1 − 1/e ≈ 1 − 0,368 = 0,632.'
+            hintEn: 'F(x) = 1 − e^(−x)',
+            hintDE: 'F(x) = 1 − e^(−x)'
         },
         {
-            q: 'X ~ Exp(λ=2). CDF: F(x) = 1 − e^(−2x) for x ≥ 0. What is P(X > 1)? Enter as a decimal rounded to 3 places. (e ≈ 2.718)',
-            qDE: 'X ~ Exp(λ=2). Verteilungsfunktion: F(x) = 1 − e^(−2x) für x ≥ 0. Wie groß ist P(X > 1)? Gib auf 3 Stellen gerundet an. (e ≈ 2,718)',
+            q: 'X ~ Exp(2). What is P(X > 1)? Enter as a decimal rounded to 3 places. (Use e ≈ 2.718)',
+            qDE: 'X ~ Exp(2). Verteilungsfunktion: F(x) = 1 − e^(−2x) für x ≥ 0. Wie groß ist P(X > 1)? Gib auf 3 Stellen gerundet an. (e ≈ 2,718)',
             answer: 0.135, tolerance: 0.005, unit: '',
-            hintEn: 'P(X > 1) = 1 − F(1) = e^(−2) ≈ 0.135.',
-            hintDE: 'P(X > 1) = 1 − F(1) = e^(−2) ≈ 0,135.'
+            hintEn: 'F(x) = 1 − e^(−2x) for x ≥ 0.',
+            hintDE: 'F(x) = 1 − e^(−2x) für x ≥ 0.'
         },
         {
-            q: 'X ~ Exp(λ). What is F(0), the CDF evaluated at x = 0?',
-            qDE: 'X ~ Exp(λ). Wie groß ist F(0), die Verteilungsfunktion ausgewertet bei x = 0?',
+            q: 'X ~ Exp(λ). What is F(0), the distribution function F evaluated at x = 0?',
+            qDE: 'X ~ Exp(λ). Was ist F(0) für die Verteilungsfunktion von X?',
             answer: 0, tolerance: 0, unit: '',
-            hintEn: 'F(0) = 1 − e^(−λ·0) = 1 − e⁰ = 1 − 1 = 0. The distribution starts at 0.',
-            hintDE: 'F(0) = 1 − e^(−λ·0) = 1 − e⁰ = 1 − 1 = 0. Die Verteilung beginnt bei 0.'
+            hintEn: 'F(0) = 1 − e^(−λ·0)',
+            hintDE: 'F(0) = 1 − e^(−λ·0)'
         },
 
     ],
+
+    // todo continue
 
     // ── WORLD 4 ─────────────────────────────────────────────────────────
     4: [
@@ -840,49 +842,49 @@ const MATH_GATE_POOLS = {
         // ── 1. DICHTETRANSFORMATIONSSATZ (Density Transformation Theorem) ─────────
 
         {
-            q: 'X has PDF f_X(x) = 1 for x ∈ [0,1]. Y = 2X. What is the PDF f_Y(y) for y ∈ [0,2]? Enter the constant value of f_Y.',
-            qDE: 'X hat Dichte f_X(x) = 1 für x ∈ [0,1]. Y = 2X. Wie groß ist die Dichte f_Y(y) für y ∈ [0,2]? Gib den konstanten Wert von f_Y ein.',
+            q: 'X has density function f_X(x) = 1 for x ∈ [0,1]. Y = 2X. What is the density function f_Y(y) for y ∈ [0,2]? Enter the constant value of f_Y.',
+            qDE: 'X hat Dichtefunktion f_X(x) = 1 für x ∈ [0,1]. Y = 2X. Was ist die Dichte f_Y(y) für y ∈ [0,2]? Gib den konstanten Wert von f_Y ein.',
             answer: 0.5, tolerance: 0.001, unit: '',
-            hintEn: 'For Y = aX: f_Y(y) = f_X(y/a) · (1/|a|) = 1 · (1/2) = 0.5.',
-            hintDE: 'Für Y = aX: f_Y(y) = f_X(y/a) · (1/|a|) = 1 · (1/2) = 0,5.'
+            hintEn: 'For Y = aX: f_Y(y) = f_X(y/a) · (1/|a|).',
+            hintDE: 'Für Y = aX: f_Y(y) = f_X(y/a) · (1/|a|).'
         },
         {
-            q: 'X has PDF f_X(x) = 2x for x ∈ [0,1]. Y = 3X. What is f_Y(y) for y ∈ [0,3]? Enter the coefficient c where f_Y(y) = c·y.',
-            qDE: 'X hat Dichte f_X(x) = 2x für x ∈ [0,1]. Y = 3X. Wie groß ist f_Y(y) für y ∈ [0,3]? Gib den Koeffizienten c an, sodass f_Y(y) = c·y.',
+            q: 'X has density function f_X(x) = 2x for x ∈ [0,1]. Y = 3X. What is f_Y(y) for y ∈ [0,3]? Enter the coefficient c where f_Y(y) = c·y.',
+            qDE: 'X hat Dichtefunktion f_X(x) = 2x für x ∈ [0,1]. Y = 3X. Was ist f_Y(y) für y ∈ [0,3]? Gib den Koeffizienten c an, sodass f_Y(y) = c·y gilt.',
             answer: 0.222, tolerance: 0.005, unit: '',
-            hintEn: 'f_Y(y) = f_X(y/3) · (1/3) = 2(y/3) · (1/3) = 2y/9 ≈ 0.222·y.',
-            hintDE: 'f_Y(y) = f_X(y/3) · (1/3) = 2(y/3) · (1/3) = 2y/9 ≈ 0,222·y.'
+            hintEn: 'f_Y(y) = f_X(y/3) · (1/3)',
+            hintDE: 'f_Y(y) = f_X(y/3) · (1/3)'
         },
         {
-            q: 'X ~ Uniform[0,1]. Y = X². The transformation theorem gives f_Y(y) = 1/(2√y) for y ∈ [0,1]. What is f_Y(0.25)? Enter as a decimal.',
-            qDE: 'X ~ Gleichverteilt[0,1]. Y = X². Der Transformationssatz liefert f_Y(y) = 1/(2√y) für y ∈ [0,1]. Wie groß ist f_Y(0,25)? Gib als Dezimalzahl ein.',
+            q: 'X ~ U[0,1]. Y = X². Calculate the density f_Y of Y. What is f_Y(0.25)? Enter as a decimal.',
+            qDE: 'X ~ U[0,1]. Y = X². Bestimme die Dichte f_Y von Y. Was ist f_Y(0,25)? Gib als Dezimalzahl ein.',
             answer: 1.0, tolerance: 0.01, unit: '',
-            hintEn: 'f_Y(0.25) = 1 / (2√0.25) = 1 / (2 · 0.5) = 1 / 1 = 1.',
-            hintDE: 'f_Y(0,25) = 1 / (2√0,25) = 1 / (2 · 0,5) = 1 / 1 = 1.'
+            hintEn: 'The transformation theorem gives f_Y(y) = 1/(2√y) for y ∈ [0,1]',
+            hintDE: 'Der Transformationssatz liefert f_Y(y) = 1/(2√y) für y ∈ [0,1].'
         },
 
         // ── 2. UNABHÄNGIGKEIT VON ZUFALLSVARIABLEN ────────────────────────────────
 
         {
             q: 'X and Y are independent. P(X=1)=0.4, P(Y=1)=0.5. What is P(X=1, Y=1)? Enter as a decimal.',
-            qDE: 'X und Y sind unabhängig. P(X=1)=0,4, P(Y=1)=0,5. Wie groß ist P(X=1, Y=1)? Gib als Dezimalzahl ein.',
+            qDE: 'X und Y sind unabhängig. P(X=1)=0,4, P(Y=1)=0,5. Was ist P(X=1, Y=1)? Gib als Dezimalzahl ein.',
             answer: 0.2, tolerance: 0.001, unit: '',
-            hintEn: 'Independence: P(X=1, Y=1) = P(X=1) · P(Y=1) = 0.4 × 0.5.',
-            hintDE: 'Unabhängigkeit: P(X=1, Y=1) = P(X=1) · P(Y=1) = 0,4 × 0,5.'
+            hintEn: 'Independence: P(X=1, Y=1) = P(X=1) · P(Y=1)',
+            hintDE: 'Unabhängigkeit: P(X=1, Y=1) = P(X=1) · P(Y=1)'
         },
         {
-            q: 'X and Y are independent with PDFs f_X and f_Y. The joint PDF is f_{X,Y}(x,y) = f_X(x) · f_Y(y). If f_X(x)=2x on [0,1] and f_Y(y)=1 on [0,1], what is f_{X,Y}(0.5, 0.5)?',
-            qDE: 'X und Y sind unabhängig. Die gemeinsame Dichte ist f_{X,Y}(x,y) = f_X(x) · f_Y(y). Wenn f_X(x)=2x auf [0,1] und f_Y(y)=1 auf [0,1], wie groß ist f_{X,Y}(0,5; 0,5)?',
+            q: 'X and Y are independent with density functions f_X and f_Y. The joint PDF is f_{X,Y}(x,y) = f_X(x) · f_Y(y). If f_X(x)=2x on [0,1] and f_Y(y)=1 on [0,1], what is f_{X,Y}(0.5, 0.5)?',
+            qDE: 'X und Y sind unabhängig. Die gemeinsame Dichte ist f_{X,Y}(x,y) = f_X(x) · f_Y(y). Wenn f_X(x)=2x auf [0,1] und f_Y(y)=1 auf [0,1], was ist dann f_{X,Y}(0,5; 0,5)?',
             answer: 1.0, tolerance: 0.001, unit: '',
-            hintEn: 'f_{X,Y}(0.5, 0.5) = f_X(0.5) · f_Y(0.5) = 2(0.5) · 1 = 1.',
-            hintDE: 'f_{X,Y}(0,5; 0,5) = f_X(0,5) · f_Y(0,5) = 2(0,5) · 1 = 1.'
+            hintEn: 'f_{X,Y}(0.5, 0.5) = f_X(0.5) · f_Y(0.5)',
+            hintDE: 'f_{X,Y}(0,5; 0,5) = f_X(0,5) · f_Y(0,5)'
         },
         {
             q: 'X and Y are independent. E[X]=3, E[Y]=4. What is E[X·Y]? Enter a whole number.',
-            qDE: 'X und Y sind unabhängig. E[X]=3, E[Y]=4. Wie groß ist E[X·Y]? Gib eine ganze Zahl ein.',
+            qDE: 'X und Y sind unabhängig. E[X]=3, E[Y]=4. Was ist E[X·Y]? Gib eine ganze Zahl ein.',
             answer: 12, tolerance: 0, unit: '',
-            hintEn: 'For independent RVs: E[X·Y] = E[X] · E[Y] = 3 × 4 = 12.',
-            hintDE: 'Für unabhängige ZV: E[X·Y] = E[X] · E[Y] = 3 × 4 = 12.'
+            hintEn: 'For independent Random Variables we have E[X·Y] = E[X] · E[Y]',
+            hintDE: 'Für unabhängige Zufallsvariablen gilt E[X·Y] = E[X] · E[Y]'
         },
 
         // ── 3. KONTINGENZTABELLE FÜR UNABHÄNGIGKEIT ──────────────────────────────
@@ -1701,7 +1703,7 @@ const MATH_GATE_POOLS = {
         {
             q: 'X ~ Bin(5, 0.5) and Y ~ Bin(5, 0.5) are independent. What is Var(X+Y)? Enter as a decimal.',
             qDE: 'X ~ Bin(5; 0,5) und Y ~ Bin(5; 0,5) sind unabhängig. Wie groß ist Var(X+Y)? Gib als Dezimalzahl ein.',
-            answer: 5.0, tolerance: 0.001, unit: '',
+            answer: 2.5, tolerance: 0.001, unit: '',
             hintEn: 'X+Y ~ Bin(10,0.5). Var = 10·0.5·0.5 = 2.5. Or: Var(X)+Var(Y) = 2·(5·0.5·0.5) = 2·1.25 = 2.5.',
             hintDE: 'X+Y ~ Bin(10;0,5). Var = 10·0,5·0,5 = 2,5. Oder: Var(X)+Var(Y) = 2·(5·0,5·0,5) = 2·1,25 = 2,5.'
         },
@@ -1771,6 +1773,655 @@ const MATH_GATE_POOLS = {
     // ── WORLD 5 ─────────────────────────────────────────────────────────
     //
     5: [
+        // ── WORLD 5 QUESTIONS ────────────────────────────────────────────────────────
+        // Add these to the existing 5: [ ... ] pool
+
+        // ── 1. HYPERGEOMETRISCHE VERTEILUNG ──────────────────────────────────────────
+        {
+            q: 'An urn has 10 balls: 4 red, 6 blue. Draw 3 without replacement. What is P(exactly 2 red)? Use P = C(4,2)·C(6,1)/C(10,3). Enter as a decimal rounded to 4 places.',
+            qDE: 'Eine Urne hat 10 Bälle: 4 rote, 6 blaue. Ziehe 3 ohne Zurücklegen. Wie groß ist P(genau 2 rote)? Nutze P = C(4,2)·C(6,1)/C(10,3). Auf 4 Stellen gerundet.',
+            answer: 0.3, tolerance: 0.001, unit: '',
+            hintEn: 'C(4,2)·C(6,1)/C(10,3) = 6·6/120 = 36/120 = 0.3.',
+            hintDE: 'C(4,2)·C(6,1)/C(10,3) = 6·6/120 = 36/120 = 0,3.'
+        },
+        {
+            q: 'Urn: N=8 balls, K=3 red, draw n=2 without replacement. What is E[X] where X = number of red balls drawn? Enter as a decimal.',
+            qDE: 'Urne: N=8 Bälle, K=3 rote, ziehe n=2 ohne Zurücklegen. Wie groß ist E[X], wobei X = Anzahl roter Bälle? Gib als Dezimalzahl ein.',
+            answer: 0.75, tolerance: 0.001, unit: '',
+            hintEn: 'E[X] = n·K/N = 2·3/8 = 0.75.',
+            hintDE: 'E[X] = n·K/N = 2·3/8 = 0,75.'
+        },
+        {
+            q: 'Urn: N=10, K=4, n=3. What is Var(X) for the hypergeometric distribution? Use Var(X) = n·(K/N)·(1−K/N)·(N−n)/(N−1). Enter as a decimal rounded to 4 places.',
+            qDE: 'Urne: N=10, K=4, n=3. Wie groß ist Var(X) der hypergeometrischen Verteilung? Nutze Var(X) = n·(K/N)·(1−K/N)·(N−n)/(N−1). Auf 4 Stellen gerundet.',
+            answer: 0.56, tolerance: 0.005, unit: '',
+            hintEn: 'Var(X) = 3·(4/10)·(6/10)·(7/9) = 3·0.4·0.6·0.778 ≈ 0.56.',
+            hintDE: 'Var(X) = 3·(4/10)·(6/10)·(7/9) = 3·0,4·0,6·0,778 ≈ 0,56.'
+        },
+
+        // ── 2. GEOMETRISCHE VERTEILUNG ────────────────────────────────────────────────
+        {
+            q: 'X ~ Geom(p=0.4): number of trials until first success. What is P(X=3)? (P(X=k) = (1−p)^(k−1)·p.) Enter as a decimal.',
+            qDE: 'X ~ Geom(p=0,4): Anzahl Versuche bis zum ersten Erfolg. Wie groß ist P(X=3)? (P(X=k) = (1−p)^(k−1)·p.) Gib als Dezimalzahl ein.',
+            answer: 0.144, tolerance: 0.002, unit: '',
+            hintEn: 'P(X=3) = 0.6²·0.4 = 0.36·0.4 = 0.144.',
+            hintDE: 'P(X=3) = 0,6²·0,4 = 0,36·0,4 = 0,144.'
+        },
+        {
+            q: 'X ~ Geom(p=0.25). What is E[X]? Enter as a whole number.',
+            qDE: 'X ~ Geom(p=0,25). Wie groß ist E[X]? Gib eine ganze Zahl ein.',
+            answer: 4, tolerance: 0, unit: '',
+            hintEn: 'E[X] = 1/p = 1/0.25 = 4.',
+            hintDE: 'E[X] = 1/p = 1/0,25 = 4.'
+        },
+        {
+            q: 'X ~ Geom(p=0.5). What is P(X > 3)? Use the memoryless property or P(X>k) = (1−p)^k. Enter as a decimal.',
+            qDE: 'X ~ Geom(p=0,5). Wie groß ist P(X > 3)? Nutze P(X>k) = (1−p)^k. Gib als Dezimalzahl ein.',
+            answer: 0.125, tolerance: 0.001, unit: '',
+            hintEn: 'P(X > 3) = (1−0.5)³ = 0.5³ = 0.125.',
+            hintDE: 'P(X > 3) = (1−0,5)³ = 0,5³ = 0,125.'
+        },
+
+        // ── 3. BERNOULLI-FOLGE ────────────────────────────────────────────────────────
+        {
+            q: 'A Bernoulli sequence has p=0.3. What is the probability of the pattern S-F-S (success, failure, success) in exactly that order?',
+            qDE: 'Eine Bernoulli-Folge hat p=0,3. Wie groß ist die Wahrscheinlichkeit des Musters E-M-E (Erfolg, Misserfolg, Erfolg) in genau dieser Reihenfolge?',
+            answer: 0.063, tolerance: 0.001, unit: '',
+            hintEn: 'P = p·(1−p)·p = 0.3·0.7·0.3 = 0.063.',
+            hintDE: 'P = p·(1−p)·p = 0,3·0,7·0,3 = 0,063.'
+        },
+        {
+            q: 'In a Bernoulli sequence with p=0.5, what is the probability of getting exactly 3 successes in 5 trials? (This is a Binomial calculation.)',
+            qDE: 'In einer Bernoulli-Folge mit p=0,5: Wie groß ist die Wahrscheinlichkeit von genau 3 Erfolgen in 5 Versuchen?',
+            answer: 0.3125, tolerance: 0.001, unit: '',
+            hintEn: 'C(5,3)·0.5³·0.5² = 10·0.03125 = 0.3125.',
+            hintDE: 'C(5,3)·0,5³·0,5² = 10·0,03125 = 0,3125.'
+        },
+        {
+            q: 'A Bernoulli sequence has p=0.2. What is the probability that the first success occurs on trial 4 or later? P(X ≥ 4) = (1−p)³. Enter as a decimal.',
+            qDE: 'Eine Bernoulli-Folge hat p=0,2. Wie groß ist P(X ≥ 4), d.h. der erste Erfolg tritt frühestens beim 4. Versuch auf? P(X ≥ 4) = (1−p)³. Gib als Dezimalzahl ein.',
+            answer: 0.512, tolerance: 0.001, unit: '',
+            hintEn: 'P(X ≥ 4) = (0.8)³ = 0.512.',
+            hintDE: 'P(X ≥ 4) = (0,8)³ = 0,512.'
+        },
+
+        // ── 4. NEGATIVE BINOMIALVERTEILUNG ───────────────────────────────────────────
+        {
+            q: 'X ~ NegBin(r=2, p=0.5): number of trials until 2nd success. What is P(X=4)? Use P(X=k) = C(k−1, r−1)·p^r·(1−p)^(k−r). Enter as a decimal.',
+            qDE: 'X ~ NegBin(r=2, p=0,5): Anzahl Versuche bis zum 2. Erfolg. Wie groß ist P(X=4)? Nutze P(X=k) = C(k−1, r−1)·p^r·(1−p)^(k−r). Gib als Dezimalzahl ein.',
+            answer: 0.1875, tolerance: 0.002, unit: '',
+            hintEn: 'P(X=4) = C(3,1)·0.5²·0.5² = 3·0.0625 = 0.1875.',
+            hintDE: 'P(X=4) = C(3,1)·0,5²·0,5² = 3·0,0625 = 0,1875.'
+        },
+        {
+            q: 'X ~ NegBin(r=3, p=0.4). What is E[X]? Enter as a decimal.',
+            qDE: 'X ~ NegBin(r=3, p=0,4). Wie groß ist E[X]? Gib als Dezimalzahl ein.',
+            answer: 7.5, tolerance: 0.001, unit: '',
+            hintEn: 'E[X] = r/p = 3/0.4 = 7.5.',
+            hintDE: 'E[X] = r/p = 3/0,4 = 7,5.'
+        },
+        {
+            q: 'X ~ NegBin(r=2, p=0.5). What is Var(X)? Use Var(X) = r·(1−p)/p². Enter as a decimal.',
+            qDE: 'X ~ NegBin(r=2, p=0,5). Wie groß ist Var(X)? Nutze Var(X) = r·(1−p)/p². Gib als Dezimalzahl ein.',
+            answer: 4.0, tolerance: 0.001, unit: '',
+            hintEn: 'Var(X) = 2·0.5/0.25 = 1/0.25 = 4.',
+            hintDE: 'Var(X) = 2·0,5/0,25 = 1/0,25 = 4.'
+        },
+
+        // ── 5. POISSONVERTEILUNG ──────────────────────────────────────────────────────
+        {
+            q: 'X ~ Poisson(λ=3). What is P(X=0)? Use P(X=k) = e^(−λ)·λ^k/k!. Enter as a decimal rounded to 4 places. (e^(−3) ≈ 0.0498)',
+            qDE: 'X ~ Poisson(λ=3). Wie groß ist P(X=0)? Nutze P(X=k) = e^(−λ)·λ^k/k!. Auf 4 Stellen gerundet. (e^(−3) ≈ 0,0498)',
+            answer: 0.0498, tolerance: 0.001, unit: '',
+            hintEn: 'P(X=0) = e^(−3)·3⁰/0! = e^(−3) ≈ 0.0498.',
+            hintDE: 'P(X=0) = e^(−3)·3⁰/0! = e^(−3) ≈ 0,0498.'
+        },
+        {
+            q: 'X ~ Poisson(λ=2). What is P(X=2)? (e^(−2) ≈ 0.1353.) Enter as a decimal rounded to 4 places.',
+            qDE: 'X ~ Poisson(λ=2). Wie groß ist P(X=2)? (e^(−2) ≈ 0,1353.) Auf 4 Stellen gerundet.',
+            answer: 0.2707, tolerance: 0.002, unit: '',
+            hintEn: 'P(X=2) = e^(−2)·2²/2! = 0.1353·4/2 = 0.1353·2 = 0.2706.',
+            hintDE: 'P(X=2) = e^(−2)·2²/2! = 0,1353·4/2 = 0,1353·2 = 0,2706.'
+        },
+        {
+            q: 'X ~ Poisson(λ=5). What is E[X] and Var(X)? They are both equal to λ. Enter the value.',
+            qDE: 'X ~ Poisson(λ=5). Wie groß sind E[X] und Var(X)? Beide sind gleich λ. Gib den Wert ein.',
+            answer: 5, tolerance: 0, unit: '',
+            hintEn: 'For Poisson(λ): E[X] = Var(X) = λ = 5.',
+            hintDE: 'Für Poisson(λ): E[X] = Var(X) = λ = 5.'
+        },
+
+        // ── 6. POISSON-GRENZWERTSATZ ──────────────────────────────────────────────────
+        {
+            q: 'X ~ Bin(n=100, p=0.03). Approximate using Poisson. What is λ? Enter as a decimal.',
+            qDE: 'X ~ Bin(n=100, p=0,03). Nähere durch Poisson an. Wie groß ist λ? Gib als Dezimalzahl ein.',
+            answer: 3.0, tolerance: 0.001, unit: '',
+            hintEn: 'λ = n·p = 100·0.03 = 3.',
+            hintDE: 'λ = n·p = 100·0,03 = 3.'
+        },
+        {
+            q: 'X ~ Bin(n=200, p=0.01). Using the Poisson approximation with λ=n·p, what is P(X=0)? (e^(−2) ≈ 0.1353.) Enter as a decimal rounded to 4 places.',
+            qDE: 'X ~ Bin(n=200, p=0,01). Mit der Poisson-Näherung λ=n·p: Wie groß ist P(X=0)? (e^(−2) ≈ 0,1353.) Auf 4 Stellen.',
+            answer: 0.1353, tolerance: 0.002, unit: '',
+            hintEn: 'λ = 2. P(X=0) ≈ e^(−2) ≈ 0.1353.',
+            hintDE: 'λ = 2. P(X=0) ≈ e^(−2) ≈ 0,1353.'
+        },
+        {
+            q: 'For the Poisson limit theorem, the approximation Bin(n,p) ≈ Poisson(λ) is good when n is large and p is small. If n=1000 and λ=2, what is p? Enter as a decimal.',
+            qDE: 'Für den Poisson-Grenzwertsatz gilt Bin(n,p) ≈ Poisson(λ) gut, wenn n groß und p klein ist. Wenn n=1000 und λ=2, wie groß ist p? Gib als Dezimalzahl ein.',
+            answer: 0.002, tolerance: 0.0001, unit: '',
+            hintEn: 'p = λ/n = 2/1000 = 0.002.',
+            hintDE: 'p = λ/n = 2/1000 = 0,002.'
+        },
+
+        // ── 7. STETIGE GLEICHVERTEILUNG ───────────────────────────────────────────────
+        {
+            q: 'X ~ Uniform[2, 8]. What is E[X]? Enter as a whole number.',
+            qDE: 'X ~ Gleichverteilt[2, 8]. Wie groß ist E[X]? Gib eine ganze Zahl ein.',
+            answer: 5, tolerance: 0, unit: '',
+            hintEn: 'E[X] = (a+b)/2 = (2+8)/2 = 5.',
+            hintDE: 'E[X] = (a+b)/2 = (2+8)/2 = 5.'
+        },
+        {
+            q: 'X ~ Uniform[0, 10]. What is P(3 ≤ X ≤ 7)? Enter as a decimal.',
+            qDE: 'X ~ Gleichverteilt[0, 10]. Wie groß ist P(3 ≤ X ≤ 7)? Gib als Dezimalzahl ein.',
+            answer: 0.4, tolerance: 0.001, unit: '',
+            hintEn: 'P(3 ≤ X ≤ 7) = (7−3)/(10−0) = 4/10 = 0.4.',
+            hintDE: 'P(3 ≤ X ≤ 7) = (7−3)/(10−0) = 4/10 = 0,4.'
+        },
+        {
+            q: 'X ~ Uniform[a, b]. What is Var(X)? Use Var(X) = (b−a)²/12. For a=0, b=6, what is Var(X)? Enter as a whole number.',
+            qDE: 'X ~ Gleichverteilt[a, b]. Var(X) = (b−a)²/12. Für a=0, b=6: Wie groß ist Var(X)? Gib eine ganze Zahl ein.',
+            answer: 3, tolerance: 0, unit: '',
+            hintEn: 'Var(X) = (6−0)²/12 = 36/12 = 3.',
+            hintDE: 'Var(X) = (6−0)²/12 = 36/12 = 3.'
+        },
+
+        // ── 8. EXPONENTIALVERTEILUNG ──────────────────────────────────────────────────
+        {
+            q: 'X ~ Exp(λ=0.5). What is E[X]? Enter as a whole number.',
+            qDE: 'X ~ Exp(λ=0,5). Wie groß ist E[X]? Gib eine ganze Zahl ein.',
+            answer: 2, tolerance: 0, unit: '',
+            hintEn: 'E[X] = 1/λ = 1/0.5 = 2.',
+            hintDE: 'E[X] = 1/λ = 1/0,5 = 2.'
+        },
+        {
+            q: 'X ~ Exp(λ=2). What is P(X ≤ 1)? Use F(x) = 1 − e^(−λx). (e^(−2) ≈ 0.1353.) Enter as a decimal rounded to 4 places.',
+            qDE: 'X ~ Exp(λ=2). Wie groß ist P(X ≤ 1)? Nutze F(x) = 1 − e^(−λx). (e^(−2) ≈ 0,1353.) Auf 4 Stellen.',
+            answer: 0.8647, tolerance: 0.002, unit: '',
+            hintEn: 'F(1) = 1 − e^(−2) ≈ 1 − 0.1353 = 0.8647.',
+            hintDE: 'F(1) = 1 − e^(−2) ≈ 1 − 0,1353 = 0,8647.'
+        },
+        {
+            q: 'X ~ Exp(λ=3). What is Var(X)? Enter as a fraction — give the numerator of 1/λ².',
+            qDE: 'X ~ Exp(λ=3). Wie groß ist Var(X)? Gib den Zähler von 1/λ² an.',
+            answer: 1, tolerance: 0, unit: '/ 9',
+            hintEn: 'Var(X) = 1/λ² = 1/9.',
+            hintDE: 'Var(X) = 1/λ² = 1/9.'
+        },
+
+        // ── 9. NORMALVERTEILUNG ───────────────────────────────────────────────────────
+        {
+            q: 'X ~ N(μ=10, σ²=4). What is the standard deviation σ? Enter as a whole number.',
+            qDE: 'X ~ N(μ=10, σ²=4). Wie groß ist die Standardabweichung σ? Gib eine ganze Zahl ein.',
+            answer: 2, tolerance: 0, unit: '',
+            hintEn: 'σ = √σ² = √4 = 2.',
+            hintDE: 'σ = √σ² = √4 = 2.'
+        },
+        {
+            q: 'X ~ N(μ=5, σ=2). To standardize: Z = (X−μ)/σ. What is the Z-score for X=9?',
+            qDE: 'X ~ N(μ=5, σ=2). Standardisierung: Z = (X−μ)/σ. Wie groß ist der Z-Wert für X=9?',
+            answer: 2.0, tolerance: 0.001, unit: '',
+            hintEn: 'Z = (9−5)/2 = 4/2 = 2.',
+            hintDE: 'Z = (9−5)/2 = 4/2 = 2.'
+        },
+        {
+            q: 'X ~ N(μ=0, σ=1). Using Φ(1.96) ≈ 0.975, what is P(−1.96 ≤ X ≤ 1.96)? Enter as a decimal.',
+            qDE: 'X ~ N(μ=0, σ=1). Mit Φ(1,96) ≈ 0,975: Wie groß ist P(−1,96 ≤ X ≤ 1,96)? Gib als Dezimalzahl ein.',
+            answer: 0.95, tolerance: 0.002, unit: '',
+            hintEn: 'P(−1.96 ≤ Z ≤ 1.96) = Φ(1.96) − Φ(−1.96) = 0.975 − 0.025 = 0.95.',
+            hintDE: 'P(−1,96 ≤ Z ≤ 1,96) = Φ(1,96) − Φ(−1,96) = 0,975 − 0,025 = 0,95.'
+        },
+
+        // ── 10. RECHNEN MIT NORMALVERTEILTEN ZUFALLSVARIABLEN ─────────────────────────
+        {
+            q: 'X ~ N(μ=3, σ²=1), Y ~ N(μ=2, σ²=4), independent. What is the distribution of X+Y? Give E[X+Y].',
+            qDE: 'X ~ N(μ=3, σ²=1), Y ~ N(μ=2, σ²=4), unabhängig. Welche Verteilung hat X+Y? Gib E[X+Y] an.',
+            answer: 5, tolerance: 0, unit: '',
+            hintEn: 'X+Y ~ N(μ_X+μ_Y, σ²_X+σ²_Y) = N(5, 5). E[X+Y] = 5.',
+            hintDE: 'X+Y ~ N(μ_X+μ_Y, σ²_X+σ²_Y) = N(5, 5). E[X+Y] = 5.'
+        },
+        {
+            q: 'X ~ N(μ=3, σ²=1), Y ~ N(μ=2, σ²=4), independent. What is Var(X+Y)?',
+            qDE: 'X ~ N(μ=3, σ²=1), Y ~ N(μ=2, σ²=4), unabhängig. Wie groß ist Var(X+Y)?',
+            answer: 5, tolerance: 0, unit: '',
+            hintEn: 'Var(X+Y) = Var(X) + Var(Y) = 1 + 4 = 5 (independence).',
+            hintDE: 'Var(X+Y) = Var(X) + Var(Y) = 1 + 4 = 5 (Unabhängigkeit).'
+        },
+        {
+            q: 'X ~ N(μ=10, σ=3). What is P(X ≤ 10)? By symmetry of the normal distribution. Enter as a decimal.',
+            qDE: 'X ~ N(μ=10, σ=3). Wie groß ist P(X ≤ 10)? Durch Symmetrie der Normalverteilung. Gib als Dezimalzahl ein.',
+            answer: 0.5, tolerance: 0.001, unit: '',
+            hintEn: 'P(X ≤ μ) = 0.5 by symmetry of the normal distribution.',
+            hintDE: 'P(X ≤ μ) = 0,5 wegen der Symmetrie der Normalverteilung.'
+        },
+
+        // ── 11. ZUFALLSVEKTOREN ───────────────────────────────────────────────────────
+        {
+            q: 'A random vector (X,Y) has joint PMF: p(0,0)=0.1, p(0,1)=0.2, p(1,0)=0.3, p(1,1)=0.4. What is P(X=1)? Enter as a decimal.',
+            qDE: 'Ein Zufallsvektor (X,Y) hat gemeinsame Zähldichte: p(0,0)=0,1, p(0,1)=0,2, p(1,0)=0,3, p(1,1)=0,4. Wie groß ist P(X=1)? Gib als Dezimalzahl ein.',
+            answer: 0.7, tolerance: 0.001, unit: '',
+            hintEn: 'P(X=1) = p(1,0) + p(1,1) = 0.3 + 0.4 = 0.7.',
+            hintDE: 'P(X=1) = p(1,0) + p(1,1) = 0,3 + 0,4 = 0,7.'
+        },
+        {
+            q: 'Joint PMF: p(0,0)=0.1, p(0,1)=0.2, p(1,0)=0.3, p(1,1)=0.4. What is P(Y=1)? Enter as a decimal.',
+            qDE: 'Gemeinsame Zähldichte: p(0,0)=0,1, p(0,1)=0,2, p(1,0)=0,3, p(1,1)=0,4. Wie groß ist P(Y=1)? Gib als Dezimalzahl ein.',
+            answer: 0.6, tolerance: 0.001, unit: '',
+            hintEn: 'P(Y=1) = p(0,1) + p(1,1) = 0.2 + 0.4 = 0.6.',
+            hintDE: 'P(Y=1) = p(0,1) + p(1,1) = 0,2 + 0,4 = 0,6.'
+        },
+        {
+            q: 'Joint PMF: p(0,0)=0.1, p(0,1)=0.2, p(1,0)=0.3, p(1,1)=0.4. What is E[X+Y]? Enter as a decimal.',
+            qDE: 'Gemeinsame Zähldichte: p(0,0)=0,1, p(0,1)=0,2, p(1,0)=0,3, p(1,1)=0,4. Wie groß ist E[X+Y]? Gib als Dezimalzahl ein.',
+            answer: 1.3, tolerance: 0.001, unit: '',
+            hintEn: 'E[X+Y] = 0·0.1 + 1·0.2 + 1·0.3 + 2·0.4 = 0 + 0.2 + 0.3 + 0.8 = 1.3.',
+            hintDE: 'E[X+Y] = 0·0,1 + 1·0,2 + 1·0,3 + 2·0,4 = 0 + 0,2 + 0,3 + 0,8 = 1,3.'
+        },
+
+        // ── 12. VERTEILUNG VON ZUFALLSVEKTOREN ───────────────────────────────────────
+        {
+            q: 'A joint PDF is f(x,y) = c on the unit square [0,1]². What must c be for a valid joint density? Enter a whole number.',
+            qDE: 'Eine gemeinsame Dichte ist f(x,y) = c auf dem Einheitsquadrat [0,1]². Welchen Wert muss c haben? Gib eine ganze Zahl ein.',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: '∫₀¹ ∫₀¹ c dx dy = c = 1.',
+            hintDE: '∫₀¹ ∫₀¹ c dx dy = c = 1.'
+        },
+        {
+            q: 'Joint PDF f(x,y) = 2x on [0,1]². What is the marginal PDF f_X(x)? It equals ∫₀¹ 2x dy. Enter the value for x=0.4.',
+            qDE: 'Gemeinsame Dichte f(x,y) = 2x auf [0,1]². Wie groß ist die Randdichte f_X(x)? Sie ist ∫₀¹ 2x dy. Gib den Wert für x=0,4 ein.',
+            answer: 0.8, tolerance: 0.001, unit: '',
+            hintEn: 'f_X(x) = ∫₀¹ 2x dy = 2x·1 = 2x. At x=0.4: f_X(0.4) = 2·0.4 = 0.8.',
+            hintDE: 'f_X(x) = ∫₀¹ 2x dy = 2x·1 = 2x. Bei x=0,4: f_X(0,4) = 2·0,4 = 0,8.'
+        },
+        {
+            q: 'Joint PMF: p(1,1)=0.3, p(1,2)=0.2, p(2,1)=0.1, p(2,2)=0.4. What is P(X=2, Y=2)? Enter as a decimal.',
+            qDE: 'Gemeinsame Zähldichte: p(1,1)=0,3, p(1,2)=0,2, p(2,1)=0,1, p(2,2)=0,4. Wie groß ist P(X=2, Y=2)? Gib als Dezimalzahl ein.',
+            answer: 0.4, tolerance: 0.001, unit: '',
+            hintEn: 'P(X=2, Y=2) = p(2,2) = 0.4 directly from the table.',
+            hintDE: 'P(X=2, Y=2) = p(2,2) = 0,4 direkt aus der Tabelle.'
+        },
+
+        // ── 13. PRODUKTVERTEILUNG BEI UNABHÄNGIGKEIT ─────────────────────────────────
+        {
+            q: 'X ~ Uniform[0,1] and Y ~ Uniform[0,1] are independent. What is f_{X,Y}(x,y) on [0,1]²? Enter as a whole number.',
+            qDE: 'X ~ Gleichverteilt[0,1] und Y ~ Gleichverteilt[0,1] sind unabhängig. Wie groß ist f_{X,Y}(x,y) auf [0,1]²? Gib eine ganze Zahl ein.',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: 'f_{X,Y}(x,y) = f_X(x)·f_Y(y) = 1·1 = 1.',
+            hintDE: 'f_{X,Y}(x,y) = f_X(x)·f_Y(y) = 1·1 = 1.'
+        },
+        {
+            q: 'X and Y are independent with f_X(x)=2x on [0,1] and f_Y(y)=3y² on [0,1]. What is f_{X,Y}(0.5, 0.5)?',
+            qDE: 'X und Y sind unabhängig mit f_X(x)=2x auf [0,1] und f_Y(y)=3y² auf [0,1]. Wie groß ist f_{X,Y}(0,5; 0,5)?',
+            answer: 0.75, tolerance: 0.001, unit: '',
+            hintEn: 'f_{X,Y}(0.5,0.5) = f_X(0.5)·f_Y(0.5) = (2·0.5)·(3·0.25) = 1·0.75 = 0.75.',
+            hintDE: 'f_{X,Y}(0,5;0,5) = f_X(0,5)·f_Y(0,5) = (2·0,5)·(3·0,25) = 1·0,75 = 0,75.'
+        },
+        {
+            q: 'p_X(0)=0.4, p_X(1)=0.6, p_Y(0)=0.3, p_Y(1)=0.7. If X and Y are independent, what is p(X=1, Y=1)? Enter as a decimal.',
+            qDE: 'p_X(0)=0,4, p_X(1)=0,6, p_Y(0)=0,3, p_Y(1)=0,7. Falls X und Y unabhängig sind, wie groß ist p(X=1, Y=1)? Gib als Dezimalzahl ein.',
+            answer: 0.42, tolerance: 0.001, unit: '',
+            hintEn: 'p(1,1) = p_X(1)·p_Y(1) = 0.6·0.7 = 0.42.',
+            hintDE: 'p(1,1) = p_X(1)·p_Y(1) = 0,6·0,7 = 0,42.'
+        },
+
+        // ── 14. BEDINGTE ZÄHLDICHTE ───────────────────────────────────────────────────
+        {
+            q: 'Joint PMF: p(0,0)=0.2, p(0,1)=0.3, p(1,0)=0.1, p(1,1)=0.4. What is p_{Y|X}(1|1) = P(Y=1|X=1)? Enter as a decimal.',
+            qDE: 'Gemeinsame Zähldichte: p(0,0)=0,2, p(0,1)=0,3, p(1,0)=0,1, p(1,1)=0,4. Wie groß ist p_{Y|X}(1|1) = P(Y=1|X=1)? Gib als Dezimalzahl ein.',
+            answer: 0.8, tolerance: 0.001, unit: '',
+            hintEn: 'P(Y=1|X=1) = p(1,1)/p_X(1) = 0.4/(0.1+0.4) = 0.4/0.5 = 0.8.',
+            hintDE: 'P(Y=1|X=1) = p(1,1)/p_X(1) = 0,4/(0,1+0,4) = 0,4/0,5 = 0,8.'
+        },
+        {
+            q: 'Joint PMF: p(0,0)=0.2, p(0,1)=0.3, p(1,0)=0.1, p(1,1)=0.4. What is p_{Y|X}(0|0) = P(Y=0|X=0)? Enter as a decimal.',
+            qDE: 'Gemeinsame Zähldichte: p(0,0)=0,2, p(0,1)=0,3, p(1,0)=0,1, p(1,1)=0,4. Wie groß ist P(Y=0|X=0)? Gib als Dezimalzahl ein.',
+            answer: 0.4, tolerance: 0.001, unit: '',
+            hintEn: 'P(Y=0|X=0) = p(0,0)/p_X(0) = 0.2/(0.2+0.3) = 0.2/0.5 = 0.4.',
+            hintDE: 'P(Y=0|X=0) = p(0,0)/p_X(0) = 0,2/(0,2+0,3) = 0,2/0,5 = 0,4.'
+        },
+        {
+            q: 'Joint PMF: p(1,1)=0.3, p(1,2)=0.2, p(2,1)=0.1, p(2,2)=0.4. What is E[Y|X=1]? Enter as a decimal.',
+            qDE: 'Gemeinsame Zähldichte: p(1,1)=0,3, p(1,2)=0,2, p(2,1)=0,1, p(2,2)=0,4. Wie groß ist E[Y|X=1]? Gib als Dezimalzahl ein.',
+            answer: 1.4, tolerance: 0.001, unit: '',
+            hintEn: 'p_X(1)=0.5. P(Y=1|X=1)=0.3/0.5=0.6, P(Y=2|X=1)=0.2/0.5=0.4. E[Y|X=1]=1·0.6+2·0.4=1.4.',
+            hintDE: 'p_X(1)=0,5. P(Y=1|X=1)=0,3/0,5=0,6, P(Y=2|X=1)=0,2/0,5=0,4. E[Y|X=1]=1·0,6+2·0,4=1,4.'
+        },
+    ],
+
+    6: [
+            // ── 1. SIMPSONS PARADOXON ─────────────────────────────────────────────────────
+
+            {
+                q: 'Hospital A has a 90% survival rate for minor surgery and 60% for major surgery. Hospital B has 85% for minor and 55% for major. But overall Hospital B looks better. Does Simpson\'s Paradox occur when subgroup trends reverse in the aggregate? Enter 1 for yes, 0 for no.',
+                qDE: 'Krankenhaus A hat 90% Überlebensrate bei kleinen und 60% bei großen Operationen. Krankenhaus B hat 85% bzw. 55%. Trotzdem sieht B insgesamt besser aus. Tritt Simpsons Paradoxon auf, wenn sich Trendrichtungen bei Aggregation umkehren? Gib 1 für ja, 0 für nein ein.',
+                answer: 1, tolerance: 0, unit: '',
+                hintEn: 'Simpson\'s Paradox: a trend in subgroups can reverse when groups are combined due to unequal group sizes.',
+                hintDE: 'Simpsons Paradoxon: Ein Trend in Untergruppen kann sich durch ungleiche Gruppengrößen bei der Aggregation umkehren.'
+            },
+            {
+                q: 'Group A: 30 successes out of 50 (60%). Group B: 70 successes out of 150 (≈46.7%). Combined: A has 30/50, B has 70/150. What is the combined success rate of B as a percentage? Round to 1 decimal place.',
+                qDE: 'Gruppe A: 30 Erfolge von 50 (60%). Gruppe B: 70 Erfolge von 150 (≈46,7%). Was ist die Gesamterfolgsrate von B in Prozent? Auf 1 Dezimalstelle gerundet.',
+                answer: 46.7, tolerance: 0.1, unit: '%',
+                hintEn: '70 / 150 ≈ 0.4667 = 46.7%.',
+                hintDE: '70 / 150 ≈ 0,4667 = 46,7%.'
+            },
+            {
+                q: 'In a study, Treatment A beats Treatment B in both men and women separately, but loses overall. The lurking variable causing this is called a __ variable. Enter 1 for confounding, 2 for independent, 3 for random.',
+                qDE: 'In einer Studie schlägt Behandlung A die Behandlung B bei Männern und Frauen separat, verliert aber insgesamt. Die verursachende versteckte Variable heißt __ Variable. Gib 1 für Störvariable, 2 für unabhängig, 3 für zufällig ein.',
+                answer: 1, tolerance: 0, unit: '',
+                hintEn: 'A confounding (lurking) variable creates Simpson\'s Paradox by being correlated with both the grouping and the outcome.',
+                hintDE: 'Eine Störvariable (Confounder) erzeugt Simpsons Paradoxon, da sie mit Gruppierung und Ergebnis korreliert.'
+            },
+
+            // ── 2. BEDINGTE DICHTE ────────────────────────────────────────────────────────
+
+            {
+                q: 'Joint PDF f(x,y) = 6x for 0 ≤ x ≤ 1, 0 ≤ y ≤ x. The marginal f_X(x) = ∫₀ˣ 6x dy = 6x². What is f_{Y|X}(y|x) = f(x,y)/f_X(x)? Enter the value at x=0.5, y=0.3.',
+                qDE: 'Gemeinsame Dichte f(x,y) = 6x für 0 ≤ x ≤ 1, 0 ≤ y ≤ x. Die Randdichte f_X(x) = 6x². Wie groß ist f_{Y|X}(y|x) = f(x,y)/f_X(x) bei x=0,5, y=0,3? Gib als Dezimalzahl ein.',
+                answer: 2.0, tolerance: 0.01, unit: '',
+                hintEn: 'f_{Y|X}(y|x) = 6x / 6x² = 1/x. At x=0.5: 1/0.5 = 2.',
+                hintDE: 'f_{Y|X}(y|x) = 6x / 6x² = 1/x. Bei x=0,5: 1/0,5 = 2.'
+            },
+            {
+                q: 'Joint PMF: p(1,1)=0.2, p(1,2)=0.3, p(2,1)=0.1, p(2,2)=0.4. What is the conditional PMF p_{Y|X}(2|2) = P(Y=2|X=2)? Enter as a decimal.',
+                qDE: 'Gemeinsame Zähldichte: p(1,1)=0,2, p(1,2)=0,3, p(2,1)=0,1, p(2,2)=0,4. Wie groß ist p_{Y|X}(2|2) = P(Y=2|X=2)? Gib als Dezimalzahl ein.',
+                answer: 0.8, tolerance: 0.001, unit: '',
+                hintEn: 'p_X(2) = p(2,1)+p(2,2) = 0.1+0.4 = 0.5. P(Y=2|X=2) = 0.4/0.5 = 0.8.',
+                hintDE: 'p_X(2) = p(2,1)+p(2,2) = 0,1+0,4 = 0,5. P(Y=2|X=2) = 0,4/0,5 = 0,8.'
+            },
+            {
+                q: 'Joint PDF f(x,y) = 2 for 0 ≤ y ≤ x ≤ 1. The marginal f_X(x) = 2x. What is f_{Y|X}(y|x)? Enter the value at x=0.6, y=0.3.',
+                qDE: 'Gemeinsame Dichte f(x,y) = 2 für 0 ≤ y ≤ x ≤ 1. Randdichte f_X(x) = 2x. Wie groß ist f_{Y|X}(y|x) bei x=0,6, y=0,3? Gib als Dezimalzahl ein.',
+                answer: 1.667, tolerance: 0.005, unit: '',
+                hintEn: 'f_{Y|X}(y|x) = 2 / 2x = 1/x. At x=0.6: 1/0.6 ≈ 1.667.',
+                hintDE: 'f_{Y|X}(y|x) = 2 / 2x = 1/x. Bei x=0,6: 1/0,6 ≈ 1,667.'
+            },
+
+            // ── 3. KRITERIUM FÜR UNABHÄNGIGKEIT ÜBER BEDINGTE DICHTEN ────────────────────
+
+            {
+                q: 'X and Y are independent iff f_{Y|X}(y|x) = f_Y(y) for all x, y. Joint PMF: p(0,0)=0.12, p(0,1)=0.18, p(1,0)=0.28, p(1,1)=0.42. p_Y(0)=0.4. Does P(Y=0|X=0) = p_Y(0)? Enter 1 for yes (independent), 0 for no.',
+                qDE: 'X und Y sind unabhängig gdw. f_{Y|X}(y|x) = f_Y(y). Gemeinsame Zähldichte: p(0,0)=0,12, p(0,1)=0,18, p(1,0)=0,28, p(1,1)=0,42. p_Y(0)=0,4. Gilt P(Y=0|X=0) = p_Y(0)? Gib 1 für ja, 0 für nein ein.',
+                answer: 1, tolerance: 0, unit: '',
+                hintEn: 'p_X(0)=0.3. P(Y=0|X=0)=0.12/0.3=0.4=p_Y(0). ✓ Independent.',
+                hintDE: 'p_X(0)=0,3. P(Y=0|X=0)=0,12/0,3=0,4=p_Y(0). ✓ Unabhängig.'
+            },
+            {
+                q: 'Joint PDF f(x,y) = 4xy for x,y ∈ [0,1]. Marginals: f_X(x) = 2x, f_Y(y) = 2y. Does f(x,y) = f_X(x)·f_Y(y)? Enter 1 for yes (independent), 0 for no.',
+                qDE: 'Gemeinsame Dichte f(x,y) = 4xy für x,y ∈ [0,1]. Randdichten: f_X(x) = 2x, f_Y(y) = 2y. Gilt f(x,y) = f_X(x)·f_Y(y)? Gib 1 für ja (unabhängig), 0 für nein ein.',
+                answer: 1, tolerance: 0, unit: '',
+                hintEn: 'f_X(x)·f_Y(y) = 2x·2y = 4xy = f(x,y). ✓ Independent.',
+                hintDE: 'f_X(x)·f_Y(y) = 2x·2y = 4xy = f(x,y). ✓ Unabhängig.'
+            },
+            {
+                q: 'Joint PDF f(x,y) = 6x for 0 ≤ y ≤ x ≤ 1. The marginal f_X(x) = 6x². Is f_{Y|X}(y|x) = 1/x the same as f_Y(y) (which would be independent)? Compute f_Y(y) = ∫_y^1 6x dx = 3(1−y²). Does 1/x = 3(1−y²) for all x,y? Enter 1 for yes, 0 for no (dependent).',
+                qDE: 'Gemeinsame Dichte f(x,y) = 6x für 0 ≤ y ≤ x ≤ 1. Randdichte f_X(x) = 6x². Ist f_{Y|X}(y|x) = 1/x gleich f_Y(y) = 3(1−y²)? Gib 1 für ja (unabhängig), 0 für nein (abhängig) ein.',
+                answer: 0, tolerance: 0, unit: '',
+                hintEn: '1/x depends on x while 3(1−y²) depends only on y. They cannot be equal for all x,y. Dependent.',
+                hintDE: '1/x hängt von x ab, 3(1−y²) nur von y. Sie können nicht für alle x,y gleich sein. Abhängig.'
+            },
+
+            // ── 4. BEDINGTER ERWARTUNGSWERT DISKRET ───────────────────────────────────────
+
+            {
+                q: 'Joint PMF: p(1,1)=0.3, p(1,2)=0.2, p(2,1)=0.1, p(2,2)=0.4. What is E[Y|X=2]? Enter as a decimal.',
+                qDE: 'Gemeinsame Zähldichte: p(1,1)=0,3, p(1,2)=0,2, p(2,1)=0,1, p(2,2)=0,4. Wie groß ist E[Y|X=2]? Gib als Dezimalzahl ein.',
+                answer: 1.8, tolerance: 0.001, unit: '',
+                hintEn: 'p_X(2)=0.5. P(Y=1|X=2)=0.1/0.5=0.2, P(Y=2|X=2)=0.4/0.5=0.8. E[Y|X=2]=1·0.2+2·0.8=1.8.',
+                hintDE: 'p_X(2)=0,5. P(Y=1|X=2)=0,1/0,5=0,2, P(Y=2|X=2)=0,4/0,5=0,8. E[Y|X=2]=1·0,2+2·0,8=1,8.'
+            },
+            {
+                q: 'Joint PMF: p(0,0)=0.1, p(0,1)=0.4, p(1,0)=0.3, p(1,1)=0.2. What is E[Y|X=0]? Enter as a decimal.',
+                qDE: 'Gemeinsame Zähldichte: p(0,0)=0,1, p(0,1)=0,4, p(1,0)=0,3, p(1,1)=0,2. Wie groß ist E[Y|X=0]? Gib als Dezimalzahl ein.',
+                answer: 0.8, tolerance: 0.001, unit: '',
+                hintEn: 'p_X(0)=0.5. P(Y=0|X=0)=0.1/0.5=0.2, P(Y=1|X=0)=0.4/0.5=0.8. E[Y|X=0]=0·0.2+1·0.8=0.8.',
+                hintDE: 'p_X(0)=0,5. P(Y=0|X=0)=0,2, P(Y=1|X=0)=0,8. E[Y|X=0]=0·0,2+1·0,8=0,8.'
+            },
+            {
+                q: 'Joint PMF: p(1,2)=0.25, p(1,4)=0.25, p(2,2)=0.25, p(2,4)=0.25. What is E[Y|X=1]? Enter as a whole number.',
+                qDE: 'Gemeinsame Zähldichte: p(1,2)=0,25, p(1,4)=0,25, p(2,2)=0,25, p(2,4)=0,25. Wie groß ist E[Y|X=1]? Gib eine ganze Zahl ein.',
+                answer: 3, tolerance: 0, unit: '',
+                hintEn: 'p_X(1)=0.5. P(Y=2|X=1)=0.5, P(Y=4|X=1)=0.5. E[Y|X=1]=2·0.5+4·0.5=3.',
+                hintDE: 'p_X(1)=0,5. P(Y=2|X=1)=0,5, P(Y=4|X=1)=0,5. E[Y|X=1]=2·0,5+4·0,5=3.'
+            },
+
+            // ── 5. BEDINGTER ERWARTUNGSWERT STETIG ────────────────────────────────────────
+
+            {
+                q: 'Joint PDF f(x,y) = 2 for 0 ≤ y ≤ x ≤ 1. Conditional PDF: f_{Y|X}(y|x) = 1/x for y ∈ [0,x]. What is E[Y|X=x]? Enter the formula evaluated at x=0.6.',
+                qDE: 'Gemeinsame Dichte f(x,y) = 2 für 0 ≤ y ≤ x ≤ 1. Bedingte Dichte: f_{Y|X}(y|x) = 1/x. Wie groß ist E[Y|X=x] ausgewertet bei x=0,6? Gib als Dezimalzahl ein.',
+                answer: 0.3, tolerance: 0.001, unit: '',
+                hintEn: 'E[Y|X=x] = ∫₀ˣ y·(1/x) dy = (1/x)·[y²/2]₀ˣ = x/2. At x=0.6: 0.6/2 = 0.3.',
+                hintDE: 'E[Y|X=x] = ∫₀ˣ y·(1/x) dy = x/2. Bei x=0,6: 0,6/2 = 0,3.'
+            },
+            {
+                q: 'Joint PDF f(x,y) = 6x for 0 ≤ y ≤ x ≤ 1. Conditional f_{Y|X}(y|x) = 1/x for y ∈ [0,x]. E[Y|X=x] = x/2. What is E[E[Y|X]]? Use the law of total expectation and E[X] for X with f_X(x)=6x²−6x³... actually f_X(x)=6x²: E[X]=∫₀¹ x·6x² dx. Enter as a decimal.',
+                qDE: 'Gemeinsame Dichte f(x,y)=6x, bedingte Dichte f_{Y|X}=1/x, E[Y|X=x]=x/2. Wie groß ist E[E[Y|X]] = E[X/2]? Nutze f_X(x)=6x² und E[X]=∫₀¹ x·6x² dx. Gib als Dezimalzahl ein.',
+                answer: 0.375, tolerance: 0.005, unit: '',
+                hintEn: 'E[X] = ∫₀¹ 6x³ dx = [6x⁴/4]₀¹ = 3/2. E[Y] = E[X/2] = (3/2)/2 = 3/4. Wait — E[X]=3/4, so E[Y]=3/8=0.375.',
+                hintDE: 'E[X] = ∫₀¹ 6x³ dx = 3/2? Nein: ∫₀¹ x·6x² dx = ∫₀¹ 6x³ dx = 6/4 = 3/2. E[Y]=E[X/2]=3/4. Korrektur: ∫₀¹ 6x³ dx = 3/2 → E[Y]=3/4. Nochmal: f_X(x)=6x², E[X]=∫₀¹ x·6x²dx=6·1/4=3/2 → E[Y]=3/4=0,75. Tipp: E[X]=3/4 → E[Y]=3/8=0,375.'
+            },
+            {
+                q: 'X ~ Uniform[0,1]. Given X=x, Y|X=x ~ Uniform[0,x]. So E[Y|X=x] = x/2. Using the law of total expectation: E[Y] = E[X/2] = E[X]/2. E[X]=0.5 for Uniform[0,1]. What is E[Y]? Enter as a decimal.',
+                qDE: 'X ~ Gleichverteilt[0,1]. Gegeben X=x ist Y|X=x ~ Gleichverteilt[0,x], also E[Y|X=x]=x/2. Mit dem Gesetz der totalen Erwartung: E[Y]=E[X]/2. Wie groß ist E[Y]? Gib als Dezimalzahl ein.',
+                answer: 0.25, tolerance: 0.001, unit: '',
+                hintEn: 'E[Y] = E[X/2] = E[X]/2 = 0.5/2 = 0.25.',
+                hintDE: 'E[Y] = E[X/2] = E[X]/2 = 0,5/2 = 0,25.'
+            },
+
+            // ── 6. BOX-MULLER-METHODE ─────────────────────────────────────────────────────
+
+            {
+                q: 'The Box-Muller transform takes U₁, U₂ ~ Uniform[0,1] and produces Z₁ = √(−2·ln U₁)·cos(2πU₂). What distribution does Z₁ follow?  Enter 1 for N(0,1), 2 for Uniform[0,1], 3 for Exp(1).',
+                qDE: 'Die Box-Muller-Methode nimmt U₁, U₂ ~ Gleichverteilt[0,1] und erzeugt Z₁ = √(−2·ln U₁)·cos(2πU₂). Welche Verteilung hat Z₁? Gib 1 für N(0,1), 2 für Gleichverteilt, 3 für Exp(1) ein.',
+                answer: 1, tolerance: 0, unit: '',
+                hintEn: 'The Box-Muller transform produces standard normal N(0,1) random variables.',
+                hintDE: 'Die Box-Muller-Methode erzeugt standardnormalverteilte N(0,1) Zufallszahlen.'
+            },
+            {
+                q: 'Box-Muller: U₁=e^(−2) ≈ 0.1353, U₂=0.25. Z₁ = √(−2·ln(0.1353))·cos(2π·0.25). Note: −2·ln(0.1353) ≈ 4, cos(π/2) = 0. What is Z₁? Enter as a whole number.',
+                qDE: 'Box-Muller: U₁=e^(−2)≈0,1353, U₂=0,25. Z₁=√(−2·ln(0,1353))·cos(2π·0,25). Hinweis: −2·ln(0,1353)≈4, cos(π/2)=0. Wie groß ist Z₁? Gib eine ganze Zahl ein.',
+                answer: 0, tolerance: 0, unit: '',
+                hintEn: '√4·cos(π/2) = 2·0 = 0.',
+                hintDE: '√4·cos(π/2) = 2·0 = 0.'
+            },
+            {
+                q: 'Box-Muller: U₁=e^(−0.5) ≈ 0.6065, U₂=0. Z₂ = √(−2·ln U₁)·sin(2πU₂). Note: −2·ln(e^(−0.5)) = 1, sin(0) = 0. What is Z₂? Enter as a whole number.',
+                qDE: 'Box-Muller: U₁=e^(−0,5)≈0,6065, U₂=0. Z₂=√(−2·ln U₁)·sin(2πU₂). −2·ln(e^(−0,5))=1, sin(0)=0. Wie groß ist Z₂? Gib eine ganze Zahl ein.',
+                answer: 0, tolerance: 0, unit: '',
+                hintEn: '√1·sin(0) = 1·0 = 0.',
+                hintDE: '√1·sin(0) = 1·0 = 0.'
+            },
+
+            // ── 7. ERWARTUNGSWERTVEKTOR ───────────────────────────────────────────────────
+
+            {
+                q: 'Random vector (X, Y) has E[X]=3 and E[Y]=7. What is the second component of the mean vector μ = (E[X], E[Y])? Enter as a whole number.',
+                qDE: 'Zufallsvektor (X, Y) hat E[X]=3 und E[Y]=7. Wie groß ist die zweite Komponente des Erwartungswertvektors μ=(E[X], E[Y])? Gib eine ganze Zahl ein.',
+                answer: 7, tolerance: 0, unit: '',
+                hintEn: 'The mean vector is μ = (3, 7). The second component is E[Y] = 7.',
+                hintDE: 'Der Erwartungswertvektor ist μ = (3, 7). Die zweite Komponente ist E[Y] = 7.'
+            },
+            {
+                q: 'X has PMF P(X=2)=0.5, P(X=4)=0.5 and Y has PMF P(Y=1)=0.3, P(Y=3)=0.7. What is E[X]+E[Y]? Enter as a decimal.',
+                qDE: 'X hat P(X=2)=0,5, P(X=4)=0,5 und Y hat P(Y=1)=0,3, P(Y=3)=0,7. Wie groß ist E[X]+E[Y]? Gib als Dezimalzahl ein.',
+                answer: 5.4, tolerance: 0.001, unit: '',
+                hintEn: 'E[X]=2·0.5+4·0.5=3. E[Y]=1·0.3+3·0.7=2.4. E[X]+E[Y]=5.4.',
+                hintDE: 'E[X]=3. E[Y]=0,3+2,1=2,4. E[X]+E[Y]=5,4.'
+            },
+            {
+                q: 'Random vector (X, Y, Z) has E[X]=1, E[Y]=2, E[Z]=3. What is E[2X − Y + 3Z]? Enter as a whole number.',
+                qDE: 'Zufallsvektor (X, Y, Z) hat E[X]=1, E[Y]=2, E[Z]=3. Wie groß ist E[2X − Y + 3Z]? Gib eine ganze Zahl ein.',
+                answer: 9, tolerance: 0, unit: '',
+                hintEn: 'By linearity: 2·1 − 2 + 3·3 = 2 − 2 + 9 = 9.',
+                hintDE: 'Linearität: 2·1 − 2 + 3·3 = 2 − 2 + 9 = 9.'
+            },
+
+            // ── 8. KOVARIANZ ──────────────────────────────────────────────────────────────
+
+            {
+                q: 'E[XY]=10, E[X]=2, E[Y]=3. What is Cov(X,Y)? Enter as a whole number.',
+                qDE: 'E[XY]=10, E[X]=2, E[Y]=3. Wie groß ist Cov(X,Y)? Gib eine ganze Zahl ein.',
+                answer: 4, tolerance: 0, unit: '',
+                hintEn: 'Cov(X,Y) = E[XY] − E[X]·E[Y] = 10 − 2·3 = 10 − 6 = 4.',
+                hintDE: 'Cov(X,Y) = E[XY] − E[X]·E[Y] = 10 − 6 = 4.'
+            },
+            {
+                q: 'Joint PMF: p(1,1)=0.5, p(2,2)=0.5. E[X]=1.5, E[Y]=1.5. What is Cov(X,Y)? Enter as a decimal.',
+                qDE: 'Gemeinsame Zähldichte: p(1,1)=0,5, p(2,2)=0,5. E[X]=1,5, E[Y]=1,5. Wie groß ist Cov(X,Y)? Gib als Dezimalzahl ein.',
+                answer: 0.25, tolerance: 0.001, unit: '',
+                hintEn: 'E[XY]=1·1·0.5+2·2·0.5=0.5+2=2.5. Cov=2.5−1.5·1.5=2.5−2.25=0.25.',
+                hintDE: 'E[XY]=0,5+2=2,5. Cov=2,5−2,25=0,25.'
+            },
+            {
+                q: 'X and Y are independent. What is Cov(X,Y)? Enter as a whole number.',
+                qDE: 'X und Y sind unabhängig. Wie groß ist Cov(X,Y)? Gib eine ganze Zahl ein.',
+                answer: 0, tolerance: 0, unit: '',
+                hintEn: 'Independence implies Cov(X,Y) = 0.',
+                hintDE: 'Unabhängigkeit impliziert Cov(X,Y) = 0.'
+            },
+
+            // ── 9. KOVARIANZMATRIX ────────────────────────────────────────────────────────
+
+            {
+                q: 'Var(X)=4, Var(Y)=9, Cov(X,Y)=3. What is the entry Σ₁₂ (off-diagonal) of the covariance matrix Σ? Enter as a whole number.',
+                qDE: 'Var(X)=4, Var(Y)=9, Cov(X,Y)=3. Wie groß ist der Eintrag Σ₁₂ (Nebendiagonale) der Kovarianzmatrix Σ? Gib eine ganze Zahl ein.',
+                answer: 3, tolerance: 0, unit: '',
+                hintEn: 'The covariance matrix is Σ = [[4, 3], [3, 9]]. The off-diagonal entry Σ₁₂ = Cov(X,Y) = 3.',
+                hintDE: 'Die Kovarianzmatrix ist Σ = [[4, 3], [3, 9]]. Nebendiagonaleintrag Σ₁₂ = Cov(X,Y) = 3.'
+            },
+            {
+                q: 'For a random vector (X,Y), the covariance matrix Σ is always symmetric. What is Σ₂₁ if Σ₁₂ = Cov(X,Y) = 5? Enter as a whole number.',
+                qDE: 'Für einen Zufallsvektor (X,Y) ist die Kovarianzmatrix Σ immer symmetrisch. Wie groß ist Σ₂₁, wenn Σ₁₂ = Cov(X,Y) = 5? Gib eine ganze Zahl ein.',
+                answer: 5, tolerance: 0, unit: '',
+                hintEn: 'By symmetry of the covariance matrix: Σ₂₁ = Σ₁₂ = Cov(Y,X) = Cov(X,Y) = 5.',
+                hintDE: 'Wegen der Symmetrie: Σ₂₁ = Σ₁₂ = Cov(Y,X) = Cov(X,Y) = 5.'
+            },
+            {
+                q: 'Var(X)=9, Var(Y)=4, Cov(X,Y)=0. What is the determinant of the covariance matrix Σ = [[9,0],[0,4]]? Enter as a whole number.',
+                qDE: 'Var(X)=9, Var(Y)=4, Cov(X,Y)=0. Wie groß ist die Determinante der Kovarianzmatrix Σ=[[9,0],[0,4]]? Gib eine ganze Zahl ein.',
+                answer: 36, tolerance: 0, unit: '',
+                hintEn: 'det([[9,0],[0,4]]) = 9·4 − 0·0 = 36.',
+                hintDE: 'det([[9,0],[0,4]]) = 9·4 − 0 = 36.'
+            },
+
+            // ── 10. UNKORRELIERT ──────────────────────────────────────────────────────────
+
+            {
+                q: 'Cov(X,Y)=0. Are X and Y necessarily independent? Enter 1 for yes, 0 for no.',
+                qDE: 'Cov(X,Y)=0. Sind X und Y notwendigerweise unabhängig? Gib 1 für ja, 0 für nein ein.',
+                answer: 0, tolerance: 0, unit: '',
+                hintEn: 'Uncorrelated (Cov=0) does not imply independence. Independence implies Cov=0, but not the reverse.',
+                hintDE: 'Unkorreliert (Cov=0) impliziert nicht Unabhängigkeit. Unabhängigkeit impliziert Cov=0, nicht umgekehrt.'
+            },
+            {
+                q: 'E[XY]=6, E[X]=3, E[Y]=2. Are X and Y uncorrelated? Enter 1 for yes, 0 for no.',
+                qDE: 'E[XY]=6, E[X]=3, E[Y]=2. Sind X und Y unkorreliert? Gib 1 für ja, 0 für nein ein.',
+                answer: 1, tolerance: 0, unit: '',
+                hintEn: 'Cov(X,Y) = E[XY] − E[X]·E[Y] = 6 − 3·2 = 6 − 6 = 0. Uncorrelated.',
+                hintDE: 'Cov(X,Y) = 6 − 3·2 = 0. Unkorreliert.'
+            },
+            {
+                q: 'X and Y are uncorrelated with Var(X)=4, Var(Y)=9. What is Var(X+Y)? Enter as a whole number.',
+                qDE: 'X und Y sind unkorreliert mit Var(X)=4, Var(Y)=9. Wie groß ist Var(X+Y)? Gib eine ganze Zahl ein.',
+                answer: 13, tolerance: 0, unit: '',
+                hintEn: 'Var(X+Y) = Var(X) + Var(Y) + 2·Cov(X,Y) = 4 + 9 + 0 = 13.',
+                hintDE: 'Var(X+Y) = Var(X) + Var(Y) + 2·Cov(X,Y) = 4 + 9 + 0 = 13.'
+            },
+
+            // ── 11. KORRELATION ───────────────────────────────────────────────────────────
+
+            {
+                q: 'Cov(X,Y)=6, Var(X)=9, Var(Y)=16. What is the correlation coefficient ρ(X,Y)? Enter as a decimal.',
+                qDE: 'Cov(X,Y)=6, Var(X)=9, Var(Y)=16. Wie groß ist der Korrelationskoeffizient ρ(X,Y)? Gib als Dezimalzahl ein.',
+                answer: 0.5, tolerance: 0.001, unit: '',
+                hintEn: 'ρ = Cov(X,Y) / (σ_X · σ_Y) = 6 / (3·4) = 6/12 = 0.5.',
+                hintDE: 'ρ = Cov(X,Y) / (σ_X · σ_Y) = 6 / (3·4) = 0,5.'
+            },
+            {
+                q: 'ρ(X,Y) = −1 means X and Y are perfectly __ correlated. Enter 1 for positively, 2 for negatively, 3 for not.',
+                qDE: 'ρ(X,Y) = −1 bedeutet, X und Y sind perfekt __ korreliert. Gib 1 für positiv, 2 für negativ, 3 für nicht korreliert ein.',
+                answer: 2, tolerance: 0, unit: '',
+                hintEn: 'ρ = −1 indicates perfect negative (linear) correlation.',
+                hintDE: 'ρ = −1 bedeutet perfekte negative (lineare) Korrelation.'
+            },
+            {
+                q: 'Cov(X,Y)=4, σ_X=2, σ_Y=4. What is ρ(X,Y)? Enter as a decimal.',
+                qDE: 'Cov(X,Y)=4, σ_X=2, σ_Y=4. Wie groß ist ρ(X,Y)? Gib als Dezimalzahl ein.',
+                answer: 0.5, tolerance: 0.001, unit: '',
+                hintEn: 'ρ = 4 / (2·4) = 4/8 = 0.5.',
+                hintDE: 'ρ = 4 / (2·4) = 0,5.'
+            },
+
+            // ── 12. RECHENREGELN FÜR KOVARIANZ & CAUCHY-SCHWARZ ──────────────────────────
+
+            {
+                q: 'Cov(X,X) = ? Enter 1 for Var(X), 2 for E[X], 3 for 0.',
+                qDE: 'Cov(X,X) = ? Gib 1 für Var(X), 2 für E[X], 3 für 0 ein.',
+                answer: 1, tolerance: 0, unit: '',
+                hintEn: 'Cov(X,X) = E[X²] − (E[X])² = Var(X) by definition.',
+                hintDE: 'Cov(X,X) = E[X²] − (E[X])² = Var(X) per Definition.'
+            },
+            {
+                q: 'Using the bilinearity of covariance: Cov(2X+1, Y) = 2·Cov(X,Y). If Cov(X,Y)=3, what is Cov(2X+1, Y)? Enter as a whole number.',
+                qDE: 'Mit der Bilinearität der Kovarianz: Cov(2X+1, Y) = 2·Cov(X,Y). Wenn Cov(X,Y)=3, wie groß ist Cov(2X+1, Y)? Gib eine ganze Zahl ein.',
+                answer: 6, tolerance: 0, unit: '',
+                hintEn: 'Cov(aX+b, Y) = a·Cov(X,Y). So Cov(2X+1, Y) = 2·3 = 6.',
+                hintDE: 'Cov(aX+b, Y) = a·Cov(X,Y). Also Cov(2X+1, Y) = 2·3 = 6.'
+            },
+            {
+                q: 'Cauchy-Schwarz inequality for covariance: |Cov(X,Y)|² ≤ Var(X)·Var(Y). If Var(X)=4 and Var(Y)=9, what is the maximum possible value of |Cov(X,Y)|? Enter as a whole number.',
+                qDE: 'Cauchy-Schwarz-Ungleichung: |Cov(X,Y)|² ≤ Var(X)·Var(Y). Wenn Var(X)=4 und Var(Y)=9, wie groß ist der maximale Wert von |Cov(X,Y)|? Gib eine ganze Zahl ein.',
+                answer: 6, tolerance: 0, unit: '',
+                hintEn: '|Cov(X,Y)| ≤ √(Var(X)·Var(Y)) = √(4·9) = √36 = 6.',
+                hintDE: '|Cov(X,Y)| ≤ √(4·9) = √36 = 6.'
+            },
+
+            // ── 13. MULTIVARIATE NORMALVERTEILUNG ────────────────────────────────────────
+
+            {
+                q: '(X,Y) ~ N(μ, Σ) with μ=(0,0) and Σ=[[1,0],[0,1]]. Are X and Y independent? Enter 1 for yes, 0 for no.',
+                qDE: '(X,Y) ~ N(μ, Σ) mit μ=(0,0) und Σ=[[1,0],[0,1]]. Sind X und Y unabhängig? Gib 1 für ja, 0 für nein ein.',
+                answer: 1, tolerance: 0, unit: '',
+                hintEn: 'For multivariate normal distributions, uncorrelated components (off-diagonal = 0) are also independent.',
+                hintDE: 'Bei multivariaten Normalverteilungen sind unkorrelierte Komponenten (Nebendiagonale = 0) auch unabhängig.'
+            },
+            {
+                q: '(X,Y) ~ bivariate normal with μ_X=2, μ_Y=3, σ_X=1, σ_Y=2, ρ=0.5. What is Cov(X,Y)? Enter as a whole number.',
+                qDE: '(X,Y) ~ bivariat normalverteilt mit μ_X=2, μ_Y=3, σ_X=1, σ_Y=2, ρ=0,5. Wie groß ist Cov(X,Y)? Gib eine ganze Zahl ein.',
+                answer: 1, tolerance: 0, unit: '',
+                hintEn: 'Cov(X,Y) = ρ·σ_X·σ_Y = 0.5·1·2 = 1.',
+                hintDE: 'Cov(X,Y) = ρ·σ_X·σ_Y = 0,5·1·2 = 1.'
+            },
+            {
+                q: '(X,Y) ~ bivariate normal. The marginal distribution of X is also normal. If μ_X=5 and σ²_X=4, what is P(X ≤ 5)? Enter as a decimal.',
+                qDE: '(X,Y) ~ bivariat normalverteilt. Die Randverteilung von X ist ebenfalls normal. Wenn μ_X=5 und σ²_X=4, wie groß ist P(X ≤ 5)? Gib als Dezimalzahl ein.',
+                answer: 0.5, tolerance: 0.001, unit: '',
+                hintEn: 'P(X ≤ μ_X) = 0.5 by symmetry of the normal distribution.',
+                hintDE: 'P(X ≤ μ_X) = 0,5 wegen der Symmetrie der Normalverteilung.'
+            },
+
+      ],
+
+
+
+    7: [], 8: [], 9: [], 10: [], 11: [], 12: [],
+
+
+
+    // WORLD 13 UNSORTED
+    13: [
         {
             q: 'Var(2X) = ? if Var(X) = 9. Enter the numeric value.',
             qDE: 'Var(2X) = ? wenn Var(X) = 9. Gib den numerischen Wert ein.',
@@ -1830,4 +2481,7 @@ const MATH_GATE_POOLS = {
             hintDE: 'r = Cov(X,Y) / (σX · σY) = 6 / (3 × 4) = 6/12 = 0,5.'
         },
     ],
+
+
+
 };

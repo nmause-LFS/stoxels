@@ -11,6 +11,7 @@ let _pt_dragStartY = 0;
 let _pt_dragTxStart = 0;
 let _pt_dragTyStart = 0;
 let _pt_mouseDownTime = 0;   // shared with renderer to distinguish click vs drag
+let _pt_abortController = null;
 
 
 
@@ -89,6 +90,12 @@ function _ptFitToView(bounds) {
 
 
 function _ptBindEvents() {
+
+    // Abort any previously registered listeners
+    if (_pt_abortController) _pt_abortController.abort();
+    _pt_abortController = new AbortController();
+    const sig = { signal: _pt_abortController.signal };
+
 
     //  Wheel -> zoom 
     _pt_container.addEventListener('wheel', e => {

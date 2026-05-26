@@ -45,6 +45,8 @@ function showToast(msg) {
     el.textContent = msg;
     el.classList.add('show');
     setTimeout(() => el.classList.remove('show'), 2500);
+
+    //Audio_Manager.playSFX('showtoast');
 }
 
 

@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     onClick('btn-codes', () => showCodes());
     onClick('btn-achievements', () => showAchievements());
     onClick('btn-reset', () => showModal('reset-modal'));
+    onClick('btn-settings', () => { loadSettingsUI(); showModal('settings-modal'); });
 
     // Language switcher
     document.querySelectorAll('.lang-btn').forEach(btn => {
@@ -51,7 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', () => togMod(btn));
     });
 
-    onClick('btn-start-setup', () => startSetup());
+    onClick('btn-start-setup', () => {
+        startSetup();
+    });
     onClick('btn-setup-back', () => showTitle());
 
 
@@ -73,7 +76,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── In-game ──────────────────────────────────────────────
 
-    onClick('btn-go-levels', () => goLevels());
+    onClick('btn-go-levels', () => {
+        if (typeof clearActiveRandomWalkers === "function") {
+            clearActiveRandomWalkers();
+        }
+        goLevels();
+    });
 
     // Puzzle table: suppress context menu and clear hover on mouse leave
     const ptable = document.getElementById('ptable');

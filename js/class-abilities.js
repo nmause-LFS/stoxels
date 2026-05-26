@@ -30,6 +30,23 @@ function _resolveCell(r, c, sol) {
     return null;
 }
 
+
+// _revealFilledCell — reveals a filled solution cell only. Never marks empty cells.
+// Used by Diagonal Strike when the 'diagonally_wrong' node is not active.
+function _revealFilledCell(r, c, sol) {
+    if (sol[r][c] === 1) {
+        if (!revealedGrid[r][c] && userGrid[r][c] !== 1) {
+            revealedGrid[r][c] = true;
+            userGrid[r][c] = 1;
+            renderCell(r, c);
+            updClues(r, c);
+            return `g-${r}-${c}`;
+        }
+    }
+    return null;
+}
+
+
 // _filterRevealedIds — returns only the ids that correspond to filled solution cells.
 function _filterRevealedIds(ids, sol) {
     return ids.filter(id => {
@@ -82,31 +99,89 @@ function _setAbilityMode(armed) {
 // toggleActiveAbility — arms or disarms the active ability.
 //   slot: 'active1' or 'active2' — which ability to arm.
 //   When armed, clicking a grid cell triggers executeActiveAbility().
+//   Some abilities are "instant" and fire immediately without needing a cell click.
 function toggleActiveAbility(slot) {
+    if (isClassless()) return;
     const newSlot = slot || 'active1';
     const cd = cooldownState[newSlot];
 
     if (dead || cd.remaining > 0) return;
 
-    // If clicking the already-armed slot, cancel it; otherwise arm it
+    // If clicking the already-armed slot, cancel it
     const isAlreadyArmed = activeAbilityMode && STATE.classActiveChoice === newSlot;
     if (isAlreadyArmed) {
         _setAbilityMode(false);
-    } else {
-        STATE.classActiveChoice = newSlot;
-        _setAbilityMode(true);
-        _showAbilityArmToast(newSlot);
+        buildClassHUD();
+        return;
     }
+
+    // Check if this ability fires instantly (no cell click needed)
+    if (_isInstantAbility(newSlot)) {
+        STATE.classActiveChoice = newSlot;
+        _fireInstantAbility(newSlot);
+        return;
+    }
+
+    // Normal arm-then-click flow
+    STATE.classActiveChoice = newSlot;
+    _setAbilityMode(true);
+    _showAbilityArmToast(newSlot);
+    buildClassHUD();
+}
+
+// _isInstantAbility — returns true for abilities that fire on button press,
+//   not on a subsequent cell click. Currently: Black Swan (active4 for Outlier).
+
+function _isInstantAbility(slot) {
+    if (STATE.playerAscendency === 'actuary') {
+        if (slot === 'active3') return true; // Regression to Prior — instant
+        if (slot === 'active4') return true; // Significance Threshold — instant (shows picker immediately)
+    }
+    if (STATE.playerAscendency === 'markovian') {
+        if (slot === 'active3') return true; // State Rollback — instant (no cell click)
+        if (slot === 'active4') return true; // Transition Matrix — instant
+    }
+    if (slot !== 'active4') return false;
+    return STATE.playerAscendency === 'outlier' || STATE.playerAscendency === 'recursionist';
+}
+
+
+
+// _fireInstantAbility — executes the ability immediately and starts its cooldown.
+function _fireInstantAbility(slot) {
+    const asc = STATE.playerAscendency ? ASCENDENCY_DEFS[STATE.playerAscendency] : null;
+    if (!asc) return;
+
+    const ascSlot = slot === 'active3' ? 'active1' : 'active2';
+    const skillLv = ascSlot === 'active1'
+        ? (STATE.ascendencySkill1Level || 1)
+        : (STATE.ascendencySkill2Level || 1);
+    const actData = asc[ascSlot].levels[skillLv - 1];
+    const effect = actData.effect;
+
+    _dispatchAscendencyAbility(slot, STATE.playerAscendency, 0, 0, effect);
+
+    const cdSeconds = getEffectiveCooldown(slot, asc[ascSlot].cooldownSeconds);
+    startSlotCooldown(slot, cdSeconds);
 
     buildClassHUD();
 }
 
 // _showAbilityArmToast — shows the cursor hint toast for the given ability slot.
+// NEW:
 function _showAbilityArmToast(slot) {
-    const def = CLASS_DEFS[STATE.playerClass];
-    const activeData = def[slot];
+    let activeData = null;
+    if (slot === 'active3' || slot === 'active4') {
+        const asc = STATE.playerAscendency ? ASCENDENCY_DEFS[STATE.playerAscendency] : null;
+        if (!asc) return;
+        activeData = slot === 'active3' ? asc.active1 : asc.active2;
+    } else {
+        const def = CLASS_DEFS[STATE.playerClass];
+        if (!def) return;
+        activeData = def[slot];
+    }
     if (!activeData) return;
-    const msg = LANG === 'de' ? activeData.descCursorDE : activeData.descCursorEn;
+    const msg = LANG === 'de' ? (activeData.descCursorDE || activeData.descCursorEn) : activeData.descCursorEn;
     showToast(`🎯 ${msg}`);
 }
 
@@ -114,18 +189,39 @@ function _showAbilityArmToast(slot) {
 //   while activeAbilityMode is true. Dispatches to the correct class ability.
 function executeActiveAbility(row, col) {
     if (!activeAbilityMode || !STATE.playerClass || dead) return;
+    if (isClassless()) { _setAbilityMode(false); return; }
 
     _setAbilityMode(false);
 
-    const def = CLASS_DEFS[STATE.playerClass];
     const activeKey = STATE.classActiveChoice || 'active1';
-    const actData = _getActiveAbilityData(def, activeKey);
-    const effect = actData.effect;
 
-    _dispatchActiveAbility(activeKey, STATE.playerClass, row, col, effect);
+    if (activeKey === 'active3' || activeKey === 'active4') {
+        // Ascendency skill
+        const asc = STATE.playerAscendency ? ASCENDENCY_DEFS[STATE.playerAscendency] : null;
+        if (!asc) return;
+        const ascSlot = activeKey === 'active3' ? 'active1' : 'active2';
+        const skillLv = ascSlot === 'active1'
+            ? (STATE.ascendencySkill1Level || 1)
+            : (STATE.ascendencySkill2Level || 1);
+        const actData = asc[ascSlot].levels[skillLv - 1];
+        const effect = actData.effect;
 
-    const cdSeconds = getEffectiveCooldown(activeKey, def[activeKey].cooldownSeconds);
-    startSlotCooldown(activeKey, cdSeconds);
+        _dispatchAscendencyAbility(activeKey, STATE.playerAscendency, row, col, effect);
+
+        const cdSeconds = getEffectiveCooldown(activeKey, asc[ascSlot].cooldownSeconds);
+        startSlotCooldown(activeKey, cdSeconds);
+    } else {
+        // Base class skill
+        const def = CLASS_DEFS[STATE.playerClass];
+        const actData = _getActiveAbilityData(def, activeKey);
+        const effect = actData.effect;
+
+        _dispatchActiveAbility(activeKey, STATE.playerClass, row, col, effect);
+
+        const cdSeconds = getEffectiveCooldown(activeKey, def[activeKey].cooldownSeconds);
+        startSlotCooldown(activeKey, cdSeconds);
+    }
+
     buildClassHUD();
 }
 
@@ -163,6 +259,68 @@ function _dispatchActiveAbility(activeKey, playerClass, row, col, effect) {
                 break;
         }
         updateQuestStats('classAbilityUsed', {});
+    }
+}
+
+
+// _dispatchAscendencyAbility — routes to the correct ascendency ability function.
+// Skill implementations are stubs for now; effects will be filled in later.
+function _dispatchAscendencyAbility(hudSlot, ascendency, row, col, effect) {
+    const ascSlot = hudSlot === 'active3' ? 'active1' : 'active2';
+
+    updateQuestStats('classAbilityUsed', {});
+
+    switch (ascendency) {
+        case 'outlier':
+            if (ascSlot === 'active1') {
+                _executeTailRisk(effect.secondsPerCell, effect.maxCells);
+                trackAchStat('skillAscendencyUsed');
+            } else {
+                _executeBlackSwan(effect.duration);
+                trackAchStat('skillAscendencyUsed');
+            }
+            break;
+        case 'actuary':
+            if (ascSlot === 'active1') {
+                _executeRegressionToPrior(effect.correctCount, effect.recoverPct)
+                trackAchStat('skillAscendencyUsed');
+            } else {
+                _executeSignificanceThreshold(effect.protectCount, effect.bonusReveal)
+                trackAchStat('skillAscendencyUsed');
+            }
+            break;
+        case 'recursionist':
+            if (ascSlot === 'active1') {
+                _executeResidual(row, col, effect);
+                trackAchStat('skillAscendencyUsed');
+            } else {
+                _executeDegreesOfFreedom(row, col, effect);
+                trackAchStat('skillAscendencyUsed');
+            }
+            break;
+        case 'markovian':
+            if (ascSlot === 'active1') {
+                _executeStateRollback(effect.windowSeconds, effect.rewindSeconds, effect.clearOldMistakes);
+                trackAchStat('skillAscendencyUsed');
+            } else {
+                _executeTransitionMatrix(effect.duration, effect.cascadeChance, effect.maxDepth);
+                trackAchStat('skillAscendencyUsed');
+            }
+            break;
+        case 'bayesian':
+            if (ascSlot === 'active1') { /* TODO: Reject the Null */ showToast('🧪 Reject the Null — coming soon!'); }
+            else { /* TODO: Type I Error Shield */ showToast('🧪 Type I Error Shield — coming soon!'); }
+            break;
+        // 
+        case 'random_walker':
+            if (ascSlot === 'active1') {
+                _executeBrownianMotion(row, col, effect.paths, effect.rank);
+                trackAchStat('skillAscendencyUsed');
+            } else {
+                _executeSummonDrifter(effect.duration, effect.interval, effect.smartTarget, effect.finalHowl);
+                trackAchStat('skillAscendencyUsed');
+            }
+            break;
     }
 }
 
@@ -232,6 +390,8 @@ function _dataStrikeOverlayHTML(count) {
 
 // _dataStrikeRemoveOverlay — removes the Data Strike modal from the DOM.
 function _dataStrikeRemoveOverlay() {
+
+    Audio_Manager.playSFX('dataStrike');
     const overlay = document.getElementById('data-strike-overlay');
     if (overlay) overlay.remove();
 }
@@ -299,6 +459,9 @@ function _dataStrikeCancel() {
 // Respects passive tree nodes: diagonally_wrong, random_diagonal,
 // diagonal_witch, god_of_statistics.
 function _executeDiagonalStrike(row, col, diagonalCount) {
+
+    Audio_Manager.playSFX('diagonalStrike');
+
     if (!cur) return;
     const sol = cur.grid;
     const rows = sol.length, cols = sol[0].length;
@@ -319,6 +482,7 @@ function _executeDiagonalStrike(row, col, diagonalCount) {
 
     _playDiagonalSlashEffect(row, col, diagonalCount);
     _applyCellEffect(affected, 'reveal');
+    if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
 
     const diagRevealed = _filterRevealedIds(affected, sol).length;
     if (diagRevealed > 0) trackAchStat('tilesRevealed', diagRevealed);
@@ -337,22 +501,26 @@ function _executeDiagonalStrike(row, col, diagonalCount) {
         }
     }
 
+
+
     checkWin();
 }
 
 // _diagonalStrikeWalkDiagonals — walks all diagonal directions and resolves each cell.
+// AFTER:
 function _diagonalStrikeWalkDiagonals(row, col, diagonalCount, rows, cols, sol, affected) {
     const allDirs = [
-        [[1, 1], [-1, -1]],   // main diagonal ↘↖
-        [[1, -1], [-1, 1]],   // anti-diagonal ↙↗
+        [[1, 1], [-1, -1]],
+        [[1, -1], [-1, 1]],
     ];
     const dirs = allDirs.slice(0, Math.min(diagonalCount, 2));
+    const resolver = ptHasSkill('diagonally_wrong') ? _resolveCell : _revealFilledCell;
 
     dirs.forEach(pair => {
         pair.forEach(([dr, dc]) => {
             let r = row + dr, c = col + dc;
             while (r >= 0 && r < rows && c >= 0 && c < cols) {
-                const id = _resolveCell(r, c, sol);
+                const id = resolver(r, c, sol);
                 if (id) affected.push(id);
                 r += dr; c += dc;
             }
@@ -362,23 +530,23 @@ function _diagonalStrikeWalkDiagonals(row, col, diagonalCount, rows, cols, sol, 
 
 // _diagonalStrikeProcessCell — resolves the originally clicked cell itself.
 function _diagonalStrikeProcessCell(row, col, sol, affected) {
-    const id = _resolveCell(row, col, sol);
+    const resolver = ptHasSkill('diagonally_wrong') ? _resolveCell : _revealFilledCell;
+    const id = resolver(row, col, sol);
     if (id) affected.push(id);
 }
 
-// _diagonalStrikeProcessRow — resolves all cells in the given row (rank 3 bonus).
 function _diagonalStrikeProcessRow(row, cols, sol, affected) {
+    const resolver = ptHasSkill('diagonally_wrong') ? _resolveCell : _revealFilledCell;
     for (let c = 0; c < cols; c++) {
-        const id = _resolveCell(row, c, sol);
+        const id = resolver(row, c, sol);
         if (id) affected.push(id);
     }
 }
 
-
-// _diagonalStrikeProcessCol — resolves all cells in the given column (rank 3 bonus).
 function _diagonalStrikeProcessCol(col, rows, sol, affected) {
+    const resolver = ptHasSkill('diagonally_wrong') ? _resolveCell : _revealFilledCell;
     for (let r = 0; r < rows; r++) {
-        const id = _resolveCell(r, col, sol);
+        const id = resolver(r, col, sol);
         if (id) affected.push(id);
     }
 }
@@ -420,6 +588,7 @@ function _diagonalStrikeBonusRepeat(diagonalCount, rows, cols, sol) {
     if (ptHasSkill('diagonally_wrong')) _diagonalStrikeMarkWrong(bonusAffected, sol);
 
     _applyCellEffect(bonusAffected, 'reveal');
+    if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
     showToast(`⚔️ Bonus Strike! ${bonusAffected.length} more cell(s)!`);
 }
 
@@ -459,13 +628,14 @@ function _executeArcaneReveal(row, col, radius) {
         });
     }
 
-    _applyCellEffect(_filterRevealedIds(affected, sol), 'reveal');
+    const revealedIds = _filterRevealedIds(affected, sol);
+
+    _applyCellEffect(revealedIds, 'reveal');
+    if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
     _applyCellEffect(_filterMarkedIds(affected, sol), 'mark');
 
-    if (revealedIds.length > 0) updateQuestStats('tilesRevealed', { count: revealedIds.length });
-
-    const revealedIds = _filterRevealedIds(affected, sol);
     if (revealedIds.length > 0) {
+        updateQuestStats('tilesRevealed', { count: revealedIds.length });
         trackAchStat('tilesRevealed', revealedIds.length);
     }
 
@@ -476,6 +646,8 @@ function _executeArcaneReveal(row, col, radius) {
             _arcaneRevealBonusCell(sol, rows, cols);
         }
     });
+
+    Audio_Manager.playSFX('arcaneReveal');
 
     checkWin();
     _spawnArcaneSparkles(revealedIds);
@@ -540,6 +712,8 @@ function _executeArcaneFreeze(durationMs) {
     const secs = Math.ceil(effectiveDuration / 1000);
     showToast(`🔮 Absolute Zero! ${secs}s!`);
 
+    Audio_Manager.playSFX('absoluteZero');
+
     const tick = _arcaneFreezeStartCountdown(secs);
     setTimeout(() => _arcaneFreezeEnd(tick), effectiveDuration);
 }
@@ -548,12 +722,13 @@ function _executeArcaneFreeze(durationMs) {
 //   Returns the interval handle so it can be cleared on expiry.
 function _arcaneFreezeStartCountdown(totalSecs) {
     let remaining = totalSecs;
-    return setInterval(() => {
+    const interval = setInterval(() => {
         remaining--;
         const el = document.getElementById('timer-val');
         if (el) el.textContent = `❄️ ${remaining}s`;
-        if (remaining <= 0) clearInterval(tick); // safety: also cleared in _arcaneFreezeEnd
+        if (remaining <= 0) clearInterval(interval);
     }, 1000);
+    return interval;
 }
 
 // _arcaneFreezeEnd — restores normal timer state after the freeze expires.
@@ -602,6 +777,8 @@ function _executePrecisionMark(row, col, extraLines) {
     _playPrecisionMarkEffect(row, col);
     _applyCellEffect(affected, 'mark');
     showToast(`🎯 ${affected.length} ${LANG === 'de' ? 'Zellen markiert!' : 'cells marked!'}`);
+
+    Audio_Manager.playSFX('precisionMark');
 
     // momentum_of_certainty: +3 min if a cell in the affected area is correctly filled within 10s
     if (ptHasSkill('momentum_of_certainty') && affected.length > 0) {
@@ -723,6 +900,8 @@ function _executeFieldScan(scanSize, durationMs) {
     showToast(`🎯 Field Scan! Memorize the ${effectiveSize}×${effectiveSize} region!`);
     _fieldScanCheckBigScanAchievement(prevStates, sol);
 
+    Audio_Manager.playSFX('fieldScan');
+
     setTimeout(() => _fieldScanRestore(scanned, prevStates), effectiveDuration);
 }
 
@@ -773,6 +952,7 @@ function _fieldScanRestore(scanned, prevStates) {
             revealedGrid[r][c] = true;
             updClues(r, c);
             trackAchStat('tilesRevealed', 1);
+            renderCell(r, c);
             // don't re-render to default; leave as filled
         } else {
             renderCell(r, c);
@@ -812,6 +992,8 @@ function _bayesianRevealOneCell() {
             }
         }
     }
+
+
     if (!candidates.length) return;
     const [r, c] = candidates[Math.floor(Math.random() * candidates.length)];
     revealedGrid[r][c] = true;
@@ -819,6 +1001,9 @@ function _bayesianRevealOneCell() {
     renderCell(r, c);
     updClues(r, c);
     trackAchStat('tilesRevealed', 1);
+
+
+
 }
 
 
@@ -839,7 +1024,10 @@ function applyClassPassiveOnLevelStart() {
     window._cursedImmune = false;
     window._shieldExtraCharges = 0;
 
-    if (!STATE.playerClass) return;
+    if (typeof resetRecursionistState === 'function') resetRecursionistState();
+    if (typeof resetMarkovianState === 'function') resetMarkovianState();
+
+    if (!STATE.playerClass || isClassless()) return;
     const effect = _getPassiveEffect();
 
     if (STATE.playerClass === 'mathmagician') {
@@ -857,6 +1045,7 @@ function applyClassPassiveOnLevelStart() {
             if (ptHasSkill('posterior_insight')) markCount += 2;
             if (ptHasSkill('convergent_evidence')) markCount += 2;
             markWrongTiles(markCount);
+            Audio_Manager.playSFX('bayesianInsight');
 
             // confirmed_hypothesis and god_of_probabilities each reveal 1 correct filled cell
             let bonusReveals = 0;
@@ -873,18 +1062,28 @@ function applyClassPassiveOnLevelStart() {
 //   Called from applyPenalty() in input.js.
 //   Returns 0.0 if the Mathmagician has free mistakes remaining (no penalty).
 function getClassPenaltyMultiplier() {
-    if (!STATE.playerClass) return 1.0;
+    if (!STATE.playerClass || isClassless()) return 1.0;
+
+    // Black Swan active mistake modifier
+    if (window._blackSwanActive) {
+        _endBlackSwan(false); // Ends unnatural
+        showToast(LANG === 'de' ? '📉 Schwan abgebrochen (3x Strafe)!' : '📉 Swan broken (3x Penalty)!');
+        return 3.0;
+    }
+
 
     if (STATE.playerClass === 'mathmagician' && window._classFreeMistakes > 0) {
         window._classFreeMistakes--;
         absorbedMistakes++;
+        buildClassHUD();
+        Audio_Manager.playSFX('varianceShield');
         trackAchStat('mistakesAbsorbed');
 
         // Bonus time for absorbed mistakes
         let bonus = 0;
-        if (ptHasSkill('calculated_error') && Math.random() < 0.50) bonus += 5;
-        if (ptHasSkill('error_dividend') && Math.random() < 0.25) bonus += 3;
-        if (ptHasSkill('lucky_lapse') && Math.random() < 0.25) bonus += 3;
+        if (ptHasSkill('calculated_error') && Math.random() < 0.50) bonus += 300;
+        if (ptHasSkill('error_dividend') && Math.random() < 0.25) bonus += 180;
+        if (ptHasSkill('lucky_lapse') && Math.random() < 0.25) bonus += 180;
 
         // god_of_math doubles the absorbed-mistake timer bonuses
         if (ptHasSkill('god_of_math') && bonus > 0) bonus *= 2;
@@ -905,7 +1104,17 @@ function getClassPenaltyMultiplier() {
 // onCorrectFill — called from ac() in mouse-button-handlers.js when a correct cell is filled.
 //   Tracks the Statistician fill streak and awards bonus time on threshold.
 function onCorrectFill(row, col) {
-    if (STATE.playerClass !== 'statistician') return;
+    // Transition Matrix cascade runs for any class
+    if (window._transitionMatrixActive && typeof _transitionMatrixCascade === 'function') {
+        const tm = window._transitionMatrixActive;
+        if (Date.now() <= tm.endTime) {
+            _transitionMatrixCascade(row, col, tm.maxDepth);
+        } else {
+            _clearTransitionMatrix(true);
+        }
+    }
+
+    if (STATE.playerClass !== 'statistician' || isClassless()) return;
     const effect = _getPassiveEffect();
 
     // frozen_resilience: every 5 correct fills during Absolute Zero → +1 free mistake
@@ -945,9 +1154,16 @@ function onCorrectFill(row, col) {
 
 
     correctFillStreak++;
-    if (correctFillStreak >= effect.streakForBonus) {
+    if (window._blackSwanActive) {
+        // Black Swan triggers Momentum on EVERY correct fill
         _statisticianTriggerMomentum(effect.bonusSeconds);
+    } else {
+        correctFillStreak++;
+        if (correctFillStreak >= effect.streakForBonus) {
+            _statisticianTriggerMomentum(effect.bonusSeconds);
+        }
     }
+
 }
 
 // _statisticianTriggerMomentum — awards bonus time and tracks momentum achievements.
@@ -977,12 +1193,14 @@ function _statisticianTriggerMomentum(bonusSeconds) {
 
     window._momentumThisLevel = (window._momentumThisLevel || 0) + 1;
     if (window._momentumThisLevel === 3) trackAchStat('statistician3MomentumOneLevel');
+
+    Audio_Manager.playSFX('momentum');
 }
 
 // onMistake — called on any wrong fill.
 // Resets or reduces the Statistician streak depending on passive tree nodes.
 function onMistake() {
-    if (STATE.playerClass === 'statistician') {
+    if (STATE.playerClass === 'statistician' && !isClassless()) {
         let reduction = 0;
         if (ptHasSkill('learning_from_mistakes')) reduction += 3;
         if (ptHasSkill('mistakes_no_matter')) reduction += 3;
@@ -1002,9 +1220,3 @@ function onMistake() {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
-
-
-
-
-
-

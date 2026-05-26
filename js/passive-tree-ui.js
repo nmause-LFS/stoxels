@@ -379,12 +379,17 @@ function _ptDrawNodes(bounds) {
 // Main render
 
 function _ptRender() {
-    _pt_container = document.getElementById('pt-canvas');
-    if (!_pt_container) { console.error('[PassiveTree] #pt-canvas not found'); return; }
+    const old = document.getElementById('pt-canvas');
+    if (!old) { console.error('[PassiveTree] #pt-canvas not found'); return; }
+
+    // Clone the element to strip all previously attached event listeners
+    _pt_container = old.cloneNode(false);
+    old.parentNode.replaceChild(_pt_container, old);
 
     // Reset caches
     _pt_nodeEls = {};
     _pt_connEls = {};
+    _pt_eventsBound = false;
     if (_pt_tooltip) { _pt_tooltip.remove(); _pt_tooltip = null; }
 
     _pt_container.innerHTML = '';

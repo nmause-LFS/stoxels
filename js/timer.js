@@ -81,6 +81,8 @@ function timesUp() {
     document.getElementById('lose-sub').textContent =
         `${mistakeCount} ${mistakeCount !== 1 ? t('ov_win_mistakes') : t('ov_win_mistake')}. ${t('btn_retry2')}!`;
     document.getElementById('ov-lose').classList.add('show');
+
+    Audio_Manager.playSFX('lose');
 }
 
 
@@ -128,6 +130,7 @@ function startTimer() {
 
     _ergodicFieldInit();
     _randomWalkInit();
+    if (typeof resetMarkovianState === 'function') resetMarkovianState();
 
     timerInterval = setInterval(() => {
         if (dead || timerFrozen) return;
@@ -137,6 +140,7 @@ function startTimer() {
         _entropyDrainTick();
         _randomWalkTick();
         _degreesOfFreedomTick();
+        if (typeof _markovSnapshotTick === 'function') _markovSnapshotTick();
 
         // timed_stasis (195-197): auto-freeze for 1s (+0.5s per tier 2/3) every 10 min
         if (window._timedStasisNext && Date.now() >= window._timedStasisNext) {

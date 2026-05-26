@@ -108,7 +108,7 @@ function buildPuzzleArea() {
             <div class="tut-puzzle-hud">
                 <div class="tut-timer-row" id="tut-timer-row">
                     <span>⏱</span>
-                    <span class="tut-timer-val" id="tut-timer-display">08:42</span>
+                    <span class="tut-timer-val" id="tut-timer-display">30:00</span>
                 </div>
                 <div class="tut-hint-text">${eventLabel}</div>
                 <div class="tut-mod-tags" id="tut-mod-tags">
@@ -266,6 +266,10 @@ function buildDemoGrid() {
 function startDemoTimer() {
     if (demoTimerInt) clearInterval(demoTimerInt);
     demoTimerSecs = 1800;
+
+    // set display immediately so there's no 1-second flash
+    const el = document.getElementById('tut-timer-display');
+    if (el) el.textContent = formatDemoTime(demoTimerSecs);
     demoTimerInt = setInterval(() => {
         const el = document.getElementById('tut-timer-display');
         if (!el) { clearInterval(demoTimerInt); return; }
@@ -481,7 +485,7 @@ function finishTutorial() {
     save();
     stopDemoTimer();
     clearTutHighlights();
-    startSetup();
+    showSetup();
 }
 
 

@@ -1,7 +1,7 @@
 ﻿// Handles penalties for mistakes, including time deduction, visual feedback, and tracking mistake count for scoring and achievements.
 
 
-function applyPenalty() {
+function applyPenalty(row,col) {
     const penMult = getClassPenaltyMultiplier(); // class effect, 0 = absorbed by Variance Shield
 
     const overfitMult = _overfittingPenaltyMultiplier();
@@ -10,9 +10,6 @@ function applyPenalty() {
         if (overfitMult === 0) { wrongGrid[row][col] = true; renderCell(row, col); return; }
         // otherwise overfitMult replaces the normal penMult below
     }
-
-
-
 
     if (penMult === 0) {
         // Fully absorbed by a shield effect
@@ -65,6 +62,9 @@ function applyPenalty() {
     timerSecs = Math.max(0, timerSecs - effectivePen);
     updTimer();
 
+    // Actuary: log this mistake for Regression to Prior
+    if (effectivePen > 0) actuaryLogMistake(row, col, effectivePen);
+
     // penalty_clutch: flag if this penalty pushed the timer below 60s (and player
     // was above 60s before), so scoring.js can award the achievement on win
     if (timerBefore >= 60 && timerSecs < 60 && timerSecs > 0) {
@@ -94,6 +94,7 @@ function applyPenalty() {
         stopTimer();
         timesUp();
     }
+
 }
 
 

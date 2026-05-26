@@ -66,8 +66,8 @@ function _ptRefreshPointsDisplay() {
     if (!el) return;
     const p = _ptPoints();
     el.textContent = _ptLang() === 'de'
-        ? `Verfügbare Punkte: ${p}`
-        : `Available points: ${p}`;
+        ? `Verfügbare Konvergenzpunkte: ${p}`
+        : `Available Convergence Points: ${p}`;
 }
 
 
@@ -237,7 +237,9 @@ function _ptGetNodeVisualState(id) {
  Example:  if (ptHasSkill('tutor_enable')) { ... }
  */
 function ptHasSkill(statKey) {
-    // Ensure tree data is loaded even if the player never opened the PT screen
+    // Treeless modifier: treat all nodes as unallocated
+    if (typeof isTreeless === 'function' && isTreeless()) return false;
+
     if (!_pt_skills.length && typeof TALENT_TREE_DATA !== 'undefined') {
         PT.loadInline(TALENT_TREE_DATA);
     }

@@ -1,12 +1,13 @@
-﻿
-
-let activeAbilityMode = false;
+﻿let activeAbilityMode = false;
 
 // Per-skill independent cooldown state.
 // Each slot ('active1', 'active2') tracks its own remaining seconds + interval
+// active3 / active4 are the two ascendency skill slots
 let cooldownState = {
     active1: { remaining: 0, interval: null },
     active2: { remaining: 0, interval: null },
+    active3: { remaining: 0, interval: null },
+    active4: { remaining: 0, interval: null },
 };
 
 
@@ -110,6 +111,7 @@ function startSlotCooldown(slot, seconds) {
             state.remaining = 0;
             clearInterval(state.interval);
             state.interval = null;
+            _showCooldownReadyToast(slot);
             buildClassHUD(); // full rebuild to restore ACTIVATE button
         } else {
             _patchCooldownButton(slot);
@@ -118,6 +120,27 @@ function startSlotCooldown(slot, seconds) {
 }
 
 
+// _showCooldownReadyToast — shows a toast when an ability comes off cooldown.
+// NEW:
+function _showCooldownReadyToast(slot) {
+    let abilityData = null;
+    const slotIndex = { active1: '1', active2: '2', active3: '3', active4: '4' }[slot] || slot;
+
+    if (slot === 'active3' || slot === 'active4') {
+        const asc = STATE.playerAscendency ? ASCENDENCY_DEFS[STATE.playerAscendency] : null;
+        if (!asc) return;
+        abilityData = slot === 'active3' ? asc.active1 : asc.active2;
+    } else {
+        const def = CLASS_DEFS[STATE.playerClass];
+        if (!def) return;
+        abilityData = def[slot];
+    }
+
+    if (!abilityData) return;
+    const name = LANG === 'de' ? (abilityData.nameDE || abilityData.nameEn) : abilityData.nameEn;
+    showToast(`✅ [${slotIndex}] ${name} — ${LANG === 'de' ? 'Bereit!' : 'Ready!'}`);
+    Audio_Manager.playSFX('abilityReady');
+}
 
 
 
@@ -134,17 +157,15 @@ function startSlotCooldown(slot, seconds) {
 //   without rebuilding the entire HUD. Falls back to full rebuild if
 //   the button element can't be found (e.g. panel was just re-rendered).
 function _patchCooldownButton(slot) {
-    // Update the full cooldown overlay when HUD is expanded
-    const section = document.querySelector(
-        `#class-hud-panel .chud-active-section[data-slot="${slot}"]`
+    const btn = document.querySelector(
+        `#class-hud-panel .chud-skill-btn[data-slot="${slot}"]`
     );
-    if (section) {
-        const timerEl = section.querySelector('.chud-cd-timer');
-        if (timerEl) timerEl.textContent = formatCooldown(cooldownState[slot].remaining);
+    if (btn) {
+        const cdEl = btn.querySelector('.chud-btn-cd');
+        if (cdEl) {
+            cdEl.textContent = formatCooldown(cooldownState[slot].remaining);
+        }
     }
-
-    // Also update the minimized bar if it's visible
-    if (hudMinimized) patchMinimizedBar();
 }
 
 
@@ -190,8 +211,8 @@ function patchMinimizedBar() {
 
 
 function resetActiveCooldown() {
-    // Clear both slot timers
-    ['active1', 'active2'].forEach(slot => {
+    // Clear all slot timers (base + ascendency)
+    ['active1', 'active2', 'active3', 'active4'].forEach(slot => {
         if (cooldownState[slot].interval) clearInterval(cooldownState[slot].interval);
         cooldownState[slot].interval = null;
         cooldownState[slot].remaining = 0;
@@ -220,6 +241,29 @@ function resetActiveCooldown() {
 
 
 
+//------------------------------------------------------------------------
+//---------------------------KEYBOARD SHORTCUTS---------------------------
+//------------------------------------------------------------------------
 
+function _initClassAbilityHotkeys() {
+    document.addEventListener('keydown', (e) => {
+        // Ignore if focus is in a text input / textarea
+        const tag = document.activeElement?.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA') return;
 
+        // Ignore if any modal overlay is open
+        if (document.querySelector('.modal-bg.show, .cs-overlay.show, #class-selection-overlay.show')) return;
 
+        if (!STATE.playerClass || isClassless() || dead) return;
+
+        if (e.key === '1') { e.preventDefault(); toggleActiveAbility('active1'); }
+        if (e.key === '2') { e.preventDefault(); toggleActiveAbility('active2'); }
+        if (e.key === '3') { e.preventDefault(); toggleActiveAbility('active3'); }
+        if (e.key === '4') { e.preventDefault(); toggleActiveAbility('active4'); }
+
+        // Pressing Escape cancels an armed ability
+        if (e.key === 'Escape' && activeAbilityMode) { _setAbilityMode(false); buildClassHUD(); }
+    });
+}
+
+_initClassAbilityHotkeys();

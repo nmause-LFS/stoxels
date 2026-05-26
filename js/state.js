@@ -8,19 +8,19 @@
 let cur = null;         // set to the current level's puzzle object when a level starts; see startLevel() in screens.js
 
 let userGrid = [];      // built as an empty grid at the start of each level, then updated with the player's fills and marks as they interact with the puzzle
-                        // (e.g. userGrid[3][5] === 2 means the cell at row 3, column 5 is currently marked with an ✕ by the player)
+// (e.g. userGrid[3][5] === 2 means the cell at row 3, column 5 is currently marked with an ✕ by the player)
 
 let wrongGrid = [];     // built as an empty grid at the start of each level, then updated with true values for any cells the player fills incorrectly;
-                        // used to show red ✕ marks and apply time penalties
+// used to show red ✕ marks and apply time penalties
 
 let revealedGrid = [];  // built as an empty grid at the start of each level, then updated with true values for any cells revealed by items and classes;
-                        // (shown in green, counts as correct, cannot be un-filled)
+// (shown in green, counts as correct, cannot be un-filled)
 
 
 let mistakeCount = 0;           // amount of wrong fills the player has made this level; used to calculate score penalties and track progress towards Hardcore mode failure
 
 let absorbedMistakes = 0;       // amount of wrong fills that were absorbed by the shield item or a class passive ability; these do not count towards the mistakeCount or trigger penalties, 
-                                // but are tracked separately so they can be used for achievements
+// but are tracked separately so they can be used for achievements
 
 let itemsUsedThisLevel = 0;     // counts how many items the player has used this level, used for achievements
 
@@ -32,13 +32,13 @@ let levelStartTime = 0;         // Date.now() timestamp when the level begins, u
 
 
 let shieldActive = false;   // when true, the next mistake will be absorbed by the shield instead of counting towards the mistakeCount or triggering penalties; 
-                            // resets to false after absorbing one mistake
+// resets to false after absorbing one mistake
 
 let timerFrozen = false;    // when true, the timer is paused and will not count down; set to true by the Freeze item or Absolute Zero class skill, 
-                            // and reset to false when the freeze duration expires
+// and reset to false when the freeze duration expires
 
 let quizAnsweredCorrectly = false;  // set to true if the player answers the quiz correctly, false if they skip or answer incorrectly;
-                                    // read by scoring.js to determine whether to award the bonus reward
+// read by scoring.js to determine whether to award the bonus reward
 
 
 let luckyTiles = new Set();         // e.g. if the tile at row 3, column 5 is lucky, luckyTiles will contain the string "3-5"
@@ -57,6 +57,8 @@ let _lawOfLargeNumbersNext = null; // keystone_law_of_large_numbers: timestamp o
 let _confidenceIntervalActive = false; // confidence_interval: true during the grace window after a mistake
 
 let _streakBonusFills = 0;             // streak_bonus: consecutive correct fills since last mistake
+
+let axisLockEnabled = false;   // when true, drag strokes are locked to the row or column of the starting cell
 
 
 
@@ -103,6 +105,11 @@ function initState() {
         if (!s.achStats) s.achStats = {};
         if (!s.convergenceDone) s.convergenceDone = [];
         if (s.passiveTreePoints === undefined) s.passiveTreePoints = 0;
+        // Ascendency migration guards
+        if (s.playerAscendency === undefined) s.playerAscendency = null;
+        if (!s.ascendencySkill1Level) s.ascendencySkill1Level = 1;
+        if (!s.ascendencySkill2Level) s.ascendencySkill2Level = 1;
+        if (!s.ascendencyWorldsCompleted) s.ascendencyWorldsCompleted = [];
         if (!s.passiveTreeAllocated || !Array.isArray(s.passiveTreeAllocated)) {
             s.passiveTreeAllocated = new Set();
         } else {
@@ -113,12 +120,12 @@ function initState() {
     }
     // Fresh save structure 
     return {
-        totalScore: 0,      
-        levelHS: {},         
-        inventory: [],       
-        unlockedCodes: [],   
-        done: [],            
-        bonusDone: [],        
+        totalScore: 0,
+        levelHS: {},
+        inventory: [],
+        unlockedCodes: [],
+        done: [],
+        bonusDone: [],
         tutorialDone: false,
         mathGatePassed: [],
         primerPending: false,
@@ -130,11 +137,16 @@ function initState() {
         classUpgradesAvailable: 0,
         classWorldsCompleted: [],
         classActiveChoice: 'active1',
-        convergenceDone: [],   
-        passiveTreePoints: 0,  
+        convergenceDone: [],
+        passiveTreePoints: 0,
         passiveTreeAllocated: new Set(),
         questStats: {},
         questsClaimed: [],
+        questsNotified: [],
+        playerAscendency: null,
+        ascendencySkill1Level: 1,
+        ascendencySkill2Level: 1,
+        ascendencyWorldsCompleted: [],
     };
 }
 
@@ -161,16 +173,3 @@ function save() {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -10,6 +10,7 @@ let hoverCol = -1;          // column currently hovered by the mouse, -1 if none
 
 
 
+
 //------------------------------------------------------------------------
 //---------------MOUSEOVER ROW/COLUMN HIGHLIGHT---------------------------
 //------------------------------------------------------------------------
@@ -78,13 +79,27 @@ function clearHover() {
 //      this cell so painting works smoothly across multiple cells.
 function onHover(e, row, col) {
     if (row !== hoverRow || col !== hoverCol) {
-        clearHover();           // remove highlight from the old cell
+        clearHover();
         hoverRow = row;
         hoverCol = col;
-        applyHover(row, col);   // apply highlight to the new cell
+        applyHover(row, col);
     }
-    // Continue painting if the mouse button is still held
-    if (painting && !dead) ac(row, col);
+
+    if (painting && !dead) {
+        if (axisLockEnabled) {
+            if (dragAxis === null && (row !== dragStartRow || col !== dragStartCol)) {
+                if (row === dragStartRow) dragAxis = 'row';
+                else if (col === dragStartCol) dragAxis = 'col';
+                else dragAxis = 'row';
+            }
+            const allowed = dragAxis === null
+                || (dragAxis === 'row' && row === dragStartRow)
+                || (dragAxis === 'col' && col === dragStartCol);
+            if (allowed) ac(row, col);
+        } else {
+            ac(row, col);
+        }
+    }
 }
 
 
