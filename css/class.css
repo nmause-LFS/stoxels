@@ -1085,12 +1085,6 @@
 
 
 
- .sig-thresh-protected {
-    // outline: 1px solid rgba(230, 126, 34, 0.55) !important;
-    // background-color: rgba(230, 126, 34, 0.07) !important;
-    //
-}
-
 
 /* Residual Totem marker */
 .residual-totem {
@@ -1236,7 +1230,6 @@
 
 /* The base background tint for protected cells */
 .sig-thresh-protected {
-    background-color: rgba(230, 126, 34, 0.15) !important;
     position: relative !important;
     animation: shieldPulse 2s infinite ease-in-out;
 }
@@ -1264,20 +1257,7 @@
         opacity: 0.6; /* Slightly transparent so it isn't too distracting */
     }
 
-/* The glowing animation loop */
-@keyframes shieldPulse {
-    0% {
-        background-color: rgba(230, 126, 34, 0.10);
-    }
 
-    50% {
-        background-color: rgba(230, 126, 34, 0.25);
-    }
-
-    100% {
-        background-color: rgba(230, 126, 34, 0.10);
-    }
-}
 
 
 
@@ -1427,3 +1407,86 @@
 
 
 
+
+/* Bayesian: Protection Trap line highlight */
+.bayes-protect-line {
+    outline: 1px solid rgba(243, 156, 18, 0.5) !important;
+    background-color: transparent !important;
+}
+
+/*
+--- Bayesian: Type I Error Shield shimmering cell ---
+*/
+.type-i-shielded {
+    box-shadow: inset 0 0 0 1px rgba(39, 174, 96, 0.4) !important;
+    animation: type-i-shimmer 2.5s ease-in-out infinite;
+}
+
+@keyframes type-i-shimmer {
+    0%,100% {
+        background-color: transparent;
+    }
+
+    50% {
+        background-color: rgba(39, 174, 96, 0.08);
+    }
+}
+
+/*
+--- Bayesian: trap indicator icon inside a cell ---
+*/
+.bayes-trap-indicator {
+    position: absolute;
+    top: 1px;
+    right: 2px;
+    font-size: 10px;
+    line-height: 1;
+    pointer-events: none;
+    opacity: .75;
+}
+
+
+
+
+
+
+
+@keyframes type1-matrix-sweep {
+    0% {
+        transform: scale(0.4);
+        background-color: rgba(46, 204, 113, 0.8);
+        box-shadow: 0 0 12px rgba(46, 204, 113, 1);
+    }
+
+    30% {
+        transform: scale(1);
+        background-color: rgba(46, 204, 113, 0.4);
+    }
+
+    100% {
+        transform: scale(1.05);
+        background-color: rgba(46, 204, 113, 0);
+        opacity: 0;
+    }
+}
+
+/* Shield popping open and dynamically turning red/shattering when intercepted */
+@keyframes type1-shield-shatter {
+    0% {
+        transform: translate(-50%, -50%) scale(0.8);
+        filter: drop-shadow(0 0 2px #2ecc71) hue-rotate(0deg);
+        opacity: 1;
+    }
+
+    35% {
+        transform: translate(-50%, -50%) scale(1.5);
+        filter: drop-shadow(0 0 10px #e74c3c) hue-rotate(140deg); /* Flash warning red as it breaks */
+        opacity: 0.9;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(2.2) rotate(25deg);
+        filter: drop-shadow(0 0 15px #e74c3c) blur(1px);
+        opacity: 0;
+    }
+}

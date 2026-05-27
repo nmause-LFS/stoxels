@@ -146,7 +146,7 @@ function handleSpecialRewards({ gi, isFirstClear, isAscensionLevel, irz }) {
     if (isConvergenceLevel && isFirstClear) {
         if (!STATE.convergenceDone) STATE.convergenceDone = [];
         STATE.convergenceDone.push(gi);
-        STATE.passiveTreePoints = (STATE.passiveTreePoints || 0) + 1;        // Grant Passive Points, in total players should get 26 from convergence and 26 from quests
+        STATE.passiveTreePoints = (STATE.passiveTreePoints || 0) + 1;        // Grant Passive tree Points, in total players should get 26 from convergence and 26 from quests
         save();
         window._pendingConvergenceModal = true;
     }
@@ -378,7 +378,7 @@ function checkWin() {
 
 
 
-    _ptApplyLevelCompleteRewards();   // ← gear_of_the_statistician & improved_gear nodes
+    _ptApplyLevelCompleteRewards();   // gear_of_the_statistician & improved_gear nodes
 
     const bonusMet = evaluateBonusObjective(elapsed);
 
@@ -418,6 +418,8 @@ function checkWin() {
             return (rows * cols >= 200) && ptHasSkill('adjacency_matrix');
         })(),
     });
+
+    if (typeof _endBlackSwan === "function") _endBlackSwan(false);
 
 
 }

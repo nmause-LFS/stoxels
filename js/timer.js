@@ -211,7 +211,11 @@ function startTimer() {
 
 
 
-        if (!window._goldenClockActive) timerSecs--;
+        if (!window._goldenClockActive) {
+            timerSecs--;
+            // Black Swan speedforce: timer drains 10 times as fast
+            if (window._blackSwanActive) timerSecs-=9;
+        }
         updTimer();
 
         const elapsed = Math.floor((Date.now() - levelStartTime) / 1000);

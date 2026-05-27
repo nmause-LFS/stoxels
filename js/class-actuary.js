@@ -3,40 +3,7 @@
 //-------------------------------ACTUARY CLASS----------------------------
 //------------------------------------------------------------------------
 //
-// ACTIVE 1 — Regression to Prior
-//   Corrects N most-recent mistake cells and recovers a % of those penalties.
-//   Requires a mistake history log: window._mistakeLog[]
-//   Each entry: { r, c, penaltySecs }
-//
-// ACTIVE 2 — Significance Threshold
-//   The player clicks a row or column header (or any cell in that line).
-//   That line is shielded: the next wrong fill there auto-corrects instead
-//   of counting as a mistake, optionally revealing 1 correct cell (rank 3).
-//   Protected lines are stored in window._sigThresholdProtected (Set of
-//   strings like "row:3" or "col:7").
-//
-// INTEGRATION HOOKS NEEDED in other files
-// ─────────────────────────────────────────
-//
-// 1. class-abilities.js — applyClassPassiveOnLevelStart()
-//    Add inside the reset block:
-//      window._mistakeLog = [];
-//      window._sigThresholdProtected = new Set();
-//
-// 2. Wherever applyPenalty() lives (input.js / game.js)
-//    After the penalty is applied and if the multiplier was > 0, push:
-//      if (window._mistakeLog !== undefined && penaltySecs > 0) {
-//          window._mistakeLog.push({ r: row, c: col, penaltySecs });
-//          if (window._mistakeLog.length > 10) window._mistakeLog.shift();
-//      }
-//    NOTE: If the Mathmagician absorbs a mistake (multiplier === 0)
-//    do NOT push it — there was no penalty to recover.
-//
-// 3. Wherever a wrong-fill is about to be committed (before userGrid changes)
-//    in input.js, add a Significance Threshold intercept:
-//      if (_sigThresholdIntercept(row, col)) return; // blocked — no mistake
-//
-//------------------------------------------------------------------------
+
 
 
 // ─── MISTAKE LOG ──────────────────────────────────────────────────────
@@ -113,71 +80,12 @@ function _executeRegressionToPrior(correctCount, recoverPct) {
 
     if (window.Audio_Manager) Audio_Manager.playSFX('varianceShield');
 
-    checkWin();
-    buildClassHUD();
-}
-
-
-/*
-
-function _executeRegressionToPrior(correctCount, recoverPct) {
-    if (!cur) return;
-    const log = window._mistakeLog || [];
-
-    if (log.length === 0) {
-        showToast(LANG === 'de'
-            ? '🛡️ Keine Fehler zum Korrigieren!'
-            : '🛡️ No mistakes to correct!');
-        _regressionCancel(true);
-        return;
-    }
-
-    // Take up to correctCount most-recent entries (end of array = most recent)
-    const toCorrect = log.splice(-correctCount, correctCount);
-
-    let recovered = 0;
-    const affected = [];
-
-    toCorrect.forEach(({ r, c, penaltySecs }) => {
-        // Only act on cells that are still in the wrong state (userGrid === 1
-        // but solution is 0, i.e. the player clicked a filled cell incorrectly).
-        // userGrid value for a wrong fill is typically the ✕-mark (value 2),
-        // OR still 1 if the game keeps the fill. We clear whatever state is there
-        // and restore the cell to unmarked/unfilled.
-        if (cur.grid[r][c] === 0) {
-            // Cell should be empty — player wrongly filled it. Reset to blank.
-            if (userGrid[r][c] !== 0) {
-                userGrid[r][c] = 0;
-                renderCell(r, c);
-                affected.push(`g-${r}-${c}`);
-            }
-        }
-        // Whether or not we could visually undo (cell may already be re-corrected
-        // by other means), always recover the time fraction.
-        recovered += Math.round(penaltySecs * recoverPct);
-    });
-
-    // Recover time
-    if (recovered > 0) {
-        timerSecs = Math.min(timerSecs + recovered, 3600);
-        updTimer();
-    }
-
-    _applyCellEffect(affected, 'reveal');
-
-    const pct = Math.round(recoverPct * 100);
-    showToast(`🛡️ ${LANG === 'de'
-        ? `Regression: ${toCorrect.length} Fehler korrigiert, +${recovered}s zurück`
-        : `Regression: ${toCorrect.length} mistake(s) corrected, +${recovered}s recovered`}`);
-
-    if (window.Audio_Manager) Audio_Manager.playSFX('varianceShield');
+    Audio_Manager.playSFX('holyHealing');
 
     checkWin();
     buildClassHUD();
 }
 
-
-*/
 
 function _regressionCancel(noOverlayToRemove = false) {
     _setAbilityMode(false);
@@ -230,6 +138,8 @@ function _executeSignificanceThreshold(protectCount, bonusReveal) {
 
     // Show the line-picker modal immediately — no intermediate grid click needed
     _sigThreshShowLinePicker(protectCount);
+
+    Audio_Manager.playSFX('holySpell');
 }
 
 
@@ -648,35 +558,3 @@ function _sigThreshBonusRevealInLine(type, idx) {
     checkWin();
 }
 
-
-//------------------------------------------------------------------------
-// INTEGRATION NOTE — executeActiveAbility() in class-abilities.js
-//------------------------------------------------------------------------
-// The Significance Threshold ability arms a mode where clicks go to
-// _sigThreshPickFromCell() rather than the normal grid handler.
-// Add this to executeActiveAbility():
-//
-//   if (activeKey === 'active4' && window._sigThreshArmed) {
-//       _sigThreshPickFromCell(row, col);
-//       return; // don't disarm or start cooldown again
-//   }
-//
-// And update _dispatchAscendencyAbility() case 'actuary':
-//   if (ascSlot === 'active1') {
-//       _executeRegressionToPrior(effect.correctCount, effect.recoverPct);
-//   } else {
-//       _executeSignificanceThreshold(effect.protectCount, effect.bonusReveal);
-//       // Store bonusReveal flag for intercept to read
-//       window._sigThreshBonusReveal = effect.bonusReveal;
-//   }
-//------------------------------------------------------------------------
-
-
-//------------------------------------------------------------------------
-// CSS TO ADD (in your CSS file)
-//------------------------------------------------------------------------
-// .sig-thresh-protected {
-//     outline: 1px solid rgba(230, 126, 34, 0.55) !important;
-//     background-color: rgba(230, 126, 34, 0.07) !important;
-// }
-//------------------------------------------------------------------------

@@ -119,21 +119,21 @@ const CLASS_DEFS = {
             levels: [
                 {
                     level: 1,
-                    descEn: 'Every 10 correct fills in a row grant +10 seconds added to the timer.',
-                    descDE: '10 korrekte Klicks hintereinander geben +10 Sekunden mehr Zeit.',
-                    effect: { streakForBonus: 10, bonusSeconds: 10 }
+                    descEn: 'Every 15 correct fills in a row without mistake grant +10 seconds added to the timer.',
+                    descDE: '15 korrekte Klicks hintereinander ohne Fehler geben +10 Sekunden mehr Zeit.',
+                    effect: { streakForBonus: 15, bonusSeconds: 10 }
                 },
                 {
                     level: 2,
-                    descEn: 'Every 9 correct fills in a row grant +15 seconds added to the timer.',
-                    descDE: '9 korrekte Klicks hintereinander geben +15 Sekunden mehr Zeit.',
-                    effect: { streakForBonus: 9, bonusSeconds: 15 }
+                    descEn: 'Every 15 correct fills in a row without mistake grant +15 seconds added to the timer.',
+                    descDE: '15 korrekte Klicks hintereinander ohne Fehler geben +15 Sekunden mehr Zeit.',
+                    effect: { streakForBonus: 15, bonusSeconds: 15 }
                 },
                 {
                     level: 3,
-                    descEn: 'Every 8 correct fills in a row grant +20 seconds added to the timer.',
-                    descDE: '8 korrekte Klicks hintereinander geben +20 Sekunden mehr Zeit.',
-                    effect: { streakForBonus: 8, bonusSeconds: 20 }
+                    descEn: 'Every 15 correct fills in a row without mistake grant +20 seconds added to the timer.',
+                    descDE: '15 korrekte Klicks hintereinander ohne Fehler geben +20 Sekunden mehr Zeit.',
+                    effect: { streakForBonus: 15, bonusSeconds: 20 }
                 },
             ]
         },
@@ -147,21 +147,21 @@ const CLASS_DEFS = {
             levels: [
                 {
                     level: 1,
-                    descEn: 'Choose between instantly solving 1 random unsolved row or column. Cooldown: 5 minutes.',
-                    descDE: 'Wähle zwischen dem sofortigen Lösen einer ungelösten Zeile oder Spalte. Abklingzeit: 5 Minuten.',
-                    effect: { solveCount: 1 }
+                    descEn: 'Choose between instantly revealing 5 unfilled correct cells in 1 random unsolved row or column. Cooldown: 5 minutes.',
+                    descDE: 'Wähle zwischen dem sofortigen Lösen von 5 ungelösten Zellen in einer zufälligen ungelösten Zeile oder Spalte. Abklingzeit: 5 Minuten.',
+                    effect: { solveCount: 1, revealCap: 5 }
                 },
                 {
                     level: 2,
-                    descEn: 'Choose between instantly solving 2 random unsolved rows or columns. Cooldown: 5 minutes.',
-                    descDE: 'Wähle zwischen dem sofortigen Lösen von 2 ungelösten Zeilen oder Spalten. Abklingzeit: 5 Minuten.',
-                    effect: { solveCount: 2 }
+                    descEn: 'Choose between instantly revealing 6 unfilled correct cells in 2 random unsolved rows or columns each. Cooldown: 5 minutes.',
+                    descDE: 'Wähle zwischen dem sofortigen Lösen von jeweils 6 ungelösten Zellen in 2 zufälligen ungelösten Zeilen oder Spalten. Abklingzeit: 5 Minuten.',
+                    effect: { solveCount: 2, revealCap: 6 }
                 },
                 {
                     level: 3,
-                    descEn: 'Choose between instantly solving 3 random unsolved rows or columns. Cooldown: 5 minutes.',
-                    descDE: 'Wähle zwischen dem sofortigen Lösen von 3 ungelösten Zeilen oder Spalten. Abklingzeit: 5 Minuten.',
-                    effect: { solveCount: 3 }
+                    descEn: 'Choose between instantly revealing 7 unfilled correct cells in 3 random unsolved rows or columns each. Cooldown: 5 minutes.',
+                    descDE: 'Wähle zwischen dem sofortigen Lösen von jeweils 7 ungelösten Zellen in 3 zufälligen ungelösten Zeilen oder Spalten. Abklingzeit: 5 Minuten.',
+                    effect: { solveCount: 3, revealCap: 7 }
                 },
             ]
         },
@@ -175,21 +175,21 @@ const CLASS_DEFS = {
             levels: [
                 {
                     level: 1,
-                    descEn: 'Strike diagonally through a cell. Cooldown: 3 minutes.',
-                    descDE: 'Gehe diagonal durch eine Zelle. Abklingzeit: 3 Minuten.',
-                    effect: { diagonals: 1 }
+                    descEn: 'Strike diagonally through a cell. Reveals up to 5 unfilled correct cells. Cooldown: 3 minutes.',
+                    descDE: 'Gehe diagonal durch eine Zelle. Löst bis zu 5 ungelöste Zellen. Abklingzeit: 3 Minuten.',
+                    effect: { diagonals: 1, revealCap: 5 }
                 },
                 {
                     level: 2,
-                    descEn: 'Strike diagonally through a cell. Covers both diagonals. Cooldown: 3 minutes.',
-                    descDE: 'Gehe diagonal durch eine Zelle. Erfasst beide Diagonalen. Abklingzeit: 3 Minuten.',
-                    effect: { diagonals: 2 }
+                    descEn: 'Strike diagonally through a cell. Covers both diagonals. Reveals up to 7 unfilled correct cells. Cooldown: 3 minutes.',
+                    descDE: 'Gehe diagonal durch eine Zelle. Erfasst beide Diagonalen. Löst bis zu 7 ungelöste Zellen. Abklingzeit: 3 Minuten.',
+                    effect: { diagonals: 2, revealCap: 7 }
                 },
                 {
                     level: 3,
-                    descEn: 'Strike diagonally, horizontally and vertically through a cell. Cooldown: 3 minutes.',
-                    descDE: 'Gehe diagonal, horizontal und vertikal durch eine Zelle. Abklingzeit: 3 Minuten.',
-                    effect: { diagonals: 4 }
+                    descEn: 'Strike diagonally, horizontally and vertically through a cell. Reveals up to 10 unfilled correct cells. Cooldown: 3 minutes.',
+                    descDE: 'Gehe diagonal, horizontal und vertikal durch eine Zelle. Löst bis zu 10 ungelöste Zellen. Abklingzeit: 3 Minuten.',
+                    effect: { diagonals: 4, revealCap: 10 }
                 },
             ]
         },
@@ -322,55 +322,55 @@ const ASCENDENCY_DEFS = {
         active1: {
             nameEn: 'Tail Risk',
             nameDE: 'Tail-Risiko',
-            descCursorEn: 'Opens an input panel — choose how many seconds to sacrifice for reveals.',
-            descCursorDE: 'Öffnet ein Eingabefenster — wähle, wie viele Sekunden du für Enthüllungen opferst.',
+            descCursorEn: 'Make a deal with the Infinite Hunger. Sacrifice your time for reveals. Every second counts. ',
+            descCursorDE: 'Mache einen Handel mit dem Unendlichen Hunger. Opfere deine Zeit für Enthüllungen. Jede Sekunde zählt.',
             cooldownSeconds: 240,
             levels: [
                 {
                     level: 1,
-                    descEn: 'Trade 60s per cell revealed. Maximum 3 cells. Cooldown: 4 minutes.',
-                    descDE: 'Opfere 60s pro enthüllter Zelle. Maximal 3 Zellen. Abklingzeit: 4 Minuten.',
-                    effect: { secondsPerCell: 60, maxCells: 3 }
+                    descEn: 'Make a deal with the Infinite Hunger. Sacrifice 90 seconds of your time each in exchange for up to 10 revealed cells. Cooldown: 4 minutes.',
+                    descDE: 'Mache einen Handel mit dem Unendlichen Hunger. Opfere jeweils 90 Sekunden deiner Zeit im Tausch für bis zu 10 enthüllte Zellen. Abklingzeit: 4 Minuten.',
+                    effect: { secondsPerCell: 90, maxCells: 10 }
                 },
                 {
                     level: 2,
-                    descEn: 'Trade 45s per cell revealed. Maximum 5 cells. Cooldown: 4 minutes.',
-                    descDE: 'Opfere 45s pro enthüllter Zelle. Maximal 5 Zellen. Abklingzeit: 4 Minuten.',
-                    effect: { secondsPerCell: 45, maxCells: 5 }
+                    descEn: 'Make a deal with the Infinite Hunger. Sacrifice 75 seconds of your time each in exchange for up to 15 revealed cells. Cooldown: 4 minutes.',
+                    descDE: 'Mache einen Handel mit dem Unendlichen Hunger. Opfere jeweils 75 Sekunden deiner Zeit im Tausch für bis zu 15 enthüllte Zellen. Abklingzeit: 4 Minuten.',
+                    effect: { secondsPerCell: 75, maxCells: 15 }
                 },
                 {
                     level: 3,
-                    descEn: 'Trade 30s per cell revealed. Maximum 8 cells. Cooldown: 4 minutes.',
-                    descDE: 'Opfere 30s pro enthüllter Zelle. Maximal 8 Zellen. Abklingzeit: 4 Minuten.',
-                    effect: { secondsPerCell: 30, maxCells: 8 }
+                    descEn: 'Make a deal with the Infinite Hunger. Sacrifice 60 seconds of your time each in exchange for up to 20 revealed cells. Cooldown: 4 minutes.',
+                    descDE: 'Mache einen Handel mit dem Unendlichen Hunger. Opfere jeweils 60 Sekunden deiner Zeit im Tausch für bis zu 20 enthüllte Zellen. Abklingzeit: 4 Minuten.',
+                    effect: { secondsPerCell: 60, maxCells: 20 }
                 },
             ]
         },
 
         active2: {
-            nameEn: 'Black Swan',
-            nameDE: 'Schwarzer Schwan',
-            descCursorEn: 'Enter hyper-momentum — every correct fill triggers a Momentum bonus.',
-            descCursorDE: 'Betrete Hyper-Schwung — jede korrekte Füllung löst einen Schwung-Bonus aus.',
-            cooldownSeconds: 300,
+            nameEn: 'SPEEDFORCE',
+            nameDE: 'SPEEDFORCE',
+            descCursorEn: 'Enter the SPEEDFORCE: Every correct fill triggers a Momentum bonus. Time passes ten times as quickly.',
+            descCursorDE: 'Betrete die SPEEDFORCE: Jede korrekte Füllung löst einen Schwung-Bonus aus. Die Zeit vergeht zehn mal so schnell.',
+            cooldownSeconds: 120,
             levels: [
                 {
                     level: 1,
-                    descEn: 'Active for 10s. Every correct fill triggers Momentum. Any mistake triples penalty and ends the effect. Cooldown: 5 minutes.',
-                    descDE: 'Aktiv für 10s. Jede korrekte Füllung löst Schwung aus. Fehler verdreifachen die Strafe und beenden den Effekt. Abklingzeit: 5 Minuten.',
-                    effect: { duration: 10000, streakThreshold: 1 }
+                    descEn: 'Enter the SPEEDFORCE. Every correct fill triggers a Momentum bonus. Any mistake is five times as severe and ends the effect. Time passes ten times as fast while in the SPEEDFORCE. Lasts for 5 seconds Cooldown: 2 minutes.',
+                    descDE: 'Betrete die SPEEDFORCE: Jede korrekte Füllung löst einen Schwung-Bonus aus. Fehler verfünffachen die Strafe und beenden den Effekt. Die Zeit vergeht zehn mal so schnell solange du in der SPEEDFORCE bist. Aktiv für 5 Sekunden. Abklingzeit: 2 Minuten.',
+                    effect: { duration: 5000, streakThreshold: 1 }
                 },
                 {
                     level: 2,
-                    descEn: 'Active for 20s. Every correct fill triggers Momentum. Any mistake triples penalty and ends the effect. Cooldown: 5 minutes.',
-                    descDE: 'Aktiv für 20s. Jede korrekte Füllung löst Schwung aus. Fehler verdreifachen die Strafe und beenden den Effekt. Abklingzeit: 5 Minuten.',
-                    effect: { duration: 20000, streakThreshold: 1 }
+                    descEn: 'Enter the SPEEDFORCE: Every correct fill triggers a Momentum bonus. Any mistake is five times as severe and ends the effect.Time passes ten times as fast while in the SPEEDFORCE. Lasts for 10 seconds. Cooldown: 2 minutes.',
+                    descDE: 'Betrete die SPEEDFORCE: Jede korrekte Füllung löst einen Schwung-Bonus aus. Fehler verfünffachen die Strafe und beenden den Effekt. Die Zeit vergeht zehn mal so schnell solange du in der SPEEDFORCE bist. Aktiv für 10 Sekunden. Abklingzeit: 2 Minuten.',
+                    effect: { duration: 10000, streakThreshold: 1 }
                 },
                 {
                     level: 3,
-                    descEn: 'Active for 30s. Every single correct fill triggers Momentum. Any mistake triples penalty and ends the effect. Cooldown: 5 minutes.',
-                    descDE: 'Aktiv für 30s. Jede einzelne korrekte Füllung löst Schwung aus. Fehler verdreifachen die Strafe und beenden den Effekt. Abklingzeit: 5 Minuten.',
-                    effect: { duration: 30000, streakThreshold: 1 }
+                    descEn: 'Enter the SPEEDFORCE: Every correct fill triggers a Momentum bonus. Any mistake is five times as severe and ends the effect. Time passes ten times as fast while in the SPEEDFORCE.Lasts for 15 seconds. Cooldown: 2 minutes.',
+                    descDE: 'Betrete die SPEEDFORCE: Jede korrekte Füllung löst einen Schwung-Bonus aus. Fehler verfünffachen die Strafe und beenden den Effekt. Die Zeit vergeht zehn mal so schnell solange du in der SPEEDFORCE bist. Aktiv für 15 Sekunden. Abklingzeit: 2 Minuten.',
+                    effect: { duration: 15000, streakThreshold: 1 }
                 },
             ]
         },
@@ -391,26 +391,26 @@ const ASCENDENCY_DEFS = {
         active1: {
             nameEn: 'Regression to Prior',
             nameDE: 'Regression zum Prior',
-            descCursorEn: 'Correct your most recent mistake cells and recover time penalties.',
-            descCursorDE: 'Korrigiere deine letzten Fehlerzellen und erhalte Zeitstrafen zurück.',
+            descCursorEn: 'Correct your most recent mistakes and recover lost time.',
+            descCursorDE: 'Korrigiere deine letzten Fehler und erhalte verlorene Zeit zurück.',
             cooldownSeconds: 120,
             levels: [
                 {
                     level: 1,
-                    descEn: 'Correct the most recent 1 mistake cell. Recover 50% of the time penalty paid. Cooldown: 2 minutes.',
-                    descDE: 'Korrigiere die letzte 1 Fehlerzelle. Erhalte 50% der gezahlten Zeitstrafe zurück. Abklingzeit: 2 Minuten.',
+                    descEn: 'Correct the most recent mistake. Recover 50% of the lost time. Cooldown: 2 minutes.',
+                    descDE: 'Korrigiere den letzten Fehler. Erhalte 50% der verlorenen Zeit zurück. Abklingzeit: 2 Minuten.',
                     effect: { correctCount: 1, recoverPct: 0.5 }
                 },
                 {
                     level: 2,
-                    descEn: 'Correct the most recent 2 mistake cells. Recover 50% of time penalties paid. Cooldown: 2 minutes.',
-                    descDE: 'Korrigiere die letzten 2 Fehlerzellen. Erhalte 50% der gezahlten Zeitstrafen zurück. Abklingzeit: 2 Minuten.',
+                    descEn: 'Correct the two most recent mistakes. Recover 50% of the lost time. Cooldown: 2 minutes.',
+                    descDE: 'Korrigiere die letzten zwei Fehler. Erhalte 50% der verlorenen Zeit zurück. Abklingzeit: 2 Minuten.',
                     effect: { correctCount: 2, recoverPct: 0.5 }
                 },
                 {
                     level: 3,
-                    descEn: 'Correct the most recent 3 mistake cells. Recover 100% of time penalties paid. Cooldown: 2 minutes.',
-                    descDE: 'Korrigiere die letzten 3 Fehlerzellen. Erhalte 100% der gezahlten Zeitstrafen zurück. Abklingzeit: 2 Minuten.',
+                    descEn: 'Correct the three most recent mistakes. Recover 100% of the lost time. Cooldown: 2 minutes.',
+                    descDE: 'Korrigiere die letzten drei Fehler. Erhalte 100% der verlorenen Zeit zurück. Abklingzeit: 2 Minuten.',
                     effect: { correctCount: 3, recoverPct: 1.0 }
                 },
             ]
@@ -419,26 +419,26 @@ const ASCENDENCY_DEFS = {
         active2: {
             nameEn: 'Significance Threshold',
             nameDE: 'Signifikanzschwelle',
-            descCursorEn: 'Click a row or column to protect — the next mistake there auto-corrects.',
-            descCursorDE: 'Klicke eine Zeile oder Spalte zum Schützen — der nächste Fehler dort wird automatisch korrigiert.',
+            descCursorEn: 'Select a row or column to protect. Mistakes in affected cells will cause no penalties.',
+            descCursorDE: 'Wähle eine Zeile oder Spalte zum Beschützen aus. Fehler in den betroffenen Zellen verursachen keine Strafen.',
             cooldownSeconds: 180,
             levels: [
                 {
                     level: 1,
-                    descEn: 'Protect 1 row or column. The next mistake there is blocked and auto-corrects. Cooldown: 4 minutes.',
-                    descDE: 'Schütze 1 Zeile oder Spalte. Der nächste Fehler dort wird blockiert und automatisch korrigiert. Abklingzeit: 3 Minuten.',
+                    descEn: 'Select a row or column to protect. Mistakes in affected cells will cause no penalties. Cooldown: 4 minutes.',
+                    descDE: 'Wähle eine Zeile oder Spalte zum Beschützen aus. Fehler in den betroffenden Zellen verursachen keine Strafen. Abklingzeit: 3 Minuten.',
                     effect: { protectCount: 1, bonusReveal: false }
                 },
                 {
                     level: 2,
-                    descEn: 'Protect up to 2 rows or columns simultaneously. Cooldown: 4 minutes.',
-                    descDE: 'Schütze bis zu 2 Zeilen oder Spalten gleichzeitig. Abklingzeit: 3 Minuten.',
+                    descEn: 'Select two rows or columns to protect. Mistakes in affected cells will cause no penalties. Cooldown: 4 minutes.',
+                    descDE: 'Wähle zwei Zeilen oder Spalten zum Beschützen aus. Fehler in den betroffenen Zellen verursachen keine Strafen. Abklingzeit: 3 Minuten.',
                     effect: { protectCount: 2, bonusReveal: false }
                 },
                 {
                     level: 3,
-                    descEn: 'Protect up to 3 rows or columns. When triggered, also reveals 1 random correct cell in that line. Cooldown: 4 minutes.',
-                    descDE: 'Schütze bis zu 3 Zeilen oder Spalten. Bei Auslösung wird auch 1 zufällige korrekte Zelle in dieser Linie enthüllt. Abklingzeit: 3 Minuten.',
+                    descEn: 'Select up to 3 rows or columns to protect. When triggered, also reveals 1 random correct cell in that line. Cooldown: 4 minutes.',
+                    descDE: 'Wähle bis zu 3 Zeilen oder Spalten zum Beschützen aus. Bei Auslösung wird auch 1 zufällige korrekte Zelle in dieser Linie enthüllt. Abklingzeit: 3 Minuten.',
                     effect: { protectCount: 3, bonusReveal: true }
                 },
             ]
@@ -468,21 +468,21 @@ const ASCENDENCY_DEFS = {
             levels: [
                 {
                     level: 1,
-                    descEn: 'Plant a Residual Totem on a mistake cell. It fires a Revealing Beam every 20s to unfilled correct cells around it with radius 1. 3 Beam Charges. Cooldown: 2 minutes.',
-                    descDE: 'Setze ein Residual-Totem auf eine Fehlerzelle. Es feuert einen Enthüllungs-Strahl alle 20s auf ungefüllte Zellen um sich herum mit Radius 1 ab. 3 Ladungen. Abklingzeit: 2 Minuten.',
-                    effect: { beamRadius: 1, charges: 3, fires: 20 }
+                    descEn: 'Plant a Residual Totem on a mistake cell. It fires a Revealing Beam every 20s to unfilled correct cells around it with radius 1. 3 Beam Charges. Max. 1 Totem. Cooldown: 2 minutes.',
+                    descDE: 'Setze ein Residual-Totem auf eine Fehlerzelle. Es feuert einen Enthüllungs-Strahl alle 20s auf ungefüllte Zellen um sich herum mit Radius 1 ab. 3 Ladungen. Max. 1 Totem. Abklingzeit: 2 Minuten.',
+                    effect: { beamRadius: 1, charges: 3, fires: 20, maxTotems: 1 }
                 },
                 {
                     level: 2,
-                    descEn: 'Plant a Residual Totem on a mistake cell. It fires a Revealing Beam every 15s to unfilled correct cells around it with radius 2. 4 Beam Charges. Cooldown: 2 minutes.',
-                    descDE: 'Setze ein Residual-Totem auf eine Fehlerzelle. Es feuert einen Enthüllungs-Strahl alle 15s auf ungefüllte Zellen um sich herum mit Radius 2 ab. 4 Ladungen. Abklingzeit: 2 Minuten.',
-                    effect: { beamRadius: 2, charges: 3, fires: 15 }
+                    descEn: 'Plant a Residual Totem on a mistake cell. It fires a Revealing Beam every 15s to unfilled correct cells around it with radius 2. 4 Beam Charges. Max. 2 Totems. Cooldown: 2 minutes.',
+                    descDE: 'Setze ein Residual-Totem auf eine Fehlerzelle. Es feuert einen Enthüllungs-Strahl alle 15s auf ungefüllte Zellen um sich herum mit Radius 2 ab. 4 Ladungen. Max. 2 Totems. Abklingzeit: 2 Minuten.',
+                    effect: { beamRadius: 2, charges: 3, fires: 15, maxTotems: 2 }
                 },
                 {
                     level: 3,
-                    descEn: 'Plant a Residual Totem on a mistake cell. It fires a Revealing Beam every 10s to unfilled correct cells around it with radius 3. 6 Beam Charges. Cooldown: 2 minutes.',
-                    descDE: 'Setze ein Residual-Totem auf eine Fehlerzelle. Es feuert einen Enthüllungs-Strahl alle 10s auf ungefüllte Zellen um sich herum mit Radius 3 ab. 6 Ladungen. Abklingzeit: 2 Minuten.',
-                    effect: { beamRadius: 3, charges: 5, fires: 10 }
+                    descEn: 'Plant a Residual Totem on a mistake cell. It fires a Revealing Beam every 10s to unfilled correct cells around it with radius 3. 6 Beam Charges. Max. 3 Totems. Cooldown: 2 minutes.',
+                    descDE: 'Setze ein Residual-Totem auf eine Fehlerzelle. Es feuert einen Enthüllungs-Strahl alle 10s auf ungefüllte Zellen um sich herum mit Radius 3 ab. 6 Ladungen. Max. 3 Totems. Abklingzeit: 2 Minuten.',
+                    effect: { beamRadius: 3, charges: 5, fires: 10, maxTotems: 3 }
                 },
             ]
         },
@@ -537,20 +537,20 @@ const ASCENDENCY_DEFS = {
             levels: [
                 {
                     level: 1,
-                    descEn: 'Rollback window 10s. Timer rewinds 10s. Mistakes within the window are erased. Cooldown: 7 minutes.',
-                    descDE: 'Rücksetzfenster 10s. Timer spult 10s zurück. Fehler im Fenster werden gelöscht. Abklingzeit: 7 Minuten.',
+                    descEn: 'Rewind Time by 10 seconds, undoing fills, marks and mistakes. Cooldown: 7 minutes.',
+                    descDE: 'Setze die Zeit um 10 Sekunden zurück. Abklingzeit: 7 Minuten.',
                     effect: { windowSeconds: 10, rewindSeconds: 10, clearOldMistakes: false }
                 },
                 {
                     level: 2,
-                    descEn: 'Rollback window 20s. Timer rewinds 20s. Mistakes within the window are erased. Cooldown: 7 minutes.',
-                    descDE: 'Rücksetzfenster 20s. Timer spult 20s zurück. Fehler im Fenster werden gelöscht. Abklingzeit: 7 Minuten.',
+                    descEn: 'Rewind Time by 20 seconds, undoing fills, marks and mistakes. Cooldown: 7 minutes.',
+                    descDE: 'Setze die Zeit um 20 Sekunden zurück, wobei Füllungen, Markierungen und Fehler rückgängig gemacht werden. Abklingzeit: 7 Minuten.',
                     effect: { windowSeconds: 20, rewindSeconds: 20, clearOldMistakes: false }
                 },
                 {
                     level: 3,
-                    descEn: 'Rollback window 30s. Timer rewinds 30s. Also corrects mistake cells from before the window. Cooldown: 7 minutes.',
-                    descDE: 'Rücksetzfenster 30s. Timer spult 30s zurück. Korrigiert auch Fehlerzellen von vor dem Fenster. Abklingzeit: 7 Minuten.',
+                    descEn: 'Rewind Time by 30 seconds, undoing fills, marks and mistakes. Cooldown: 7 minutes.',
+                    descDE: 'Setze die Zeit um 30 Sekunden zurück, wobei Füllungen, Markierungen und Fehler rückgängig gemacht werden. Abklingzeit: 7 Minuten.',
                     effect: { windowSeconds: 30, rewindSeconds: 30, clearOldMistakes: true }
                 },
             ]
@@ -559,26 +559,26 @@ const ASCENDENCY_DEFS = {
         active2: {
             nameEn: 'Transition Matrix',
             nameDE: 'Übergangsmatrix',
-            descCursorEn: 'Enter Transition Mode — each correct fill may cascade to a neighbouring cell.',
-            descCursorDE: 'Betrete Übergangsmodus — jede korrekte Füllung kann auf eine benachbarte Zelle übertragen werden.',
+            descCursorEn: 'Enter Transition Mode - each correct fill may cascade to a neighbouring cell.',
+            descCursorDE: 'Betrete Übergangsmodus - jede korrekte Füllung kann auf eine benachbarte Zelle übertragen werden.',
             cooldownSeconds: 300,
             levels: [
                 {
                     level: 1,
-                    descEn: 'Active 10s. Each correct fill has a 25% chance to cascade to a random unfilled neighbour. Cooldown: 5 minutes.',
-                    descDE: 'Aktiv 10s. Jede korrekte Füllung hat 25% Chance, auf eine zufällige ungefüllte Nachbarzelle zu übertragen. Abklingzeit: 5 Minuten.',
+                    descEn: 'Enter the Matrix. Each correct fill has a 25% chance to cascade to a random unfilled neighbour. Lasts for 10 seconds. Cooldown: 5 minutes.',
+                    descDE: 'Betrete die Matrix. Jede korrekte Füllung hat 25% Chance, auf eine zufällige ungefüllte Nachbarzelle übertragen zu werden. Aktiv für 10 Sekunden. Abklingzeit: 5 Minuten.',
                     effect: { duration: 10000, cascadeChance: 0.25, maxDepth: 1 }
                 },
                 {
                     level: 2,
-                    descEn: 'Active 15s. Each correct fill has a 40% chance to cascade to a random unfilled neighbour. Cooldown: 5 minutes.',
-                    descDE: 'Aktiv 15s. Jede korrekte Füllung hat 40% Chance zur Übertragung. Abklingzeit: 5 Minuten.',
+                    descEn: 'Enter the Matrix. Each correct fill has a 40% chance to cascade to a random unfilled neighbour. Lasts for 15 seconds. Cooldown: 5 minutes.',
+                    descDE: 'Betrete die Matrix. Jede korrekte Füllung hat 40% Chance, auf eine zufällige ungefüllte Nachbarzelle übertragen zu werden. Aktiv für 15 Sekunden. Abklingzeit: 5 Minuten.',
                     effect: { duration: 15000, cascadeChance: 0.40, maxDepth: 1 }
                 },
                 {
                     level: 3,
-                    descEn: 'Active 20s. 50% cascade chance. Cascaded fills can themselves cascade once (max chain depth 2). Cooldown: 5 minutes.',
-                    descDE: 'Aktiv 20s. 50% Übertragungschance. Übertragende Füllungen können selbst einmal übertragen werden (max. Kettentiefe 2). Abklingzeit: 5 Minuten.',
+                    descEn: 'Enter the Matrix. Each correct fill has a 50% chance to cascade to a random unfilled neighbour. Cascaded fills can themselves cascade once (max chain depth 2). Lasts for 20 seconds. Cooldown: 5 minutes.',
+                    descDE: 'Betrete die Matrix. Jede korrekte Füllung hat 50% Chance, auf eine zufällige ungefüllte Nachbarzelle übertragen zu werden. Übertragende Füllungen können selbst einmal übertragen werden (max. Kettentiefe 2). Aktiv für 20 Sekunden. Abklingzeit: 5 Minuten.',
                     effect: { duration: 20000, cascadeChance: 0.50, maxDepth: 2 }
                 },
             ]
@@ -600,29 +600,38 @@ const ASCENDENCY_DEFS = {
         archetype: 'Trapper',
 
         active1: {
-            nameEn: 'Reject the Null',
-            nameDE: 'Nullhypothese ablehnen',
-            descCursorEn: 'Select a row or column — each correct ✕ mark reveals a correct cell in that line.',
-            descCursorDE: 'Wähle eine Zeile oder Spalte — jedes korrekte ✕ enthüllt eine korrekte Zelle in dieser Linie.',
+            nameEn: 'Bayes Traps',
+            nameDE: 'Bayes-Fallen',
+            descCursorEn: 'Choose and arm a specialized trap. Place it before the fuse expires or it detonates in your hands, reducing remaining time.',
+            descCursorDE: 'Wähle und aktiviere eine spezialisierte Falle. Platziere sie vor Ablauf der Zündschnur, sonst explodiert sie in deinen Händen und reduziert die verbleibende Zeit.',
             cooldownSeconds: 240,
             levels: [
                 {
                     level: 1,
-                    descEn: 'Select 1 row or column. Each correct ✕ in that line reveals 1 correct cell. Cooldown: 4 minutes.',
-                    descDE: 'Wähle 1 Zeile oder Spalte. Jedes korrekte ✕ enthüllt 1 korrekte Zelle. Abklingzeit: 4 Minuten.',
-                    effect: { lineCount: 1, revealsPerMark: 1 }
+                    descEn: 'Place a Reveal Trap onto the grid before its fuse expires. After a short delay, the trap activates automatically. Reveal Traps reveal nearby correct cells in a 1-step radius. Cooldown: 4 minutes.',
+                    descDE: 'Platziere eine Enthüllungsfalle auf dem Feld bevor Ablauf der Zündschnur. Nach kurzer Verzögerung aktiviert sich die Falle automatisch. Die Enthüllungsfalle deckt korrekte Zellen in einem 1-Schritt Radius auf. Abklingzeit: 4 Minuten.',
+                    effect: {
+                        trapCount: 1,
+                        availableTraps: ['reveal']
+                    }
                 },
                 {
                     level: 2,
-                    descEn: 'Select up to 2 rows or columns. Each correct ✕ reveals 1 correct cell. Cooldown: 4 minutes.',
-                    descDE: 'Wähle bis zu 2 Zeilen oder Spalten. Jedes korrekte ✕ enthüllt 1 korrekte Zelle. Abklingzeit: 4 Minuten.',
-                    effect: { lineCount: 2, revealsPerMark: 1 }
+                    descEn: 'Choose between Reveal Traps and Elimination Traps. Place 2 traps before the fuse expires or they detonate in your hands, reducing remaining Time. Reveal Traps reveal nearby correct cells in a 1-step radius. Elimination Traps mark incorrect empty cells horizontally and vertically up to 5 cells away. Cooldown: 4 minutes.',
+                    descDE: 'Wähle zwischen Enthüllungsfallen und Eliminierungsfallen. Platziere 2 Fallen vor Ablauf der Zündschnur, sonst explodieren sie in deinen Händen und reduzieren die verbleibende Zeit. Enthüllungsfallen decken nahe korrekte Zellen in einem 1-Schritt Radius auf. Eliminierungsfallen markieren falsche leere Zellen horizontal und vertikal bis zu 5 Zellen entfernt. Abklingzeit: 4 Minuten.',
+                    effect: {
+                        trapCount: 2,
+                        availableTraps: ['reveal', 'elimination']
+                    }
                 },
                 {
                     level: 3,
-                    descEn: 'Select up to 3 rows or columns. Each correct ✕ reveals 2 correct cells. Cooldown: 4 minutes.',
-                    descDE: 'Wähle bis zu 3 Zeilen oder Spalten. Jedes korrekte ✕ enthüllt 2 korrekte Zellen. Abklingzeit: 4 Minuten.',
-                    effect: { lineCount: 3, revealsPerMark: 2 }
+                    descEn: 'Choose between Reveal Traps, Elimination Traps and Protection Traps. Place 3 traps before the fuse expires or they detonate in your hands, reducing remaining Time. Reveal Traps reveal nearby correct cells in a 1-step radius. Elimination Traps mark incorrect empty cells horizontally and vertically up to 5 cells away. Protection Trap prevents mistake penalties on its row and column. Cooldown: 4 minutes.',
+                    descDE: 'Wähle zwischen Enthüllungsfallen, Eliminierungsfallen und Schutzfallen. Platziere 3 Fallen vor Ablauf der Zündschnur, sonst explodieren sie in deinen Händen und reduzieren die verbleibende Zeit. Enthüllungsfallen decken nahe korrekte Zellen in einem 1-Schritt radius auf. Eliminierungsfallen markieren falsche leere Zellen horizontal und vertikal bis zu 5 Zellen entfernt. Schutzfallen verhindern Fehlerstrafen in ihrer Zeile und Spalte. Abklingzeit: 4 Minuten.',
+                    effect: {
+                        trapCount: 3,
+                        availableTraps: ['reveal', 'elimination', 'protection']
+                    }
                 },
             ]
         },
@@ -630,8 +639,8 @@ const ASCENDENCY_DEFS = {
         active2: {
             nameEn: 'Type I Error Shield',
             nameDE: 'Typ-I-Fehlerschutz',
-            descCursorEn: 'Seeds random empty cells with invisible shields — accidental clicks auto-mark ✕ instead of counting as mistakes.',
-            descCursorDE: 'Versieht zufällige leere Zellen mit unsichtbaren Schilden — versehentliche Klicks markieren ✕ statt als Fehler zu zählen.',
+            descCursorEn: 'Seeds random empty cells with invisible shields - incorrectly revealing a shielded cell will protect you from the mistake.',
+            descCursorDE: 'Versieht zufällige leere Zellen mit unsichtbaren Schilden, die dich vor Fehlern schützen werden.',
             cooldownSeconds: 180,
             levels: [
                 {

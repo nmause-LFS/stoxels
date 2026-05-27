@@ -16,6 +16,10 @@ const Audio_Manager = (() => {
 
     let _lastBGMKey = '';
 
+    let _pendingResumeCleanup = null;
+
+    const _sfxInstances = {};
+
     // ── BGM Registry ─────────────────────────────────────────
     // Map track names to file paths.
     // Put your mp3 files in an /audio/ folder next to index.html.
@@ -300,6 +304,27 @@ const Audio_Manager = (() => {
         dofBurn: 'audio/sfx_dof_burn.mp3',
 
 
+        // Bayesian
+        bayesTrapSelect: 'audio/sfx_bayes_traps_select.mp3',
+        bayesTrapExplosion: 'audio/sfx_bayes_traps_explosion.mp3',
+        type1errorShieldBreak: 'audio/sfx_type1error_shield_break.mp3',
+        type1errorShieldHide: 'audio/sfx_type1error_shield_hide.mp3',
+
+
+        // Markovian
+        stateReversal: 'audio/sfx_state_reversal.mp3',
+        transitionMatrix: 'audio/sfx_transition_matrix.mp3',
+        transitionCascade: 'audio/sfx_transition_cascade.mp3',
+
+        // Outlaw
+        tailRiskResolve: 'audio/sfx_tail_risk_resolve.mp3',
+        tailRiskStart: 'audio/sfx_tail_risk_start.mp3',
+        speedforceEnter: 'audio/sfx_speedforce_enter.mp3',
+
+        // Actuary
+        holyHealing: 'audio/sfx_holy_healing.mp3',
+        holySpell: 'audio/sfx_holy_spell.mp3',
+
 
         // Achievements / milestones / quest milestones
         achievement: 'audio/sfx_achievement.mp3',
@@ -330,7 +355,13 @@ const Audio_Manager = (() => {
         const src = BGM_TRACKS[trackKey];
         if (!src) return;
         _lastBGMKey = trackKey;
-        if (currentBGMSrc === src && currentBGM && !currentBGM.paused) return; // already playing
+        if (currentBGMSrc === src && currentBGM && !currentBGM.paused) return;
+
+        // Cancel any pending autoplay-resume listener from a previous track
+        if (_pendingResumeCleanup) {
+            _pendingResumeCleanup();
+            _pendingResumeCleanup = null;
+        }
 
         stopBGM();
 
@@ -340,13 +371,17 @@ const Audio_Manager = (() => {
         currentBGM = audio;
         currentBGMSrc = src;
 
-        // Browsers block autoplay until the user has interacted.
-        // We catch the error silently — the music will start on the
-        // next user interaction if it can't play immediately.
         audio.play().catch(() => {
-            // Queue it to play on the next user interaction
             const resume = () => {
-                audio.play().catch(() => { });
+                // Only resume if this audio object is still the active one
+                if (currentBGM === audio) {
+                    audio.play().catch(() => { });
+                }
+                document.removeEventListener('click', resume);
+                document.removeEventListener('keydown', resume);
+                _pendingResumeCleanup = null;
+            };
+            _pendingResumeCleanup = () => {
                 document.removeEventListener('click', resume);
                 document.removeEventListener('keydown', resume);
             };
@@ -376,18 +411,28 @@ const Audio_Manager = (() => {
     }
 
 
-    // ── SFX ───────────────────────────────────────────────────
+    function stopSFX(key) {
+        const a = _sfxInstances[key];
+        if (!a) return;
+        a.pause();
+        a.currentTime = 0;
+        delete _sfxInstances[key];
+    }
 
+
+    // ── SFX ───────────────────────────────────────────────────
     function playSFX(key) {
         if (!sfxEnabled) return;
         const src = SFX[key];
         if (!src) return;
 
-        // Clone the cached Audio so the same sound can overlap itself
         const base = _sfxCache[key];
         const a = base ? base.cloneNode() : new Audio(src);
         a.volume = SFX_VOLUME;
         a.play().catch(() => { });
+
+        // Store last instance so it can be cancelled
+        _sfxInstances[key] = a;
     }
 
 
@@ -428,9 +473,8 @@ const Audio_Manager = (() => {
 
 
     // ── Public API ────────────────────────────────────────────
-
     return {
-        playBGM, stopBGM, playSFX, preload, trackForLevel,
+        playBGM, stopBGM, playSFX, stopSFX, preload, trackForLevel,
         toggleBGM, toggleSFX, setBGMVolume, setSFXVolume
     };
 

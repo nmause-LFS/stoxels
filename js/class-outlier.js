@@ -29,6 +29,8 @@ function _executeTailRisk(secondsPerCell, maxCells) {
 
     const actualMax = Math.min(maxCells, available);
     _tailRiskShowOverlay(secondsPerCell, actualMax, candidates);
+
+    Audio_Manager.playSFX('tailRiskStart');
 }
 
 function _tailRiskShowOverlay(secondsPerCell, maxCells, candidates) {
@@ -53,7 +55,7 @@ function _tailRiskShowOverlay(secondsPerCell, maxCells, candidates) {
 }
 
 function _tailRiskOverlayHTML(secondsPerCell, maxCells) {
-    const title = LANG === 'de' ? 'TAIL-RISIKO' : 'TAIL RISK';
+    const title = LANG === 'de' ? 'UNENDLICHER HUNGER' : 'INFINITE HUNGER';
     const prompt = LANG === 'de'
         ? `Wie viele Zellen willst du enthüllen? (Kosten: ${secondsPerCell}s pro Zelle)`
         : `How many cells to reveal? (Cost: ${secondsPerCell}s per cell)`;
@@ -65,12 +67,12 @@ function _tailRiskOverlayHTML(secondsPerCell, maxCells) {
             <div style="font-family:var(--PX); font-size:13px; color:#e74c3c; letter-spacing:2px; margin-bottom:12px;">
                 📈 ${title}
             </div>
-            <div style="font-family:var(--PX); font-size:10px; color:var(--accent2); margin-bottom:18px; line-height:1.8;">
+            <div style="font-family:var(--PX); font-size:15px; color:var(--accent2); margin-bottom:18px; line-height:1.8;">
                 ${prompt}
             </div>
             <div style="margin-bottom:18px;">
                 <input type="range" id="tr-slider" min="1" max="${maxCells}" value="1" style="width:80%;">
-                <div style="margin-top:8px; font-size:11px; color:#e74c3c;">
+                <div style="margin-top:15px; font-size:15px; color:#e74c3c;">
                     ${LANG === 'de' ? 'Kosten' : 'Cost'}: <span id="tr-cost">${secondsPerCell}</span>s
                 </div>
             </div>
@@ -80,7 +82,7 @@ function _tailRiskOverlayHTML(secondsPerCell, maxCells) {
                 </button>
             </div>
             <div style="margin-top:12px;">
-                <button onclick="_tailRiskCancel()" style="font-family:var(--PX); font-size:9px; background:transparent; border:1px solid #444; color:#555; padding:5px 14px; cursor:pointer; letter-spacing:1px;">
+                <button onclick="_tailRiskCancel()" style="font-family:var(--PX); font-size:15px; background:transparent; border:1px solid #444; color:#555; padding:5px 14px; cursor:pointer; letter-spacing:1px;">
                     ${cancelLabel}
                 </button>
             </div>
@@ -150,7 +152,7 @@ function _tailRiskResolve() {
     trackAchStat('tilesRevealed', revealedCount);
     showToast(`📈 Tail Risk: ${revealedCount} ${LANG === 'de' ? 'Zellen enthüllt' : 'cells revealed'} (-${totalCost}s)`);
 
-    if (window.Audio_Manager) Audio_Manager.playSFX('dataStrike'); // You can replace 'dataStrike' with a specific sound
+    Audio_Manager.playSFX('tailRiskResolve'); 
 
     checkWin();
 }
@@ -163,8 +165,10 @@ function _executeBlackSwan(durationMs) {
     window._blackSwanDurationMs = durationMs;
     window._blackSwanStartTime = Date.now();
 
-    showToast(LANG === 'de' ? '📉 Schwarzer Schwan aktiviert!' : '📉 Black Swan activated!');
-    if (window.Audio_Manager) Audio_Manager.playSFX('momentum');
+    Audio_Manager.stopBGM(300);  // 300ms fade out
+
+    showToast(LANG === 'de' ? '📉 BETRETE SPEEDFORCE' : '📉 ENTERING SPEEDFORCE');
+    Audio_Manager.playSFX('speedforceEnter');
 
     if (window._blackSwanTimeout) clearTimeout(window._blackSwanTimeout);
     if (window._blackSwanTickInterval) clearInterval(window._blackSwanTickInterval);
@@ -192,6 +196,8 @@ function _executeBlackSwan(durationMs) {
 function _endBlackSwan(natural = false) {
     window._blackSwanActive = false;
 
+    
+
     if (window._blackSwanTimeout) {
         clearTimeout(window._blackSwanTimeout);
         window._blackSwanTimeout = null;
@@ -205,9 +211,13 @@ function _endBlackSwan(natural = false) {
     _blackSwanRemoveBadge();
 
     if (natural) {
-        showToast(LANG === 'de' ? '📉 Schwarzer Schwan beendet!' : '📉 Black Swan ended!');
+        showToast(LANG === 'de' ? '📉 VERLASSE SPEEDFORCE' : '📉 LEAVING SPEEDFORCE');
         buildClassHUD();
     }
+
+    Audio_Manager.stopSFX('speedforceEnter');
+    // Resume BGM after leaving speedforce
+    Audio_Manager.toggleBGM(true);
 }
 
 // ─── HYPERSPEED OVERLAY ────────────────────────────────────────────────
@@ -223,7 +233,7 @@ function _blackSwanStartHyperspeed(durationMs) {
         'width:100%',
         'height:100%',
         'pointer-events:none',
-        'z-index:500',
+        'z-index:1',
         'opacity:0',
         'transition:opacity 0.4s ease-in',
     ].join(';');
@@ -236,7 +246,14 @@ function _blackSwanStartHyperspeed(durationMs) {
     canvas.height = window.innerHeight;
 
     const W = canvas.width, H = canvas.height;
-    const cx = W / 2, cy = H / 2;
+    let cx = W / 2, cy = H / 2;
+    const _gridEl = document.getElementById('ptable') || document.getElementById('puzzle-scaler-wrap');
+    if (_gridEl) {
+        const _r = _gridEl.getBoundingClientRect();
+        cx = _r.left + _r.width / 2;
+        cy = _r.top + _r.height / 2;
+    }
+
     const COLORS = ['#ffffff', '#e8ccff', '#c4a8ff', '#ff6b6b', '#ffd93d', '#6bcfff'];
     const stars = Array.from({ length: 180 }, () => _bswMakeStar(COLORS));
 
@@ -244,19 +261,40 @@ function _blackSwanStartHyperspeed(durationMs) {
     const startTime = performance.now();
     let animId;
 
+    // Cache grid rect once — recomputed only on resize, not every frame
+    let gridRect = null;
+    const _updateGridRect = () => {
+        const _g = document.getElementById('ptable') || document.getElementById('puzzle-scaler-wrap');
+        gridRect = _g ? _g.getBoundingClientRect() : null;
+    };
+    _updateGridRect();
+    const _origResize = canvas._onResize;
+    canvas._onResize = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        _updateGridRect();
+    };
+
     function draw(now) {
         const elapsed = now - startTime;
         const speedFactor = Math.min(elapsed / RAMP_MS, 1);
         const baseSpeed = 6 + speedFactor * 22;
         const cw = canvas.width, ch = canvas.height;
-
         ctx.clearRect(0, 0, cw, ch);
-
         const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(cw, ch) * 0.7);
         grad.addColorStop(0, 'rgba(0,0,0,0)');
         grad.addColorStop(1, 'rgba(0,0,0,0.45)');
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, cw, ch);
+
+        // Clip: draw streaks everywhere EXCEPT inside the grid rectangle (uses cached rect)
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, cw, ch);
+        if (gridRect) {
+            ctx.rect(gridRect.left, gridRect.top, gridRect.width, gridRect.height);
+        }
+        ctx.clip('evenodd');
 
         for (let i = 0; i < stars.length; i++) {
             const s = stars[i];
@@ -283,13 +321,18 @@ function _blackSwanStartHyperspeed(durationMs) {
             }
         }
 
+        ctx.restore();
         animId = requestAnimationFrame(draw);
+        canvas._animId = animId;  // keep _animId in sync so cancelAnimationFrame works
     }
 
-    animId = requestAnimationFrame(draw);
-    canvas._animId = animId;
+    animId = requestAnimationFrame(draw);  // actually start the animation
 
-    canvas._onResize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+    canvas._onResize = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        _updateGridRect();
+    };
     window.addEventListener('resize', canvas._onResize);
 
     canvas._stopTimeout = setTimeout(() => _blackSwanFadeOutHyperspeed(), Math.max(0, durationMs - 500));

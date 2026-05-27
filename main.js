@@ -1,17 +1,4 @@
-﻿// ═══════════════════════════════════════════════
-//  MAIN  (main.js)
-//  This is the entry point — the last script
-//  loaded by index.html. By the time it runs,
-//  every other module is already defined.
-//  It is intentionally kept small: only global
-//  bootstrap calls and document-level event
-//  listeners live here.
-// ═══════════════════════════════════════════════
-
-// Set the initial UI language to English.
-// This also triggers setLang() in translations.js which:
-//   - marks the EN button as active
-//   - fills every [data-t] element with its translated text
+﻿
 setLang('en');
 
 // Global mouseup listener — ends any paint stroke that started inside the
@@ -42,6 +29,10 @@ window.addEventListener('resize', () => {
 //      (defined in ui.js) to return to the previous screen
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
+
+        if (typeof _bayesTrapsCleanup === "function") {
+            _bayesTrapsCleanup(false);
+        }
         if (typeof clearActiveRandomWalkers === "function") {
             clearActiveRandomWalkers();
         }
@@ -78,7 +69,7 @@ function _startTitleMusic() {
 }
 
 document.addEventListener('click', _startTitleMusic, { once: true });
-document.addEventListener('keydown', _startTitleMusic, { once: true });
+
 
 
 initSettingsControls();   // wire the settings modal controls

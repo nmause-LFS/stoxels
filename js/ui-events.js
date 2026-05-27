@@ -80,6 +80,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof clearActiveRandomWalkers === "function") {
             clearActiveRandomWalkers();
         }
+        if (typeof _bayesTrapsCleanup === "function") {
+            _bayesTrapsCleanup(false);
+        }
+        if (typeof _endBlackSwan === "function") {
+            _endBlackSwan(false);
+        }
+
         goLevels();
     });
 
@@ -99,10 +106,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     onClick('btn-next-lvl', () => nextLvl());
     onClick('btn-win-retry', () => replayLvl());
-    onClick('btn-win-levels', () => goLevels());
 
-    onClick('btn-lose-retry', () => replayLvl());
-    onClick('btn-lose-levels', () => goLevels());
+
+    onClick('btn-win-levels', () => { if (typeof _endBlackSwan === "function") _endBlackSwan(false); goLevels(); });
+    onClick('btn-win-retry', () => { if (typeof _endBlackSwan === "function") _endBlackSwan(false); replayLvl(); });
+
+    onClick('btn-lose-retry', () => { if (typeof _endBlackSwan === "function") _endBlackSwan(false); replayLvl(); });
+    onClick('btn-lose-levels', () => { if (typeof _endBlackSwan === "function") _endBlackSwan(false); goLevels(); });
 
 
     // ── Quiz overlay ─────────────────────────────────────────

@@ -124,7 +124,7 @@ function _questStats_trackActivePTNodes(inc) {
     if (!hasPTSkill) return;
 
     const trackedNodes = [
-        'lucky_drops', 'tutor_enable', 'celerity',
+        'lucky_drops', 'tutor_enable',
         'keystone_apex_collector', 'keystone_curse_embrace',
         'keystone_iron_doctrine', 'keystone_countdown_crisis',
     ];

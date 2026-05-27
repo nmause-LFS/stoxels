@@ -133,8 +133,53 @@ function renderCompactHUD(def) {
             ${renderCompactActiveBtn(def, 'active2')}
             ${STATE.playerAscendency ? renderAscendencyButtons() : ''}
             ${shieldPips}
-        </div>`;
+        </div>
+        ${STATE.playerClass === 'statistician' ? '<div id="chud-momentum-bar-wrap"><div id="chud-momentum-bar"></div><span id="chud-momentum-count"></span></div>' : ''}`;
 }
+
+
+function updateMomentumBar(streak, threshold) {
+    const handle = document.getElementById('class-hud-drag-handle');
+    if (!handle) return;
+
+    let count = document.getElementById('chud-momentum-count');
+    if (!count) {
+        count = document.createElement('span');
+        count.id = 'chud-momentum-count';
+        count.style.cssText = 'font-family:var(--PX,monospace); font-size:15px; font-weight:bold; min-width:14px; text-align:center;';
+        handle.appendChild(count);
+    }
+
+    const pct = Math.min(streak / threshold, 1);
+
+    if (streak === 0) {
+        // Trigger reset flash then clear
+        handle.classList.add('chud-momentum-reset');
+        handle.style.removeProperty('--mom-color');
+        handle.style.removeProperty('--mom-glow');
+        handle.style.removeProperty('--mom-border');
+        count.textContent = '';
+        setTimeout(() => handle.classList.remove('chud-momentum-reset'), 400);
+        return;
+    }
+
+    // Colour shifts: dark red → vivid red → orange-red near threshold
+    const g = Math.round(30 + 60 * (1 - pct));
+    const col = `rgb(220,${g},40)`;
+    const glowSize = 2 + pct * 10;         // 2px → 12px spread
+    const glowOpacity = 0.3 + pct * 0.65;  // 0.3 → 0.95
+    const borderWidth = 1 + Math.round(pct * 2); // 1px → 3px
+
+    handle.style.setProperty('--mom-color', col);
+    handle.style.setProperty('--mom-glow', `0 0 ${glowSize}px rgba(220,${g},40,${glowOpacity}), inset 0 0 ${glowSize * 0.6}px rgba(220,${g},40,${glowOpacity * 0.3})`);
+    handle.style.setProperty('--mom-border', `${borderWidth}px solid ${col}`);
+    handle.classList.add('chud-has-momentum');
+    handle.classList.remove('chud-momentum-reset');
+
+    count.textContent = streak;
+    count.style.color = col;
+}
+
 
 // Renders shield stack pip indicators for Variance Shield
 function _renderShieldPips(stacks) {
@@ -288,6 +333,8 @@ function buildClassHUD() {
     const panel = document.getElementById('class-hud-panel');
     if (!panel) return;
 
+    hideHUDTooltip();
+
     if (!STATE.playerClass || isClassless()) {
         panel.innerHTML = '';
         panel.style.display = 'none';
@@ -417,6 +464,29 @@ function injectCompactHUDStyles(def) {
             font-variant-numeric: tabular-nums;
             letter-spacing: .03em;
         }
+
+        #class-hud-drag-handle.chud-has-momentum {
+            border: var(--mom-border, 1px solid rgba(255,255,255,0.12));
+            box-shadow: var(--mom-glow, 0 2px 12px rgba(0,0,0,0.5));
+            transition: border .2s, box-shadow .2s;
+        }
+
+        #class-hud-drag-handle.chud-momentum-reset {
+            border: 1px solid rgba(255,255,255,0.12) !important;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.5) !important;
+            transition: border .15s, box-shadow .15s;
+        }
+
+        #chud-momentum-count {
+            font-family: var(--PX, monospace);
+            font-size: 13px;
+            font-weight: bold;
+            min-width: 14px;
+            text-align: center;
+            line-height: 1;
+        }
+
+
     `;
     document.head.appendChild(s);
 }

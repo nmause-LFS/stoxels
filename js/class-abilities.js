@@ -146,6 +146,13 @@ function _isInstantAbility(slot) {
         if (slot === 'active3') return true; // State Rollback — instant (no cell click)
         if (slot === 'active4') return true; // Transition Matrix — instant
     }
+
+    if (STATE.playerAscendency === 'bayesian') {
+        if (slot === 'active3') return true; // Bayes Traps (Opens UI immediately)
+        if (slot === 'active4') return true; // Type I Error Shield (Auto-seeds immediately)
+    }
+
+    if (STATE.playerAscendency === 'outlier' && slot === 'active3') return true; // Tail Risk — instant
     if (slot !== 'active4') return false;
     return STATE.playerAscendency === 'outlier' || STATE.playerAscendency === 'recursionist';
 }
@@ -191,32 +198,10 @@ function _fireInstantAbility(slot) {
 
 
 
-/*
-
-function _fireInstantAbility(slot) {
-    const asc = STATE.playerAscendency ? ASCENDENCY_DEFS[STATE.playerAscendency] : null;
-    if (!asc) return;
-
-    const ascSlot = slot === 'active3' ? 'active1' : 'active2';
-    const skillLv = ascSlot === 'active1'
-        ? (STATE.ascendencySkill1Level || 1)
-        : (STATE.ascendencySkill2Level || 1);
-    const actData = asc[ascSlot].levels[skillLv - 1];
-    const effect = actData.effect;
-
-    _dispatchAscendencyAbility(slot, STATE.playerAscendency, 0, 0, effect);
-
-    const cdSeconds = getEffectiveCooldown(slot, asc[ascSlot].cooldownSeconds);
-    startSlotCooldown(slot, cdSeconds);
-
-    buildClassHUD();
-}
-
-*/
 
 
 // _showAbilityArmToast — shows the cursor hint toast for the given ability slot.
-// NEW:
+
 function _showAbilityArmToast(slot) {
     let activeData = null;
     if (slot === 'active3' || slot === 'active4') {
@@ -233,13 +218,13 @@ function _showAbilityArmToast(slot) {
     showToast(`🎯 ${msg}`);
 }
 
+
+
 // executeActiveAbility — called when the player clicks a grid cell
 //   while activeAbilityMode is true. Dispatches to the correct class ability.
 function executeActiveAbility(row, col) {
     if (!activeAbilityMode || !STATE.playerClass || dead) return;
     if (isClassless()) { _setAbilityMode(false); return; }
-
-    _setAbilityMode(false);
 
     const activeKey = STATE.classActiveChoice || 'active1';
 
@@ -254,12 +239,34 @@ function executeActiveAbility(row, col) {
         const actData = asc[ascSlot].levels[skillLv - 1];
         const effect = actData.effect;
 
+        // Route and fire the ability
         _dispatchAscendencyAbility(activeKey, STATE.playerAscendency, row, col, effect);
 
-        const cdSeconds = getEffectiveCooldown(activeKey, asc[ascSlot].cooldownSeconds);
-        startSlotCooldown(activeKey, cdSeconds);
+        // Recursionist Residual special case: placing totems doesn't start cooldown until max totems are placed, so keep the mode active and skip starting cooldown for now
+        if (STATE.playerAscendency === 'recursionist' && ascSlot === 'active1') {
+            const maxTotemsAllowed = effect.maxTotems || 1;
+            const currentTotems = (window._residualTotems || []).length;
+
+            if (currentTotems >= maxTotemsAllowed) {
+                // At maximum capacity: finalize deployment and begin cooldown
+                _setAbilityMode(false);
+                const cdSeconds = getEffectiveCooldown(activeKey, asc[ascSlot].cooldownSeconds);
+                startSlotCooldown(activeKey, cdSeconds);
+                showToast('💀 All active totems deployed.');
+            } else {
+                // Keep selection mode active and bypass starting the cooldown
+                const remaining = maxTotemsAllowed - currentTotems;
+                showToast(`💀 Totem placed! Click another mistake cell to place another. (${remaining} left)`);
+            }
+        } else {
+            // Default behavior for all other standard targeted ascendency skills
+            _setAbilityMode(false);
+            const cdSeconds = getEffectiveCooldown(activeKey, asc[ascSlot].cooldownSeconds);
+            startSlotCooldown(activeKey, cdSeconds);
+        }
     } else {
-        // Base class skill
+        // Base class skill behavior (remains completely unchanged)
+        _setAbilityMode(false);
         const def = CLASS_DEFS[STATE.playerClass];
         const actData = _getActiveAbilityData(def, activeKey);
         const effect = actData.effect;
@@ -273,6 +280,8 @@ function executeActiveAbility(row, col) {
     buildClassHUD();
 }
 
+
+
 // _dispatchActiveAbility — routes to the correct ability function and tracks achievement stats.
 function _dispatchActiveAbility(activeKey, playerClass, row, col, effect) {
     if (activeKey === 'active1') {
@@ -282,11 +291,11 @@ function _dispatchActiveAbility(activeKey, playerClass, row, col, effect) {
                 trackAchStat('skillArcaneRevealUsed');
                 break;
             case 'statistician':
-                _executeDataStrike(effect.solveCount);
+                _executeDataStrike(effect.solveCount, effect.revealCap || 5);
                 trackAchStat('skillDataStrikeUsed');
                 break;
-            case 'probabilist':
-                _executePrecisionMark(row, col, effect.extraLines);
+            case 'statistician':
+                _executeDiagonalStrike(row, col, effect.diagonals, effect.revealCap || 5);
                 trackAchStat('skillPrecisionMarkUsed');
                 break;
         }
@@ -356,8 +365,13 @@ function _dispatchAscendencyAbility(hudSlot, ascendency, row, col, effect) {
             }
             break;
         case 'bayesian':
-            if (ascSlot === 'active1') { /* TODO: Reject the Null */ showToast('🧪 Reject the Null — coming soon!'); }
-            else { /* TODO: Type I Error Shield */ showToast('🧪 Type I Error Shield — coming soon!'); }
+            if (ascSlot === 'active1') {
+                _executeBayesTraps(effect.trapCount, effect.availableTraps);
+                trackAchStat('skillAscendencyUsed');
+            } else {
+                _executeTypeIShield(effect.seedCount, effect.bonusReveal);
+                trackAchStat('skillAscendencyUsed');
+            }
             break;
         // 
         case 'random_walker':
@@ -374,271 +388,6 @@ function _dispatchAscendencyAbility(hudSlot, ascendency, row, col, effect) {
 
 
 
-
-
-//------------------------------------------------------------------------
-//-----------------STATISTICIAN-------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-
-// Data Strike
-
-
-// _executeDataStrike — shows a choice popup so the player can pick rows or columns,
-//   then solves N random unsolved lines of that type.
-function _executeDataStrike(count) {
-    _dataStrikeShowOverlay(count);
-    window._dataStrikePendingCount = count;
-}
-
-// _dataStrikeShowOverlay — builds and appends the rows/cols choice modal.
-function _dataStrikeShowOverlay(count) {
-    const overlay = document.createElement('div');
-    overlay.id = 'data-strike-overlay';
-    overlay.className = 'modal-bg show';
-    overlay.style.cssText = 'z-index:3000;';
-    overlay.innerHTML = _dataStrikeOverlayHTML(count);
-    document.body.appendChild(overlay);
-}
-
-// _dataStrikeOverlayHTML — returns the inner HTML string for the Data Strike modal.
-function _dataStrikeOverlayHTML(count) {
-    const title = LANG === 'de' ? 'DATENHIEB' : 'DATA STRIKE';
-    const prompt = LANG === 'de'
-        ? `Wähle: ${count} zufällige Zeile(n) oder Spalte(n) sofort lösen?`
-        : `Choose: solve ${count} random row(s) or column(s)?`;
-    const rowLabel = LANG === 'de' ? '▶ ZEILEN' : '▶ ROWS';
-    const colLabel = LANG === 'de' ? '▶ SPALTEN' : '▶ COLS';
-    const cancelLabel = LANG === 'de' ? 'ABBRECHEN' : 'CANCEL';
-
-    return `
-        <div class="modal-box" style="text-align:center; border-left: 4px solid #e74c3c; max-width: 320px;">
-            <div style="font-family:var(--PX); font-size:13px; color:#e74c3c; letter-spacing:2px; margin-bottom:12px;">
-                ⚔️ ${title}
-            </div>
-            <div style="font-family:var(--PX); font-size:10px; color:var(--accent2); margin-bottom:18px; line-height:1.8;">
-                ${prompt}
-            </div>
-            <div style="display:flex; gap:12px; justify-content:center;">
-                <button onclick="_dataStrikeResolve('rows')" style="font-family:var(--PX); font-size:10px; background:transparent; border:1px solid #e74c3c; color:#e74c3c; padding:8px 18px; cursor:pointer; letter-spacing:1px;">
-                    ${rowLabel}
-                </button>
-                <button onclick="_dataStrikeResolve('cols')" style="font-family:var(--PX); font-size:10px; background:transparent; border:1px solid #e74c3c; color:#e74c3c; padding:8px 18px; cursor:pointer; letter-spacing:1px;">
-                    ${colLabel}
-                </button>
-            </div>
-            <div style="margin-top:12px;">
-                <button onclick="_dataStrikeCancel()" style="font-family:var(--PX); font-size:9px; background:transparent; border:1px solid #444; color:#555; padding:5px 14px; cursor:pointer; letter-spacing:1px;">
-                    ${cancelLabel}
-                </button>
-            </div>
-        </div>`;
-}
-
-// _dataStrikeRemoveOverlay — removes the Data Strike modal from the DOM.
-function _dataStrikeRemoveOverlay() {
-
-    Audio_Manager.playSFX('dataStrike');
-    const overlay = document.getElementById('data-strike-overlay');
-    if (overlay) overlay.remove();
-}
-
-// _dataStrikeResolve — called by modal buttons; solves the chosen line type.
-// Respects passive tree nodes: monte_carlo, correlation_matrix,
-// advanced_data_strike, god_of_statistics.
-function _dataStrikeResolve(type) {
-    _dataStrikeRemoveOverlay();
-
-    let count = window._dataStrikePendingCount || 1;
-    window._dataStrikePendingCount = null;
-
-    // god_of_statistics: each Data Strike beyond the first this level gets +1 extra solve
-    if (ptHasSkill('god_of_statistics')) {
-        const uses = window._dataStrikeUsesThisLevel || 0;
-        if (uses > 0) count += uses;
-    }
-    window._dataStrikeUsesThisLevel = (window._dataStrikeUsesThisLevel || 0) + 1;
-
-    // Each node below gives an independent 25% chance at one extra solve
-    let extraChances = 0;
-    if (ptHasSkill('monte_carlo')) extraChances++;
-    if (ptHasSkill('correlation_matrix')) extraChances++;
-    if (ptHasSkill('advanced_data_strike')) extraChances++;
-    // god_of_statistics contributes an effective 50% (= two independent 25% rolls)
-    if (ptHasSkill('god_of_statistics')) extraChances += 2;
-    for (let i = 0; i < extraChances; i++) {
-        if (Math.random() < 0.25) count++;
-    }
-
-    const solved = type === 'rows' ? solveRows(count) : solveCols(count);
-    const typeName = type === 'rows'
-        ? (LANG === 'de' ? 'Zeile(n)' : 'row(s)')
-        : (LANG === 'de' ? 'Spalte(n)' : 'col(s)');
-
-    _playSlashEffect(type === 'cols');
-    showToast(`⚔️ ${solved} ${typeName} ${LANG === 'de' ? 'gelöst!' : 'solved!'}`);
-    if (solved > 0) checkWin();
-}
-
-// _dataStrikeCancel — called by the Cancel button; closes modal and refunds cooldown.
-function _dataStrikeCancel() {
-    _dataStrikeRemoveOverlay();
-    window._dataStrikePendingCount = null;
-
-    _setAbilityMode(false);
-    STATE.classActiveChoice = 'active1';
-
-    // Refund the cooldown — it was started in executeActiveAbility before the modal opened
-    const cd = cooldownState['active1'];
-    if (cd.interval) { clearInterval(cd.interval); cd.interval = null; }
-    cd.remaining = 0;
-
-    buildClassHUD();
-    showToast(LANG === 'de' ? '⚔️ Abgebrochen.' : '⚔️ Cancelled.');
-}
-
-
-
-// Diagonal Strike
-
-
-// _executeDiagonalStrike — resolves cells along diagonal directions through (row, col).
-// Respects passive tree nodes: diagonally_wrong, random_diagonal,
-// diagonal_witch, god_of_statistics.
-function _executeDiagonalStrike(row, col, diagonalCount) {
-
-    Audio_Manager.playSFX('diagonalStrike');
-
-    if (!cur) return;
-    const sol = cur.grid;
-    const rows = sol.length, cols = sol[0].length;
-    const affected = [];
-
-    _diagonalStrikeWalkDiagonals(row, col, diagonalCount, rows, cols, sol, affected);
-    _diagonalStrikeProcessCell(row, col, sol, affected);
-
-    if (diagonalCount >= 4) {
-        _diagonalStrikeProcessRow(row, cols, sol, affected);
-        _diagonalStrikeProcessCol(col, rows, sol, affected);
-    }
-
-    // diagonally_wrong: mark incorrectly-filled cells along the strike path
-    if (ptHasSkill('diagonally_wrong')) {
-        _diagonalStrikeMarkWrong(affected, sol);
-    }
-
-    _playDiagonalSlashEffect(row, col, diagonalCount);
-    _applyCellEffect(affected, 'reveal');
-    if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
-
-    const diagRevealed = _filterRevealedIds(affected, sol).length;
-    if (diagRevealed > 0) trackAchStat('tilesRevealed', diagRevealed);
-
-    showToast(`⚔️ Diagonal Strike! ${affected.length} cell(s) affected.`);
-
-    // Repeat chances — each node is an independent 25% roll
-    // god_of_statistics gives 50% effective = two independent 25% rolls
-    let repeatChances = 0;
-    if (ptHasSkill('random_diagonal')) repeatChances++;
-    if (ptHasSkill('diagonal_witch')) repeatChances++;
-    if (ptHasSkill('god_of_statistics')) repeatChances += 2;
-    for (let i = 0; i < repeatChances; i++) {
-        if (Math.random() < 0.25) {
-            _diagonalStrikeBonusRepeat(diagonalCount, rows, cols, sol);
-        }
-    }
-
-
-
-    checkWin();
-}
-
-// _diagonalStrikeWalkDiagonals — walks all diagonal directions and resolves each cell.
-// AFTER:
-function _diagonalStrikeWalkDiagonals(row, col, diagonalCount, rows, cols, sol, affected) {
-    const allDirs = [
-        [[1, 1], [-1, -1]],
-        [[1, -1], [-1, 1]],
-    ];
-    const dirs = allDirs.slice(0, Math.min(diagonalCount, 2));
-    const resolver = ptHasSkill('diagonally_wrong') ? _resolveCell : _revealFilledCell;
-
-    dirs.forEach(pair => {
-        pair.forEach(([dr, dc]) => {
-            let r = row + dr, c = col + dc;
-            while (r >= 0 && r < rows && c >= 0 && c < cols) {
-                const id = resolver(r, c, sol);
-                if (id) affected.push(id);
-                r += dr; c += dc;
-            }
-        });
-    });
-}
-
-// _diagonalStrikeProcessCell — resolves the originally clicked cell itself.
-function _diagonalStrikeProcessCell(row, col, sol, affected) {
-    const resolver = ptHasSkill('diagonally_wrong') ? _resolveCell : _revealFilledCell;
-    const id = resolver(row, col, sol);
-    if (id) affected.push(id);
-}
-
-function _diagonalStrikeProcessRow(row, cols, sol, affected) {
-    const resolver = ptHasSkill('diagonally_wrong') ? _resolveCell : _revealFilledCell;
-    for (let c = 0; c < cols; c++) {
-        const id = resolver(row, c, sol);
-        if (id) affected.push(id);
-    }
-}
-
-function _diagonalStrikeProcessCol(col, rows, sol, affected) {
-    const resolver = ptHasSkill('diagonally_wrong') ? _resolveCell : _revealFilledCell;
-    for (let r = 0; r < rows; r++) {
-        const id = resolver(r, col, sol);
-        if (id) affected.push(id);
-    }
-}
-
-
-
-// _diagonalStrikeMarkWrong — marks wrongly-filled cells (user filled but should be empty)
-// along the already-computed affected path. Used by the 'diagonally_wrong' node.
-function _diagonalStrikeMarkWrong(affected, sol) {
-    affected.forEach(id => {
-        const [, r, c] = id.split('-').map(Number);
-        if (sol[r][c] === 0 && userGrid[r][c] === 1) {
-            userGrid[r][c] = 3; // wrong-mark state
-            renderCell(r, c);
-        }
-    });
-}
-
-// _diagonalStrikeBonusRepeat — fires a Diagonal Strike on a random unrevealed filled cell.
-// Used by random_diagonal / diagonal_witch / god_of_statistics.
-function _diagonalStrikeBonusRepeat(diagonalCount, rows, cols, sol) {
-    const candidates = [];
-    for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-            if (sol[r][c] === 1 && !revealedGrid[r][c]) candidates.push([r, c]);
-        }
-    }
-    if (!candidates.length) return;
-    const [r, c] = candidates[Math.floor(Math.random() * candidates.length)];
-
-    const bonusAffected = [];
-    _diagonalStrikeWalkDiagonals(r, c, diagonalCount, rows, cols, sol, bonusAffected);
-    _diagonalStrikeProcessCell(r, c, sol, bonusAffected);
-    if (diagonalCount >= 4) {
-        _diagonalStrikeProcessRow(r, cols, sol, bonusAffected);
-        _diagonalStrikeProcessCol(c, rows, sol, bonusAffected);
-    }
-
-    if (ptHasSkill('diagonally_wrong')) _diagonalStrikeMarkWrong(bonusAffected, sol);
-
-    _applyCellEffect(bonusAffected, 'reveal');
-    if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
-    showToast(`⚔️ Bonus Strike! ${bonusAffected.length} more cell(s)!`);
-}
 
 
 
@@ -1007,7 +756,7 @@ function _fieldScanRestore(scanned, prevStates) {
         }
     });
     scanned.forEach(el => el.classList.remove('scan-reveal'));
-    showToast('🎯 Scan faded — play from memory!');
+    showToast('🎯 Scan faded');
     buildClassHUD();
 }
 
@@ -1063,6 +812,7 @@ function _bayesianRevealOneCell() {
 //   to apply the passive effect before play begins.
 function applyClassPassiveOnLevelStart() {
     correctFillStreak = 0;
+    updateMomentumBar(0, 15);
     nextPenaltyHalved = false;
     window._momentumThisLevel = 0;
     window._dataStrikeUsesThisLevel = 0;
@@ -1071,6 +821,11 @@ function applyClassPassiveOnLevelStart() {
     window._goldenClockMistakesLeft = null;
     window._cursedImmune = false;
     window._shieldExtraCharges = 0;
+
+    window._bayesTrapsState = null;
+    window._typeIShieldedCells = new Set();
+    window._typeIBonusReveal = false;
+    window._bayesTrapProtectedLines = new Set();
 
     if (typeof resetRecursionistState === 'function') resetRecursionistState();
     if (typeof resetMarkovianState === 'function') resetMarkovianState();
@@ -1115,8 +870,8 @@ function getClassPenaltyMultiplier() {
     // Black Swan active mistake modifier
     if (window._blackSwanActive) {
         _endBlackSwan(false); // Ends unnatural
-        showToast(LANG === 'de' ? '📉 Schwan abgebrochen (3x Strafe)!' : '📉 Swan broken (3x Penalty)!');
-        return 3.0;
+        showToast(LANG === 'de' ? '📉 SPEEDFORCE abgebrochen!' : '📉 SPEEDFORCE broken!');
+        return 5.0;
     }
 
 
@@ -1201,61 +956,47 @@ function onCorrectFill(row, col) {
 
 
 
-    correctFillStreak++;
     if (window._blackSwanActive) {
         // Black Swan triggers Momentum on EVERY correct fill
         _statisticianTriggerMomentum(effect.bonusSeconds);
+        updateMomentumBar(correctFillStreak, effect.streakForBonus);
     } else {
         correctFillStreak++;
         if (correctFillStreak >= effect.streakForBonus) {
             _statisticianTriggerMomentum(effect.bonusSeconds);
+            // streak was reset to 0 inside triggerMomentum — bar will be called by onMistake-style reset below
+        } else {
+            updateMomentumBar(correctFillStreak, effect.streakForBonus);
         }
     }
 
+
+
 }
 
-// _statisticianTriggerMomentum — awards bonus time and tracks momentum achievements.
-// Respects passive tree nodes: chain_reaction, precise_momentum,
-// exponential_growth, god_of_statistics.
-function _statisticianTriggerMomentum(bonusSeconds) {
-    correctFillStreak = 0;
 
-    let bonus = bonusSeconds;
-    if (ptHasSkill('chain_reaction')) bonus += 2;
-    if (ptHasSkill('precise_momentum')) bonus += 3;
-
-    // exponential_growth: each prior Momentum this level adds +1s
-    if (ptHasSkill('exponential_growth')) {
-        bonus += (window._momentumThisLevel || 0);
-    }
-
-    // god_of_statistics doubles the total Momentum bonus
-    if (ptHasSkill('god_of_statistics')) bonus *= 2;
-
-    timerSecs = Math.min(timerSecs + bonus, 3600);
-    updTimer();
-    showToast(`⚔️ Momentum! +${bonus}s`);
-    trackAchStat('timeAdded', bonus);
-    trackAchStat('momentumTriggered');
-    updateQuestStats('momentumTriggered', {});
-
-    window._momentumThisLevel = (window._momentumThisLevel || 0) + 1;
-    if (window._momentumThisLevel === 3) trackAchStat('statistician3MomentumOneLevel');
-
-    Audio_Manager.playSFX('momentum');
-}
 
 // onMistake — called on any wrong fill.
 // Resets or reduces the Statistician streak depending on passive tree nodes.
+// AFTER
 function onMistake() {
     if (STATE.playerClass === 'statistician' && !isClassless()) {
-        let reduction = 0;
-        if (ptHasSkill('learning_from_mistakes')) reduction += 3;
-        if (ptHasSkill('mistakes_no_matter')) reduction += 3;
-        if (reduction > 0) {
+        const effect = _getPassiveEffect();
+        const threshold = effect.streakForBonus || 15;
+        const hasLFM = ptHasSkill('learning_from_mistakes');
+        const hasMNM = ptHasSkill('mistakes_no_matter');
+
+        if (hasLFM || hasMNM) {
+            // Both together: -10. Either alone: -12.
+            const reduction = (hasLFM && hasMNM) ? 10 : 12;
             correctFillStreak = Math.max(0, correctFillStreak - reduction);
+            updateMomentumBar(correctFillStreak, threshold);
             return;
         }
+
+        correctFillStreak = 0;
+        updateMomentumBar(0, threshold);
+        return;
     }
     correctFillStreak = 0;
 }

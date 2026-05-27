@@ -30,6 +30,12 @@ function ac(row, col) {
         return;
     }
 
+    // BAYESIAN: Trap Placement Intercept
+    if (typeof _bayesTrapPlacementClick === 'function' && _bayesTrapPlacementClick(row, col)) {
+        return;
+    }
+
+
 
     if (activeAbilityMode) {
         if (pval === 1 || mbtn === 0) {
@@ -52,6 +58,10 @@ function ac(row, col) {
         if (cur.grid[row][col] !== 1) {
             // Significance Threshold: intercept before any penalty logic
             if (_sigThresholdIntercept(row, col)) return;
+
+            // BAYESIAN: Mistake Prevention Intercepts
+            if (typeof _typeIShieldIntercept === 'function' && _typeIShieldIntercept(row, col)) return;
+            if (typeof _bayesTrapProtectionIntercept === 'function' && _bayesTrapProtectionIntercept(row, col)) return;
 
             if (window._freezeActive) {
                 // During freeze: mistake is cosmetically marked but costs zero time

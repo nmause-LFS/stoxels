@@ -160,7 +160,7 @@ function _executeStateRollback(windowSeconds, rewindSeconds, clearOldMistakes) {
         ? `Zustandsrücksetzer! ${approxSecs}s zurückgespult. +${rewindSeconds}s Zeit.`
         : `State Rollback! Rewound ~${approxSecs}s. +${rewindSeconds}s added.`}`);
 
-    Audio_Manager.playSFX('absoluteZero'); // reuse freeze sound — temporal feel
+    Audio_Manager.playSFX('stateReversal'); 
 
     checkWin();
 }
@@ -179,7 +179,6 @@ function _rollbackCancel(silent = false) {
 
 
 function _rollbackPlayVFX(rows, cols) {
-    Audio_Manager.playSFX('absoluteZero');
 
     const DURATION = 2200;
 
@@ -390,7 +389,7 @@ function _executeTransitionMatrix(durationMs, cascadeChance, maxDepth) {
         ? `⏳ Übergangsmatrix aktiviert! ${secs}s — ${Math.round(cascadeChance * 100)}% Kettenreaktion.`
         : `⏳ Transition Matrix active! ${secs}s — ${Math.round(cascadeChance * 100)}% cascade chance.`);
 
-    Audio_Manager.playSFX('momentum');
+    Audio_Manager.playSFX('transitionMatrix');
 
     // ── Start the background overlay ──────────────────────────────
     _transitionMatrixStartOverlay(durationMs);
@@ -686,7 +685,7 @@ function _transitionMatrixCascade(row, col, depth) {
     trackAchStat('tilesRevealed', 1);
     if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
 
-    _transitionMatrixCellVFX(nr, nc);
+    _transitionMatrixCellVFX(nr, nc, row, col);
 
     showToast(`⏳ ${LANG === 'de' ? 'Übergang! Zelle enthüllt.' : 'Transition! Cell cascaded.'}`);
 
@@ -695,15 +694,129 @@ function _transitionMatrixCascade(row, col, depth) {
         setTimeout(() => _transitionMatrixCascade(nr, nc, depth - 1), 250);
     }
 
+    Audio_Manager.playSFX('transitionCascade');
+
     checkWin();
 }
 
-// Draws a brief chain-link VFX on the cascaded cell
-function _transitionMatrixCellVFX(row, col) {
+// Draws a brief chain-link VFX on the cascaded cell,
+// plus an animated green beam from the source cell to the target.
+function _transitionMatrixCellVFX(row, col, srcRow, srcCol) {
+    // Flash on the destination cell (existing behaviour)
     const el = document.getElementById(`g-${row}-${col}`);
-    if (!el) return;
-    el.classList.add('transition-cascade-flash');
-    setTimeout(() => el.classList.remove('transition-cascade-flash'), 600);
+    if (el) {
+        el.classList.add('transition-cascade-flash');
+        setTimeout(() => el.classList.remove('transition-cascade-flash'), 600);
+    }
+
+    // ── Beam from source → target ─────────────────────────────────
+    if (srcRow == null || srcCol == null) return;
+    const srcEl = document.getElementById(`g-${srcRow}-${srcCol}`);
+    const dstEl = document.getElementById(`g-${row}-${col}`);
+    if (!srcEl || !dstEl) return;
+
+    const sr = srcEl.getBoundingClientRect();
+    const dr = dstEl.getBoundingClientRect();
+    const x1 = sr.left + sr.width / 2;
+    const y1 = sr.top + sr.height / 2;
+    const x2 = dr.left + dr.width / 2;
+    const y2 = dr.top + dr.height / 2;
+
+    const DURATION = 1000; // ms — beam lifetime
+
+    const cvs = document.createElement('canvas');
+    cvs.style.cssText = `
+        position: fixed; inset: 0;
+        width: 100vw; height: 100vh;
+        pointer-events: none;
+        z-index: 6000;
+    `;
+    document.body.appendChild(cvs);
+    const ctx = cvs.getContext('2d');
+
+    const resize = () => { cvs.width = window.innerWidth; cvs.height = window.innerHeight; };
+    resize();
+    window.addEventListener('resize', resize);
+
+    const startTime = performance.now();
+    let animId;
+
+    function tick(now) {
+        const t = Math.min((now - startTime) / DURATION, 1);
+
+        // Fade: quick in, slow fade out
+        const alpha = t < 0.15 ? t / 0.15 : 1 - ((t - 0.15) / 0.85);
+
+        cvs.width = cvs.width; // clear
+        const ctx2 = cvs.getContext('2d');
+
+        // ── Travelling head position along the beam ───────────────
+        const headT = Math.min(t / 0.55, 1); // head reaches target at t=0.55
+        const hx = x1 + (x2 - x1) * headT;
+        const hy = y1 + (y2 - y1) * headT;
+
+        // ── Core beam line (drawn only up to head position) ───────
+        const grad = ctx2.createLinearGradient(x1, y1, hx, hy);
+        grad.addColorStop(0, `rgba(46,204,113,0)`);
+        grad.addColorStop(0.3, `rgba(46,204,113,${0.55 * alpha})`);
+        grad.addColorStop(1, `rgba(150,255,180,${0.95 * alpha})`);
+
+        ctx2.save();
+        ctx2.strokeStyle = grad;
+        ctx2.lineWidth = 2.5;
+        ctx2.shadowColor = `rgba(46,204,113,${0.8 * alpha})`;
+        ctx2.shadowBlur = 10;
+        ctx2.beginPath();
+        ctx2.moveTo(x1, y1);
+        ctx2.lineTo(hx, hy);
+        ctx2.stroke();
+
+        // Bright white core stripe
+        ctx2.strokeStyle = `rgba(220,255,235,${0.6 * alpha})`;
+        ctx2.lineWidth = 1;
+        ctx2.shadowBlur = 0;
+        ctx2.beginPath();
+        ctx2.moveTo(x1, y1);
+        ctx2.lineTo(hx, hy);
+        ctx2.stroke();
+        ctx2.restore();
+
+        // ── Travelling spark at the head ─────────────────────────
+        const sparkR = 5 + 3 * Math.sin(t * Math.PI);
+        const sparkGrad = ctx2.createRadialGradient(hx, hy, 0, hx, hy, sparkR * 2.5);
+        sparkGrad.addColorStop(0, `rgba(200,255,210,${alpha})`);
+        sparkGrad.addColorStop(0.4, `rgba(46,204,113,${0.75 * alpha})`);
+        sparkGrad.addColorStop(1, `rgba(46,204,113,0)`);
+        ctx2.beginPath();
+        ctx2.arc(hx, hy, sparkR * 2.5, 0, Math.PI * 2);
+        ctx2.fillStyle = sparkGrad;
+        ctx2.fill();
+
+        // ── Destination burst (when head arrives) ─────────────────
+        if (headT >= 1) {
+            const burstT = (t - 0.55) / 0.45; // 0→1 after head arrives
+            const burstAlpha = alpha * (1 - burstT * 0.5);
+            const burstR = 6 + burstT * 18;
+            const burstGrad = ctx2.createRadialGradient(x2, y2, 0, x2, y2, burstR);
+            burstGrad.addColorStop(0, `rgba(180,255,200,${burstAlpha})`);
+            burstGrad.addColorStop(0.5, `rgba(46,204,113,${burstAlpha * 0.6})`);
+            burstGrad.addColorStop(1, `rgba(46,204,113,0)`);
+            ctx2.beginPath();
+            ctx2.arc(x2, y2, burstR, 0, Math.PI * 2);
+            ctx2.fillStyle = burstGrad;
+            ctx2.fill();
+        }
+
+        if (t < 1) {
+            animId = requestAnimationFrame(tick);
+        } else {
+            cancelAnimationFrame(animId);
+            window.removeEventListener('resize', resize);
+            cvs.remove();
+        }
+    }
+
+    animId = requestAnimationFrame(tick);
 }
 
 

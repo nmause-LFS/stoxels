@@ -1397,6 +1397,7 @@ const W6 = [
 const W7 = [
 
     /*
+
     {
         hint: "dev",
         hintDE: "your hint here (DE)",
@@ -1414,6 +1415,7 @@ const W7 = [
     },
 
     */
+ 
 ];
 
 //------------------------------------------------------------------------
@@ -1439,8 +1441,8 @@ const W8 = [
             [1, 0, 0, 0, 0], [1, 0, 0, 0, 0]
         )
     },
-
     */
+ 
 ];
 
 //------------------------------------------------------------------------
@@ -1451,6 +1453,7 @@ const W8 = [
 const W9 = [
 
     /*
+
     {
         hint: "dev",
         hintDE: "your hint here (DE)",
@@ -1466,8 +1469,8 @@ const W9 = [
             [1, 0, 0, 0, 0], [1, 0, 0, 0, 0]
         )
     },
-
     */
+
 ];
 
 
@@ -1507,7 +1510,7 @@ const W10 = [
 
 const W11 = [
 
-    /*
+    /*    
     {
 
         hint: "dev",
@@ -1524,8 +1527,8 @@ const W11 = [
             [1, 0, 0, 0, 0], [1, 0, 0, 0, 0]
         )
     },
-
     */
+
 ];
 
 
@@ -1565,8 +1568,8 @@ const W12 = [
 
 const W13 = [
 
-    /*
 
+    /*
     {
         hint: "dev",
         hintDE: "your hint here (DE)",
@@ -1587,9 +1590,132 @@ const W13 = [
 ];
 
 
+//------------------------------------------------------------------------
+//-------------------WORLD 14: Level Data----------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+/*
+
+const W14 = [
 
 
 
+    {
+        hint: "dev",
+        hintDE: "your hint here (DE)",
+        reveal: "your reveal here",
+        revealDE: "your reveal here (DE)",
+        timer: 300,
+        bonusHint: "Complete level",
+        bonusHintDE: "Complete level (DE)",
+        bonusType: "nomiss",
+        bonusParam: 0,
+        grid: G(
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0], [1, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0]
+        )
+    },
+
+
+];
+
+
+const W15 = [
+
+
+
+    {
+        hint: "dev",
+        hintDE: "your hint here (DE)",
+        reveal: "your reveal here",
+        revealDE: "your reveal here (DE)",
+        timer: 300,
+        bonusHint: "Complete level",
+        bonusHintDE: "Complete level (DE)",
+        bonusType: "nomiss",
+        bonusParam: 0,
+        grid: G(
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0], [1, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0]
+        )
+    },
+
+
+];
+
+
+const W16 = [
+
+
+
+    {
+        hint: "dev",
+        hintDE: "your hint here (DE)",
+        reveal: "your reveal here",
+        revealDE: "your reveal here (DE)",
+        timer: 300,
+        bonusHint: "Complete level",
+        bonusHintDE: "Complete level (DE)",
+        bonusType: "nomiss",
+        bonusParam: 0,
+        grid: G(
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0], [1, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0]
+        )
+    },
+
+
+];
+
+const W17 = [
+
+
+
+    {
+        hint: "dev",
+        hintDE: "your hint here (DE)",
+        reveal: "your reveal here",
+        revealDE: "your reveal here (DE)",
+        timer: 300,
+        bonusHint: "Complete level",
+        bonusHintDE: "Complete level (DE)",
+        bonusType: "nomiss",
+        bonusParam: 0,
+        grid: G(
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0], [1, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0]
+        )
+    },
+
+
+];
+
+const W18 = [
+
+
+
+    {
+        hint: "dev",
+        hintDE: "your hint here (DE)",
+        reveal: "your reveal here",
+        revealDE: "your reveal here (DE)",
+        timer: 300,
+        bonusHint: "Complete level",
+        bonusHintDE: "Complete level (DE)",
+        bonusType: "nomiss",
+        bonusParam: 0,
+        grid: G(
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0], [1, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0], [1, 0, 0, 0, 0]
+        )
+    },
+
+
+];
+
+
+*/
 
 //------------------------------------------------------------------------
 //-------------------WORLD container -------------------------------------
@@ -1613,4 +1739,12 @@ const WORLDS = [
     { label: 'World 12', labelDE: 'Welt 12', data: W12 },
     { label: 'World 13', labelDE: 'Welt 13', data: W13 },
 
+    /*
+    { label: 'DevWorld1', labelDE: 'DevWorld1', data: W14 },
+    { label: 'DevWorld2', labelDE: 'DevWorld2', data: W15 },
+    { label: 'DevWorld3', labelDE: 'DevWorld3', data: W16 },
+    { label: 'DevWorld4', labelDE: 'DevWorld4', data: W17 },
+    { label: 'DevWorld5', labelDE: 'DevWorld5', data: W18 },
+
+    */
 ];

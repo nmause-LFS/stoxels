@@ -29,8 +29,8 @@ function formatCooldown(secs) {
 // getEffectiveCooldown — returns the cooldown for a slot after all passive tree reductions.
 // celerity:               −30s all active abilities
 // advanced_data_strike:   −30s Data Strike  (active1)
-// swift_strike:           −30s Data Strike  (active1)
-// accelerated_computation:−30s Data Strike  (active1)
+// swift_strike:           −15s Data Strike  (active1)
+// accelerated_computation:−15s Data Strike  (active1)
 // quick_strike:           −30s Diagonal Strike (active2)
 // accelerated_striking:   −30s Diagonal Strike (active2)
 function getEffectiveCooldown(slot, baseSeconds) {
@@ -41,8 +41,8 @@ function getEffectiveCooldown(slot, baseSeconds) {
     if (STATE.playerClass === 'statistician') {
         if (slot === 'active1') {
             if (ptHasSkill('advanced_data_strike')) reduction += 30;
-            if (ptHasSkill('swift_strike')) reduction += 30;
-            if (ptHasSkill('accelerated_computation')) reduction += 30;
+            if (ptHasSkill('swift_strike')) reduction += 15;
+            if (ptHasSkill('accelerated_computation')) reduction += 15;
         }
         if (slot === 'active2') {
             if (ptHasSkill('quick_strike')) reduction += 30;

@@ -49,13 +49,19 @@ function _resetLevelState() {
     quizAnsweredCorrectly = false;
     consecutiveCorrectFills = 0;
     _lawOfLargeNumbersNext = null;
-    window._veiled_cursedUsed = false; // reset Veil of Purity per-level flag here too
+    window._veiled_cursedUsed = false; 
     _confidenceIntervalActive = false;
     _streakBonusFills = 0;
     window._asymptoticLinesCompleted = 0;
     window._stochasticLastFired = false;
     window._deadReckoningActive = false;
     window._deadReckoningUnlocked = false;
+
+    window._mistakeLog = [];
+    window._sigThresholdProtected = new Set();
+    window._dofRevertedCells = new Set();
+    window._sigThreshBonusReveal = false;
+
     _resetNewNodeState();
     resetWitchImmunityLevelCounter();
 }

@@ -1,20 +1,23 @@
 ﻿// Handles penalties for mistakes, including time deduction, visual feedback, and tracking mistake count for scoring and achievements.
 
+function applyPenalty(row, col) {
+    const penMult = getClassPenaltyMultiplier(); // class effect; 5.0 during Black Swan, 0 = absorbed
 
-function applyPenalty(row,col) {
-    const penMult = getClassPenaltyMultiplier(); // class effect, 0 = absorbed by Variance Shield
-
-    const overfitMult = _overfittingPenaltyMultiplier();
-
-    if (overfitMult !== null) {
-        if (overfitMult === 0) { wrongGrid[row][col] = true; renderCell(row, col); return; }
-        // otherwise overfitMult replaces the normal penMult below
-    }
-
+    // Shield absorbed — nothing happens (do NOT end Black Swan for a free hit)
     if (penMult === 0) {
-        // Fully absorbed by a shield effect
         showToast(t('pen_shield'));
         return;
+    }
+
+    // If Black Swan is active, end it now — the penalty is landing
+    if (window._blackSwanActive) {
+        _endBlackSwan(false);
+        showToast(LANG === 'de' ? '📉 SPEEDFORCE abgebrochen!' : '📉 SPEEDFORCE broken!');
+    }
+
+    const overfitMult = _overfittingPenaltyMultiplier();
+    if (overfitMult !== null) {
+        if (overfitMult === 0) { wrongGrid[row][col] = true; renderCell(row, col); return; }
     }
 
     // keystone_stochastic_resonance (265): 50% chance to reveal 1 correct cell instead of penalising.
@@ -58,7 +61,13 @@ function applyPenalty(row,col) {
 
     // Deduct penalty seconds and refresh the clock display
     const timerBefore = timerSecs;
-    const effectivePen = Math.max(0, Math.round(pen * penMult) - asymptoteReduction);
+
+
+    // Use overfitMult if active, otherwise fall back to penMult (e.g. 5× from Black Swan)
+    const activeMult = (overfitMult !== null) ? overfitMult : penMult;
+    const effectivePen = Math.max(0, Math.round(pen * activeMult) - asymptoteReduction);
+
+
     timerSecs = Math.max(0, timerSecs - effectivePen);
     updTimer();
 

@@ -8,7 +8,7 @@
 
 // ── STATE ────────────────────────────────────────────────────────────────
 
-window._residualTotem = null;   // { row, col, radius, charges, fireIntervalSecs, timeout }
+window._residualTotems = [];    // Array of objects: { id, row, col, radius, charges, fireIntervalSecs, timeout }
 window._dofSession = null;      // { correctCount, recoverPct, picked: [], active: bool }
 
 
@@ -42,12 +42,18 @@ function _consumeMistakePenalty(r, c) {
 }
 
 
+
+
 // ── RESIDUAL TOTEM ────────────────────────────────────────────────────────
 
 function _executeResidual(row, col, effect) {
-    _clearResidualTotem();
+    const { beamRadius, charges, fires, maxTotems = 1 } = effect;
 
-    const { beamRadius, charges, fires } = effect;
+    // If we are at capacity, remove the oldest totem before placing a new one
+    if (window._residualTotems.length >= maxTotems) {
+        const oldestTotem = window._residualTotems[0];
+        if (oldestTotem) _clearSpecificTotem(oldestTotem.id);
+    }
 
     // Prefer the nearest mistake cell to where the player clicked
     const mistakeCells = _getMistakeCells();
@@ -62,33 +68,37 @@ function _executeResidual(row, col, effect) {
         totemCol = best.c;
     }
 
-    _spawnResidualTotem(totemRow, totemCol, beamRadius, charges, fires);
+    // Generate a unique ID for this totem instance
+    const totemId = `totem-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+    _spawnResidualTotem(totemId, totemRow, totemCol, beamRadius, charges, fires);
 }
 
 
-function _spawnResidualTotem(row, col, radius, charges, fireIntervalSecs) {
-    _residualTotemAddDOM(row, col, charges);
+function _spawnResidualTotem(id, row, col, radius, charges, fireIntervalSecs) {
+    _residualTotemAddDOM(id, row, col, charges);
     showToast(`💀 Residual Totem planted! ${charges} charges, fires in 3s then every ${fireIntervalSecs}s.`);
     Audio_Manager.playSFX('residualSummon');
 
-    window._residualTotem = { row, col, radius, charges, fireIntervalSecs, timeout: null };
+    const newTotem = { id, row, col, radius, charges, fireIntervalSecs, timeout: null };
+    window._residualTotems.push(newTotem);
 
     // First shot fires after 3 seconds, then every fireIntervalSecs
-    window._residualTotem.timeout = setTimeout(() => {
-        _residualTotemShoot();
+    newTotem.timeout = setTimeout(() => {
+        _residualTotemShoot(id);
     }, 3000);
 }
 
 
-function _residualTotemShoot() {
-    const totem = window._residualTotem;
-    if (!totem) return;
+function _residualTotemShoot(id) {
+    const totemIndex = window._residualTotems.findIndex(t => t.id === id);
+    if (totemIndex === -1) return;
+    const totem = window._residualTotems[totemIndex];
 
     const fired = _residualTotemFireOne(totem.row, totem.col, totem.radius);
     totem.charges--;
 
-    // Update DOM charge count
-    _residualTotemUpdateDOM(totem.row, totem.col, totem.charges);
+    // Update specific DOM charge count
+    _residualTotemUpdateDOM(totem.id, totem.row, totem.col, totem.charges);
 
     if (fired) {
         showToast(`💀 Residual Beam! 1 cell revealed. (${totem.charges} charge${totem.charges !== 1 ? 's' : ''} left)`);
@@ -97,19 +107,17 @@ function _residualTotemShoot() {
     }
 
     if (totem.charges <= 0) {
-        _clearResidualTotem();
+        _clearSpecificTotem(id);
         return;
     }
 
     // Schedule next shot
     totem.timeout = setTimeout(() => {
-        _residualTotemShoot();
+        _residualTotemShoot(id);
     }, totem.fireIntervalSecs * 1000);
 }
 
-
-// Finds the closest unfilled correct cell within radius and reveals exactly 1,
-// drawing a beam SVG line from totem to that cell.
+// Finds the closest unfilled correct cell within radius and reveals exactly 1
 function _residualTotemFireOne(row, col, radius) {
     if (!cur) return false;
     const sol = cur.grid;
@@ -202,55 +210,75 @@ function _residualDrawBeam(fromRow, fromCol, toRow, toCol, onComplete) {
 }
 
 
-// Adds the skull totem overlay to the cell
-function _residualTotemAddDOM(row, col, charges) {
+// Adds the skull totem overlay to the cell with specific ID markers
+function _residualTotemAddDOM(id, row, col, charges) {
     const el = document.getElementById(`g-${row}-${col}`);
     if (!el) return;
     el.classList.add('residual-totem');
 
     const marker = document.createElement('span');
     marker.className = 'residual-totem-icon';
-    marker.id = 'residual-totem-marker';
+    marker.id = `residual-totem-marker-${id}`;
     marker.textContent = '💀';
+
     // charge badge
     const badge = document.createElement('span');
     badge.className = 'residual-totem-badge';
-    badge.id = 'residual-totem-badge';
+    badge.id = `residual-totem-badge-${id}`;
     badge.textContent = charges;
     marker.appendChild(badge);
 
     el.appendChild(marker);
 }
 
-function _residualTotemUpdateDOM(row, col, charges) {
-    const badge = document.getElementById('residual-totem-badge');
+function _residualTotemUpdateDOM(id, row, col, charges) {
+    const badge = document.getElementById(`residual-totem-badge-${id}`);
     if (badge) badge.textContent = charges;
     const el = document.getElementById(`g-${row}-${col}`);
     if (el) el.setAttribute('title', `💀 Residual Totem (${charges} charges)`);
 }
 
+function _clearSpecificTotem(id) {
+    const totemIndex = window._residualTotems.findIndex(t => t.id === id);
+    if (totemIndex === -1) return;
 
-function _clearResidualTotem() {
-    if (!window._residualTotem) return;
-    const { row, col, timeout } = window._residualTotem;
+    const { row, col, timeout } = window._residualTotems[totemIndex];
     if (timeout) clearTimeout(timeout);
 
     const el = document.getElementById(`g-${row}-${col}`);
     if (el) {
-        el.classList.remove('residual-totem');
-        el.removeAttribute('title');
-        const marker = document.getElementById('residual-totem-marker');
+        // Only strip class if this is the ONLY totem on this cell (just in case they overlap)
+        const activeTotemsOnCell = window._residualTotems.filter(t => t.row === row && t.col === col && t.id !== id);
+        if (activeTotemsOnCell.length === 0) {
+            el.classList.remove('residual-totem');
+            el.removeAttribute('title');
+        }
+
+        const marker = document.getElementById(`residual-totem-marker-${id}`);
         if (marker) marker.remove();
         renderCell(row, col);
         Audio_Manager.playSFX('residualDespawn');
     }
 
-    window._residualTotem = null;
+    window._residualTotems.splice(totemIndex, 1);
 }
 
 
+
+function _clearAllResidualTotems() {
+    if (!window._residualTotems || window._residualTotems.length === 0) return;
+    // Clear backwards to prevent indexing issues during splicing
+    for (let i = window._residualTotems.length - 1; i >= 0; i--) {
+        _clearSpecificTotem(window._residualTotems[i].id);
+    }
+    window._residualTotems = [];
+}
+
+
+
+
 function resetRecursionistState() {
-    _clearResidualTotem();
+    _clearAllResidualTotems();
     _cancelDegreesOfFreedom(true); // silent cancel on level start
 }
 
