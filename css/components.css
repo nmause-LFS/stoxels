@@ -1,0 +1,49 @@
+/* Danger/red button variant */
+.btn-danger {
+    border-color: var(--red) !important;
+    color: var(--red) !important;
+}
+
+/* Text color utilities */
+.text-red {
+    color: var(--red);
+}
+
+.text-green {
+    color: var(--green);
+}
+
+.text-yellow {
+    color: var(--yellow);
+}
+
+.text-orange {
+    color: var(--orange);
+}
+
+.text-purple {
+    color: var(--purple);
+}
+
+.text-accent2 {
+    color: var(--accent2);
+}
+
+/* Tag color variants (modifier buttons on setup screen) */
+.tag-orange {
+    background: var(--orange);
+}
+
+.tag-red {
+    background: var(--red);
+}
+
+.tag-purple {
+    background: var(--purple);
+}
+
+/* Label optional text */
+.label-optional {
+    font-size: 8px;
+    color: #555;
+}

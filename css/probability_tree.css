@@ -1,0 +1,143 @@
+﻿
+
+/* ═══════════════════════════════════════════
+   PROBABILITY TREE SCREEN
+   ═══════════════════════════════════════════ */
+
+#screen-passive-tree {
+    overflow: hidden;
+}
+
+.pt-topbar {
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.pt-title {
+    font-family: var(--PX);
+    font-size: 15px;
+    color: var(--green);
+    letter-spacing: 2px;
+}
+
+#pt-search-wrap {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.pt-points {
+    margin-left: auto;
+    font-family: var(--PX);
+    font-size: 13px;
+    color: var(--yellow);
+}
+
+.pt-canvas {
+    flex: 1;
+    overflow: auto;
+    position: relative;
+}
+
+/* ── Convergence level card ── */
+.level-card.convergence {
+    border-color: var(--green);
+    background: linear-gradient(160deg, var(--surface) 60%, rgba(46, 204, 113, 0.10) 100%);
+    box-shadow: 0 0 8px rgba(46, 204, 113, 0.20);
+}
+
+    .level-card.convergence:hover {
+        border-color: #58d68d;
+        box-shadow: 0 0 16px rgba(46, 204, 113, 0.38);
+    }
+
+.lc-convergence-badge {
+    font-family: var(--PX);
+    font-size: 9px;
+    color: var(--green);
+    letter-spacing: 2px;
+    text-align: center;
+    padding: 3px 6px;
+    border: 1px solid rgba(46, 204, 113, 0.45);
+    background: rgba(46, 204, 113, 0.08);
+    margin-bottom: 6px;
+    animation: convergence-pulse 2.8s ease-in-out infinite;
+}
+
+@keyframes convergence-pulse {
+    0%, 100% {
+        opacity: 0.75;
+    }
+
+    50% {
+        opacity: 1;
+        box-shadow: 0 0 7px rgba(46, 204, 113, 0.35);
+    }
+}
+
+
+
+
+/* ── Zoom bar ── */
+#pt-zoom-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(10,10,20,0.88);
+    border: 1px solid rgba(184,154,80,0.45);
+    border-radius: 6px;
+    padding: 5px 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+#pt-zoom-label {
+    font-family: var(--PX, monospace);
+    font-size: 11px;
+    color: #d4b870;
+    min-width: 38px;
+    text-align: right;
+}
+
+#pt-zoom-bar {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 120px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(184,154,80,0.25);
+    outline: none;
+    cursor: pointer;
+}
+
+    #pt-zoom-bar::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #d4b870;
+        border: 2px solid rgba(10,10,20,0.8);
+        box-shadow: 0 0 6px rgba(212,184,112,0.5);
+        cursor: pointer;
+        transition: background 0.15s, box-shadow 0.15s;
+    }
+
+        #pt-zoom-bar::-webkit-slider-thumb:hover {
+            background: #ffe680;
+            box-shadow: 0 0 10px rgba(255,230,128,0.7);
+        }
+
+    #pt-zoom-bar::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #d4b870;
+        border: 2px solid rgba(10,10,20,0.8);
+        cursor: pointer;
+    }

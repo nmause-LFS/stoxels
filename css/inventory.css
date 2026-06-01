@@ -1,0 +1,384 @@
+/* ═══════════════════════════════════════════════════════════════
+   NEW INVENTORY PANEL  — fixed bottom slot grid
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Outer panel ── */
+
+#inv-panel {
+    position: fixed;
+    bottom: 0; /* Glue it to the very bottom edge */
+    left: 0;
+    right: 0; /* Span all the way across the screen */
+    z-index: 500;
+    background: var(--panel);
+    border-top: 1px solid var(--border); /* Only need a top border now */
+    padding: 10px 16px;
+    height: 75px; /* Compact fixed height to fit text + slots */
+
+    display: flex;
+    flex-direction: row; /* Layout child blocks horizontally */
+    align-items: center; /* Center items vertically */
+    gap: 20px; /* Add healthy spacing between groups */
+    box-shadow: 0 -4px 18px rgba(0,0,0,0.55); /* Shadow casting upwards */
+
+    overflow-x: auto; /* Enables horizontal scrolling when items overflow */
+    overflow-y: hidden; /* Prevents any weird vertical scrollbar twitching */
+    scrollbar-width: thin; /* For Firefox styling */
+}
+
+    /* Optional: Custom sleek scrollbar for Chrome/Safari/Edge */
+    #inv-panel::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    #inv-panel::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    #inv-panel::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+    }
+
+        #inv-panel::-webkit-scrollbar-thumb:hover {
+            background: var(--yellow);
+        }
+
+
+/* ── Top row: turned into a left-side vertical label block ── */
+.inv-panel-toprow {
+    display: flex;
+    flex-direction: column; /* Stack label over counter */
+    align-items: flex-start;
+    justify-content: center;
+    min-width: 90px; /* Give the label region some structure */
+    gap: 4px;
+    margin-bottom: 0; /* Reset old margin */
+}
+
+
+
+
+.inv-panel-label {
+    font-family: var(--PX);
+    font-size: 11px;
+    color: var(--yellow);
+    letter-spacing: 1px;
+}
+
+#reshuffle-counter {
+    font-family: var(--PX);
+    font-size: 10px;
+    color: #aaa;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+/* ── Group block ── */
+
+.inv-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    height: 100%;
+    flex-shrink: 0; /* Prevents layout from squeezing slots together */
+}
+
+
+.inv-group-label {
+    font-family: var(--PX);
+    font-size: 9px;
+    color: #666;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding-bottom: 1px;
+    /* Remove the old bottom border line if it looks crowded horizontally */
+}
+
+
+.inv-group-slots {
+    display: flex;
+    flex-direction: row; /* Slots stay next to each other */
+    flex-wrap: nowrap; /* Keep them in a single strict horizontal row */
+    gap: 6px;
+}
+
+
+/* ── Prevent fixed inventory from overlapping game elements ── */
+.game-main {
+    /* 75px (inventory height) + 25px breathing room = 100px */
+    padding-bottom: 100px !important;
+}
+
+
+
+/* ── Individual slot ── */
+.inv-slot {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color .1s, transform .1s, opacity .1s;
+    flex-shrink: 0;
+}
+
+    .inv-slot:hover:not(.inv-slot-empty):not(.ironman-lock) {
+        transform: scale(1.12);
+        border-color: var(--accent) !important;
+    }
+
+    /* Empty slot: dimmed, no pointer cursor */
+    .inv-slot.inv-slot-empty {
+        opacity: 0.25;
+        cursor: default;
+        border-color: var(--border) !important;
+    }
+
+    .inv-slot.ironman-lock {
+        opacity: 0.35;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    /* Cursed-locked state (reuse existing class from game logic if needed) */
+    .inv-slot.cursed-locked {
+        opacity: 0.45;
+        cursor: not-allowed;
+        pointer-events: none;
+        border-color: #f44 !important;
+    }
+
+/* Icon inside slot */
+.inv-slot-icon {
+    font-size: 22px;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Stack count badge */
+.inv-slot-count {
+    position: absolute;
+    bottom: 1px;
+    right: 3px;
+    font-family: var(--PX);
+    font-size: 9px;
+    color: #fff;
+    line-height: 1;
+    pointer-events: none;
+    text-shadow: 0 0 3px #000, 0 0 3px #000;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   TOOLTIP
+   ═══════════════════════════════════════════════════════════════ */
+
+#inv-slot-tooltip {
+    position: fixed;
+    z-index: 9000;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    width: 220px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .1s;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+}
+
+    #inv-slot-tooltip.visible {
+        opacity: 1;
+    }
+
+.inv-tip-name {
+    font-family: var(--PX);
+    font-size: 12px;
+    margin-bottom: 2px;
+}
+
+.inv-tip-rarity {
+    font-family: var(--PX);
+    font-size: 9px;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    opacity: 0.7;
+}
+
+.inv-tip-desc {
+    font-size: 13px;
+    color: #e0e0e0;
+    line-height: 1.45;
+    margin-bottom: 7px;
+}
+
+.inv-tip-stack {
+    font-size: 11px;
+    color: #aaa;
+    margin-bottom: 5px;
+}
+
+.inv-tip-hint {
+    font-size: 10px;
+    color: #666;
+    border-top: 1px solid var(--border);
+    padding-top: 5px;
+    line-height: 1.4;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   RESHUFFLE MODAL  (unchanged visually)
+   ═══════════════════════════════════════════════════════════════ */
+
+#rshuffle-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+#rshuffle-box {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 28px 32px 32px;
+    max-width: 800px;
+    width: 90%;
+    text-align: center;
+}
+
+#rshuffle-title {
+    font-family: var(--PX);
+    font-size: 18px;
+    color: var(--yellow);
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+}
+
+#rshuffle-subtitle {
+    font-size: 15px;
+    color: #aaa;
+    margin-bottom: 22px;
+}
+
+#rshuffle-cards {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.rshuffle-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 18px 14px;
+    min-width: 150px;
+    max-width: 250px;
+    cursor: pointer;
+    transition: border-color .12s, transform .12s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+    .rshuffle-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-3px);
+    }
+
+.rshuffle-card-icon {
+    font-size: 42px;
+}
+
+.rshuffle-card-name {
+    font-family: var(--PX);
+    font-size: 12px;
+    text-align: center;
+}
+
+.rshuffle-card-desc {
+    font-size: 15px;
+    color: #ccc;
+    text-align: center;
+    line-height: 1.4;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   TOAST 
+   ═══════════════════════════════════════════════════════════════ */
+
+
+.item-use-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 25px;
+    transform: translate(-50%);
+    font-family: var(--PX);
+    font-size: 25px;
+    color: var(--bg);
+    background: var(--purple);
+    padding: 9px 18px;
+    z-index: 900;
+    display: none;
+    /*animation: toast-in 1s ease;*/
+    animation: toast-in-bottom 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Snappy pop-in animation */
+}
+
+    .item-use-toast.show {
+        display: block;
+    }
+
+@keyframes toast-in {
+    from {
+        opacity: 0;
+        /*transform: translate(-50%, -60%);*/
+        transform: translate(-50%, 15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+
+
+
+
+
+
+#quest-reward-tooltip {
+    position: fixed;
+    z-index: 9999;
+    background: var(--bg2, #1a1a2e);
+    border: 1px solid var(--border2, #444);
+    border-radius: 8px;
+    padding: 8px 12px;
+    pointer-events: none;
+    max-width: 240px;
+    font-size: 0.82rem;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+    #quest-reward-tooltip.visible {
+        opacity: 1;
+    }
+
+.quest-reward-item-tip {
+    cursor: default;
+}
+
+    .quest-reward-item-tip:hover {
+        filter: brightness(1.2);
+    }
