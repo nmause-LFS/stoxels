@@ -246,6 +246,7 @@ div.gc.hov-c:not(.filled):not(.wrong-mark) {
 div.gc.hov-r.hov-c:not(.filled):not(.wrong-mark) {
     background: var(--cell-hover-intersect);
     border-color: var(--cell-hover-intersect-border);
+    border-width: 3px;
 }
 
 
@@ -583,3 +584,67 @@ td.rct {
     color: #555;
 }
 /* grey */
+
+
+
+
+
+
+
+
+
+.completion-glimpse-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    padding: 3px 8px;
+    font-size: 15px;
+    max-width: 1500px;
+    animation: glimpse-fadein 0.4s ease;
+}
+
+    .completion-glimpse-bar.hidden {
+        display: none;
+    }
+
+.completion-glimpse-label {
+    flex-shrink: 0;
+}
+
+.completion-glimpse-text {
+    font-style: italic;
+    opacity: 0.9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@keyframes glimpse-fadein {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+
+
+.drag-count-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    font-size: 0.45em;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+    z-index: 20;
+    line-height: 1;
+}

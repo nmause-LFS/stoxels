@@ -140,6 +140,90 @@ function buildGrid() {
 
 
 
+// getSolvedClueFlags — returns a boolean array, one entry per clue number,
+// indicating whether that specific run has already been correctly filled.
+// Greedily matches player-filled correct runs (left-to-right) against clues.
+function getSolvedClueFlags(clueNums, userRow, solRow) {
+    const len = solRow.length;
+    const n = clueNums.length;
+
+    // Step 1: Find the earliest and latest position each clue can START,
+    // based purely on the solution layout (not the player's fills).
+    // earliest[ci] = leftmost cell index where clue ci could begin
+    // latest[ci]   = rightmost cell index where clue ci could begin
+    const earliest = new Array(n).fill(0);
+    const latest = new Array(n).fill(0);
+
+    // Forward pass: place each clue as far left as possible
+    let pos = 0;
+    for (let ci = 0; ci < n; ci++) {
+        // Advance pos until we find a run of clueNums[ci] filled solution cells
+        while (pos <= len - clueNums[ci]) {
+            let fits = true;
+            for (let k = 0; k < clueNums[ci]; k++) {
+                if (solRow[pos + k] !== 1) { fits = false; break; }
+            }
+            if (fits) break;
+            pos++;
+        }
+        earliest[ci] = pos;
+        pos += clueNums[ci] + 1; // +1 for mandatory gap
+    }
+
+    // Backward pass: place each clue as far right as possible
+    pos = len - 1;
+    for (let ci = n - 1; ci >= 0; ci--) {
+        // Advance pos (leftward) until a run of clueNums[ci] fits ending at pos
+        while (pos - clueNums[ci] + 1 >= 0) {
+            let fits = true;
+            for (let k = 0; k < clueNums[ci]; k++) {
+                if (solRow[pos - clueNums[ci] + 1 + k] !== 1) { fits = false; break; }
+            }
+            if (fits) break;
+            pos--;
+        }
+        latest[ci] = pos - clueNums[ci] + 1;
+        pos -= clueNums[ci] + 1; // +1 for mandatory gap
+    }
+
+    // Step 2: Collect the player's correctly-filled runs with their start positions
+    // A run only counts if every cell the player filled also matches the solution
+    const playerRuns = []; // [{start, size}]
+    let i = 0;
+    while (i < len) {
+        if (userRow[i] === 1 && solRow[i] === 1) {
+            const start = i;
+            while (i < len && userRow[i] === 1 && solRow[i] === 1) i++;
+            playerRuns.push({ start, size: i - start });
+        } else {
+            i++;
+        }
+    }
+
+    // Step 3: For each clue, check whether there is exactly one player run
+    // that fits within the clue's exclusive positional window AND matches its size.
+    // "Exclusive" means the window [earliest[ci], latest[ci]] does not overlap
+    // with the window of any adjacent clue — if windows overlap, the run is
+    // ambiguous and we don't strike anything through.
+    const solved = new Array(n).fill(false);
+    for (let ci = 0; ci < n; ci++) {
+        const e = earliest[ci];
+        const l = latest[ci];
+        const sz = clueNums[ci];
+
+        // Check for overlap with neighbours — if the window is ambiguous, skip
+        const overlapPrev = ci > 0 && latest[ci - 1] + clueNums[ci - 1] > e;
+        const overlapNext = ci < n - 1 && l + sz > earliest[ci + 1];
+        if (overlapPrev || overlapNext) continue;
+
+        // Look for a player run that exactly matches: correct size, starts within [e, l]
+        const match = playerRuns.find(r => r.size === sz && r.start >= e && r.start <= l);
+        if (match) solved[ci] = true;
+    }
+
+    return solved;
+}
+
 
 
 
@@ -156,8 +240,12 @@ function buildGrid() {
 //   number spans accordingly.
 
 
-function updClues(row, col) {
+function updClues(row, col, isInitial = false) {
     if (!cur) return;
+
+    // Bypass rewards if this is an automated start-of-level reveal ---
+    if (isInitial) return;
+
     const sol = cur.grid;
     const rows = sol.length;
     const cols = sol[0].length;
@@ -178,12 +266,13 @@ function updClues(row, col) {
     // Apply or remove strikethrough on every row clue span for this row
     // Span ids: rn-{row}-{i}  (one per clue number in the row)
     const RC = sol.map(r => clues(r));
+    const rowFlags = getSolvedClueFlags(RC[row], userGrid[row], sol[row]);
     RC[row].forEach((_, i) => {
         const span = document.getElementById(`rn-${row}-${i}`);
-        if (span) span.classList.toggle('clue-done', rowDone);
+        if (span) span.classList.toggle('clue-done', rowDone || rowFlags[i]);
     });
 
-    _sparsePriorOnLineComplete(row, true);
+    if (rowDone && userGrid[row][col] === 1 && !revealedGrid[row][col]) _sparsePriorOnLineComplete(row, true);
 
     // Check the affected column 
     const colDone = sol.every((r, ro) => {
@@ -193,11 +282,15 @@ function updClues(row, col) {
     });
 
     // Apply or remove strikethrough on every column clue span for this col.
-    document.querySelectorAll(`[id^="cn-${col}-"]`).forEach(span => {
-        span.classList.toggle('clue-done', colDone);
+    const CC = Array.from({ length: sol[0].length }, (_, c) => clues(sol.map(r => r[c])));
+    const colUserLine = userGrid.map(r => r[col]);
+    const colSolLine = sol.map(r => r[col]);
+    const colFlags = getSolvedClueFlags(CC[col], colUserLine, colSolLine);
+    document.querySelectorAll(`[id^="cn-${col}-"]`).forEach((span, i) => {
+        span.classList.toggle('clue-done', colDone || colFlags[i]);
     });
 
-    _sparsePriorOnLineComplete(col, false);
+    if (colDone && userGrid[row][col] === 1 && !revealedGrid[row][col]) _sparsePriorOnLineComplete(col, false);
 
     // keystone_asymptotic_mastery (266): count newly completed lines to reduce future penalties
     if (ptHasSkill('keystone_asymptotic_mastery')) {
@@ -209,91 +302,117 @@ function updClues(row, col) {
     }
 
     _signalToNoiseCheckRestore();
-    _entropyDrainUpdateProgress(row, col);
+    if (sol[row][col] === 1 && (userGrid[row][col] === 1 || revealedGrid[row][col])) {
+        _entropyDrainUpdateProgress(row, col);
+    }
+
+
+
 
     // regression_reward (225-227): only award when this specific cell was the final piece.
+    // _regressionRewardedLines tracks rows ('r0', 'r1'...) and cols ('c0', 'c1'...)
+    // that have already paid out, so overmark-then-reveal exploits don't double-dip.
     if (ptHasSkill('regression_reward_1') || ptHasSkill('regression_reward_2') || ptHasSkill('regression_reward_3')) {
         let bonus = 0;
         if (ptHasSkill('regression_reward_1')) bonus += 5;
-        if (ptHasSkill('regression_reward_2')) bonus += 10;
-        if (ptHasSkill('regression_reward_3')) bonus += 15;
+        if (ptHasSkill('regression_reward_2')) bonus += 5;
+        if (ptHasSkill('regression_reward_3')) bonus += 5;
 
-        // A line was "just completed by this cell" only if this cell is solution=1
-        // and the line is now done. We verify the cell is the trigger (sol===1, now filled).
+        if (!window._regressionRewardedLines) window._regressionRewardedLines = new Set();
+
         const sol = cur.grid;
-        const cellJustFilled = (sol[row][col] === 1) && (userGrid[row][col] === 1 || revealedGrid[row][col]);
+        const cellJustFilled = (sol[row][col] === 1) && (userGrid[row][col] === 1) && !revealedGrid[row][col];
+        if (!cellJustFilled) return; // only trigger on a genuine player fill, not revealed cells or erasure
 
-        if (cellJustFilled && rowDone && bonus > 0) {
+        if (cellJustFilled && rowDone && bonus > 0 && !window._regressionRewardedLines.has(`r${row}`)) {
+            window._regressionRewardedLines.add(`r${row}`);
             timerSecs += bonus;
             updTimer();
             showToast(`📉 ${LANG === 'de' ? `+${bonus}s (Regressions-Belohnung)` : `+${bonus}s (Regression Reward)`}`);
         }
-        if (cellJustFilled && colDone && bonus > 0) {
+        if (cellJustFilled && colDone && bonus > 0 && !window._regressionRewardedLines.has(`c${col}`)) {
+            window._regressionRewardedLines.add(`c${col}`);
             timerSecs += bonus;
             updTimer();
             showToast(`📉 ${LANG === 'de' ? `+${bonus}s (Regressions-Belohnung)` : `+${bonus}s (Regression Reward)`}`);
         }
     }
 
-    // residual_analysis (249-251): when a row/col is completed, mark wrong empty cells
-    // in an adjacent row/col. 1 cell per node (1, 2, or 3 total).
-    if (ptHasSkill('residual_analysis_1') || ptHasSkill('residual_analysis_2') || ptHasSkill('residual_analysis_3')) {
-        let markCount = 0;
-        if (ptHasSkill('residual_analysis_1')) markCount++;
-        if (ptHasSkill('residual_analysis_2')) markCount++;
-        if (ptHasSkill('residual_analysis_3')) markCount++;
+    // residual_analysis (249-251): when a row/col is completed, roll a chance to auto-mark 
+    // exactly 1 wrong empty cell in an adjacent row/col. Chance scales with nodes (max 40%).
+    if (!window._oracleActive && !ptHasSkill('keystone_ergodic_field') && (ptHasSkill('residual_analysis_1') || ptHasSkill('residual_analysis_2') || ptHasSkill('residual_analysis_3'))) {
+        let activationChance = 0;
+
+        if (ptHasSkill('residual_analysis_1')) activationChance += 0.25; // Node 1: 25% base
+        if (ptHasSkill('residual_analysis_2')) activationChance += 0.05; // Node 2: +5%
+        if (ptHasSkill('residual_analysis_3')) activationChance += 0.10; // Node 3: +10%
 
         const cellJustFilled = (sol[row][col] === 1) && (userGrid[row][col] === 1 || revealedGrid[row][col]);
         if (!cellJustFilled) return; // only trigger on a correct fill, not on erasure/undo
 
-        if (rowDone) {
-            // Pick an adjacent row (row-1 or row+1) that exists and is not done
-            const adjRows = [row - 1, row + 1].filter(r => r >= 0 && r < rows);
-            // Shuffle so we don't always prefer the same direction
-            if (adjRows.length > 1 && Math.random() < 0.5) adjRows.reverse();
-            for (const adjR of adjRows) {
-                const cands = [];
-                for (let c = 0; c < cols; c++)
-                    if (sol[adjR][c] === 0 && (userGrid[adjR][c] === 0 || userGrid[adjR][c] === 3) && !wrongGrid[adjR][c])
-                        cands.push([adjR, c]);
-                if (cands.length > 0) {
-                    // shuffle and take up to markCount
-                    for (let i = cands.length - 1; i > 0; i--) {
-                        const j = Math.floor(Math.random() * (i + 1));
-                        [cands[i], cands[j]] = [cands[j], cands[i]];
-                    }
-                    cands.slice(0, markCount).forEach(([r, c]) => {
+        if (!window._residualAnalysisRewardedLines) window._residualAnalysisRewardedLines = new Set();
+
+        // Process Row Completion
+        if (rowDone && !window._residualAnalysisRewardedLines.has(`r${row}`)) {
+            window._residualAnalysisRewardedLines.add(`r${row}`);
+
+            // Single RNG check based on the combined total chance
+            if (Math.random() < activationChance) {
+                const adjRows = [row - 1, row + 1].filter(r => r >= 0 && r < rows);
+                if (adjRows.length > 1 && Math.random() < 0.5) adjRows.reverse();
+                for (const adjR of adjRows) {
+                    const cands = [];
+                    for (let c = 0; c < cols; c++)
+                        if (sol[adjR][c] === 0 && (userGrid[adjR][c] === 0 || userGrid[adjR][c] === 3) && !wrongGrid[adjR][c])
+                            cands.push([adjR, c]);
+                    if (cands.length > 0) {
+                        // Grab exactly 1 random cell from the candidates
+                        const [r, c] = cands[Math.floor(Math.random() * cands.length)];
                         userGrid[r][c] = 2;
                         renderCell(r, c);
-                    });
-                    break; // only use one adjacent row
+
+                        if (_getBayesianBonus() > 0 && Math.random() < _getBayesianBonus()) {
+                            _resetBayesianBonus();
+                            markWrongTiles(1);
+                        }
+                        break; // only use one adjacent row
+                    }
                 }
             }
         }
 
-        if (colDone) {
-            const adjCols = [col - 1, col + 1].filter(c => c >= 0 && c < cols);
-            if (adjCols.length > 1 && Math.random() < 0.5) adjCols.reverse();
-            for (const adjC of adjCols) {
-                const cands = [];
-                for (let r = 0; r < rows; r++)
-                    if (sol[r][adjC] === 0 && (userGrid[r][adjC] === 0 || userGrid[r][adjC] === 3) && !wrongGrid[r][adjC])
-                        cands.push([r, adjC]);
-                if (cands.length > 0) {
-                    for (let i = cands.length - 1; i > 0; i--) {
-                        const j = Math.floor(Math.random() * (i + 1));
-                        [cands[i], cands[j]] = [cands[j], cands[i]];
-                    }
-                    cands.slice(0, markCount).forEach(([r, c]) => {
+        // Process Column Completion
+        if (colDone && !window._residualAnalysisRewardedLines.has(`c${col}`)) {
+            window._residualAnalysisRewardedLines.add(`c${col}`);
+
+            // Single RNG check based on the combined total chance
+            if (Math.random() < activationChance) {
+                const adjCols = [col - 1, col + 1].filter(c => c >= 0 && c < cols);
+                if (adjCols.length > 1 && Math.random() < 0.5) adjCols.reverse();
+                for (const adjC of adjCols) {
+                    const cands = [];
+                    for (let r = 0; r < rows; r++)
+                        if (sol[r][adjC] === 0 && (userGrid[r][adjC] === 0 || userGrid[r][adjC] === 3) && !wrongGrid[r][adjC])
+                            cands.push([r, adjC]);
+                    if (cands.length > 0) {
+                        // Grab exactly 1 random cell from the candidates
+                        const [r, c] = cands[Math.floor(Math.random() * cands.length)];
                         userGrid[r][c] = 2;
                         renderCell(r, c);
-                    });
-                    break;
+
+                        if (_getBayesianBonus() > 0 && Math.random() < _getBayesianBonus()) {
+                            _resetBayesianBonus();
+                            markWrongTiles(1);
+                        }
+                        break; // only use one adjacent column
+                    }
                 }
             }
         }
-    }
+    }    
 }
+
+
 
 
 

@@ -19,14 +19,13 @@ function _resetBayesianBonus() {
     window._bayesianBonus = 0;
 }
 
-// Called from penalty.js after mistakeCount++ (see instructions below)
+// Called from penalty.js after mistakeCount++ 
 function _onMistakeBayesianUpdate() {
     if (!ptHasSkill('bayesian_update_1') && !ptHasSkill('bayesian_update_2') && !ptHasSkill('bayesian_update_3')) return;
     let increment = 0;
     if (ptHasSkill('bayesian_update_1')) increment += 0.05;
     if (ptHasSkill('bayesian_update_2')) increment += 0.05;
-    if (ptHasSkill('bayesian_update_3')) increment += 0.08; // node 3 replaces node 3's own 5% with 8%
-    // If all three: 5% + 5% + 8% per mistake
+    if (ptHasSkill('bayesian_update_3')) increment += 0.05;
     window._bayesianBonus = (window._bayesianBonus || 0) + increment;
 }
 
@@ -54,21 +53,30 @@ function _poissonProcessTick() {
     if (Date.now() < window._poissonNext) return;
     if (!cur) return;
 
-    const interval = ptHasSkill('poisson_process_3') ? 45 : 60;
+
+    // Determine interval based on the highest unlocked node
+    // Base: 120s, with node 271: 90s, with node 272: 60s
+    let interval = 120;
+    if (ptHasSkill('poisson_process_3')) {
+        interval = 60;
+    } else if (ptHasSkill('poisson_process_2')) {
+        interval = 90;
+    }
+
     window._poissonNext = Date.now() + interval * 1000;
 
-    // How many cells to mark: 1 per node
-    let count = (ptHasSkill('poisson_process_1') ? 1 : 0)
-        + (ptHasSkill('poisson_process_2') ? 1 : 0)
-        + (ptHasSkill('poisson_process_3') ? 1 : 0);
+    let count = ptHasSkill('poisson_process_1') ? 1 : 0;
 
     if (count <= 0) return;
 
-    // Ergodic Field disables auto-marks
-    if (ptHasSkill('keystone_ergodic_field')) return;
+    // Ergodic Field and Oracle disable auto-marks
+    if (ptHasSkill('keystone_ergodic_field') || window._oracleActive) return;
 
-    // Bayesian Update boost
-    if (_bayesianRoll(0)) count = Math.max(count, 1); // bayesian doesn't boost count, just resets
+    const bayesExtra = _getBayesianBonus();
+    if (bayesExtra > 0 && Math.random() < bayesExtra) {
+        count++;
+        _resetBayesianBonus();
+    }
 
     markWrongTiles(count);
     showToast(`⚗️ ${LANG === 'de' ? `Poisson-Prozess! ${count} Zelle(n) markiert.` : `Poisson Process! ${count} cell(s) marked.`}`);
@@ -83,19 +91,19 @@ function _poissonProcessTick() {
 window._binomialBurstFills = 0;
 
 function _binomialBurstOnCorrectFill() {
-    if (!ptHasSkill('binomial_burst_1') && !ptHasSkill('binomial_burst_2') && !ptHasSkill('binomial_burst_3')) return;
+    // Check if at least the base node is active
+    if (!ptHasSkill('binomial_burst_1')) return;
     // Ergodic Field disables auto-marks
-    if (ptHasSkill('keystone_ergodic_field')) return;
+    if (ptHasSkill('keystone_ergodic_field') || window._oracleActive) return;
 
     window._binomialBurstFills = (window._binomialBurstFills || 0) + 1;
     if (window._binomialBurstFills < 10) return;
     window._binomialBurstFills = 0;
 
-    // Chance: 20% base; node 3 replaces with 35%
-    let chance = 0;
-    if (ptHasSkill('binomial_burst_1')) chance = 0.20;
-    if (ptHasSkill('binomial_burst_2')) chance = 0.20;
-    if (ptHasSkill('binomial_burst_3')) chance = 0.35;
+    // Calculate additive chance
+    let chance = 0.20; // Base from node 1
+    if (ptHasSkill('binomial_burst_2')) chance += 0.10; // +10%
+    if (ptHasSkill('binomial_burst_3')) chance += 0.20; // +20%
 
     if (_bayesianRoll(chance)) {
         markWrongTiles(1);
@@ -110,6 +118,8 @@ function _binomialBurstOnCorrectFill() {
 //------------------------------------------------------------------------
 function _applyMaximumLikelihood() {
     if (!ptHasSkill('keystone_maximum_likelihood')) return;
+    if (window._oracleActive) return;
+    if (ptHasSkill('keystone_ergodic_field')) return;
     if (!cur) return;
     const sol = cur.grid;
     const rows = sol.length, cols = sol[0].length;
@@ -137,7 +147,7 @@ function _applyMaximumLikelihood() {
             revealedGrid[bestRow][c] = true;
             userGrid[bestRow][c] = 1;
             renderCell(bestRow, c);
-            updClues(bestRow, c);
+            updClues(bestRow, c, true);
             affected.push(`g-${bestRow}-${c}`);
         }
     }
@@ -146,7 +156,7 @@ function _applyMaximumLikelihood() {
             revealedGrid[r][bestCol] = true;
             userGrid[r][bestCol] = 1;
             renderCell(r, bestCol);
-            updClues(r, bestCol);
+            updClues(r, bestCol, true);
             affected.push(`g-${r}-${bestCol}`);
         }
     }
@@ -169,6 +179,7 @@ function _applyMaximumLikelihood() {
 function _gamblersRuinOnCorrectFill() {
     if (!ptHasSkill('keystone_gamblers_ruin')) return;
     timerSecs += 3;
+    questStat_gamblersRuinTimeAdded(3);
     updTimer();
 }
 
@@ -197,6 +208,10 @@ function _applySparsePrior() {
 function _sparsePriorOnLineComplete(lineIndex, isRow) {
     if (!ptHasSkill('keystone_sparse_prior')) return;
     if (!cur) return;
+    if (!window._sparsePriorRevealedLines) window._sparsePriorRevealedLines = new Set();
+    const key = (isRow ? 'r' : 'c') + lineIndex;
+    if (window._sparsePriorRevealedLines.has(key)) return;
+    window._sparsePriorRevealedLines.add(key);
     const rows = cur.grid.length, cols = cur.grid[0].length;
 
     if (isRow) {
@@ -245,7 +260,7 @@ function _ergodicFieldTick() {
             const el = document.getElementById(`g-${r}-${c}`);
             if (!el) continue;
             el.classList.remove('filled', 'marked', 'wrong-mark', 'revealed', 'questioned');
-            el.classList.add(sol[r][c] === 1 ? 'filled' : 'marked', 'scan-reveal');
+            if (sol[r][c] === 1) el.classList.add('filled', 'scan-reveal');
             flashed.push(el);
         }
     }
@@ -253,10 +268,10 @@ function _ergodicFieldTick() {
     showToast(`🌊 ${LANG === 'de' ? 'Ergodisches Feld! Lösung kurz sichtbar.' : 'Ergodic Field! Solution briefly visible.'}`);
 
     setTimeout(() => {
+        flashed.forEach(el => el.classList.remove('scan-reveal')); 
         for (let r = 0; r < rows; r++)
             for (let c = 0; c < cols; c++)
                 renderCell(r, c);
-        flashed.forEach(el => el.classList.remove('scan-reveal'));
     }, 1000);
 }
 
@@ -350,47 +365,68 @@ function _randomWalkInit() {
     window._randomWalkNext = Date.now() + 30 * 1000;
 }
 
+
 function _randomWalkTick() {
     if (!ptHasSkill('keystone_random_walk')) return;
-    if (!window._randomWalkNext || Date.now() < window._randomWalkNext) return;
-    window._randomWalkNext = Date.now() + 30 * 1000;
     if (!cur || dead) return;
+    if (window._oracleActive) return;
+
+    // ENFORCE THE DOWNSIDE: If the player has accumulated 2 or more mistakes on their own, they fail.
+    if (mistakeCount >= 2) {
+        dead = true;
+        stopTimer();
+        window._lastFailedGi = cur.gIdx;
+        document.getElementById('lose-title').textContent = t('ov_lose');
+        document.getElementById('lose-sub').textContent =
+            `${LANG === 'de' ? 'Zufällige Wanderung: 2 Fehler — Level verloren!' : 'Random Walk: 2 mistakes — level lost!'}`;
+        document.getElementById('ov-lose').classList.add('show');
+        return;
+    }
+
+    // SELF-INITIALIZATION FAILSAFE:
+    if (!window._randomWalkNext) {
+        window._randomWalkNext = Date.now() + 30000;
+        return;
+    }
+    if (Date.now() < window._randomWalkNext) return;
+    window._randomWalkNext = Date.now() + 30000;
 
     const sol = cur.grid;
     const rows = sol.length, cols = sol[0].length;
     const unfilled = [];
-    for (let r = 0; r < rows; r++)
-        for (let c = 0; c < cols; c++)
-            if (userGrid[r][c] === 0 && !revealedGrid[r][c] && !wrongGrid[r][c])
+
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            if (userGrid[r][c] === 0 && !revealedGrid[r][c] && !wrongGrid[r][c]) {
                 unfilled.push([r, c]);
+            }
+        }
+    }
 
     if (unfilled.length === 0) return;
     const [r, c] = unfilled[Math.floor(Math.random() * unfilled.length)];
 
     if (sol[r][c] === 1) {
+        // Safe fill
         revealedGrid[r][c] = true;
         userGrid[r][c] = 1;
         renderCell(r, c);
+
+        if (_getBayesianBonus() > 0 && Math.random() < _getBayesianBonus()) {
+            _resetBayesianBonus();
+            markWrongTiles(1);
+        }
+
         updClues(r, c);
         showToast(`🚶 ${LANG === 'de' ? 'Zufällige Wanderung: Zelle enthüllt!' : 'Random Walk: Cell revealed!'}`);
         checkWin();
     } else {
-        // Counts as a mistake — check 2-mistake limit
-        wrongGrid[r][c] = true;
+        // Safe mark (does not increase mistakeCount)
+        userGrid[r][c] = 2;
         renderCell(r, c);
-        mistakeCount++;
-        const mc = document.getElementById('mistake-counter');
-        if (mc) mc.textContent = `${LANG === 'de' ? 'Fehler' : 'Mistakes'}: ${mistakeCount}`;
-        showToast(`🚶 ${LANG === 'de' ? 'Zufällige Wanderung: Falsches Feld!' : 'Random Walk: Wrong cell!'}`);
-        if (mistakeCount >= 2) {
-            dead = true;
-            stopTimer();
-            window._lastFailedGi = cur.gIdx;
-            document.getElementById('lose-title').textContent = t('ov_lose');
-            document.getElementById('lose-sub').textContent =
-                `${LANG === 'de' ? 'Zufällige Wanderung: 2 Fehler — Level verloren!' : 'Random Walk: 2 mistakes — level lost!'}`;
-            document.getElementById('ov-lose').classList.add('show');
-        }
+        updClues(r, c);
+        showToast(`🚶 ${LANG === 'de' ? 'Zufällige Wanderung: Leeres Feld markiert!' : 'Random Walk: Empty cell marked!'}`);
+        checkWin();
     }
 }
 
@@ -455,7 +491,7 @@ function _frequentistsBurdenOnCorrectFill() {
 
 //------------------------------------------------------------------------
 // 296 — KEYSTONE: SIGNAL TO NOISE
-// 10% of clues randomized at start. At 75% completion restore all.
+// 15% of clues randomized at start. At 75% completion restore all.
 // Call _applySignalToNoise() from start-level.js after buildGrid().
 // Call _signalToNoiseCheckRestore() from checkWin / updClues.
 //------------------------------------------------------------------------
@@ -484,8 +520,8 @@ function _applySignalToNoise() {
         });
     }
 
-    // Shuffle and pick 10%
-    const count = Math.max(1, Math.floor(allSpans.length * 0.10));
+    // Shuffle and pick 15%
+    const count = Math.max(1, Math.floor(allSpans.length * 0.15));
     const shuffled = allSpans.sort(() => Math.random() - 0.5);
     shuffled.slice(0, count).forEach(({ span, type, idx }) => {
         const original = parseInt(span.textContent) || 0;
@@ -497,7 +533,7 @@ function _applySignalToNoise() {
         span.style.color = 'var(--danger, #f55)';
     });
 
-    showToast(`📡 ${LANG === 'de' ? '10% der Hinweise sind verfälscht!' : '10% of clues are falsified!'}`);
+    showToast(`📡 ${LANG === 'de' ? '15% der Hinweise sind verfälscht!' : '15% of clues are falsified!'}`);
 }
 
 function _signalToNoiseCheckRestore() {
@@ -564,7 +600,9 @@ function _dofChoose(type) {
     const modal = document.getElementById('dof-modal');
     if (modal) modal.remove();
     window._degreesOfFreedomChoice = type;
-    window._degreesOfFreedomNext = Date.now() + 3 * 60 * 1000;
+
+    // CHANGED: Set the next reveal to happen 30 seconds from now
+    window._degreesOfFreedomNext = Date.now() + 30 * 1000;
 
     if (!cur) return;
     const rows = cur.grid.length, cols = cur.grid[0].length;
@@ -582,42 +620,30 @@ function _degreesOfFreedomTick() {
     if (!ptHasSkill('keystone_degrees_of_freedom')) return;
     if (!window._degreesOfFreedomChoice || !window._degreesOfFreedomNext) return;
     if (Date.now() < window._degreesOfFreedomNext) return;
-    window._degreesOfFreedomNext = Date.now() + 3 * 60 * 1000;
+
+    window._degreesOfFreedomNext = Date.now() + 30 * 1000;
     if (!cur) return;
 
-    const sol = cur.grid;
-    const rows = sol.length, cols = sol[0].length;
     const type = window._degreesOfFreedomChoice;
 
     if (type === 'row') {
-        for (let r = 0; r < rows; r++) {
-            const count = sol[r].filter(v => v === 1).length;
-            // Show count briefly by un-blacking-out the first clue span
-            const span = document.querySelector(`[id^="rn-${r}-"]`);
-            if (span) {
-                const orig = span.textContent;
-                document.querySelectorAll(`.rct-${r}`).forEach(el => el.classList.remove('clue-blackout'));
-                span.textContent = count;
-                setTimeout(() => {
-                    document.querySelectorAll(`.rct-${r}`).forEach(el => el.classList.add('clue-blackout'));
-                    span.textContent = orig;
-                }, 3000);
-            }
-        }
+        // Target all blacked-out row elements
+        const elements = document.querySelectorAll('[class*="rct-"]');
+        elements.forEach(el => el.classList.remove('clue-blackout'));
+
+        // Hide them again after 5 seconds
+        setTimeout(() => {
+            elements.forEach(el => el.classList.add('clue-blackout'));
+        }, 5000);
     } else {
-        for (let c = 0; c < cols; c++) {
-            const count = sol.filter(row => row[c] === 1).length;
-            const span = document.querySelector(`[id^="cn-${c}-"]`);
-            if (span) {
-                const orig = span.textContent;
-                document.querySelectorAll(`.cch-${c}`).forEach(el => el.classList.remove('clue-blackout'));
-                span.textContent = count;
-                setTimeout(() => {
-                    document.querySelectorAll(`.cch-${c}`).forEach(el => el.classList.add('clue-blackout'));
-                    span.textContent = orig;
-                }, 3000);
-            }
-        }
+        // Target all blacked-out column elements
+        const elements = document.querySelectorAll('[class*="cch-"]');
+        elements.forEach(el => el.classList.remove('clue-blackout'));
+
+        // Hide them again after 5 seconds
+        setTimeout(() => {
+            elements.forEach(el => el.classList.add('clue-blackout'));
+        }, 5000);
     }
     showToast(`🎛️ ${LANG === 'de' ? 'Hinweise kurz sichtbar!' : 'Clues briefly visible!'}`);
 }
@@ -639,7 +665,7 @@ function _overfittingGetPhase() {
     for (let r = 0; r < rows; r++)
         for (let c = 0; c < cols; c++)
             if (sol[r][c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])) filled++;
-    return filled < Math.ceil(total * 0.50) ? 'free' : 'hard';
+    return filled < Math.ceil(total * 0.15) ? 'free' : 'hard';
 }
 
 // Returns a penalty multiplier override, or null if not active.
@@ -663,6 +689,8 @@ window._oracleActive = false;
 
 function _applyTheOracle() {
     if (!ptHasSkill('keystone_the_oracle')) return;
+    const _cellCount = cur ? cur.grid.length * cur.grid[0].length : 0;
+    if (_cellCount < 200) return;
     window._oracleActive = true;
 
     if (!cur) return;
@@ -682,7 +710,7 @@ function _applyTheOracle() {
     // Hide all clues immediately
     document.querySelectorAll('.rct, .cch').forEach(el => el.classList.add('clue-blackout'));
 
-    showToast(`👁️ ${LANG === 'de' ? 'Das Orakel! Lösung für 3 Sekunden sichtbar.' : 'The Oracle! Solution visible for 3 seconds.'}`, 3000);
+    showToast(`👁️ ${LANG === 'de' ? 'Das Orakel! Lösung für 5 Sekunden sichtbar.' : 'The Oracle! Solution visible for 3 seconds.'}`, 5000);
 
     setTimeout(() => {
         // Restore all cells to blank
@@ -695,17 +723,13 @@ function _applyTheOracle() {
 
 
 //------------------------------------------------------------------------
-// 301 — KEYSTONE: INTERQUARTILE VISION (3rd node / keystone variant)
-// Adds a 3rd node of +1s to the interquartile vision scan duration.
-// No separate code needed — just update _applyInterquartileVision() in start-level.js
-// to also check ptHasSkill('keystone_interquartile_vision').
-// This function is a drop-in replacement for that check:
+//
 //------------------------------------------------------------------------
 function _interquartileVisionDuration() {
     let dur = 0;
     if (ptHasSkill('interquartile_vision_1')) dur = 2000;
     if (ptHasSkill('interquartile_vision_2')) dur += 1000;
-    if (ptHasSkill('keystone_interquartile_vision')) dur += 1000;
+    if (ptHasSkill('interquartile_vision_3')) dur += 1000;
     return dur;
 }
 
@@ -726,4 +750,6 @@ function _resetNewNodeState() {
     window._degreesOfFreedomChoice = null;
     window._degreesOfFreedomNext = null;
     window._oracleActive = false;
+    window._sparsePriorRevealedLines = new Set();
+    window._residualAnalysisRewardedLines = new Set();
 }

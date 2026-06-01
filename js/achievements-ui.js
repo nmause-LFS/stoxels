@@ -304,7 +304,13 @@ function _buildCardProgressHtml(def, highestUnlocked, currentVal, lang) {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
+function showAchResetModal() {
+    document.getElementById('ach-reset-modal').style.display = 'flex';
+}
 
+function hideAchResetModal() {
+    document.getElementById('ach-reset-modal').style.display = 'none';
+}
 
 
 

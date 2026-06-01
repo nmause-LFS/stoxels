@@ -96,6 +96,7 @@ function showClassSelection() {
         </div>`;
 
     overlay.classList.add('show');
+    Audio_Manager.playSFX('classSelection');
 }
 
 function confirmClassSelection(cid) {
@@ -446,6 +447,8 @@ function confirmAscendencySelection(aid) {
     const asc = ASCENDENCY_DEFS[aid];
     Audio_Manager.playSFX('classSelected');
     showToast(`✨ ${t(asc.nameEn, asc.nameDE)} ${t('ascendency chosen!', 'Aufstiegsklasse gewählt!')}`);
+    updateQuestStats('ascendencyChosen', {});
+    trackAchStat('ascendencyChosen');
     closeClassOverlay();
     buildClassHUD();
 }
@@ -551,6 +554,7 @@ function applyAscendencyUpgrade(type) {
     const newLv = type === 'active1' ? STATE.ascendencySkill1Level : STATE.ascendencySkill2Level;
     Audio_Manager.playSFX('classUpgraded');
     showToast(`✨ ${t(skillDef.nameEn, skillDef.nameDE)} → ${t('Level', 'Stufe')} ${newLv}!`);
+    updateQuestStats('ascendencyUpgradeApplied', {});
     closeClassOverlay();
     buildClassHUD();
 }

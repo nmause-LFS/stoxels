@@ -94,17 +94,24 @@ function pickRandomItem() {
         if (TUTOR_IDS.has(d.id) && tutorBoost) w *= (1 + tutorBoost);
         if (SHIELD_IDS.has(d.id) && shieldBoost) w *= (1 + shieldBoost);
         if (UTILITY_IDS.has(d.id) && utilityBoost) w *= (1 + utilityBoost);
-        // Apex Collector: items below epic cannot be picked
-        if (ptHasSkill('keystone_apex_collector') && r !== 'epic' && r !== 'legendary' && r !== 'artifact' && r !== 'cursed') w = 0;
+
         return { ...d, weight: w };
     });
 
     const total = adjustedPool.reduce((s, d) => s + d.weight, 0);
     let roll = Math.random() * total;
+
+
     for (const d of adjustedPool) {
         roll -= d.weight;
         if (roll <= 0) {
-            // Common Refinement: chance to upgrade common → uncommon
+            // Apex Collector: if the rolled item is below epic, give nothing
+            if (ptHasSkill('keystone_apex_collector')
+                && d.rarity !== 'epic' && d.rarity !== 'legendary'
+                && d.rarity !== 'artifact' && d.rarity !== 'cursed') {
+                return null;
+            }
+            // Common Refinement: chance to upgrade common -> uncommon
             if (d.rarity === 'common') {
                 const upgradeChance = (ptHasSkill('common_refinement_1') ? 0.05 : 0)
                     + (ptHasSkill('common_refinement_2') ? 0.05 : 0)
@@ -120,13 +127,23 @@ function pickRandomItem() {
             return d.id;
         }
     }
-    return adjustedPool[adjustedPool.length - 1].id;
+
+    // Apex Collector: final fallback item might also be below epic
+    const fallback = adjustedPool[adjustedPool.length - 1];
+    if (ptHasSkill('keystone_apex_collector')
+        && fallback.rarity !== 'epic' && fallback.rarity !== 'legendary'
+        && fallback.rarity !== 'artifact' && fallback.rarity !== 'cursed') {
+        return null;
+    }
+    return fallback.id;
+
+
 }
 
 
 // Same pool but with a small artifact chance on top
 function pickLuckyItem() {
-    if (ptHasSkill('keystone_apex_collector') || Math.random() < 0.01) return 'artifactComplete';
+    if (ptHasSkill('keystone_apex_collector') && Math.random() < 0.03) return 'artifactComplete';
     return pickRandomItem();
 }
 

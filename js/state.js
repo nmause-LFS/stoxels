@@ -43,7 +43,7 @@ let quizAnsweredCorrectly = false;  // set to true if the player answers the qui
 
 let luckyTiles = new Set();         // e.g. if the tile at row 3, column 5 is lucky, luckyTiles will contain the string "3-5"
 
-let luckyRewardClaimed = false;     // This is used to ensure the player can only get the lucky item reward once per level, even if they fill multiple lucky tiles
+let luckyRewardClaimed = 0;     // This is used to ensure the player can only get the lucky item reward once per level, even if they fill multiple lucky tiles
 
 
 
@@ -55,6 +55,7 @@ let consecutiveCorrectFills = 0;  // sample_efficiency: resets on time-costing m
 let _lawOfLargeNumbersNext = null; // keystone_law_of_large_numbers: timestamp of next auto-reveal tick
 
 let _confidenceIntervalActive = false; // confidence_interval: true during the grace window after a mistake
+let _confidenceIntervalUsed = false;  // confidence_interval: true if the CI window was just consumed (prevents back-to-back activations)
 
 let _streakBonusFills = 0;             // streak_bonus: consecutive correct fills since last mistake
 

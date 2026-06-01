@@ -1490,3 +1490,651 @@
         opacity: 0;
     }
 }
+
+
+
+
+
+
+/* ═══════════════════════════════════════════════
+   GOD OF STATISTICS: DIVINE INTERVENTION EFFECT
+   ═══════════════════════════════════════════════ */
+
+/* Fullscreen or board-relative canvas for the holy light */
+.divine-intervention-container {
+    position: fixed;
+    inset: 0;
+    z-index: 4000; /* Above all modals and puzzle boards */
+    pointer-events: none;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Big pillar of solid holy light fading out */
+.divine-beam {
+    position: absolute;
+    width: 250px;
+    height: 150%;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 243, 190, 0.45) 30%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 243, 190, 0.45) 70%, rgba(255, 255, 255, 0) 100% );
+    filter: blur(8px);
+    transform: rotate(-15deg); /* Majestic angled ray */
+    opacity: 0;
+    animation: divine-beam-cast 3s cubic-bezier(0.15, 0.85, 0.35, 1) forwards;
+}
+
+/* Holy floating dust particles */
+.divine-sparkle {
+    position: absolute;
+    color: #fff2a3;
+    font-size: 24px;
+    font-family: Arial, sans-serif;
+    text-shadow: 0 0 10px #ffdf6d, 0 0 20px #ffd700;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0;
+    animation: divine-float 3s ease-out forwards;
+}
+
+/* Golden screen flash overlay */
+.divine-flash {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(255, 223, 109, 0.15);
+    pointer-events: none;
+    opacity: 0;
+    animation: divine-flash-glow 2s ease-out forwards;
+}
+
+/* Earth-shaking when God changes reality */
+.divine-shake {
+    animation: divine-rumble 0.4s ease-in-out;
+}
+
+/* --- ANIMATION KEYFRAMES --- */
+
+@keyframes divine-beam-cast {
+    0% {
+        opacity: 0;
+        transform: scaleX(0.1) rotate(-15deg) translateY(-100px);
+    }
+
+    15% {
+        opacity: 1;
+        transform: scaleX(1.3) rotate(-15deg) translateY(0);
+    }
+
+    40% {
+        transform: scaleX(1) rotate(-15deg) translateY(10px);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scaleX(0.6) rotate(-15deg) translateY(30px);
+        filter: blur(20px);
+    }
+}
+
+@keyframes divine-float {
+    0% {
+        opacity: 0;
+        transform: translateY(40px) scale(0.5);
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    80% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-80px) scale(1.4);
+    }
+}
+
+@keyframes divine-flash-glow {
+    0% {
+        opacity: 0;
+        filter: brightness(1.5);
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        filter: brightness(1);
+    }
+}
+
+@keyframes divine-rumble {
+    0%, 100% {
+        transform: translate(0, 0);
+    }
+
+    20% {
+        transform: translate(-3px, 2px);
+    }
+
+    40% {
+        transform: translate(3px, -1px);
+    }
+
+    60% {
+        transform: translate(-2px, -2px);
+    }
+
+    80% {
+        transform: translate(2px, 1px);
+    }
+}
+
+
+
+
+/* Modified to ensure the massive ring isn't clipped by any hidden overflow properties */
+.balloon-effect-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: visible !important; /* Double-check that nothing clips our mega ring */
+}
+
+/* The actual purple balloon styling */
+.arcane-balloon {
+    width: 24px;
+    height: 24px;
+    background: #a855f7;
+    border-radius: 50% 50% 50% 50% / 45% 45% 55% 55% !important;
+    display: block;
+    position: relative;
+    animation: riseAndPop 1.6s forwards ease-out;
+}
+
+    /* Little tie knot underneath */
+    .arcane-balloon::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: calc(50% - 3px);
+        width: 0;
+        height: 0;
+        border-left: 3px solid transparent;
+        border-right: 3px solid transparent;
+        border-bottom: 5px solid #a855f7;
+    }
+
+    /* ── ENLARGED PURPLE SHOCKWAVE RING EFFECT ── */
+    .arcane-balloon::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 100%;
+        border: 3px solid #d8b4fe;
+        border-radius: 50% !important;
+        pointer-events: none;
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+        animation: purpleShockwave 1.6s forwards ease-out;
+    }
+
+/* --- ANIMATION KEYFRAMES --- */
+
+@keyframes riseAndPop {
+    0% {
+        transform: translateY(15px) scale(0.2);
+        opacity: 0;
+    }
+
+    12% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    88% {
+        transform: translateY(-38px) scale(1.05);
+        opacity: 1;
+        background: #a855f7;
+    }
+
+    92% {
+        transform: translateY(-40px) scale(1.35);
+        background: #f3e8ff;
+        opacity: 0.9;
+    }
+
+    100% {
+        transform: translateY(-40px) scale(0);
+        opacity: 0;
+    }
+}
+
+@keyframes purpleShockwave {
+    0%, 88% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+        border-width: 5px; /* Slightly thicker initial border so it looks clean when stretched out */
+    }
+
+    92% {
+        opacity: 1;
+        border-color: #a855f7;
+    }
+
+    100% {
+        /* Increased from scale(3.5) to scale(6.5) for a massive, screen-ripping expansion */
+        transform: translate(-50%, -50%) scale(6.5);
+        opacity: 0;
+        border-width: 0.5px; /* Thins out into nothingness right at the edge of the explosion */
+    }
+}
+
+
+
+/* ── ARCANE EXPLODING STARS ── */
+.arcane-exploding-star {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    color: #c084fc; /* Bright lavender/purple stars */
+    font-size: 20px; /* Noticeable star visuals */
+    font-family: Arial, sans-serif;
+    line-height: 1;
+    pointer-events: none;
+    text-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7; /* Magical purple glow */
+    transform: translate(-50%, -50%) rotate(0deg) translate(0, 0) scale(1);
+    /* Animate using a highly accelerated curve to simulate an explosive blast */
+    animation: blastOutward 3s cubic-bezier(0.1, 0.8, 0.15, 1) forwards;
+    animation-delay: var(--delay);
+}
+
+@keyframes blastOutward {
+    0% {
+        /* Start tightly clustered at the center explosion point */
+        transform: translate(-50%, -50%) rotate(var(--angle)) translate(0, 0) scale(0.5) rotate(0deg);
+        opacity: 1;
+    }
+
+    15% {
+        /* Quick flash to full size early in the blast */
+        scale: 1.4;
+    }
+
+    80% {
+        opacity: 1;
+    }
+
+    100% {
+        /* Shoot out to its randomized massive off-screen distance, spinning rapidly along the way */
+        transform: translate(-50%, -50%) rotate(var(--angle)) translate(0, calc(-1 * var(--distance))) scale(0.4) rotate(720deg);
+        opacity: 0; /* Fade right at the edge of the screen boundaries */
+    }
+}
+
+
+
+
+
+
+/* ── Absolute Zero: Frozen Solid Jagged Floor Overlay ── */
+#ability-frozen-floor {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 140px; /* Slightly taller to accommodate the spikes */
+    z-index: 348;
+    pointer-events: none;
+    user-select: none;
+    /* Main body of the ice */
+    background: linear-gradient(180deg, rgba(225, 245, 255, 0.9) 0%, rgba(135, 210, 255, 0.85) 30%, rgba(40, 140, 220, 0.95) 100% );
+    /* This creates an organic, multi-crested jagged ice horizon line */
+    clip-path: polygon( 0% 65%, 4% 45%, 9% 55%, 15% 30%, 22% 58%, 28% 40%, 35% 25%, 41% 50%, 48% 35%, 53% 55%, 60% 20%, 68% 48%, 74% 38%, 81% 60%, 87% 28%, 93% 52%, 100% 40%, 100% 100%, 0% 100% );
+    /* Clean frosty outer highlight and inner glow depth */
+    box-shadow: inset 0 25px 30px rgba(255, 255, 255, 0.7);
+    filter: drop-shadow(0 -6px 12px rgba(100, 200, 255, 0.6));
+    opacity: 0;
+    transform: translateY(60px) scaleY(0.6);
+    transform-origin: bottom;
+    transition: transform 0.6s cubic-bezier(0.15, 0.85, 0.35, 1.1), opacity 0.4s ease;
+}
+
+    /* BACKGROUND SHARD LAYER 1: Adds crystal depth behind the main wall */
+    #ability-frozen-floor::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        bottom: 20px;
+        z-index: -1;
+        background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(100,180,240,0.5) 100%);
+        /* A completely different set of spikes offset from the front layer */
+        clip-path: polygon( 0% 40%, 7% 15%, 18% 50%, 30% 10%, 45% 45%, 55% 5%, 65% 35%, 78% 12%, 89% 45%, 100% 20%, 100% 100%, 0% 100% );
+        opacity: 0.7;
+    }
+
+    /* GLARE/LIGHT LAYER 2: Creates the sharp, angular reflections on the facets */
+    #ability-frozen-floor::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient( 45deg, rgba(255, 255, 255, 0.15) 0px, rgba(255, 255, 255, 0.15) 10px, transparent 10px, transparent 30px );
+        mix-blend-mode: overlay;
+    }
+
+    /* Active Class states */
+    #ability-frozen-floor.active {
+        opacity: 1;
+        transform: translateY(0) scaleY(1);
+        animation: absolute-ice-pulse 3s ease-in-out infinite alternate;
+    }
+
+@keyframes absolute-ice-pulse {
+    0% {
+        filter: drop-shadow(0 -4px 8px rgba(135,206,250,0.5)) brightness(1);
+    }
+
+    100% {
+        filter: drop-shadow(0 -10px 20px rgba(174,228,255,0.85)) brightness(1.1);
+    }
+}
+
+
+
+
+
+
+/* ── PRECISION MARK: Bow & Arrow Effect ── */
+
+@keyframes pm-bow-appear {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--pm-rot, 0deg)) scale(0.3);
+    }
+
+    70% {
+        transform: translate(-50%, -50%) rotate(var(--pm-rot, 0deg)) scale(1.15);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) rotate(var(--pm-rot, 0deg)) scale(1);
+    }
+}
+
+@keyframes pm-bow-disappear {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2);
+    }
+}
+
+@keyframes pm-impact {
+    0% {
+        width: 0;
+        height: 0;
+        box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.9), 0 0 0 6px rgba(0, 255, 136, 0.4);
+        opacity: 1;
+    }
+
+    60% {
+        width: 48px;
+        height: 48px;
+        box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.5), 0 0 0 10px rgba(0, 204, 102, 0.2);
+        opacity: 0.8;
+    }
+
+    100% {
+        width: 72px;
+        height: 72px;
+        box-shadow: 0 0 0 1px rgba(0, 255, 136, 0), 0 0 0 16px rgba(0, 204, 102, 0);
+        opacity: 0;
+    }
+}
+
+@keyframes pm-flash {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+
+    50% {
+        opacity: 0.9;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.8);
+    }
+}
+
+
+
+
+
+
+/* ── Bayesian Insight: Crossbow pull animation ── */
+.bayesian-crossbow {
+    position: fixed;
+    font-size: 28px;
+    z-index: 9100;
+    pointer-events: none;
+    filter: drop-shadow(0 0 6px #bb8fce) drop-shadow(0 0 12px #8e44ad);
+    animation: crossbow-appear 0.35s cubic-bezier(0.2, 1.4, 0.4, 1) forwards;
+    transform-origin: center;
+}
+
+@keyframes crossbow-appear {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2);
+    }
+
+    70% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.15);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes crossbow-disappear {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2);
+    }
+}
+
+/* The X mark that gets yanked out of the cell */
+.bi-x-mark {
+    position: fixed;
+    font-size: 14px;
+    font-weight: bold;
+    color: #bb8fce;
+    text-shadow: 0 0 8px #8e44ad, 0 0 16px #6c3483;
+    z-index: 9101;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    animation: bi-x-fly linear forwards;
+}
+
+@keyframes bi-x-fly {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.3);
+    }
+
+    15% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+
+    85% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+}
+
+/* The chain/rope that connects crossbow to cell */
+.bi-chain {
+    position: fixed;
+    height: 4px;
+    z-index: 9099;
+    pointer-events: none;
+    transform-origin: left center;
+    background: linear-gradient(90deg, rgba(39,174,96,0.9), rgba(150,255,200,0.7), rgba(39,174,96,0.9));
+    box-shadow: 0 0 6px rgba(39,174,96,0.6);
+    animation: chain-fade linear forwards;
+}
+
+@keyframes chain-fade {
+    0% {
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 0.8;
+    }
+
+    80% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+/* Small impact flash when X mark lands at the crossbow */
+.bi-impact {
+    position: fixed;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    z-index: 9102;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    animation: bi-impact-ring 0.45s ease-out forwards;
+}
+
+@keyframes bi-impact-ring {
+    0% {
+        width: 0;
+        height: 0;
+        box-shadow: 0 0 0 3px rgba(187,143,206,0.9);
+        opacity: 1;
+    }
+
+    60% {
+        width: 36px;
+        height: 36px;
+        box-shadow: 0 0 0 2px rgba(142,68,173,0.5);
+        opacity: 0.7;
+    }
+
+    100% {
+        width: 54px;
+        height: 54px;
+        box-shadow: 0 0 0 1px rgba(142,68,173,0);
+        opacity: 0;
+    }
+}
+
+
+
+
+/* ── Field Scan: modernized (beam, outline, bar, cell flash) ── */
+/* The beam, outline, and bar are all injected inline via JS with dynamic keyframes. */
+/* scan-reveal class still marks temporarily-revealed cells. */
+
+/* Subtle tint on scan-revealed cells so they're distinguishable from normally-filled ones */
+.scan-reveal {
+    outline: 1px solid rgba(74, 222, 128, 0.3) !important;
+    outline-offset: -1px;
+}
+
+
+
+/* ── Bayesian Insight: confirmed_hypothesis golden reveal orb ── */
+@keyframes bi-reveal-trail {
+    0% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2) translateY(10px);
+    }
+}
+
+@keyframes bi-reveal-ring-anim {
+    0% {
+        width: 0;
+        height: 0;
+        box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.95), 0 0 0 6px rgba(255, 165, 0, 0.4);
+        opacity: 1;
+    }
+
+    60% {
+        width: 52px;
+        height: 52px;
+        box-shadow: 0 0 0 2px rgba(255, 180, 0, 0.5), 0 0 0 10px rgba(255, 140, 0, 0.15);
+        opacity: 0.8;
+    }
+
+    100% {
+        width: 80px;
+        height: 80px;
+        box-shadow: 0 0 0 1px rgba(255, 215, 0, 0), 0 0 0 18px rgba(255, 140, 0, 0);
+        opacity: 0;
+    }
+}
+
+@keyframes bi-reveal-flash {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.4);
+    }
+
+    50% {
+        opacity: 0.9;
+        transform: translate(-50%, -50%) scale(1.3);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(2);
+    }
+}

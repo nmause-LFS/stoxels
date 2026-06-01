@@ -39,7 +39,7 @@
 
     /* ── Modal sizing ─────────────────────────────────────────────────────── */
     .ledger-modal-box {
-        width: min(760px, 96vw);
+        width: min(1000px, 96vw);
         max-height: 88vh;
         overflow-y: auto;
         display: flex;
@@ -48,7 +48,7 @@
         padding-bottom: 20px;
     }
     .quest-log-box {
-        width: min(680px, 96vw);
+        width: min(1000px, 96vw);
         max-height: 86vh;
         overflow-y: auto;
         display: flex;

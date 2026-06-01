@@ -78,3 +78,60 @@
     .qcb-close:hover {
         color: #fff;
     }
+
+
+
+
+
+
+
+
+/* ── Tab Navigation ───────────────────────────────────────────────────── */
+.ledger-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border2, #333);
+    padding-bottom: 8px;
+}
+
+.ledger-tab-btn {
+    font-family: var(--PX, monospace);
+    font-size: 10px;
+    letter-spacing: 1px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--accent2, #aaa);
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+
+    .ledger-tab-btn:hover {
+        color: var(--accent, #fff);
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .ledger-tab-btn.active {
+        color: #3498db; /* Using your progress bar blue */
+        border: 1px solid #3498db;
+        background: rgba(52, 152, 219, 0.08);
+    }
+
+
+
+/* ── Claimable dot on tab headers ─────────────────────────────── */
+.ledger-tab-btn {
+    position: relative;
+}
+
+.ledger-tab-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #f39c12;
+    margin-left: 6px;
+    vertical-align: middle;
+    animation: questPulse 1.2s ease-in-out infinite;
+}

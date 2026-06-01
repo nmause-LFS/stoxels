@@ -132,7 +132,23 @@ function onHoverOut(row, col) {
 //------------------------------------------------------------------------
 
 
+// _dragCounterApply — adds a stroke-count overlay number to a cell during a drag.
+function _dragCounterApply(row, col, count) {
+    const el = document.getElementById(`g-${row}-${col}`);
+    if (!el) return;
+    let overlay = el.querySelector('.drag-count-overlay');
+    if (!overlay) {
+        overlay = document.createElement('span');
+        overlay.className = 'drag-count-overlay';
+        el.appendChild(overlay);
+    }
+    overlay.textContent = count;
+}
 
+// _dragCounterClear — removes all stroke-count overlays from the board.
+function _dragCounterClear() {
+    document.querySelectorAll('.drag-count-overlay').forEach(el => el.remove());
+}
 
 
 

@@ -47,27 +47,27 @@ const CLASS_DEFS = {
         active1: {
             nameEn: 'Arcane Reveal',
             nameDE: 'Arkane Enthüllung',
-            descCursorEn: 'Click a cell to reveal it and its neighbours',
-            descCursorDE: 'Klicke eine Zelle, um sie und ihre Nachbarn zu enthüllen',
-            cooldownSeconds: 420, //
+            descCursorEn: 'Select a cell to reveal a limited amount of correct neighhbours.',
+            descCursorDE: 'Wähle eine Zelle, um eine begrenzte Anzahl korrekter Nachbarn zu enthüllen.',
+            cooldownSeconds: 300,
             levels: [
                 {
                     level: 1,
-                    descEn: 'Click a cell to reveal the correct state of all cells within 1 step. Cooldown: 7 minutes.',
-                    descDE: 'Klicke eine Zelle, um alle Zellen im Umkreis von 1 Schritt zu enthüllen. Abklingzeit: 7 Minuten.',
-                    effect: { radius: 1 }
+                    descEn: 'Select a cell to reveal up to 4 correct neighbours within 1 step. Cooldown: 5 minutes.',
+                    descDE: 'Wähle eine Zelle, um bis zu 4 korrekte Nachbarn im Umkreis von 1 Schritt zu enthüllen. Abklingzeit: 5 Minuten.',
+                    effect: { radius: 1, maxReveals: 4}
                 },
                 {
                     level: 2,
-                    descEn: 'Click a cell to reveal the correct state of all cells within 2 steps. Cooldown: 7 minutes.',
-                    descDE: 'Klicke eine Zelle, um alle Zellen im Umkreis von 2 Schritten zu enthüllen. Abklingzeit: 7 Minuten.',
-                    effect: { radius: 2 }
+                    descEn: 'Select a cell to reveal up to 5 correct neighbours within 2 steps. Cooldown: 5 minutes.',
+                    descDE: 'Wähle eine Zelle, um bis zu 5 korrekte Nachbarn im Umkreis von 2 Schritten zu enthüllen. Abklingzeit: 5 Minuten.',
+                    effect: { radius: 2, maxReveals: 5 }
                 },
                 {
                     level: 3,
-                    descEn: 'Click a cell to reveal the correct state of all cells within 3 steps. Cooldown: 7 minutes.',
-                    descDE: 'Klicke eine Zelle, um alle Zellen im Umkreis von 3 Schritten zu enthüllen. Abklingzeit: 7 Minuten.',
-                    effect: { radius: 3 }
+                    descEn: 'Select a cell to reveal up to 6 correct neighbours within 3 steps. Cooldown: 5 minutes.',
+                    descDE: 'Wähle eine Zelle, um bis zu 6 korrekte Nachbarn im Umkreis von 3 Schritten zu enthüllen. Abklingzeit: 5 Minuten.',
+                    effect: { radius: 3, maxReveals: 6 }
                 },
             ]
         },
@@ -235,26 +235,26 @@ const CLASS_DEFS = {
         active1: {
             nameEn: 'Precision Mark',
             nameDE: 'Präzisionsmarkierung',
-            descCursorEn: 'Click a cell to mark all wrong cells in its row and column with ✕',
-            descCursorDE: 'Klicke eine Zelle, um alle falschen Zellen in Zeile und Spalte mit ✕ zu markieren',
+            descCursorEn: 'Click a cell to mark up to 5 wrong cells in its row and column with ✕',
+            descCursorDE: 'Klicke eine Zelle, um bis zu 5 falsche Zellen in Zeile und Spalte mit ✕ zu markieren',
             cooldownSeconds: 300,
             levels: [
                 {
                     level: 1,
-                    descEn: 'Click a cell to mark all wrong cells in that row and column with ✕. Cooldown: 5 minutes.',
-                    descDE: 'Klicke eine Zelle um alle falschen Zellen in dieser Zeile und Spalte mit einem ✕ zu markieren. Abklingzeit: 5 Minuten.',
+                    descEn: 'Click a cell to mark up to 5 wrong cells in that row and column with ✕. Cooldown: 5 minutes.',
+                    descDE: 'Klicke eine Zelle um bis zu 5 falsche Zellen in dieser Zeile und Spalte mit einem ✕ zu markieren. Abklingzeit: 5 Minuten.',
                     effect: { crossMark: true, extraLines: 0 }
                 },
                 {
                     level: 2,
-                    descEn: 'Click a cell to mark all wrong cells in that row, column and 1 adjacent row and column with ✕. Cooldown: 5 minutes.',
-                    descDE: 'Klicke eine Zelle um alle falschen Zellen in dieser Zeile, Spalte, und 1 angrenzende Zeile und Spalte mit ✕ zu markieren. Abklingzeit: 5 Minuten',
+                    descEn: 'Click a cell to mark up to 6 wrong cells in that row, column and 1 adjacent row and column with ✕. Cooldown: 5 minutes.',
+                    descDE: 'Klicke eine Zelle um bis zu 6 falsche Zellen in dieser Zeile, Spalte, und 1 angrenzende Zeile und Spalte mit ✕ zu markieren. Abklingzeit: 5 Minuten',
                     effect: { crossMark: true, extraLines: 1 }
                 },
                 {
                     level: 3,
-                    descEn: 'Click a cell to mark all wrong cells in that row, column and 2 adjacent rows and columns with ✕. Cooldown: 5 minutes.',
-                    descDE: 'Klicke eine Zelle um alle falschen Zellen in dieser Zeile, Spalte, und 2 angrenzenden Zeilen und Spalten mit ✕ zu markieren. Abklingzeit: 5 Minuten',
+                    descEn: 'Click a cell to mark up to 7 wrong cells in that row, column and 2 adjacent rows and columns with ✕. Cooldown: 5 minutes.',
+                    descDE: 'Klicke eine Zelle um bis zu 7 falsche Zellen in dieser Zeile, Spalte, und 2 angrenzenden Zeilen und Spalten mit ✕ zu markieren. Abklingzeit: 5 Minuten',
                     effect: { crossMark: true, extraLines: 2 }
                 },
             ]
@@ -263,27 +263,27 @@ const CLASS_DEFS = {
         active2: {
             nameEn: 'Field Scan',
             nameDE: 'Feldscan',
-            descCursorEn: 'Click a cell to scan a random region',
-            descCursorDE: 'Klicke eine Zelle zum Scannen einer zufälligen Region!',
-            cooldownSeconds: 120,
+            descCursorEn: 'Scans a random region on the grid.',
+            descCursorDE: 'Scannt eine zufällig Region auf dem Spielfeld.',
+            cooldownSeconds: 180,
             levels: [
                 {
                     level: 1,
-                    descEn: 'Reveals a random 4×4 region for 1 second — correct tiles glow green, empty tiles show ✕. Cooldown: 2 minutes.',
-                    descDE: 'Enthüllt eine zufällige 4×4-Region für 1 Sekunde — richtige Felder leuchten grün, leere zeigen ✕. Abklingzeit: 2 Minuten.',
-                    effect: { scanSize: 4, scanDuration: 1000 }
+                    descEn: 'Scans a random 2×2 region on the grid for 1 second. Cooldown: 3 minutes.',
+                    descDE: 'Scannt eine zufällige 2×2-Region auf dem Spielfeld für 1 Sekunde. Abklingzeit: 3 Minuten.',
+                    effect: { scanSize: 2, scanDuration: 1000 }
                 },
                 {
                     level: 2,
-                    descEn: 'Reveals a random 6×6 region for 2 seconds — correct tiles glow green, empty tiles show ✕. Cooldown: 2 minutes.',
-                    descDE: 'Enthüllt eine zufällige 6×6-Region für 2 Sekunden — richtige Felder leuchten grün, leere zeigen ✕. Abklingzeit: 2 Minuten.',
-                    effect: { scanSize: 6, scanDuration: 2000 }
+                    descEn: 'Scans a random 3×3 region on the grid for 1.5 seconds. Cooldown: 3 minutes.',
+                    descDE: 'Enthüllt eine zufällige 3×3-Region auf dem Spielfeld für 1,5 Sekunden. Abklingzeit: 3 Minuten.',
+                    effect: { scanSize: 3, scanDuration: 1500 }
                 },
                 {
                     level: 3,
-                    descEn: 'Reveals a random 8×8 region for 3 seconds — correct tiles glow green, empty tiles show ✕. Cooldown: 2 minutes.',
-                    descDE: 'Enthüllt eine zufällige 8×8-Region für 3 Sekunden — richtige Felder leuchten grün, leere zeigen ✕. Abklingzeit: 2 Minuten.',
-                    effect: { scanSize: 8, scanDuration: 3000 }
+                    descEn: 'Reveals a random 4×4 region on the grid for 2 seconds. Cooldown: 3 minutes.',
+                    descDE: 'Enthüllt eine zufällige 4×4-Region auf dem Spielfeld für 2 Sekunden. Abklingzeit: 3 Minuten.',
+                    effect: { scanSize: 4, scanDuration: 2000 }
                 },
             ]
         },

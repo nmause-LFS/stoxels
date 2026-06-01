@@ -165,6 +165,7 @@ function _revealCellForBear(r, c) {
         updClues(r, c);
         trackAchStat('tilesRevealed', 1);
         _applyCellEffect([`g-${r}-${c}`], 'reveal');
+        trackAchStat('brownianCellsRevealed');
 
         if (typeof ptHasSkill === 'function' && ptHasSkill('adjacency_matrix')) {
             _adjacencyMatrixRefreshAll();
@@ -174,6 +175,9 @@ function _revealCellForBear(r, c) {
         //renderCell(r, c);
         //_applyCellEffect([`g-${r}-${c}`], 'mark');
     }
+
+    questStat_classRevealUsed(1);
+    updateQuestStats('classAbilityUsedThisLevel', {});
 
     checkWin();
 }
@@ -356,6 +360,8 @@ function _drifterPoopExplosion(el, r, c, rows, cols) {
             setTimeout(() => el.remove(), 300);
 
             if (cellsRevealed > 0) trackAchStat('tilesRevealed', cellsRevealed);
+            questStat_classRevealUsed(cellsRevealed);
+            updateQuestStats('classAbilityUsedThisLevel', {});
             checkWin();
         }
     }, 1000);
@@ -410,6 +416,7 @@ window.feedDrifter = function () {
 
         showToast(`🐶 Drifter Level Up!`);
         Audio_Manager.playSFX('drifterLevelUp');
+        trackAchStat('drifterLevelUps');
     }
 
     // 3. Update the health bar using the newly calculated dynamic level cap

@@ -209,6 +209,13 @@
                     </label>
                     <button class="settings-toggle" id="stt-axis">OFF</button>
                 </div>
+                <div class="settings-row">
+                    <label class="settings-label">
+                        Question Mark
+                        <span class="settings-hint">Right Click a X - marked cell to add a yellow ?  </span>
+                    </label>
+                    <button class="settings-toggle" id="stt-qmark">ON</button>
+                </div>
             </div>
 
         </div>
@@ -259,6 +266,12 @@
                         <div class="bonus-inline" id="bonus-sidebar">
                             <span class="bonus-sidebar-label">🎯 BONUS</span>
                             <span class="bonus-sidebar-hint" id="bonus-sidebar-hint"></span>
+                        </div>
+                    </div>
+                    <div class="game-meta-row4">
+                        <div class="completion-glimpse-bar hidden" id="completion-glimpse-bar">
+                            <span class="completion-glimpse-label">📋</span>
+                            <span class="completion-glimpse-text" id="completion-glimpse-text"></span>
                         </div>
                     </div>
                 </div>
@@ -469,7 +482,7 @@
         <div class="pt-canvas" id="pt-canvas"></div>
     </div>
 
-
+    <!-- CONVERGENCE -->
     <div class="modal-bg" id="convergence-modal">
         <div class="modal convergence-modal-box">
             <div class="convergence-modal-icon">🌿</div>
@@ -489,6 +502,25 @@
                 <button class="btn convergence-btn-levels" onclick="hideConvergenceModal(); goLevels();">
                     ☰ <span data-en="Level Select" data-de="Levelauswahl">Level Select</span>
                 </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ACHIEVEMENT RESET CONFIRM MODAL -->
+    <div id="ach-reset-modal" class="modal-bg">
+        <div class="modal-box modal-box-danger">
+            <button class="modal-close" onclick="hideAchResetModal()">✕ CLOSE</button>
+            <div class="modal-title text-red">⚠ RESET ACHIEVEMENTS</div>
+            <div class="modal-section">
+                <p class="reset-body-text">
+                    This will permanently erase all achievement progress and unlocked tiers.<br><br>
+                    <strong class="text-accent2">This cannot be undone.</strong>
+                </p>
+            </div>
+            <div class="modal-actions">
+                <button class="title-btn btn-danger" onclick="hideAchResetModal(); _doResetAchievements();">🗑 YES, RESET ACHIEVEMENTS</button>
+                <button class="title-btn sec" onclick="hideAchResetModal()">CANCEL</button>
             </div>
         </div>
     </div>

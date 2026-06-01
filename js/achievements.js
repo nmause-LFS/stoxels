@@ -152,6 +152,13 @@ function trackClassStats(ctx) {
     if (ctx.playerClass === 'statistician') trackAchStat('levelsAsStatistician');
     if (ctx.playerClass === 'probabilist') trackAchStat('levelsAsProbabilist');
 
+    // NEW: Ascendency Level Completion Tracking
+    if (ctx.playerAscendency) {
+        // Capitalizes the first letter (e.g. 'actuary' -> 'levelsAsActuary')
+        const ascKey = 'levelsAs' + ctx.playerAscendency.charAt(0).toUpperCase() + ctx.playerAscendency.slice(1);
+        trackAchStat(ascKey);
+    }
+
     // Mathmagician absorb streak in a single level
     if (ctx.playerClass === 'mathmagician' && ctx.absorbedThisLevel >= 3) {
         trackAchStat('mathmagician3AbsorbOneLevel');
@@ -328,19 +335,17 @@ function checkWorldCompleteAch() {
 // resetAchievements — wipes all achievement progress from storage and memory,
 //   then rebuilds the UI to reflect the cleared state.
 function resetAchievements() {
-    if (!confirm("Are you sure you want to wipe ALL achievement progress? This cannot be undone.")) return;
+    showAchResetModal();
+}
 
+
+function _doResetAchievements() {
     localStorage.removeItem(ACH_SAVE_KEY);
     ACH_STATE = { stats: {}, unlocked: [] };
     saveAchState();
     buildAchievementsScreen();
-
-    if (typeof showToast === 'function') {
-        showToast("Achievements Cleared!");
-    }
+    if (typeof showToast === 'function') showToast("Achievements Cleared!");
 }
-
-
 
 
 

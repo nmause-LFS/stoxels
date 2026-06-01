@@ -11,6 +11,7 @@ const SETTINGS_DEFAULTS = {
     sfxEnabled: true,
     sfxVolume: 0.7,    // 0–1
     axisLock: false,
+    questionMark: true,
 };
 
 // Load from localStorage, falling back to defaults for any missing keys
@@ -22,6 +23,7 @@ function loadSettings() {
     } catch {
         return { ...SETTINGS_DEFAULTS };
     }
+
 }
 
 function saveSettings(s) {
@@ -38,8 +40,7 @@ function applySettings() {
     Audio_Manager.setBGMVolume(SETTINGS.bgmVolume);
     Audio_Manager.toggleSFX(SETTINGS.sfxEnabled);
     Audio_Manager.setSFXVolume(SETTINGS.sfxVolume);
-    // axisLockEnabled is the global used by mouse-button-handlers.js
-    axisLockEnabled = SETTINGS.axisLock;
+    if (typeof axisLockEnabled !== 'undefined') axisLockEnabled = SETTINGS.axisLock;
 }
 
 
@@ -81,6 +82,13 @@ function loadSettingsUI() {
     if (btnAxis) {
         btnAxis.textContent = s.axisLock ? 'ON' : 'OFF';
         btnAxis.classList.toggle('settings-toggle-off', !s.axisLock);
+    }
+
+    // Question mark toggle
+    const btnQM = document.getElementById('stt-qmark');
+    if (btnQM) {
+        btnQM.textContent = s.questionMark ? 'ON' : 'OFF';
+        btnQM.classList.toggle('settings-toggle-off', !s.questionMark);
     }
 }
 
@@ -124,6 +132,13 @@ function initSettingsControls() {
         SETTINGS.axisLock = !SETTINGS.axisLock;
         saveSettings(SETTINGS);
         applySettings();
+        loadSettingsUI();
+    });
+
+    // Question mark toggle
+    document.getElementById('stt-qmark')?.addEventListener('click', () => {
+        SETTINGS.questionMark = !SETTINGS.questionMark;
+        saveSettings(SETTINGS);
         loadSettingsUI();
     });
 }

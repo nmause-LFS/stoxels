@@ -29,7 +29,16 @@ const MATH_GATE_LEVELS = [
     { world: 5, level: 10},
     { world: 6, level: 1 },
     { world: 6, level: 3 },
-    { world: 6, level: 5},
+    { world: 6, level: 5 },
+    { world: 6, level: 7 },
+    { world: 6, level: 9 },
+    { world: 6, level: 12 },
+    { world: 7, level: 1 },
+    { world: 7, level: 3 },
+    { world: 7, level: 5 },
+    { world: 7, level: 7 },
+    { world: 7, level: 9 },
+    { world: 7, level: 11 },
 ];
 
 
@@ -185,6 +194,8 @@ function mgMarkGatePassed(gi) {
 // Saves state and rebuilds the inventory panel.
 function mgGrantGateReward(gi) {
     const rewardId = pickLuckyItem();
+    if (!rewardId) { hideMathGate(); return; }
+
     const def = ITEM_DEFS[rewardId];
 
     STATE.inventory.push({
@@ -233,6 +244,7 @@ function mgRollBonusItemRewards() {
 
     if (Math.random() < bonusChance) {
         const defId = pickRandomItem();
+        if (!defId) return;
         const def = ITEM_DEFS[defId];
         if (!def) return;
 
@@ -275,7 +287,7 @@ function mgHandleCorrectAnswer() {
         startLevel(gi);
     }, 1500);
 
-    Audio_Manager.playSFX('quiz-correct');
+    Audio_Manager.playSFX('quizCorrect');
 }
 
 
@@ -303,9 +315,9 @@ function mgHandleWrongAnswer() {
 
     const hintThreshold = mgCalcHintThreshold();
     if (hintThreshold !== null && gateAttempts >= hintThreshold) mgShowHint();
-    if (gateAttempts >= 3) mgShowNewQuestionButton();
+    if (gateAttempts >= 5) mgShowNewQuestionButton();
 
-    Audio_Manager.playSFX('quiz-wrong');
+    Audio_Manager.playSFX('quizWrong');
 }
 
 // Reveals the hint for the current question.
@@ -313,6 +325,7 @@ function mgShowHint() {
     const hint = mgGetLocalizedHint(currentGateQuestion);
     document.getElementById('mg-hint-text').textContent = '💡 ' + hint;
     document.getElementById('mg-hint-box').style.display = 'block';
+    questStat_primerHintShown();
 }
 
 // Reveals the "try a different question" button.
@@ -427,7 +440,7 @@ function showMgFeedback(msg, ok) {
 }
 
 // Loads a fresh (different) question from the pool.
-// Available to the player after 3 failed attempts.
+// Available to the player after 5 failed attempts.
 function mgNewQuestion() {
     const world = worldOfGi(pendingGateGi);
     const pool = MATH_GATE_POOLS[world] || MATH_GATE_POOLS[1];
@@ -438,7 +451,9 @@ function mgNewQuestion() {
     document.getElementById('mg-question').textContent =
         mgGetLocalizedQuestion(currentGateQuestion);
 
+
     mgResetModalInputState();
+    _mgRefreshTutorButton();
     mgSetUnitLabel(currentGateQuestion);
     document.getElementById('mg-answer-input').focus();
 }
@@ -469,10 +484,31 @@ function _mgRefreshTutorButton() {
     const btn = document.getElementById('mg-tutor-btn');
     if (!btn) return;
 
+    // Check if player has the node skill enabled
     const hasTutorSkill = PT.hasSkill('tutor_enable');
-    const hasTutorItem = !!STATE.inventory.find(i => i.defId.startsWith('mistakeEraser'));
 
-    btn.style.display = (hasTutorSkill && hasTutorItem) ? 'inline-block' : 'none';
+
+    // Count how many total tutors are currently in STATE.inventory
+    const tutorCount = STATE.inventory.filter(i =>
+        i.defId === 'mistakeEraser' ||
+        i.defId === 'mistakeEraser4' ||
+        i.defId === 'mistakeEraser6' ||
+        i.defId === 'mistakeEraserAll'
+    ).length;
+
+    // Only display button if player has the skill unlocked AND owns at least 1 tutor item
+    if (hasTutorSkill && tutorCount > 0) {
+        btn.style.display = 'inline-block';
+
+        // Apply localization with the accurate count
+        if (LANG === 'de') {
+            btn.textContent = `🎓 Tutor um Hilfe bitten (${tutorCount})`;
+        } else {
+            btn.textContent = `🎓 Ask Tutor for Help (${tutorCount})`;
+        }
+    } else {
+        btn.style.display = 'none';
+    }
 }
 
 // Calculates the tutor's base success chance from passive skill nodes.
@@ -506,6 +542,7 @@ function mgConsumeTutorItem(tutorItem) {
 function mgHandleTutorSuccess() {
     const gi = pendingGateGi;
     const msg = LANG === 'de' ? '🎓 Tutor hat die Frage gelöst!' : '🎓 Tutor solved it!';
+    Audio_Manager.playSFX('tutorSuccess'); 
 
     showMgFeedback(msg, true);
     document.getElementById('mg-tutor-btn').style.display = 'none';
@@ -514,6 +551,7 @@ function mgHandleTutorSuccess() {
     mgMarkGatePassed(gi);
 
     setTimeout(() => { hideMathGate(); startLevel(gi); }, 1200);
+    questStat_tutorAnsweredCorrect();
 }
 
 // Handles the path where the tutor fails to solve the question.
@@ -521,6 +559,8 @@ function mgHandleTutorFailure() {
     const msg = LANG === 'de'
         ? '🎓 Tutor konnte die Frage nicht lösen…'
         : '🎓 Tutor couldn\'t solve it…';
+        
+    Audio_Manager.playSFX('tutorFail');
 
     showMgFeedback(msg, false);
     document.getElementById('mg-tutor-btn').style.display = 'none';

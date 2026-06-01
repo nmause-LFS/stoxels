@@ -321,7 +321,7 @@
 .item-use-toast {
     position: fixed;
     left: 50%;
-    bottom: 95px;
+    bottom: 25px;
     transform: translate(-50%);
     font-family: var(--PX);
     font-size: 25px;

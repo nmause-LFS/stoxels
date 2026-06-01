@@ -26,15 +26,16 @@ const Audio_Manager = (() => {
 
     const BGM_TRACKS = {
         title: 'audio/bgm_title.mp3',
+        convergence: 'audio/bgm_convergence.mp3',
         level_1_1: 'audio/bgm_1.mp3',
         level_1_2: 'audio/bgm_1.mp3',
         level_1_3: 'audio/bgm_1.mp3',
         level_1_4: 'audio/bgm_2.mp3',
-        level_1_5: 'audio/bgm_title.mp3',
+        level_1_5: 'audio/bgm_convergence.mp3',
         level_1_6: 'audio/bgm_2.mp3',
         level_1_7: 'audio/bgm_2.mp3',
         level_1_8: 'audio/bgm_4.mp3',
-        level_1_9: 'audio/bgm_title.mp3',
+        level_1_9: 'audio/bgm_convergence.mp3',
         level_1_10: 'audio/bgm_4.mp3',
         level_1_11: 'audio/bgm_4.mp3',
         level_1_12: 'audio/bgm_5.mp3',
@@ -42,10 +43,10 @@ const Audio_Manager = (() => {
         level_2_1: 'audio/bgm_6.mp3',
         level_2_2: 'audio/bgm_6.mp3', 
         level_2_3: 'audio/bgm_6.mp3',
-        level_2_4: 'audio/bgm_title.mp3',
+        level_2_4: 'audio/bgm_convergence.mp3',
         level_2_5: 'audio/bgm_7.mp3',
         level_2_6: 'audio/bgm_7.mp3',
-        level_2_7: 'audio/bgm_title.mp3',
+        level_2_7: 'audio/bgm_convergence.mp3',
         level_2_8: 'audio/bgm_8.mp3',
         level_2_9: 'audio/bgm_8.mp3',
         level_2_10: 'audio/bgm_9.mp3',
@@ -53,10 +54,10 @@ const Audio_Manager = (() => {
         level_3_1: 'audio/bgm_10.mp3', 
         level_3_2: 'audio/bgm_10.mp3',
         level_3_3: 'audio/bgm_10.mp3',
-        level_3_4: 'audio/bgm_title.mp3', 
+        level_3_4: 'audio/bgm_convergence.mp3',
         level_3_5: 'audio/bgm_11.mp3',
         level_3_6: 'audio/bgm_11.mp3',
-        level_3_7: 'audio/bgm_title.mp3',
+        level_3_7: 'audio/bgm_convergence.mp3',
         level_3_8: 'audio/bgm_12.mp3',
         level_3_9: 'audio/bgm_12.mp3',
         level_3_10: 'audio/bgm_13.mp3',
@@ -67,13 +68,13 @@ const Audio_Manager = (() => {
         level_4_4: 'audio/bgm_15.mp3',
         level_4_5: 'audio/bgm_15.mp3',
         level_4_6: 'audio/bgm_15.mp3',
-        level_4_7: 'audio/bgm_title.mp3',
+        level_4_7: 'audio/bgm_convergence.mp3',
         level_4_8: 'audio/bgm_17.mp3',
         level_4_9: 'audio/bgm_17.mp3',
         level_4_10: 'audio/bgm_16.mp3',
         level_4_11: 'audio/bgm_16.mp3',
         level_4_12: 'audio/bgm_17.mp3',
-        level_4_13: 'audio/bgm_title.mp3',
+        level_4_13: 'audio/bgm_convergence.mp3',
         level_4_14: 'audio/bgm_16.mp3',
         level_4_15: 'audio/bgm_16.mp3',
         level_4_16: 'audio/bgm_17.mp3',
@@ -84,11 +85,11 @@ const Audio_Manager = (() => {
         level_5_2: 'audio/bgm_18.mp3',
         level_5_3: 'audio/bgm_18.mp3',
         level_5_4: 'audio/bgm_19.mp3',
-        level_5_5: 'audio/bgm_title.mp3',
+        level_5_5: 'audio/bgm_convergence.mp3',
         level_5_6: 'audio/bgm_19.mp3',
         level_5_7: 'audio/bgm_20.mp3',
         level_5_8: 'audio/bgm_20.mp3',
-        level_5_9: 'audio/bgm_title.mp3',
+        level_5_9: 'audio/bgm_convergence.mp3',
         level_5_10: 'audio/bgm_21.mp3',
         level_5_11: 'audio/bgm_21.mp3',
         level_5_12: 'audio/bgm_21.mp3',
@@ -96,9 +97,31 @@ const Audio_Manager = (() => {
         level_6_1: 'audio/bgm_23.mp3',
         level_6_2: 'audio/bgm_23.mp3',
         level_6_3: 'audio/bgm_23.mp3',
-        level_6_4: 'audio/bgm_24.mp3',
+        level_6_4: 'audio/bgm_convergence.mp3',
         level_6_5: 'audio/bgm_24.mp3',
         level_6_6: 'audio/bgm_24.mp3',
+        level_6_7: 'audio/bgm_24.mp3',
+        level_6_8: 'audio/bgm_convergence.mp3',
+        level_6_9: 'audio/bgm_25.mp3',
+        level_6_10: 'audio/bgm_25.mp3',
+        level_6_11: 'audio/bgm_26.mp3',
+        level_6_12: 'audio/bgm_title.mp3',
+        level_7_1: 'audio/bgm_26.mp3',
+        level_7_2: 'audio/bgm_26.mp3',
+        level_7_3: 'audio/bgm_27.mp3',
+        level_7_4: 'audio/bgm_convergence.mp3',
+        level_7_5: 'audio/bgm_27.mp3',
+        level_7_6: 'audio/bgm_28.mp3',
+        level_7_7: 'audio/bgm_28.mp3',
+        level_7_8: 'audio/bgm_convergence.mp3',
+        level_7_9: 'audio/bgm_29.mp3',
+        level_7_10: 'audio/bgm_29.mp3',
+        level_7_11: 'audio/bgm_29.mp3',
+        level_7_12: 'audio/bgm_title.mp3',
+
+
+
+
     };
 
 
@@ -195,7 +218,26 @@ const Audio_Manager = (() => {
         '6-4': 'level_6_4',
         '6-5': 'level_6_5',
         '6-6': 'level_6_6',
+        '6-7': 'level_6_7',
+        '6-8': 'level_6_8',
+        '6-9': 'level_6_9',
+        '6-10': 'level_6_10',
+        '6-11': 'level_6_11',
+        '6-12': 'level_6_12',
 
+        // World 7
+        '7-1': 'level_7_1',
+        '7-2': 'level_7_2',
+        '7-3': 'level_7_3',
+        '7-4': 'level_7_4',
+        '7-5': 'level_7_5',
+        '7-6': 'level_7_6',
+        '7-7': 'level_7_7',
+        '7-8': 'level_7_8',
+        '7-9': 'level_7_9',
+        '7-10': 'level_7_10',
+        '7-11': 'level_7_11',
+        '7-12': 'level_7_12',
     };
 
     // ── World fallback BGM ────────────────────────────────────
@@ -230,6 +272,11 @@ const Audio_Manager = (() => {
         // Quiz & Mathgate
         quizCorrect: 'audio/sfx_quiz_correct.mp3',
         quizWrong: 'audio/sfx_quiz_wrong.mp3',
+        tutorSuccess: 'audio/sfx_tutor_success.mp3',
+        tutorFail: 'audio/sfx_tutor_fail.mp3',
+
+        // Quest
+        questRewardClaimed: 'audio/sfx_quest_reward_claimed.mp3',
 
         // Items
         candle: 'audio/sfx_candle.mp3',
@@ -268,6 +315,7 @@ const Audio_Manager = (() => {
         shadow_seal: 'audio/sfx_shadow_seal.mp3',
 
         // Class Selection / Upgrade
+        classSelection: 'audio/sfx_class_selection.mp3',
         classSelected: 'audio/sfx_class_selected.mp3',
         classUpgraded: 'audio/sfx_class_upgraded.mp3',
 
@@ -275,6 +323,7 @@ const Audio_Manager = (() => {
         momentum: 'audio/sfx_momentum.mp3',
         dataStrike: 'audio/sfx_data_strike.mp3',
         diagonalStrike: 'audio/sfx_diagonal_strike.mp3',
+        diagonalStrikeRepeat: 'audio/sfx_diagonal_strike_repeat_proc.mp3',
 
 
         varianceShield: 'audio/sfx_variance_shield.mp3',
@@ -351,6 +400,8 @@ const Audio_Manager = (() => {
     // ── BGM ───────────────────────────────────────────────────
 
     function playBGM(trackKey) {
+        // Re-read bgmEnabled from SETTINGS in case it was changed without toggleBGM being called
+        if (typeof SETTINGS !== 'undefined') bgmEnabled = SETTINGS.bgmEnabled;
         if (!bgmEnabled) return;
         const src = BGM_TRACKS[trackKey];
         if (!src) return;
@@ -455,10 +506,12 @@ const Audio_Manager = (() => {
     function toggleBGM(enabled) {
         bgmEnabled = enabled;
         if (!bgmEnabled) {
+            if (_pendingResumeCleanup) {
+                _pendingResumeCleanup();
+                _pendingResumeCleanup = null;
+            }
             stopBGM(0);
         } else {
-            // Re-enable: resume whatever track was playing before it was muted.
-            // _lastBGMKey is saved whenever playBGM is called.
             if (_lastBGMKey) playBGM(_lastBGMKey);
         }
     }

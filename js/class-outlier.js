@@ -30,6 +30,7 @@ function _executeTailRisk(secondsPerCell, maxCells) {
     const actualMax = Math.min(maxCells, available);
     _tailRiskShowOverlay(secondsPerCell, actualMax, candidates);
 
+    trackAchStat('skillTailRiskUsed');
     Audio_Manager.playSFX('tailRiskStart');
 }
 
@@ -154,6 +155,9 @@ function _tailRiskResolve() {
 
     Audio_Manager.playSFX('tailRiskResolve'); 
 
+    questStat_classRevealUsed(revealedCount);
+    updateQuestStats('classAbilityUsedThisLevel', {});
+
     checkWin();
 }
 
@@ -211,6 +215,7 @@ function _endBlackSwan(natural = false) {
     _blackSwanRemoveBadge();
 
     if (natural) {
+        trackAchStat('speedforceNaturalCompletions');
         showToast(LANG === 'de' ? '📉 VERLASSE SPEEDFORCE' : '📉 LEAVING SPEEDFORCE');
         buildClassHUD();
     }

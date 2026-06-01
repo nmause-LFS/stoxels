@@ -149,6 +149,8 @@ function revealTiles(count) {
         // Bias candidates toward cells in that row or col
         const biased = cands.filter(([r, c]) => r === bestRow || c === bestCol);
         if (biased.length > 0) cands = biased;
+
+        showToast('Biased Reveal!');
     }
 
     const affected = [];
@@ -207,6 +209,8 @@ function markWrongTiles(count) {
         }
         const biased = cands.filter(([r, c]) => r === bestRow || c === bestCol);
         if (biased.length > 0) cands = biased;
+
+        showToast('Biased Mark!')
     }
 
     const affected = [];
@@ -326,6 +330,7 @@ function unsolveRows(count) {
             }
         }
     });
+    if (targets.length > 0) questStat_rowsErased(targets.length);
     return targets.length;
 }
 
@@ -349,6 +354,7 @@ function unsolveCols(count) {
             }
         }
     });
+    if (targets.length > 0) questStat_rowsErased(targets.length);
     return targets.length;
 }
 
@@ -397,6 +403,7 @@ function unsolveRowsExcluding(count, allowedSet) {
     // Lingering red shimmer so the player clearly sees what was erased
     _applyCellEffect(erasedCells, 'erase');
     if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
+    if (targets.length > 0) questStat_rowsErased(targets.length);
     return targets.length;
 }
 
@@ -432,6 +439,7 @@ function unsolveColsExcluding(count, allowedSet) {
     // Lingering red shimmer so the player clearly sees what was erased
     _applyCellEffect(erasedCells, 'erase');
     if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
+    if (targets.length > 0) questStat_rowsErased(targets.length);
     return targets.length;
 }
 
@@ -446,11 +454,27 @@ function unsolveColsExcluding(count, allowedSet) {
 // Returns the effective duration for a cursed downside, factoring in
 // Dampened Curse, Curse Embrace immunity, and Veil of Purity.
 function _cursedDownsideDuration(baseMs) {
-    if (window._cursedImmune) return 0;
-    if (ptHasSkill('keystone_curse_embrace')) return 0;
-    // Check Veil of Purity: first cursed item per level has no downside
+    if (window._cursedImmune) {
+        questStat_curseBlocked();
+        return 0;
+    }
+    if (ptHasSkill('keystone_curse_embrace')) {
+        questStat_curseBlocked();
+        return 0;
+    }
+
+    // FIRST USE: Immune to curse
     if (ptHasSkill('keystone_veil_of_purity')) {
-        if (!window._veiled_cursedUsed) { window._veiled_cursedUsed = true; return 0; }
+        if (!window._veiled_cursedUsed) {
+            window._veiled_cursedUsed = true;
+            showToast('Veil of Purity: Downside prevented!');
+            questStat_curseBlocked();
+            return 0;
+        }
+
+        // SUBSEQUENT USES: Curse is amplified
+        showToast('Veil of Purity broken! Curse amplified!');
+        return Math.round(baseMs * 2);
     }
     let mult = 1.0;
     if (ptHasSkill('dampened_curse_1')) mult -= 0.10;
@@ -461,32 +485,48 @@ function _cursedDownsideDuration(baseMs) {
 
 // Returns adjusted count for cursed erase effects (rows/cols erased).
 function _cursedDownsideCount(baseCount) {
-    if (window._cursedImmune) return 0;
-    if (ptHasSkill('keystone_curse_embrace')) return 0;
-    if (ptHasSkill('keystone_veil_of_purity') && !window._veiled_cursedUsed) return 0;
-    // Dampened Curse reduces count proportionally
-    const durationMult = _cursedDownsideDuration(1000) / 1000; // reuse ratio
-    return Math.max(0, Math.round(baseCount * durationMult));
+    if (window._cursedImmune) {
+        questStat_curseBlocked();
+        return 0;
+    }
+    if (ptHasSkill('keystone_curse_embrace')) {
+        questStat_curseBlocked();
+        return 0;
+
+    }
+    // FIRST USE: Immune to curse (duration check sets flag, but we check/toast here too)
+    if (ptHasSkill('keystone_veil_of_purity')) {
+        if (!window._veiled_cursedUsed) {
+            showToast('Veil of Purity: Downside prevented!');
+            questStat_curseBlocked();
+            return 0; // first use: immunity (flag set in duration)
+        }
+        // Subsequent uses: double the downside
+
+        showToast('Veil of Purity broken! Curse amplified!');
+        return Math.round(baseCount * 2);
+    }
+    const durationMult = _cursedDownsideDuration(1000) / 1000;
+    return Math.max(0, Math.floor(baseCount * durationMult));
 }
 
 
 // Returns true if the blackout_ward nodes block a blackout effect this trigger.
-// Each node contributes additively: 25% + 25% + 50% = up to 100%.
 function _blackoutWardBlocks() {
     let chance = 0;
-    if (ptHasSkill('blackout_ward_1')) chance += 0.25;
-    if (ptHasSkill('blackout_ward_2')) chance += 0.25;
-    if (ptHasSkill('blackout_ward_3')) chance += 0.50;
+    if (ptHasSkill('blackout_ward_1')) chance += 0.30;
+    if (ptHasSkill('blackout_ward_2')) chance += 0.10;
+    if (ptHasSkill('blackout_ward_3')) chance += 0.20;
     return chance > 0 && Math.random() < chance;
 }
 
 // Returns true if the removal_ward nodes block a row/col erasure effect this trigger.
-// Each node contributes additively: 25% + 25% + 50% = up to 100%.
+
 function _removalWardBlocks() {
     let chance = 0;
-    if (ptHasSkill('removal_ward_1')) chance += 0.25;
-    if (ptHasSkill('removal_ward_2')) chance += 0.25;
-    if (ptHasSkill('removal_ward_3')) chance += 0.50;
+    if (ptHasSkill('removal_ward_1')) chance += 0.30;
+    if (ptHasSkill('removal_ward_2')) chance += 0.10;
+    if (ptHasSkill('removal_ward_3')) chance += 0.20;
     return chance > 0 && Math.random() < chance;
 }
 
@@ -517,6 +557,8 @@ function _removalWardBlocks() {
 
 
 function _useReveal(id, def) {
+
+    questStat_revealItemUsed();
     let count = parseInt(id.replace('reveal', '')) || 1;
 
     // Passive: Stronger Light
@@ -660,8 +702,8 @@ function _useAddTime(id, def) {
     // Passive: Extended Hour (10%, 10%, 15%)
     let multiplier = 1.0;
     if (ptHasSkill('extended_hour_1')) multiplier += 0.10;
-    if (ptHasSkill('extended_hour_2')) multiplier += 0.10;
-    if (ptHasSkill('extended_hour_3')) multiplier += 0.15;
+    if (ptHasSkill('extended_hour_2')) multiplier += 0.15;
+    if (ptHasSkill('extended_hour_3')) multiplier += 0.10;
 
     // Keystone: Golden Clock — timer items 100% more effective while active
     if (window._goldenClockActive) multiplier += 1.0;
@@ -676,12 +718,14 @@ function _useAddTime(id, def) {
 
     // Keystone: Countdown Crisis — subtracts time instead of adding
     if (ptHasSkill('keystone_countdown_crisis')) {
+        questStat_timerItemUsed();
         timerSecs = Math.max(0, timerSecs - secs);
         updTimer();
         playItemEffect(id);
         return `${def.icon} ${LANG === 'de' ? `−${secs}s (Countdown-Krise!)` : `−${secs}s (Countdown Crisis!)`}`;
     }
 
+    questStat_timerItemUsed();
     timerSecs += secs;
     updTimer();
     playItemEffect(id);
@@ -717,11 +761,15 @@ function _useShield(id, def) {
     // Store extra charges for the mistake handler to consume
     window._shieldExtraCharges = (window._shieldExtraCharges || 0) + extraCharges;
 
-    // Passive: Cursed Ward — sets immunity flag for 5 s
-    const cursedWardActive = ptHasSkill('cursed_ward_1') || ptHasSkill('cursed_ward_2') || ptHasSkill('cursed_ward_3');
-    if (cursedWardActive) {
+    // Passive: Cursed Ward — each node adds 5 s of cursed immunity (max 15 s)
+    const cursedWardSecs = (ptHasSkill('cursed_ward_1') ? 5 : 0)
+        + (ptHasSkill('cursed_ward_2') ? 5 : 0)
+        + (ptHasSkill('cursed_ward_3') ? 5 : 0);
+    if (cursedWardSecs > 0) {
         window._cursedImmune = true;
-        setTimeout(() => { window._cursedImmune = false; }, 5000);
+        setTimeout(() => { window._cursedImmune = false; }, cursedWardSecs * 1000);
+
+        showToast('Warded against curses!')
     }
 
     playItemEffect(id);
@@ -762,9 +810,10 @@ function _useMistakeEraser(id, def) {
     mistakeCount = Math.max(0, mistakeCount - reduceBy);
     playItemEffect(id);
     const removed = before - mistakeCount;
+    if (removed > 0) questStat_mistakesRemoved(removed);
 
     // Passive: Time Well Spent — bonus time per mistake removed
-    if (removed > 0) {
+    if (removed > 0 && !ptHasSkill('keystone_gamblers_ruin')) {
         let bonusSecs = 0;
         if (ptHasSkill('time_well_spent_1')) bonusSecs = 30;
         if (ptHasSkill('time_well_spent_2')) bonusSecs = 60;
@@ -842,7 +891,7 @@ function _useCursedTime(id, def) {
         applyCursedRowBlackout(dur);
         applyCursedColBlackout(dur);
     } else if (dur > 0) {
-        showToast(`🌑 ${LANG === 'de' ? 'Stromausfall-Schutz! Hinweise geschützt.' : 'Blackout Ward! Clues protected.'}`);
+        showToast(`🌑 ${LANG === 'de' ? 'Verdunklungs-Schutz! Hinweise geschützt.' : 'Blackout Ward! Clues protected.'}`);
     }
     return `💀 ${t('item_cursed_time_both')}`;
 }
@@ -855,7 +904,7 @@ function _useCursedShield(id, def) {
     if (dur > 0 && !_blackoutWardBlocks()) {
         applyCursedRowBlackout(dur);
     } else if (dur > 0) {
-        showToast(`🌑 ${LANG === 'de' ? 'Stromausfall-Schutz! Hinweise geschützt.' : 'Blackout Ward! Clues protected.'}`);
+        showToast(`🌑 ${LANG === 'de' ? 'Verdunklungs-Schutz! Hinweise geschützt.' : 'Blackout Ward! Clues protected.'}`);
     }
     playItemEffect(id);
     return `👁️ ${t('item_cursed_shield_both')}`;
@@ -902,7 +951,11 @@ function _useCursedRowCol(id, def) {
     const r = solveRows(4);
     const c = solveCols(4);
     const dur = _cursedDownsideDuration(45000);
-    if (dur > 0) applyCursedColBlackout(dur);
+    if (dur > 0 && !_blackoutWardBlocks()) {
+        applyCursedColBlackout(dur);
+    } else if (dur > 0) {
+        showToast(`🌑 ${LANG === 'de' ? 'Verdunklungs-Schutz! Hinweise geschützt.' : 'Blackout Ward! Clues protected.'}`);
+    }
     playItemEffect(id);
     checkWin();
     return `💥 ${t('item_cursed_rowcol_both').replace('{r}', r).replace('{c}', c)}`;
@@ -911,8 +964,8 @@ function _useCursedRowCol(id, def) {
 function _useCursedReveal(id, def) {
     _trackWitchImmuneCursedUse();
     revealTiles(6);
-    playItemEffect(id);
     if (window._cursedImmune || ptHasSkill('keystone_curse_embrace')) {
+        playItemEffect(id);
         return `☠️ ${LANG === 'de' ? 'Enthüllt 6 Zellen (Markierungen geschützt)!' : '6 cells revealed (marks protected)!'}`;
     }
     const rows = cur.grid.length, cols = cur.grid[0].length;
@@ -925,6 +978,7 @@ function _useCursedReveal(id, def) {
                 unmarked.push(`g-${r}-${c}`);
             }
     _applyCellEffect(unmarked, 'unmark');
+    playItemEffect(id);
     return `☠️ ${t('item_cursed_reveal_both')}`;
 }
 
@@ -1005,6 +1059,8 @@ function _useGoldenClock(id, def) {
 //------------------------------------------------------------------------
 
 function _useShadowSeal(id, def) {
+    questStat_shadowSealUsed();
+
     if (!cur) return '';
 
     // 1. Set timer to exactly 5 min
@@ -1035,7 +1091,7 @@ function _useShadowSeal(id, def) {
     _applyCellEffect(affected, 'mark');
 
     playItemEffect(id);
-    return `${def.icon} ${LANG === 'de' ? 'Schattensiegel! Hinweise versteckt, ${markCount} Felder markiert.' : `Shadow Seal! Clues hidden, ${markCount} tiles marked.`}`;
+    return `${def.icon} ${LANG === 'de' ? `Schattensiegel! Hinweise versteckt, ${markCount} Felder markiert.` : `Shadow Seal! Clues hidden, ${markCount} tiles marked.`}`;
 }
 
 

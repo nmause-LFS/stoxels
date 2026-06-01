@@ -9,6 +9,8 @@ let dragStartRow = -1;   // cell where the drag began
 let dragStartCol = -1;
 let dragAxis = null;     // 'row', 'col', or null (undecided)
 
+let dragStrokeCount = 0;     // number of cells filled in the current left-click drag stroke
+
 
 
 
@@ -50,6 +52,9 @@ function ac(row, col) {
     // No-op: cell already has the desired value
     if (userGrid[row][col] === pval) return;
 
+    // Cannot mark/erase a correctly filled cell (right-click drag protection)
+    if (mbtn === 2 && userGrid[row][col] === 1 && cur.grid[row][col] === 1) return;
+
     // Cannot erase a cell that was revealed by an item
     if (revealedGrid[row][col] && pval === 0) return;
 
@@ -57,7 +62,10 @@ function ac(row, col) {
     if (mbtn === 0 && pval === 1) {
         if (cur.grid[row][col] !== 1) {
             // Significance Threshold: intercept before any penalty logic
-            if (_sigThresholdIntercept(row, col)) return;
+            if (_sigThresholdIntercept(row, col)) {
+                trackAchStat('sigThresholdIntercepts');
+                return;
+            }
 
             // BAYESIAN: Mistake Prevention Intercepts
             if (typeof _typeIShieldIntercept === 'function' && _typeIShieldIntercept(row, col)) return;
@@ -97,10 +105,13 @@ function ac(row, col) {
             // confidence_interval (231-233): absorb the next mistake within the grace window
             if (_confidenceIntervalActive) {
                 _confidenceIntervalActive = false;
+                _confidenceIntervalUsed = true;          // ← prevent back-to-back
                 absorbedMistakes++;
+                questStat_confidenceIntervalIgnored();
                 wrongGrid[row][col] = true;
                 renderCell(row, col);
-                _streakBonusFills = 0; // streak resets even on an absorbed mistake
+                consecutiveCorrectFills = 0;             // ← fix: also reset this streak
+                _streakBonusFills = 0;
                 showToast(`📐 ${LANG === 'de' ? 'Konfidenzintervall! Fehler ignoriert.' : 'Confidence Interval! Mistake ignored.'}`);
                 return;
             }
@@ -119,12 +130,14 @@ function ac(row, col) {
             }
 
             // confidence_interval (231-233): open a grace window after a real mistake
-            if (ptHasSkill('confidence_interval_1')) {
+            if (ptHasSkill('confidence_interval_1') && !_confidenceIntervalUsed) {
                 let windowSecs = 1;
                 if (ptHasSkill('confidence_interval_2')) windowSecs++;
                 if (ptHasSkill('confidence_interval_3')) windowSecs++;
                 _confidenceIntervalActive = true;
                 setTimeout(() => { _confidenceIntervalActive = false; }, windowSecs * 1000);
+            } else {
+                _confidenceIntervalUsed = false;  // ← reset the "just used" flag after skipping once
             }
 
             // Golden Clock: track remaining allowed mistakes
@@ -163,8 +176,8 @@ function ac(row, col) {
 
     // Valid move: update the data, refresh the display, and check for a win
     // Lucky tile check: right-clicking to mark ✕ on an unspent lucky tile
-    if (pval === 2 && !luckyRewardClaimed && luckyTiles && luckyTiles.has(`${row}-${col}`)) {
-        luckyRewardClaimed = true;
+    if (pval === 2 && luckyTiles && luckyTiles.has(`${row}-${col}`)) {
+        luckyRewardClaimed++;
         trackAchStat('luckyTilesFound');
         luckyTiles.delete(`${row}-${col}`);
 
@@ -204,43 +217,35 @@ function ac(row, col) {
         showToast(toastMsg, 3500);
 
         // covariance_shift (261-263): reveal extra cells when a lucky tile is claimed
-        if (ptHasSkill('covariance_shift_1') || ptHasSkill('covariance_shift_2') || ptHasSkill('covariance_shift_3')) {
+        // Node 1: reveal 1 cell from the same row or column
+        // Node 2: reveal up to 2 cells from the same row or column
+        // Node 3: reveal up to 3 cells from the same row or column
+        if (!window._oracleActive && ptHasSkill('covariance_shift_1') && !ptHasSkill('keystone_ergodic_field')) {
             const _sol = cur.grid;
             const _cols = _sol[0].length, _rows = _sol.length;
             const _affected = [];
 
-            // Nodes 1 & 2: reveal 1 cell in the same row per node
-            const rowRevealCount = (ptHasSkill('covariance_shift_1') ? 1 : 0)
-                + (ptHasSkill('covariance_shift_2') ? 1 : 0);
-            const _rowCands = [];
+            const revealCount = ptHasSkill('covariance_shift_3') ? 3
+                : ptHasSkill('covariance_shift_2') ? 2
+                    : 1;
+
+            // Build a combined pool of unrevealed correct cells from the same row and column
+            const _pool = [];
             for (let _c = 0; _c < _cols; _c++)
                 if (_sol[row][_c] === 1 && userGrid[row][_c] !== 1 && !revealedGrid[row][_c])
-                    _rowCands.push(_c);
-            shuffle(_rowCands);
-            _rowCands.slice(0, rowRevealCount).forEach(_c => {
-                revealedGrid[row][_c] = true;
-                userGrid[row][_c] = 1;
-                renderCell(row, _c);
-                updClues(row, _c);
-                _affected.push(`g-${row}-${_c}`);
-            });
+                    _pool.push([row, _c]);
+            for (let _r = 0; _r < _rows; _r++)
+                if (_r !== row && _sol[_r][col] === 1 && userGrid[_r][col] !== 1 && !revealedGrid[_r][col])
+                    _pool.push([_r, col]);
 
-            // Node 3: also reveal 1 cell in the same column
-            if (ptHasSkill('covariance_shift_3')) {
-                const _colCands = [];
-                for (let _r = 0; _r < _rows; _r++)
-                    if (_sol[_r][col] === 1 && userGrid[_r][col] !== 1 && !revealedGrid[_r][col])
-                        _colCands.push(_r);
-                shuffle(_colCands);
-                if (_colCands.length > 0) {
-                    const _r = _colCands[0];
-                    revealedGrid[_r][col] = true;
-                    userGrid[_r][col] = 1;
-                    renderCell(_r, col);
-                    updClues(_r, col);
-                    _affected.push(`g-${_r}-${col}`);
-                }
-            }
+            shuffle(_pool);
+            _pool.slice(0, revealCount).forEach(([_r, _c]) => {
+                revealedGrid[_r][_c] = true;
+                userGrid[_r][_c] = 1;
+                renderCell(_r, _c);
+                updClues(_r, _c);
+                _affected.push(`g-${_r}-${_c}`);
+            });
 
             if (_affected.length > 0) {
                 if (typeof _applyCellEffect === 'function') {
@@ -255,7 +260,15 @@ function ac(row, col) {
 
     userGrid[row][col] = pval;
     if (pval === 1 && cur.grid[row][col] === 1) {
+        if (STATE.questStats) STATE.questStats._ql_hasManuallyFilledCell = true;
         Audio_Manager.playSFX('cellFill');
+
+        if (painting && mbtn === 0 && pval === 1) {
+            dragStrokeCount++;
+            if (dragStrokeCount > 1) {
+                _dragCounterApply(row, col, dragStrokeCount);
+            }
+        }
 
         if (typeof feedDrifter === "function") feedDrifter();
 
@@ -265,8 +278,8 @@ function ac(row, col) {
         _gamblersRuinOnCorrectFill();
         _frequentistsBurdenOnCorrectFill();
 
-        // sample_efficiency (222-224): track consecutive correct fills
-        if (ptHasSkill('sample_efficiency_1')) {
+        // sample_efficiency nodes: track consecutive correct fills
+        if (ptHasSkill('sample_efficiency_1') && !ptHasSkill('keystone_ergodic_field')) {
             consecutiveCorrectFills++;
             let threshold = 20;
             if (ptHasSkill('sample_efficiency_2')) threshold -= 2;
@@ -274,21 +287,26 @@ function ac(row, col) {
             if (consecutiveCorrectFills >= threshold) {
                 consecutiveCorrectFills = 0;
                 revealTiles(1);
+                if (_getBayesianBonus() > 0 && Math.random() < _getBayesianBonus()) {
+                    _resetBayesianBonus();
+                    revealTiles(1);
+                    questStat_sampleEfficiencyReveal();
+                }
+
                 showToast(`📈 ${LANG === 'de' ? 'Stichprobeneffizienz! 1 Zelle aufgedeckt.' : 'Sample Efficiency! 1 cell revealed.'}`);
             }
         }
 
         // streak_bonus (243-245): gain time after 15 consecutive correct fills
-        if (ptHasSkill('streak_bonus_1')) {
+        if (ptHasSkill('streak_bonus_1') && !ptHasSkill('keystone_gamblers_ruin')) {
             _streakBonusFills++;
             if (_streakBonusFills >= 15) {
                 _streakBonusFills = 0;
                 let bonus = 0;
-                if (ptHasSkill('streak_bonus_1')) bonus += 30;
-                if (ptHasSkill('streak_bonus_2')) bonus += 30;
-                if (ptHasSkill('streak_bonus_3')) bonus += 45; // node 3 replaces the flat 30 of its own tier
-                // Node 3 desc says "+45s", nodes 1 and 2 say "+30s" each.
-                // With all 3: 30 + 30 + 45 = 105s total.
+                if (ptHasSkill('streak_bonus_1')) bonus += 15;
+                if (ptHasSkill('streak_bonus_2')) bonus += 5;
+                if (ptHasSkill('streak_bonus_3')) bonus += 10; 
+
                 timerSecs += bonus;
                 updTimer();
                 showToast(`🔥 ${LANG === 'de' ? `Serienbonus! +${bonus}s` : `Streak Bonus! +${bonus}s`}`);
@@ -324,18 +342,26 @@ function cd(e, row, col) {
     dragStartRow = row;
     dragStartCol = col;
     dragAxis = null;   // reset — axis decided on first move
+    dragStrokeCount = 0;
 
 
     // Decide what value to paint for the duration of this drag stroke
     if (mbtn === 0) {   // left-click: toggle fill / erase (but cannot fill revealed cells, so no toggle)
         pval = 1;
     } else {    // right-click: mark or erase (cannot mark revealed cells, so no toggle)
-        if (userGrid[row][col] === 2) {
-            pval = 3; // red cross gets switched to yellow question mark
+        // cannot mark/erase a correctly filled cell
+        if (userGrid[row][col] === 1 && cur.grid[row][col] === 1) {
+            painting = false;   // don't start a drag stroke either
+            return;
+        }
+        if (userGrid[row][col] === 2 && SETTINGS.questionMark) {
+            pval = 3; // red cross → yellow question mark (only if enabled)
+        } else if (userGrid[row][col] === 2 && !SETTINGS.questionMark) {
+            pval = 0; // red cross → empty (skip question mark)
         } else if (userGrid[row][col] === 3) {
-            pval = 0; // yellow question mark gets switched to empty
+            pval = 0; // yellow question mark → empty
         } else {
-            pval = 2; // empty gets switched to red cross
+            pval = 2; // empty → red cross
         }
     }
 
@@ -357,6 +383,8 @@ function sp() {
     dragStartRow = -1;
     dragStartCol = -1;
     dragAxis = null;
+    _dragCounterClear();
+    dragStrokeCount = 0;
 }
 
 

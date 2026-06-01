@@ -287,15 +287,15 @@ function _dispatchActiveAbility(activeKey, playerClass, row, col, effect) {
     if (activeKey === 'active1') {
         switch (playerClass) {
             case 'mathmagician':
-                _executeArcaneReveal(row, col, effect.radius);
+                _executeArcaneReveal(row, col, effect.radius, effect.maxReveals );
                 trackAchStat('skillArcaneRevealUsed');
                 break;
             case 'statistician':
                 _executeDataStrike(effect.solveCount, effect.revealCap || 5);
                 trackAchStat('skillDataStrikeUsed');
                 break;
-            case 'statistician':
-                _executeDiagonalStrike(row, col, effect.diagonals, effect.revealCap || 5);
+            case 'probabilist':                            
+                _executePrecisionMark(row, col, effect.extraLines || 0);
                 trackAchStat('skillPrecisionMarkUsed');
                 break;
         }
@@ -394,371 +394,8 @@ function _dispatchAscendencyAbility(hudSlot, ascendency, row, col, effect) {
 
 
 
-//------------------------------------------------------------------------
-//----------------------MATHMAGICIAN SKILLS-------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
 
 
-// Arcane Reveal
-
-// _executeArcaneReveal — reveals correct/wrong state for all cells within
-//   'radius' steps of (row, col), including diagonal. Works at borders.
-function _executeArcaneReveal(row, col, radius) {
-    if (!cur) return;
-    const sol = cur.grid;
-    const rows = sol.length, cols = sol[0].length;
-
-    // god_of_math increases radius by 1
-    const effectiveRadius = radius + (ptHasSkill('god_of_math') ? 1 : 0);
-
-    const affected = _arcaneRevealCollectCells(row, col, effectiveRadius, rows, cols, sol);
-
-    // arcane_exposure: also mark empty cells in the area as ✕
-    if (ptHasSkill('arcane_exposure')) {
-        _filterMarkedIds(affected, sol).forEach(id => {
-            const [, r, c] = id.split('-').map(Number);
-            if (userGrid[r][c] === 0) {
-                userGrid[r][c] = 2;
-                renderCell(r, c);
-            }
-        });
-    }
-
-    const revealedIds = _filterRevealedIds(affected, sol);
-
-    _applyCellEffect(revealedIds, 'reveal');
-    if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
-    _applyCellEffect(_filterMarkedIds(affected, sol), 'mark');
-
-    if (revealedIds.length > 0) {
-        updateQuestStats('tilesRevealed', { count: revealedIds.length });
-        trackAchStat('tilesRevealed', revealedIds.length);
-    }
-
-
-    // arcane_echo and resonant_reveal: each is an independent 25% chance at 1 bonus reveal
-    ['arcane_echo', 'resonant_reveal'].forEach(skill => {
-        if (ptHasSkill(skill) && Math.random() < 0.25) {
-            _arcaneRevealBonusCell(sol, rows, cols);
-        }
-    });
-
-    Audio_Manager.playSFX('arcaneReveal');
-
-    checkWin();
-    _spawnArcaneSparkles(revealedIds);
-}
-
-// _arcaneRevealCollectCells — iterates the radius area and resolves each cell.
-//   Returns the list of affected cell id strings.
-function _arcaneRevealCollectCells(row, col, radius, rows, cols, sol) {
-    const affected = [];
-    for (let r = Math.max(0, row - radius); r <= Math.min(rows - 1, row + radius); r++) {
-        for (let c = Math.max(0, col - radius); c <= Math.min(cols - 1, col + radius); c++) {
-            const id = _resolveCell(r, c, sol);
-            if (id) affected.push(id);
-        }
-    }
-    return affected;
-}
-
-
-// _arcaneRevealBonusCell — reveals 1 random unrevealed filled cell (used by arcane_echo / resonant_reveal)
-function _arcaneRevealBonusCell(sol, rows, cols) {
-    const candidates = [];
-    for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-            if (sol[r][c] === 1 && !revealedGrid[r][c] && userGrid[r][c] !== 1) {
-                candidates.push([r, c]);
-            }
-        }
-    }
-    if (!candidates.length) return;
-    const [r, c] = candidates[Math.floor(Math.random() * candidates.length)];
-    revealedGrid[r][c] = true;
-    userGrid[r][c] = 1;
-    renderCell(r, c);
-    updClues(r, c);
-    trackAchStat('tilesRevealed', 1);
-    showToast('🔮 Arcane Echo! Bonus cell revealed!');
-}
-
-
-
-
-
-
-
-// Absolute Zero
-
-// _executeArcaneFreeze — freezes the timer for durationMs.
-//   During the window, wrong fills cost zero time (window._freezeActive flag).
-function _executeArcaneFreeze(durationMs) {
-    // prolonged_frost and deep_freeze each add 500ms
-    let effectiveDuration = durationMs;
-    if (ptHasSkill('prolonged_frost')) effectiveDuration += 500;
-    if (ptHasSkill('deep_freeze')) effectiveDuration += 500;
-
-    timerFrozen = true;
-    window._freezeActive = true;
-    window._freezeCorrFills = 0;   // for frozen_resilience tracking
-    _startBlizzardEffect(effectiveDuration);
-    updTimer();
-
-    const secs = Math.ceil(effectiveDuration / 1000);
-    showToast(`🔮 Absolute Zero! ${secs}s!`);
-
-    Audio_Manager.playSFX('absoluteZero');
-
-    const tick = _arcaneFreezeStartCountdown(secs);
-    setTimeout(() => _arcaneFreezeEnd(tick), effectiveDuration);
-}
-
-// _arcaneFreezeStartCountdown — ticks the freeze timer display every second.
-//   Returns the interval handle so it can be cleared on expiry.
-function _arcaneFreezeStartCountdown(totalSecs) {
-    let remaining = totalSecs;
-    const interval = setInterval(() => {
-        remaining--;
-        const el = document.getElementById('timer-val');
-        if (el) el.textContent = `❄️ ${remaining}s`;
-        if (remaining <= 0) clearInterval(interval);
-    }, 1000);
-    return interval;
-}
-
-// _arcaneFreezeEnd — restores normal timer state after the freeze expires.
-function _arcaneFreezeEnd(tick) {
-    timerFrozen = false;
-    window._freezeActive = false;
-    clearInterval(tick);
-    updTimer();
-    showToast('🔮 Absolute Zero ended!');
-    buildClassHUD();
-}
-
-
-
-
-
-
-//------------------------------------------------------------------------
-//-----------------------PROBABILIST------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-// Precision Mark
-
-
-// _executePrecisionMark — marks all empty cells in the target row+col
-//   plus 'extraLines' additional adjacent rows and columns.
-function _executePrecisionMark(row, col, extraLines) {
-    if (!cur) return;
-    const sol = cur.grid;
-    const rows = sol.length, cols = sol[0].length;
-
-    const { targetRows, targetCols } = _precisionMarkBuildTargets(row, col, extraLines, rows, cols);
-    const affected = _precisionMarkApply(targetRows, targetCols, rows, cols, sol);
-
-    // probabilistic_sweep, expanded_inference, god_of_probabilities:
-    // each is an independent 25% chance to mark one additional random row or column
-    const sweepSkills = ['probabilistic_sweep', 'expanded_inference'];
-    if (ptHasSkill('god_of_probabilities')) sweepSkills.push('god_of_probabilities');
-    sweepSkills.forEach(skill => {
-        if (ptHasSkill(skill) && Math.random() < 0.25) {
-            _precisionMarkBonusLine(rows, cols, sol, affected);
-        }
-    });
-
-    _playPrecisionMarkEffect(row, col);
-    _applyCellEffect(affected, 'mark');
-    showToast(`🎯 ${affected.length} ${LANG === 'de' ? 'Zellen markiert!' : 'cells marked!'}`);
-
-    Audio_Manager.playSFX('precisionMark');
-
-    // momentum_of_certainty: +3 min if a cell in the affected area is correctly filled within 10s
-    if (ptHasSkill('momentum_of_certainty') && affected.length > 0) {
-        _precisionMarkStartMomentumWindow(affected);
-    }
-}
-
-// _precisionMarkBuildTargets — computes the set of rows and columns to mark.
-function _precisionMarkBuildTargets(row, col, extraLines, rows, cols) {
-    const targetRows = new Set([row]);
-    const targetCols = new Set([col]);
-    for (let i = 1; i <= extraLines; i++) {
-        if (row - i >= 0) targetRows.add(row - i);
-        if (row + i < rows) targetRows.add(row + i);
-        if (col - i >= 0) targetCols.add(col - i);
-        if (col + i < cols) targetCols.add(col + i);
-    }
-    return { targetRows, targetCols };
-}
-
-// _precisionMarkApply — marks empty solution cells for all target rows and columns.
-//   Returns the list of affected cell id strings.
-function _precisionMarkApply(targetRows, targetCols, rows, cols, sol) {
-    const affected = [];
-    targetRows.forEach(r => {
-        for (let c = 0; c < cols; c++) {
-            if (sol[r][c] === 0 && userGrid[r][c] === 0) {
-                userGrid[r][c] = 2;
-                renderCell(r, c);
-                affected.push(`g-${r}-${c}`);
-            }
-        }
-    });
-    targetCols.forEach(c => {
-        for (let r = 0; r < rows; r++) {
-            if (sol[r][c] === 0 && userGrid[r][c] === 0) {
-                userGrid[r][c] = 2;
-                renderCell(r, c);
-                affected.push(`g-${r}-${c}`);
-            }
-        }
-    });
-    return affected;
-}
-
-
-// _precisionMarkBonusLine — marks all empty cells in a random unsolved row or column.
-function _precisionMarkBonusLine(rows, cols, sol, affected) {
-    // Collect rows and cols that still have unmarked empty cells
-    const unsolvedRows = [], unsolvedCols = [];
-    for (let r = 0; r < rows; r++) {
-        if ([...Array(cols).keys()].some(c => sol[r][c] === 0 && userGrid[r][c] === 0))
-            unsolvedRows.push(r);
-    }
-    for (let c = 0; c < cols; c++) {
-        if ([...Array(rows).keys()].some(r => sol[r][c] === 0 && userGrid[r][c] === 0))
-            unsolvedCols.push(c);
-    }
-    const pool = [...unsolvedRows.map(r => ({ type: 'row', idx: r })),
-    ...unsolvedCols.map(c => ({ type: 'col', idx: c }))];
-    if (!pool.length) return;
-    const pick = pool[Math.floor(Math.random() * pool.length)];
-    if (pick.type === 'row') {
-        for (let c = 0; c < cols; c++) {
-            if (sol[pick.idx][c] === 0 && userGrid[pick.idx][c] === 0) {
-                userGrid[pick.idx][c] = 2;
-                renderCell(pick.idx, c);
-                affected.push(`g-${pick.idx}-${c}`);
-            }
-        }
-    } else {
-        for (let r = 0; r < rows; r++) {
-            if (sol[r][pick.idx] === 0 && userGrid[r][pick.idx] === 0) {
-                userGrid[r][pick.idx] = 2;
-                renderCell(r, pick.idx);
-                affected.push(`g-${r}-${pick.idx}`);
-            }
-        }
-    }
-    showToast(`🎯 ${LANG === 'de' ? 'Bonus-Linie markiert!' : 'Bonus line marked!'}`);
-}
-
-// _precisionMarkStartMomentumWindow — sets a 10s window where the next correct fill
-// in the affected cells grants +3 minutes. Clears itself after the window expires.
-function _precisionMarkStartMomentumWindow(affected) {
-    const affectedSet = new Set(affected);
-    window._pmMomentumActive = true;
-    window._pmMomentumSet = affectedSet;
-    window._pmMomentumTimeout = setTimeout(() => {
-        window._pmMomentumActive = false;
-        window._pmMomentumSet = null;
-    }, 10000);
-}
-
-
-
-// Field Scan
-
-// _executeFieldScan — temporarily reveals a random region of the grid for durationMs.
-//   Cells revert to their actual state after the timer expires.
-function _executeFieldScan(scanSize, durationMs) {
-    if (!cur) return;
-    const sol = cur.grid;
-    const rows = sol.length, cols = sol[0].length;
-
-    // wider_lens and panoramic_view each add 1 to scan size
-    let effectiveSize = scanSize;
-    if (ptHasSkill('wider_lens')) effectiveSize += 1;
-    if (ptHasSkill('panoramic_view')) effectiveSize += 1;
-
-    // photographic_memory adds 5s to the scan duration
-    let effectiveDuration = durationMs;
-    if (ptHasSkill('photographic_memory')) effectiveDuration += 5000;
-
-    const { startRow, startCol } = _fieldScanPickOrigin(effectiveSize, rows, cols);
-    const { scanned, prevStates } = _fieldScanRevealRegion(startRow, startCol, effectiveSize, rows, cols, sol);
-
-    _playScanBeamEffect(startRow, startCol, effectiveSize, effectiveDuration);
-    showToast(`🎯 Field Scan! Memorize the ${effectiveSize}×${effectiveSize} region!`);
-    _fieldScanCheckBigScanAchievement(prevStates, sol);
-
-    Audio_Manager.playSFX('fieldScan');
-
-    setTimeout(() => _fieldScanRestore(scanned, prevStates), effectiveDuration);
-}
-
-// _fieldScanPickOrigin — picks a random top-left corner that keeps the region in bounds.
-function _fieldScanPickOrigin(scanSize, rows, cols) {
-    const maxRow = Math.max(0, rows - scanSize);
-    const maxCol = Math.max(0, cols - scanSize);
-    return {
-        startRow: Math.floor(Math.random() * (maxRow + 1)),
-        startCol: Math.floor(Math.random() * (maxCol + 1)),
-    };
-}
-
-// _fieldScanRevealRegion — applies temporary scan classes to unrevealed cells in the region.
-//   Returns the scanned elements and previous states for later restoration.
-function _fieldScanRevealRegion(startRow, startCol, scanSize, rows, cols, sol) {
-    const scanned = [];
-    const prevStates = [];
-
-    for (let r = startRow; r < Math.min(startRow + scanSize, rows); r++) {
-        for (let c = startCol; c < Math.min(startCol + scanSize, cols); c++) {
-            if (userGrid[r][c] === 1 || revealedGrid[r][c]) continue;
-
-            const el = document.getElementById(`g-${r}-${c}`);
-            if (!el) continue;
-
-            prevStates.push({ r, c });
-            el.classList.remove('filled', 'marked', 'wrong-mark', 'revealed', 'questioned');
-            el.classList.add(sol[r][c] === 1 ? 'filled' : 'marked', 'scan-reveal');
-            scanned.push(el);
-        }
-    }
-
-    return { scanned, prevStates };
-}
-
-// _fieldScanCheckBigScanAchievement — tracks the achievement for scanning ≥20 correct cells.
-function _fieldScanCheckBigScanAchievement(prevStates, sol) {
-    const correctInScan = prevStates.filter(({ r, c }) => sol[r][c] === 1).length;
-    if (correctInScan >= 20) trackAchStat('probabilistBigScan');
-}
-
-// _fieldScanRestore — restores all scanned cells to their real state after the timer expires.
-function _fieldScanRestore(scanned, prevStates) {
-    prevStates.forEach(({ r, c }) => {
-        // god_of_probabilities: if the cell was filled during the scan, keep it revealed
-        if (ptHasSkill('god_of_probabilities') && userGrid[r][c] === 1 && !revealedGrid[r][c]) {
-            revealedGrid[r][c] = true;
-            updClues(r, c);
-            trackAchStat('tilesRevealed', 1);
-            renderCell(r, c);
-            // don't re-render to default; leave as filled
-        } else {
-            renderCell(r, c);
-        }
-    });
-    scanned.forEach(el => el.classList.remove('scan-reveal'));
-    showToast('🎯 Scan faded');
-    buildClassHUD();
-}
 
 
 
@@ -790,7 +427,6 @@ function _bayesianRevealOneCell() {
         }
     }
 
-
     if (!candidates.length) return;
     const [r, c] = candidates[Math.floor(Math.random() * candidates.length)];
     revealedGrid[r][c] = true;
@@ -799,8 +435,11 @@ function _bayesianRevealOneCell() {
     updClues(r, c);
     trackAchStat('tilesRevealed', 1);
 
-
-
+    // Play the confirmed-hypothesis reveal effect
+    if (typeof _playBayesianRevealEffect === 'function') {
+        const cellEl = document.getElementById(`g-${r}-${c}`);
+        if (cellEl) _playBayesianRevealEffect(cellEl);
+    }
 }
 
 
@@ -843,12 +482,36 @@ function applyClassPassiveOnLevelStart() {
     if (STATE.playerClass === 'probabilist' && effect.autoMarkCount) {
         setTimeout(() => {
             let markCount = effect.autoMarkCount;
-            if (ptHasSkill('prior_knowledge')) markCount += 2;
-            if (ptHasSkill('updated_beliefs')) markCount += 2;
-            if (ptHasSkill('posterior_insight')) markCount += 2;
-            if (ptHasSkill('convergent_evidence')) markCount += 2;
+            if (ptHasSkill('prior_knowledge')) markCount += 1;
+            if (ptHasSkill('updated_beliefs')) markCount += 1;
+            if (ptHasSkill('posterior_insight')) markCount += 1;
+            if (ptHasSkill('convergent_evidence')) markCount += 1;
+
+            // Snapshot which cells are marked BEFORE and AFTER so we know what changed
+            const markedBefore = new Set();
+            if (cur) {
+                const sol = cur.grid;
+                for (let r = 0; r < sol.length; r++)
+                    for (let c = 0; c < sol[0].length; c++)
+                        if (userGrid[r][c] === 2) markedBefore.add(`g-${r}-${c}`);
+            }
+
             markWrongTiles(markCount);
             Audio_Manager.playSFX('bayesianInsight');
+
+            // Collect newly-marked cell ids for the animation
+            const newlyMarked = [];
+            if (cur) {
+                const sol = cur.grid;
+                for (let r = 0; r < sol.length; r++)
+                    for (let c = 0; c < sol[0].length; c++)
+                        if (userGrid[r][c] === 2 && !markedBefore.has(`g-${r}-${c}`))
+                            newlyMarked.push(`g-${r}-${c}`);
+            }
+
+            if (typeof _playBayesianInsightAnimation === 'function') {
+                _playBayesianInsightAnimation(newlyMarked);
+            }
 
             // confirmed_hypothesis and god_of_probabilities each reveal 1 correct filled cell
             let bonusReveals = 0;
@@ -884,9 +547,9 @@ function getClassPenaltyMultiplier() {
 
         // Bonus time for absorbed mistakes
         let bonus = 0;
-        if (ptHasSkill('calculated_error') && Math.random() < 0.50) bonus += 300;
-        if (ptHasSkill('error_dividend') && Math.random() < 0.25) bonus += 180;
-        if (ptHasSkill('lucky_lapse') && Math.random() < 0.25) bonus += 180;
+        if (ptHasSkill('calculated_error') && Math.random() < 0.50) bonus += 120;
+        if (ptHasSkill('error_dividend') && Math.random() < 0.25) bonus += 30;
+        if (ptHasSkill('lucky_lapse') && Math.random() < 0.25) bonus += 30;
 
         // god_of_math doubles the absorbed-mistake timer bonuses
         if (ptHasSkill('god_of_math') && bonus > 0) bonus *= 2;
@@ -917,9 +580,6 @@ function onCorrectFill(row, col) {
         }
     }
 
-    if (STATE.playerClass !== 'statistician' || isClassless()) return;
-    const effect = _getPassiveEffect();
-
     // frozen_resilience: every 5 correct fills during Absolute Zero → +1 free mistake
     // god_of_math: each correct fill during AZ reduces Arcane Reveal cooldown by 1s
     if (STATE.playerClass === 'mathmagician' && window._freezeActive) {
@@ -940,19 +600,24 @@ function onCorrectFill(row, col) {
     }
 
 
-    // momentum_of_certainty: +3 min if this fill is in the Precision Mark window
-    if (STATE.playerClass === 'probabilist' && window._pmMomentumActive && window._pmMomentumSet) {
-        const id = `g-${arguments[0]}-${arguments[1]}`; // see note below
+    // momentum_of_certainty: +20s if this fill is in the Precision Mark window
+    if (ptHasSkill('momentum_of_certainty') && window._pmMomentumActive && window._pmMomentumSet) {
+        const id = `g-${row}-${col}`;
         if (window._pmMomentumSet.has(id)) {
-            window._pmMomentumActive = false;
-            clearTimeout(window._pmMomentumTimeout);
-            window._pmMomentumSet = null;
-            timerSecs = Math.min(timerSecs + 180, 3600);
+            window._pmMomentumSet.delete(id); // don't double-count the same cell
+            timerSecs = Math.min(timerSecs + 20, 3600);
             updTimer();
-            showToast(LANG === 'de' ? '🎯 Schwung der Gewissheit! +3 Min!' : '🎯 Momentum of Certainty! +3 min!');
-            trackAchStat('timeAdded', 180);
+            showToast(LANG === 'de' ? '🎯 Schwung der Gewissheit! +20 s!' : '🎯 Momentum of Certainty! +20 s!');
+            trackAchStat('timeAdded', 20);
+            if (window._pmMomentumSet.size === 0) { // auto-close when all cells are filled
+                window._pmMomentumActive = false;
+                window._pmMomentumSet = null;
+            }
         }
     }
+
+    if (STATE.playerClass !== 'statistician' || isClassless()) return;
+    const effect = _getPassiveEffect();
 
 
 
@@ -969,8 +634,6 @@ function onCorrectFill(row, col) {
             updateMomentumBar(correctFillStreak, effect.streakForBonus);
         }
     }
-
-
 
 }
 

@@ -116,11 +116,19 @@ function _executeStateRollback(windowSeconds, rewindSeconds, clearOldMistakes) {
             if (userGrid[r][c] !== 1 && !revealedGrid[r][c]) {
                 userGrid[r][c] = 0;
             }
+            questStat_mistakesRemoved(1);   // Make these removed mistakes count towards the Remove 50 mistakes quest
         });
         showToast(`⏳ ${preExistingWrong.length} ${LANG === 'de'
             ? 'alte Fehler ebenfalls korrigiert!'
             : 'pre-existing mistake(s) also cleared!'}`);
+
     }
+
+    if (timerSecs <= 10) {
+        trackAchStat('rollbackSaves'); // 🏆 ACHIEVEMENT TRACKER
+        showToast('⏳ State Rollback: Cheat Death!');
+    }
+
 
     // Restore the timer to what it actually was at the snapshot moment,
     // then add the rank bonus on top (rewindSeconds is the extra gift, not
@@ -683,6 +691,8 @@ function _transitionMatrixCascade(row, col, depth) {
     renderCell(nr, nc);
     updClues(nr, nc);
     trackAchStat('tilesRevealed', 1);
+    questStat_classRevealUsed(1);
+    updateQuestStats('classAbilityUsedThisLevel', {});
     if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
 
     _transitionMatrixCellVFX(nr, nc, row, col);
@@ -692,6 +702,7 @@ function _transitionMatrixCascade(row, col, depth) {
     // Depth 2 (rank 3): the cascaded cell can itself cascade
     if (depth > 1) {
         setTimeout(() => _transitionMatrixCascade(nr, nc, depth - 1), 250);
+        trackAchStat('transitionMatrixCascades');
     }
 
     Audio_Manager.playSFX('transitionCascade');

@@ -62,7 +62,7 @@ function openReshuffleModal() {
     while (picks.length < 3 && attempts < 50) {
         attempts++;
         const id = pickLuckyItem(); // uses existing weighted pool with artifact chance
-        if (!usedIds.has(id)) {
+        if (id && ITEM_DEFS[id] &&!usedIds.has(id)) {
             usedIds.add(id);
             picks.push(ITEM_DEFS[id]);
         }

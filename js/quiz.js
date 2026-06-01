@@ -146,6 +146,7 @@ function showQuiz(worldNum) {
         // Passive tree: chance to auto-remove one wrong answer
         const elimChance = _quizCalcEliminationChance();
         if (elimChance > 0 && Math.random() < elimChance) {
+            questStat_mcWrongAnswerEliminated();
             const wrongBtns = Array.from(optsEl.children).filter(b => b.dataset.isCorrect !== '1');
             if (wrongBtns.length > 0) {
                 const toRemove = wrongBtns[Math.floor(Math.random() * wrongBtns.length)];
@@ -241,6 +242,7 @@ function _quizRollMcBonusItemReward() {
 
     if (Math.random() < chance) {
         const defId = pickRandomItem();
+        if (!defId) return;
         const def = ITEM_DEFS[defId];
         if (!def) return;
 
@@ -275,53 +277,69 @@ function _resolveQuizAnswer(correct) {
 
     if (correct) {
         Audio_Manager.playSFX('quizCorrect');
+        trackAchStat('questionsCorrect');                             
+        updateQuestStats('questionCorrect', { source: 'quiz' });
         if (quizAlreadyClaimed) {
             resEl.className = 'quiz-result ok';
             resEl.textContent = t('quiz_correct_claimed');
             if (!curMods.ironman && Math.random() < 0.15) {
                 const defId = pickRandomItem();
-                const def = ITEM_DEFS[defId];
-                if (def) {
-                    STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
-                    save();
-                    const irz = document.getElementById('item-reward-zone');
-                    const rc = rarityColors(def.rarity);
-                    const rewardEl = document.createElement('div');
-                    rewardEl.className = 'item-reward';
-                    rewardEl.dataset.rewardDefid = defId;
-                    rewardEl.style.cssText = `border-color:${rc.border};color:${rc.color};margin-top:4px;cursor:default;`;
-                    rewardEl.innerHTML = `${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong>`;
-                    irz.appendChild(rewardEl);
-                    attachItemTooltip(rewardEl, defId);
+                if (defId) {
+                    const def = ITEM_DEFS[defId];
+                    if (def) {
+                        STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
+                        save();
+                        const irz = document.getElementById('item-reward-zone');
+                        const rc = rarityColors(def.rarity);
+                        const rewardEl = document.createElement('div');
+                        rewardEl.className = 'item-reward';
+                        rewardEl.dataset.rewardDefid = defId;
+                        rewardEl.style.cssText = `border-color:${rc.border};color:${rc.color};margin-top:4px;cursor:default;`;
+                        rewardEl.innerHTML = `${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong>`;
+                        irz.appendChild(rewardEl);
+                        attachItemTooltip(rewardEl, defId);
+                    }
                 }
             }
         } else {
-            resEl.className = 'quiz-result ok';
-            resEl.textContent = t('quiz_correct');
             STATE.totalScore += 50;
-            trackAchStat('questionsCorrect');
-            updateQuestStats('questionCorrect', { source: 'quiz' });
             document.getElementById('sc-disp').textContent = STATE.totalScore;
             // Always mark the bonus as claimed on a correct first-time answer,
             // regardless of Ironman mode or whether an item reward is available.
             STATE.bonusDone.push(cur.gIdx);
+
+            // Pick the item first so we can name it in the result message
+            let rewardItemName = null;
             if (!curMods.ironman) {
                 const defId = pickRandomItem();
-                const def = ITEM_DEFS[defId];
-                if (def) {
-                    STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
-                    const irz = document.getElementById('item-reward-zone');
-                    const rc = rarityColors(def.rarity);
-                    const rewardEl = document.createElement('div');
-                    rewardEl.className = 'item-reward';
-                    rewardEl.dataset.rewardDefid = defId;
-                    rewardEl.style.cssText = `border-color:${rc.border};color:${rc.color};margin-top:4px;cursor:default;`;
-                    rewardEl.innerHTML = `${t('ov_quiz_reward')}: ${def.icon} <strong>${itemName(def)}</strong>`;
-                    irz.appendChild(rewardEl);
-                    attachItemTooltip(rewardEl, defId);
-
+                if (defId) {
+                    const def = ITEM_DEFS[defId];
+                    if (def) {
+                        rewardItemName = `${def.icon} ${itemName(def)}`;
+                        STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
+                        const irz = document.getElementById('item-reward-zone');
+                        const rc = rarityColors(def.rarity);
+                        const rewardEl = document.createElement('div');
+                        rewardEl.className = 'item-reward';
+                        rewardEl.dataset.rewardDefid = defId;
+                        rewardEl.style.cssText = `border-color:${rc.border};color:${rc.color};margin-top:4px;cursor:default;`;
+                        rewardEl.innerHTML = `${t('ov_quiz_reward')}: ${def.icon} <strong>${itemName(def)}</strong>`;
+                        irz.appendChild(rewardEl);
+                        attachItemTooltip(rewardEl, defId);
+                    }
                 }
             }
+
+            // Show result text with the actual item name if we have one
+            resEl.className = 'quiz-result ok';
+            if (rewardItemName) {
+                resEl.textContent = LANG === 'de'
+                    ? `✓ RICHTIG! +50 Punkte & ${rewardItemName} erhalten!`
+                    : `✓ CORRECT! +50 Score & ${rewardItemName} earned!`;
+            } else {
+                resEl.textContent = t('quiz_correct');
+            }
+
             save();
         }
         _quizRollMcBonusItemReward();
@@ -336,8 +354,8 @@ function _resolveQuizAnswer(correct) {
     // Hide the skip button — question already answered
     document.getElementById('btn-skip-quiz').style.display = 'none';
 
-    // Auto-finish after 3 seconds
-    _quizAutoFinishTimer = setTimeout(() => finishQuiz(), 2500);
+    // Auto-finish after 5 seconds
+    _quizAutoFinishTimer = setTimeout(() => finishQuiz(), 5000);
 }
 
 
@@ -415,9 +433,30 @@ function closeQuiz() {
 function _quizRefreshTutorButton() {
     const btn = document.getElementById('quiz-tutor-btn');
     if (!btn) return;
+
     const hasTutorSkill = PT.hasSkill('tutor_enable');
-    const tutorItem = STATE.inventory.find(i => i.defId.startsWith('mistakeEraser'));
-    btn.style.display = (hasTutorSkill && tutorItem) ? 'inline-block' : 'none';
+
+    // Count total available tutors across all tiers in the inventory
+    const tutorCount = STATE.inventory.filter(i =>
+        i.defId === 'mistakeEraser' ||
+        i.defId === 'mistakeEraser4' ||
+        i.defId === 'mistakeEraser6' ||
+        i.defId === 'mistakeEraserAll'
+    ).length;
+
+    // Only show if the player has the skill and at least 1 tutor item
+    if (hasTutorSkill && tutorCount > 0) {
+        btn.style.display = 'inline-block';
+
+        // Dynamic localized text showing the item count
+        if (LANG === 'de') {
+            btn.textContent = `🎓 Tutor um Hilfe bitten (${tutorCount})`;
+        } else {
+            btn.textContent = `🎓 Ask Tutor for Help (${tutorCount})`;
+        }
+    } else {
+        btn.style.display = 'none';
+    }
 }
 
 function quizUseTutor() {
@@ -456,6 +495,7 @@ function quizUseTutor() {
     if (Math.random() < chance) {
         // ── Tutor succeeds ────────────────────────────────────────────────
         resEl.textContent = LANG === 'de' ? '🎓 Tutor hat die Frage gelöst!' : '🎓 Tutor solved it!';
+        Audio_Manager.playSFX('tutorSuccess'); 
         resEl.className = 'quiz-result ok';
 
         if (currentQuizQuestion.type === 'mc') {
@@ -465,6 +505,7 @@ function quizUseTutor() {
                 btn.onclick = null;
                 if (btn.dataset.isCorrect === '1') btn.classList.add('correct');
             });
+            questStat_tutorAnsweredCorrect();
         } else {
             // Input question — disable the input and submit
             document.getElementById('quiz-input').disabled = true;
@@ -476,6 +517,7 @@ function quizUseTutor() {
     } else {
         // ── Tutor fails ───────────────────────────────────────────────────
         resEl.textContent = LANG === 'de' ? '🎓 Tutor konnte die Frage nicht lösen…' : '🎓 Tutor couldn\'t solve it…';
+        Audio_Manager.playSFX('tutorFail');
         resEl.className = 'quiz-result bad';
         // Leave the question active so the player can still answer
     }

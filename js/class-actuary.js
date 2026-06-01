@@ -35,6 +35,8 @@ function _executeRegressionToPrior(correctCount, recoverPct) {
     // Initialize the reverted cells tracker if it doesn't exist yet
     if (!window._dofRevertedCells) window._dofRevertedCells = new Set();
 
+    trackAchStat('skillRegressionPriorUsed');
+
     // Take up to correctCount most-recent entries
     const toCorrect = log.splice(-correctCount, correctCount);
 
@@ -65,6 +67,9 @@ function _executeRegressionToPrior(correctCount, recoverPct) {
 
         // 6. Accumulate recovered time
         recovered += Math.round(penaltySecs * recoverPct);
+
+        // Make the removed mistake count towards the 'Remove 50 mistakes in one level' quest
+        questStat_mistakesRemoved(1);
     });
 
     // Recover time
@@ -135,6 +140,8 @@ function _executeSignificanceThreshold(protectCount, bonusReveal) {
     if (!cur) return;
     window._sigThreshData = { protectCount, bonusReveal, chosen: [] };
     window._sigThreshBonusReveal = bonusReveal;
+
+    trackAchStat('skillSigThresholdUsed');
 
     // Show the line-picker modal immediately — no intermediate grid click needed
     _sigThreshShowLinePicker(protectCount);
@@ -499,6 +506,7 @@ function _sigThresholdIntercept(row, col) {
     // Shield triggers — auto-mark the cell as ✕ instead of a mistake
     if (userGrid[row][col] === 0) {
         userGrid[row][col] = 2; // ✕ mark
+        questStat_classMarkUsed(count);
         renderCell(row, col);
     }
 
@@ -555,6 +563,8 @@ function _sigThreshBonusRevealInLine(type, idx) {
     showToast(LANG === 'de'
         ? '🛡️ Schwellen-Bonus: 1 Zelle enthüllt!'
         : '🛡️ Threshold bonus: 1 cell revealed!');
+    questStat_classRevealUsed(1);
+    updateQuestStats('classAbilityUsedThisLevel', {});
     checkWin();
 }
 

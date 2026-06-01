@@ -198,18 +198,18 @@ function rollLuckyDrops() {
     // Lucky Drops node must be allocated — no drops without it
     if (!ptHasSkill('lucky_drops')) return '';
 
-    // Base 20% chance, +10% per bonus_replay node
-    let chance = 0.20;
+    // Base 25% chance, +10% per bonus_replay node
+    let chance = 0.25;
     if (ptHasSkill('bonus_replay_1')) chance += 0.10;
-    if (ptHasSkill('bonus_replay_2')) chance += 0.10;
-    if (ptHasSkill('bonus_replay_3')) chance += 0.10;
+    if (ptHasSkill('bonus_replay_2')) chance += 0.15;
+    if (ptHasSkill('bonus_replay_3')) chance += 0.20;
     if (Math.random() >= chance) return '';
 
-    // How many items: base 1, lucky_replay nodes each add 10% chance for a second
+    // How many items: base 1, lucky_replay nodes add 10%, 15%, 20% chance for a second
     let luckyCount = 1;
     const extraChance = (ptHasSkill('lucky_replay_1') ? 0.10 : 0)
-        + (ptHasSkill('lucky_replay_2') ? 0.10 : 0)
-        + (ptHasSkill('lucky_replay_3') ? 0.10 : 0);
+        + (ptHasSkill('lucky_replay_2') ? 0.15 : 0)
+        + (ptHasSkill('lucky_replay_3') ? 0.20 : 0);
     if (Math.random() < extraChance) luckyCount = 2;
 
     STATE.questStats = STATE.questStats || {};
@@ -218,6 +218,7 @@ function rollLuckyDrops() {
     let html = '';
     for (let i = 0; i < luckyCount; i++) {
         const defId = pickRandomItem();
+        if (!defId) continue;
         const def = ITEM_DEFS[defId];
         if (!def) continue;
         STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
@@ -296,14 +297,16 @@ function renderWinOverlay({ gi, pts, ptsAwarded, prevBest, mult, elapsed, bonusM
         if (bonusMet && !bonusAlreadyDone) {
             // First-time bonus clear: guaranteed item reward
             const defId = pickRandomItem();
-            const def = ITEM_DEFS[defId];
-            if (def) {
-                STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
-                save();
-                const rc = rarityColors(def.rarity);
-                irz.innerHTML += `<div class="item-reward" data-reward-defid="${defId}" style="border-color:${rc.border};color:${rc.color};cursor:default;">
-                    ${t('ov_item_earned')}: ${def.icon} <strong>${itemName(def)}</strong>
-                </div>`;
+            if (defId) {
+                const def = ITEM_DEFS[defId];
+                if (def) {
+                    STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
+                    save();
+                    const rc = rarityColors(def.rarity);
+                    irz.innerHTML += `<div class="item-reward" data-reward-defid="${defId}" style="border-color:${rc.border};color:${rc.color};cursor:default;">
+                        ${t('ov_item_earned')}: ${def.icon} <strong>${itemName(def)}</strong>
+                    </div>`;
+                }
             }
         } else if (bonusMet && bonusAlreadyDone) {
             // Bonus already claimed: show note + chance at lucky drops
@@ -372,8 +375,19 @@ function checkWin() {
         return _worldData.data.length > 2 && (idx === c1 || idx === c2) && !isAscensionLevel;
     })();
     const _worldJustCompleted = (() => {
-        const start = WORLD_START_GI[cur.world - 1];
-        return _worldData.data.every((_, li) => STATE.done.includes(start + li));
+        // Only count as a new world completion if:
+        // 1. This level itself is a first clear (prevents replays from triggering it)
+        // 2. Every level in the world is now done
+        // 3. This world hasn't already been counted in quest stats before
+        if (!isFirstClear) return false;
+        const wi = cur.world - 1;
+        const start = WORLD_START_GI[wi];
+        const allDone = _worldData.data.every((_, li) => STATE.done.includes(start + li));
+        if (!allDone) return false;
+        if (!STATE.questStats) STATE.questStats = {};
+        const counted = STATE.questStats._worldsCountedList || [];
+        if (counted.includes(wi)) return false;
+        return true;
     })();
 
 
@@ -411,7 +425,9 @@ function checkWin() {
         bonusMet,
         isConvergence: _isConvergenceLevel && isFirstClear,
         worldJustCompleted: _worldJustCompleted,
+        worldIndex: cur.world - 1, 
         luckyDropTriggered: false,
+        timerSecsAtWin: timerSecs,
         isLargeAdjMatrix: (() => {                          
             const rows = cur.grid.length;
             const cols = cur.grid[0].length;

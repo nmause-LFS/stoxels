@@ -244,13 +244,13 @@ function _ptApplyLevelCompleteRewards() {
 
     // Mathmagician 
     if (STATE.playerClass === 'mathmagician') {
-        if (ptHasSkill('gear_of_the_mathmagician') && Math.random() < 0.10) {
+        if (ptHasSkill('gear_of_the_mathmagician') && Math.random() < 0.25) {
             _ptGrantItem('mistakeEraser4');
             showToast(LANG === 'de'
                 ? '📚 Mathematgier Bonus: Professor erhalten!'
                 : '📚 Mathmagician Bonus: Professor received');
         }
-        if (ptHasSkill('improved_gear_of_the_mathmagician') && Math.random() < 0.05) {
+        if (ptHasSkill('improved_gear_of_the_mathmagician') && Math.random() < 0.15) {
             _ptGrantItem('addTime900');
             showToast(LANG === 'de'
                 ? '⚡ Mathemagier Bonus: Chronoblitz erhalten!'

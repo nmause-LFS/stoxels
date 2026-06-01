@@ -1,5 +1,4 @@
-﻿
-let primerQuestion = null;   // the question currently shown in the primer modal.
+﻿let primerQuestion = null;   // the question currently shown in the primer modal.
 let primerStreak = 0;        // how many questions answered correctly so far
 const PRIMER_MAX = 5;        // maximum questions in a chain
 
@@ -60,6 +59,7 @@ function getPrimerQuestion() {
 // showPrimerModal — builds and injects a one-off modal into the DOM,
 //   then shows it. The modal is removed from the DOM when dismissed.
 function showPrimerModal(streak = 0) {
+    pauseTimer();
     primerStreak = streak;
     primerQuestion = getPrimerQuestion();
 
@@ -115,6 +115,9 @@ function showPrimerModal(streak = 0) {
                     style="background:transparent;border-color:#555;color:#777;">
                     ${LANG === 'de' ? 'ÜBERSPRINGEN (kein weiterer Vorsprung)' : 'SKIP (no further headstart)'}
                 </button>
+                <button class="mg-submit-btn" id="primer-tutor-btn" onclick="primerUseTutor()" style="display:none;">
+                    🎓
+                </button>
             </div>
             <div class="mg-footer">
                 ${streak === 0
@@ -144,6 +147,7 @@ function showPrimerModal(streak = 0) {
         // Passive tree: chance to auto-remove one wrong answer
         const elimChance = _quizCalcEliminationChance();
         if (elimChance > 0 && Math.random() < elimChance) {
+            questStat_mcWrongAnswerEliminated();
             const wrongBtns = Array.from(optsEl.children).filter(b => b.dataset.isCorrect !== '1');
             if (wrongBtns.length > 0) {
                 const toRemove = wrongBtns[Math.floor(Math.random() * wrongBtns.length)];
@@ -162,6 +166,8 @@ function showPrimerModal(streak = 0) {
             inp.addEventListener('keydown', e => { if (e.key === 'Enter') submitPrimerAnswer(); });
         }
     }, 100);
+
+    _primerRefreshTutorButton();
 }
 
 
@@ -254,17 +260,19 @@ function showPrimerResult(correct) {
             fb.textContent = LANG === 'de'
                 ? `✓ Perfekt! ${newStreak}/${PRIMER_MAX} richtig — maximaler Vorsprung!`
                 : `✓ Perfect! ${newStreak}/${PRIMER_MAX} correct — maximum headstart!`;
+            Audio_Manager.playSFX('quizCorrect');
             trackAchStat('primerCorrect');
             updateQuestStats('questionCorrect', { source: 'primer' });
             setTimeout(() => {
                 closePrimerModal();
-                applyPrimerHeadstart(newStreak);
+                setTimeout(() => applyPerfectPrimerReveal(), 50);
             }, 1000);
         } else {
             // Correct but more questions remain
             fb.textContent = LANG === 'de'
                 ? `✓ Richtig! ${newStreak}/${PRIMER_MAX} — nächste Frage…`
                 : `✓ Correct! ${newStreak}/${PRIMER_MAX} — next question…`;
+            Audio_Manager.playSFX('quizCorrect');
             trackAchStat('primerCorrect');
             updateQuestStats('questionCorrect', { source: 'primer' });
             setTimeout(() => {
@@ -275,6 +283,7 @@ function showPrimerResult(correct) {
     } else {
         // Wrong answer — apply whatever streak was built up
         fb.className = 'mg-feedback mg-bad';
+        Audio_Manager.playSFX('quizWrong');
         if (primerStreak > 0) {
             fb.textContent = LANG === 'de'
                 ? `✗ Falsch. Vorsprung für ${primerStreak} richtige Antwort(en) wird angewendet…`
@@ -329,6 +338,7 @@ function closePrimerModal() {
     const el = document.getElementById('primer-overlay');
     if (el) el.remove();
     primerQuestion = null;
+    if (typeof timerInterval !== 'undefined' && !dead) resumeTimer();
 }
 
 
@@ -384,41 +394,104 @@ function applyPrimerHeadstart(count) {
     totalCols = Math.min(totalCols, cols);
 
     const rowIdxs = shuffle(Array.from({ length: rows }, (_, i) => i)).slice(0, totalRows);
+    const colIdxs = shuffle(Array.from({ length: cols }, (_, i) => i)).slice(0, totalCols);
+
+    // Tiered colour palette: 1=blue, 2=teal, 3=orange, 4=pink, 5+=gold (perfect path)
+    const tierColours = ['#4fc3f7', '#26c6a6', '#ffa040', '#e040fb', '#ffd700'];
+    const colour = tierColours[Math.min(count, tierColours.length) - 1];
+
+    // ── Update game state (instant, silent) ──────────────────────────────
     rowIdxs.forEach(r => {
         for (let c = 0; c < cols; c++) {
-            if (sol[r][c] === 1) {
-                revealedGrid[r][c] = true;
-                userGrid[r][c] = 1;
-            } else if (userGrid[r][c] === 0) {
-                userGrid[r][c] = 2;
-            }
+            if (sol[r][c] === 1) { revealedGrid[r][c] = true; userGrid[r][c] = 1; }
+            else if (userGrid[r][c] === 0) { userGrid[r][c] = 2; }
             renderCell(r, c);
             updClues(r, c);
         }
     });
-
-    const colIdxs = shuffle(Array.from({ length: cols }, (_, i) => i)).slice(0, totalCols);
     colIdxs.forEach(c => {
         for (let r = 0; r < rows; r++) {
-            if (sol[r][c] === 1) {
-                revealedGrid[r][c] = true;
-                userGrid[r][c] = 1;
-            } else if (userGrid[r][c] === 0) {
-                userGrid[r][c] = 2;
-            }
+            if (sol[r][c] === 1) { revealedGrid[r][c] = true; userGrid[r][c] = 1; }
+            else if (userGrid[r][c] === 0) { userGrid[r][c] = 2; }
             renderCell(r, c);
             updClues(r, c);
         }
     });
 
-    const msg = LANG === 'de'
-        ? `📜 ${totalRows} Zeile(n) + ${totalCols} Spalte(n) vorgelöst!`
-        : `📜 ${totalRows} row(s) + ${totalCols} column(s) pre-solved!`;
-    showToast(msg);
-    checkWin();
+    // ── Visual sweep over revealed cells (after state is already applied) ─
+    const cellDelay = count <= 1 ? 60 : count <= 2 ? 50 : count <= 3 ? 40 : 30;
 
-    if (dead) trackAchStat('primerSolvedAll');
-    if (dead) updateQuestStats('primerFullSolve', {});
+    let visualDelay = 0;
+
+    // getBoundingClientRect() is called INSIDE the setTimeout so the grid is
+    // already on screen and the element has real pixel dimensions.
+    const spawnFlare = (r, c, extraClass) => {
+        const cellEl = document.getElementById(`g-${r}-${c}`);
+        if (!cellEl) return;
+        const rect = cellEl.getBoundingClientRect();
+        if (!rect || rect.width === 0) return;
+        const flare = document.createElement('div');
+        flare.className = 'scout-ping-flare ' + extraClass;
+        flare.style.cssText = `
+            position:fixed;
+            top:${rect.top}px;
+            left:${rect.left}px;
+            width:${rect.width}px;
+            height:${rect.height}px;
+            --flare-colour:${colour};
+            pointer-events:none;
+            z-index:99999;
+        `;
+        document.body.appendChild(flare);
+        setTimeout(() => flare.remove(), 900);
+    };
+
+    rowIdxs.forEach((r, ri) => {
+        for (let c = 0; c < cols; c++) {
+            const localDelay = visualDelay + c * 18;
+            setTimeout(() => spawnFlare(r, c, 'scout-flare-row'), localDelay);
+        }
+        visualDelay += cellDelay;
+        if (ri % 2 === 0) setTimeout(() =>
+            typeof Audio_Manager !== 'undefined' && Audio_Manager.playSFX('tick'),
+            visualDelay);
+    });
+
+    colIdxs.forEach((c, ci) => {
+        for (let r = 0; r < rows; r++) {
+            const localDelay = visualDelay + r * 18;
+            setTimeout(() => spawnFlare(r, c, 'scout-flare-col'), localDelay);
+        }
+        visualDelay += cellDelay;
+        if (ci % 2 === 0) setTimeout(() =>
+            typeof Audio_Manager !== 'undefined' && Audio_Manager.playSFX('tick'),
+            visualDelay);
+    });
+
+    // ── Board-level glow scaled to streak ────────────────────────────────
+    const boardEl = document.querySelector('.grid-container') ||
+        document.getElementById('grid') ||
+        document.querySelector('.board') ||
+        document.body;
+
+    const glowClass = count >= 4 ? 'primer-glow-strong'
+        : count >= 2 ? 'primer-glow-mid'
+            : 'primer-glow-soft';
+    boardEl.style.setProperty('--primer-glow-colour', colour);
+    boardEl.classList.add(glowClass);
+    setTimeout(() => boardEl.classList.remove(glowClass), 1800);
+
+    // ── Toast ─────────────────────────────────────────────────────────────
+    setTimeout(() => {
+        const msg = LANG === 'de'
+            ? `📜 ${totalRows} Zeile(n) + ${totalCols} Spalte(n) vorgelöst!`
+            : `📜 ${totalRows} row(s) + ${totalCols} column(s) pre-solved!`;
+        showToast(msg);
+        questStat_primerRowsColsRevealed(rowIdxs.length, colIdxs.length);
+        checkWin();
+        if (dead) trackAchStat('primerSolvedAll');
+        if (dead) updateQuestStats('primerFullSolve', {});
+    }, visualDelay + 100);
 }
 
 
@@ -439,6 +512,110 @@ function applyPrimerHeadstart(count) {
 
 
 
+//------------------------------------------------------------------------
+//--------------------TUTOR FEATURE (PASSIVE TREE)------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// Shows or hides the Tutor button in the primer modal.
+function _primerRefreshTutorButton() {
+    const btn = document.getElementById('primer-tutor-btn');
+    if (!btn) return;
+
+    const hasTutorSkill = PT.hasSkill('tutor_enable');
+    const tutorCount = STATE.inventory.filter(i =>
+        i.defId === 'mistakeEraser' ||
+        i.defId === 'mistakeEraser4' ||
+        i.defId === 'mistakeEraser6' ||
+        i.defId === 'mistakeEraserAll'
+    ).length;
+
+    if (hasTutorSkill && tutorCount > 0) {
+        btn.style.display = 'inline-block';
+        btn.textContent = LANG === 'de'
+            ? `🎓 Tutor um Hilfe bitten (${tutorCount})`
+            : `🎓 Ask Tutor for Help (${tutorCount})`;
+    } else {
+        btn.style.display = 'none';
+    }
+}
+
+// Called when the player clicks the Tutor button in the primer modal.
+// Reuses the same chance/no-consume mechanics as the math gate and quiz tutors.
+function primerUseTutor() {
+    if (!primerQuestion) return;
+
+    const TUTOR_TIER_ORDER = ['mistakeEraser', 'mistakeEraser4', 'mistakeEraser6', 'mistakeEraserAll'];
+    const tutorItem = TUTOR_TIER_ORDER
+        .flatMap(id => STATE.inventory.filter(i => i.defId === id))
+        .find(Boolean);
+    if (!tutorItem) return;
+
+    // Build success chance from passive tree (same nodes as quiz/gate)
+    let chance = 0.10;
+    if (PT.hasSkill('stochastics_tutor')) chance += 0.10;
+    if (PT.hasSkill('statistics_tutor')) chance += 0.10;
+    if (PT.hasSkill('maths_tutor')) chance += 0.10;
+    if (PT.hasSkill('professor_tutor')) chance += 0.20;
+
+    // Build no-consume chance (same nodes as quiz/gate)
+    let noConsumeChance = 0;
+    if (PT.hasSkill('careful_study')) noConsumeChance += 0.10;
+    if (PT.hasSkill('efficient_tutoring')) noConsumeChance += 0.15;
+    if (PT.hasSkill('endless_instructions')) noConsumeChance += 0.20;
+    if (PT.hasSkill('professor_tutor')) noConsumeChance += 0.20;
+
+    const consumed = Math.random() >= noConsumeChance;
+    if (consumed) {
+        STATE.inventory = STATE.inventory.filter(i => i.uid !== tutorItem.uid);
+        save();
+        buildInventoryPanel();
+    }
+
+    // Hide button regardless of outcome
+    const btn = document.getElementById('primer-tutor-btn');
+    if (btn) btn.style.display = 'none';
+
+    const fb = document.getElementById('primer-feedback');
+
+    if (Math.random() < chance) {
+        // ── Tutor succeeds ────────────────────────────────────────────────
+        questStat_tutorAnsweredCorrect();
+        Audio_Manager.playSFX('tutorSuccess');
+        fb.className = 'mg-feedback mg-ok';
+        fb.textContent = LANG === 'de' ? '🎓 Tutor hat die Frage gelöst!' : '🎓 Tutor solved it!';
+
+        if (primerQuestion.isMultiChoice) {
+            // Highlight the correct MC option and lock all buttons
+            const optsEl = document.getElementById('primer-opts');
+            if (optsEl) {
+                Array.from(optsEl.children).forEach(b => {
+                    b.onclick = null;
+                    if (b.dataset.isCorrect === '1') b.classList.add('correct');
+                });
+            }
+        } else {
+            // Disable the input and submit button for numeric questions
+            const inp = document.getElementById('primer-input');
+            if (inp) inp.disabled = true;
+            // The submit button is inline onclick, so just disable it visually
+            const submitBtns = document.querySelectorAll('#primer-overlay .mg-submit-btn:not(#primer-skip-btn):not(#primer-tutor-btn)');
+            submitBtns.forEach(b => b.disabled = true);
+        }
+
+        showPrimerResult(true);
+
+    } else {
+        // ── Tutor fails ───────────────────────────────────────────────────
+        Audio_Manager.playSFX('tutorFail');
+        fb.className = 'mg-feedback mg-bad';
+        fb.textContent = LANG === 'de'
+            ? '🎓 Tutor konnte die Frage nicht lösen…'
+            : '🎓 Tutor couldn\'t solve it…';
+        Audio_Manager.playSFX('tutorFail');
+        // Leave the question active so the player can still answer manually
+    }
+}
 
 
 
@@ -449,17 +626,238 @@ function applyPrimerHeadstart(count) {
 
 
 
+// (helper removed — callers use document.getElementById(`g-${r}-${c}`) directly)
 
 
+/**
+ * Cinematic reveal for achieving a perfect 5/5 streak on the Scout's Primer.
+ *
+ * FIX NOTES vs old version:
+ *  - State update (renderCell) now runs FIRST, synchronously.
+ *  - Flare overlays are scheduled with per-cell stagger AFTER state is applied,
+ *    so they are never immediately painted over by renderCell in the same frame.
+ *  - Each cell in a row/col gets its own small offset (20ms apart) for a real
+ *    left-to-right / top-to-bottom sweep feel.
+ */
+function applyPerfectPrimerReveal() {
+    if (!cur) return;
+    const sol = cur.grid;
+    const rows = sol.length;
+    const cols = sol[0].length;
+
+    let totalRows = PRIMER_MAX + _primerCalcBonusRows();
+    let totalCols = PRIMER_MAX + _primerCalcBonusCols();
+
+    if (PT.hasSkill('primed_scout')) {
+        totalRows *= 2;
+        totalCols *= 2;
+    }
+
+    totalRows = Math.min(totalRows, rows);
+    totalCols = Math.min(totalCols, cols);
+
+    const rowIdxs = shuffle(Array.from({ length: rows }, (_, i) => i)).slice(0, totalRows);
+    const colIdxs = shuffle(Array.from({ length: cols }, (_, i) => i)).slice(0, totalCols);
+
+    // ── 1. Apply all state changes IMMEDIATELY (no visual yet) ────────────
+    rowIdxs.forEach(r => {
+        for (let c = 0; c < cols; c++) {
+            if (sol[r][c] === 1) { revealedGrid[r][c] = true; userGrid[r][c] = 1; }
+            else if (userGrid[r][c] === 0) { userGrid[r][c] = 2; }
+            renderCell(r, c);
+            updClues(r, c);
+        }
+    });
+    colIdxs.forEach(c => {
+        for (let r = 0; r < rows; r++) {
+            if (sol[r][c] === 1) { revealedGrid[r][c] = true; userGrid[r][c] = 1; }
+            else if (userGrid[r][c] === 0) { userGrid[r][c] = 2; }
+            renderCell(r, c);
+            updClues(r, c);
+        }
+    });
+
+    // ── 2. Board glow & toast (immediate) ────────────────────────────────
+    const msg = LANG === 'de'
+        ? `📜 MEISTER-KARTOGRAFIE: ${totalRows} Zeilen & ${totalCols} Spalten werden kartografiert!`
+        : `📜 MASTER CARTOGRAPHY: Mapping ${totalRows} rows & ${totalCols} columns!`;
+    showToast(msg);
+
+    const boardEl = document.querySelector('.grid-container') ||
+        document.getElementById('grid') ||
+        document.querySelector('.board') ||
+        document.body;
+
+    boardEl.style.setProperty('--primer-glow-colour', '#ffd700');
+    boardEl.classList.add('primer-perfect-glow');
+    setTimeout(() => boardEl.classList.remove('primer-perfect-glow'), 2800);
+
+    // ── 3. Schedule gold flare overlays AFTER state is rendered ──────────
+    //    Each cell gets a fixed-position overlay that animates independently.
+    //    We use a staggered delay so rows sweep left→right and cols top→bottom.
+    let delay = 60; // small head-start so the board glow is visible first
+
+    const spawnGoldFlare = (r, c) => {
+        // Read position at fire-time (inside setTimeout) so the grid is on screen
+        const cellEl = document.getElementById(`g-${r}-${c}`);
+        if (!cellEl) return;
+        const rect = cellEl.getBoundingClientRect();
+        if (!rect || rect.width === 0) return;
+
+        const flare = document.createElement('div');
+        flare.className = 'scout-ping-flare scout-flare-perfect';
+        flare.style.cssText = `
+            position:fixed;
+            top:${rect.top}px;
+            left:${rect.left}px;
+            width:${rect.width}px;
+            height:${rect.height}px;
+            --flare-colour:#ffd700;
+            pointer-events:none;
+            z-index:99999;
+        `;
+        document.body.appendChild(flare);
+        setTimeout(() => flare.remove(), 1000);
+    };
+
+    // Sweep rows
+    rowIdxs.forEach((r, ri) => {
+        for (let c = 0; c < cols; c++) {
+            setTimeout(() => spawnGoldFlare(r, c), delay + c * 20);
+        }
+        if (ri % 2 === 0) {
+            setTimeout(() =>
+                typeof Audio_Manager !== 'undefined' && Audio_Manager.playSFX('tick'),
+                delay);
+        }
+        delay += 80;
+    });
+
+    // Sweep cols
+    colIdxs.forEach((c, ci) => {
+        for (let r = 0; r < rows; r++) {
+            setTimeout(() => spawnGoldFlare(r, c), delay + r * 20);
+        }
+        if (ci % 2 === 0) {
+            setTimeout(() =>
+                typeof Audio_Manager !== 'undefined' && Audio_Manager.playSFX('tick'),
+                delay);
+        }
+        delay += 80;
+    });
+
+    // ── 4. Win check after all animations complete ────────────────────────
+    setTimeout(() => {
+        questStat_primerRowsColsRevealed(rowIdxs.length, colIdxs.length);
+        checkWin();
+        if (dead) trackAchStat('primerSolvedAll');
+        if (dead) updateQuestStats('primerFullSolve', {});
+    }, delay + 300);
+}
+
+(function injectPrimerStyles() {
+    if (document.getElementById('primer-animation-styles')) return;
+
+    const style = document.createElement('style');
+    style.id = 'primer-animation-styles';
+    style.textContent = `
+
+        /* ── Board-level glows (scaled by streak tier) ──────────────────── */
+        @keyframes primerGlowSoft {
+            0%   { box-shadow: 0 0 0px transparent; }
+            30%  { box-shadow: 0 0 18px var(--primer-glow-colour, #4fc3f7); }
+            100% { box-shadow: 0 0 0px transparent; }
+        }
+        @keyframes primerGlowMid {
+            0%   { box-shadow: 0 0 0px transparent; filter: brightness(1); }
+            25%  { box-shadow: 0 0 30px var(--primer-glow-colour, #ffa040); filter: brightness(1.06); }
+            100% { box-shadow: 0 0 0px transparent; filter: brightness(1); }
+        }
+        @keyframes primerGlowStrong {
+            0%   { box-shadow: 0 0 0px transparent; filter: brightness(1); }
+            20%  { box-shadow: 0 0 42px var(--primer-glow-colour, #e040fb); filter: brightness(1.09) contrast(1.04); }
+            100% { box-shadow: 0 0 0px transparent; filter: brightness(1); }
+        }
+        @keyframes primerBoardGlow {
+            0%   { box-shadow: 0 0 0px transparent; filter: brightness(1); }
+            15%  { box-shadow: 0 0 55px #ffd700, 0 0 20px #fff6a0; filter: brightness(1.12) contrast(1.06) saturate(1.2); }
+            60%  { box-shadow: 0 0 30px #ffd700; filter: brightness(1.05); }
+            100% { box-shadow: 0 0 0px transparent; filter: brightness(1); }
+        }
+
+        .primer-glow-soft   { animation: primerGlowSoft   1.4s ease-in-out !important; }
+        .primer-glow-mid    { animation: primerGlowMid    1.6s ease-in-out !important; }
+        .primer-glow-strong { animation: primerGlowStrong 1.8s ease-in-out !important; }
+        .primer-perfect-glow { animation: primerBoardGlow 2.8s ease-in-out !important; }
 
 
+        /* ── Per-cell flare — shared base ───────────────────────────────── */
+        @keyframes scoutFlareBase {
+            0%   { transform: scale(0.3); opacity: 1;   border-radius: 3px; }
+            40%  { transform: scale(1.25); opacity: 0.85; }
+            100% { transform: scale(1.0); opacity: 0;   }
+        }
 
+        /* Tier 1 – blue (1 correct) */
+        @keyframes scoutFlareRow1 {
+            0%   { transform: scale(0.3); opacity: 1;
+                   background: #4fc3f7; box-shadow: 0 0 10px #4fc3f7; }
+            40%  { transform: scale(1.2); opacity: 0.8;
+                   background: #b3e5fc; }
+            100% { transform: scale(1.0); opacity: 0; }
+        }
+        /* Tier 2 – teal (2 correct) */
+        @keyframes scoutFlareRow2 {
+            0%   { transform: scale(0.3); opacity: 1;
+                   background: #26c6a6; box-shadow: 0 0 12px #26c6a6; }
+            40%  { transform: scale(1.25); opacity: 0.85; background: #b2dfdb; }
+            100% { transform: scale(1.0); opacity: 0; }
+        }
+        /* Tier 3 – orange (3 correct) */
+        @keyframes scoutFlareRow3 {
+            0%   { transform: scale(0.3); opacity: 1;
+                   background: #ffa040; box-shadow: 0 0 14px #ffa040; }
+            40%  { transform: scale(1.3); opacity: 0.9; background: #ffe0b2; }
+            100% { transform: scale(1.0); opacity: 0; }
+        }
+        /* Tier 4 – pink/purple (4 correct) */
+        @keyframes scoutFlareRow4 {
+            0%   { transform: scale(0.3); opacity: 1;
+                   background: #e040fb; box-shadow: 0 0 16px #e040fb; }
+            40%  { transform: scale(1.35); opacity: 0.9; background: #f8bbd0; }
+            100% { transform: scale(1.0); opacity: 0; }
+        }
+        /* Tier 5 – gold/perfect (5 correct) */
+        @keyframes scoutFlarePerfect {
+            0%   { transform: scale(0.25); opacity: 1;
+                   background: #ffd700;
+                   box-shadow: 0 0 22px #ffd700, inset 0 0 10px #fffde7; }
+            30%  { transform: scale(1.5); opacity: 1;
+                   background: #fff9c4;
+                   box-shadow: 0 0 35px #ffd700; }
+            70%  { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1.0); opacity: 0; box-shadow: none; }
+        }
 
+        /* Map CSS class to animation based on --flare-colour custom prop.
+           We use separate classes per tier so the animation keyframe name differs. */
+        .scout-ping-flare {
+            border-radius: 3px;
+            will-change: transform, opacity;
+        }
+        /* The .scout-flare-row / .scout-flare-col classes are set dynamically;
+           we use the --flare-colour var to pick the right named animation via
+           a data attribute approach — simpler: we set the animation inline. */
 
-
-
-
-
-
-
-
+        /* Fallback: any flare without a specific tier class uses the base */
+        .scout-ping-flare:not(.scout-flare-perfect) {
+            animation: scoutFlareBase 0.8s cubic-bezier(0.1, 0.8, 0.25, 1) forwards !important;
+            background: var(--flare-colour, #4fc3f7);
+            box-shadow: 0 0 12px var(--flare-colour, #4fc3f7);
+        }
+        .scout-flare-perfect {
+            animation: scoutFlarePerfect 0.95s cubic-bezier(0.1, 0.8, 0.25, 1) forwards !important;
+        }
+    `;
+    document.head.appendChild(style);
+})();

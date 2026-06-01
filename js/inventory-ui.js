@@ -111,6 +111,7 @@ function _buildInvSlot(defId) {
     if (!isLocked) {
         // Left-click → use one
         el.addEventListener('click', (e) => {
+            _hideSlotTooltip();
             if (isEmpty) return;
             if (e.altKey) {
                 // Alt+click → discard one
@@ -123,6 +124,7 @@ function _buildInvSlot(defId) {
         // Right-click → reshuffle one
         el.addEventListener('contextmenu', (e) => {
             e.preventDefault();
+            _hideSlotTooltip();
             if (dead || isEmpty) return;
             _reshuffleOneByDefId(defId);
         });
@@ -141,6 +143,7 @@ function _buildInvSlot(defId) {
 //------------------------------------------------------------------------
 
 function buildInventoryPanel() {
+    _hideSlotTooltip();
     const panel = document.getElementById('inv-panel');
     if (!panel) return;
 

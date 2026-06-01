@@ -33,10 +33,19 @@ function formatCooldown(secs) {
 // accelerated_computation:−15s Data Strike  (active1)
 // quick_strike:           −30s Diagonal Strike (active2)
 // accelerated_striking:   −30s Diagonal Strike (active2)
+// signal_to_noise:        -15s all active abilities
+// keystone_the_oracle:    -30s all active abilities (only on large or massive grids)
+// degrees_of_freedom:     -30s all active abilities
+// frequentists_burden:    -15s all active abilities
 function getEffectiveCooldown(slot, baseSeconds) {
     let reduction = 0;
 
     if (ptHasSkill('celerity')) reduction += 30;
+    if (ptHasSkill('signal_to_noise')) reduction += 15;
+    if (ptHasSkill('keystone_the_oracle') && window._oracleActive === true) reduction += 30;
+    if (ptHasSkill('keystone_degrees_of_freedom')) reduction += 30;
+    if (ptHasSkill('keystone_entropy_drain')) reduction += 30;
+    if (ptHasSkill('keystone_frequentists_burden')) reduction += 15;
 
     if (STATE.playerClass === 'statistician') {
         if (slot === 'active1') {
@@ -45,8 +54,8 @@ function getEffectiveCooldown(slot, baseSeconds) {
             if (ptHasSkill('accelerated_computation')) reduction += 15;
         }
         if (slot === 'active2') {
-            if (ptHasSkill('quick_strike')) reduction += 30;
-            if (ptHasSkill('accelerated_striking')) reduction += 30;
+            if (ptHasSkill('quick_strike')) reduction += 15;
+            if (ptHasSkill('accelerated_striking')) reduction += 15;
         }
     }
 
@@ -54,26 +63,26 @@ function getEffectiveCooldown(slot, baseSeconds) {
     if (STATE.playerClass === 'mathmagician') {
         if (slot === 'active1') {
             // Arcane Reveal cooldown reductions
-            if (ptHasSkill('rapid_revelation')) reduction += 30;
-            if (ptHasSkill('accelerated_revelation')) reduction += 30;
+            if (ptHasSkill('rapid_revelation')) reduction += 15;
+            if (ptHasSkill('accelerated_revelation')) reduction += 15;
         }
         if (slot === 'active2') {
             // Absolute Zero cooldown reductions
-            if (ptHasSkill('hastened_zero')) reduction += 30;
-            if (ptHasSkill('accelerated_zero')) reduction += 30;
+            if (ptHasSkill('hastened_zero')) reduction += 15;
+            if (ptHasSkill('accelerated_zero')) reduction += 15;
         }
     }
 
     if (STATE.playerClass === 'probabilist') {
         if (slot === 'active1') {
             // Precision Mark cooldown reductions
-            if (ptHasSkill('swift_marking')) reduction += 30;
-            if (ptHasSkill('accelerated_marking')) reduction += 30;
+            if (ptHasSkill('swift_marking')) reduction += 15;
+            if (ptHasSkill('accelerated_marking')) reduction += 15;
         }
         if (slot === 'active2') {
             // Field Scan cooldown reductions
-            if (ptHasSkill('swift_scan')) reduction += 30;
-            if (ptHasSkill('accelerated_scan')) reduction += 30;
+            if (ptHasSkill('swift_scan')) reduction += 15;
+            if (ptHasSkill('accelerated_scan')) reduction += 15;
         }
     }
 
@@ -121,8 +130,10 @@ function startSlotCooldown(slot, seconds) {
 
 
 // _showCooldownReadyToast — shows a toast when an ability comes off cooldown.
-// NEW:
 function _showCooldownReadyToast(slot) {
+    // Don't fire if the player has already left the game screen
+    if (!document.getElementById('screen-game')?.classList.contains('active')) return;
+
     let abilityData = null;
     const slotIndex = { active1: '1', active2: '2', active3: '3', active4: '4' }[slot] || slot;
 

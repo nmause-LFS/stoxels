@@ -15,14 +15,10 @@ function applyPenalty(row, col) {
         showToast(LANG === 'de' ? '📉 SPEEDFORCE abgebrochen!' : '📉 SPEEDFORCE broken!');
     }
 
-    const overfitMult = _overfittingPenaltyMultiplier();
-    if (overfitMult !== null) {
-        if (overfitMult === 0) { wrongGrid[row][col] = true; renderCell(row, col); return; }
-    }
 
-    // keystone_stochastic_resonance (265): 50% chance to reveal 1 correct cell instead of penalising.
+    // keystone_stochastic_resonance (265): 20% chance to reveal 1 correct cell instead of penalising.
     // Cannot trigger twice in a row (tracked via window._stochasticLastFired).
-    if (ptHasSkill('keystone_stochastic_resonance') && !window._stochasticLastFired && Math.random() < 0.5) {
+    if (ptHasSkill('keystone_stochastic_resonance') && !window._stochasticLastFired && Math.random() < 0.2) {
         window._stochasticLastFired = true;
         revealTiles(1);
         showToast(`〰️ ${LANG === 'de' ? 'Stochastische Resonanz! Zelle enthüllt.' : 'Stochastic Resonance! Cell revealed.'}`);
@@ -39,16 +35,22 @@ function applyPenalty(row, col) {
 
     if (typeof onMistake === 'function') onMistake();
 
-    // standard_deviation (255-257): every 3 mistakes (or every 2 with node 3) reveal cells.
-    // Nodes stack: 1 cell each per node allocated (up to 3 cells with all three).
-    if (ptHasSkill('standard_deviation_1') || ptHasSkill('standard_deviation_2') || ptHasSkill('standard_deviation_3')) {
-        const threshold = ptHasSkill('standard_deviation_3') ? 2 : 3;
+    // standard_deviation (node ID: 255-257):
+    //   Node 1 only      → every 3 mistakes → 1 reveal
+    //   Nodes 1+2        → every 2 mistakes → 1 reveal
+    //   Nodes 1+2+3      → every 2 mistakes → 2 reveals
+    if (ptHasSkill('standard_deviation_1')) {
+        const hasNode2 = ptHasSkill('standard_deviation_2');
+        const hasNode3 = ptHasSkill('standard_deviation_3');
+        const threshold = hasNode2 ? 2 : 3;
         if (mistakeCount % threshold === 0) {
-            const count = (ptHasSkill('standard_deviation_1') ? 1 : 0)
-                + (ptHasSkill('standard_deviation_2') ? 1 : 0)
-                + (ptHasSkill('standard_deviation_3') ? 1 : 0);
+            const count = hasNode3 ? 2 : 1;
             revealTiles(count);
-            showToast(`📏 ${LANG === 'de' ? `Standardabweichung! ${count} Zelle(n) enthüllt.` : `Standard Deviation! ${count} cell(s) revealed.`}`);
+            if (_getBayesianBonus() > 0 && Math.random() < _getBayesianBonus()) {
+                _resetBayesianBonus();
+                revealTiles(1);
+            }
+            showToast(`📏 ${LANG === 'de' ? `Fehler-Feedback! ${count} Zelle(n) enthüllt.` : `Error Feedback! ${count} cell(s) revealed.`}`);
         }
     }
 
@@ -63,7 +65,7 @@ function applyPenalty(row, col) {
     const timerBefore = timerSecs;
 
 
-    // Use overfitMult if active, otherwise fall back to penMult (e.g. 5× from Black Swan)
+    const overfitMult = _overfittingPenaltyMultiplier();
     const activeMult = (overfitMult !== null) ? overfitMult : penMult;
     const effectivePen = Math.max(0, Math.round(pen * activeMult) - asymptoteReduction);
 

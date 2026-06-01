@@ -263,6 +263,8 @@ function _bayesTrapPlacementClick(row, col) {
         showToast(LANG === 'de'
             ? `🧪 Alle ${state.placedCount} Falle(n) platziert! Warten auf Detonation...`
             : `🧪 All ${state.placedCount} trap(s) placed! Waiting for detonation...`);
+
+        trackAchStat('bayesTrapsAllPlaced');
     } else {
         // Next trap to place from the queue
         const nextTrap = state.trapsQueue[state.currentTrapIdx];
@@ -402,6 +404,8 @@ function _bayesTrapReveal(row, col) {
     if (affected.length > 0) {
         _applyCellEffect(affected, 'reveal');
         trackAchStat('tilesRevealed', affected.length);
+        questStat_classRevealUsed(affected.length);
+        updateQuestStats('classAbilityUsedThisLevel', {});
         checkWin();
     } 
     
@@ -425,6 +429,7 @@ function _bayesTrapElimination(row, col) {
             if (r < 0 || r >= rows || c < 0 || c >= cols) break;
             if (sol[r][c] === 0 && (userGrid[r][c] === 0 || userGrid[r][c] === 3) && !wrongGrid[r][c]) {
                 userGrid[r][c] = 2; // ✕ mark
+                questStat_classMarkUsed(1);
                 renderCell(r, c);
                 affected.push(`g-${r}-${c}`);
             }
@@ -550,6 +555,7 @@ function _bayesTrapProtectionIntercept(row, col) {
     if (userGrid[row][col] === 0) {
         userGrid[row][col] = 2;
         renderCell(row, col);
+        questStat_classMarkUsed(1);
     }
 
     // Consume this line's protection
@@ -899,6 +905,7 @@ function _typeIShieldIntercept(row, col) {
         : 'Type I Error - Shield triggered!');
 
     Audio_Manager.playSFX('type1errorShieldBreak');
+    trackAchStat('type1Intercepts');
 
     if (window._typeIBonusReveal) {
         _typeIBonusRevealCell(row, col);
@@ -1012,6 +1019,9 @@ function _typeIBonusRevealCell(row, col) {
     showToast(LANG === 'de'
         ? '🛡️ Typ-I-Bonus: 1 korrekte Zelle enthüllt!'
         : 'Type I bonus: 1 correct cell revealed!');
+
+    questStat_classRevealUsed(1);
+    updateQuestStats('classAbilityUsedThisLevel', {});
 
     checkWin();
 }

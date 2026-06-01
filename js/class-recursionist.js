@@ -146,7 +146,11 @@ function _residualTotemFireOne(row, col, radius) {
         renderCell(r, c);
         updClues(r, c);
         trackAchStat('tilesRevealed', 1);
+        trackAchStat('residualBeamsFired');
         if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
+
+        questStat_classRevealUsed(1);
+        updateQuestStats('classAbilityUsedThisLevel', {});
         checkWin();
     });
 
@@ -348,6 +352,10 @@ function _dofHandleClick(row, col) {
     if (remaining > 0) {
         showToast(`💀 Selected ${session.picked.length}/${session.correctCount}. Click ${remaining} more — or Esc to cancel.`);
     }
+    // Make the removed mistake count towards the 'Remove 50 mistakes' quest
+    questStat_mistakesRemoved(1);
+
+    trackAchStat('skillDoFUsed');
 
     if (session.picked.length >= session.correctCount) {
         _confirmDegreesOfFreedom();

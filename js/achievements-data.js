@@ -1239,6 +1239,291 @@ const ACHIEVEMENT_DEFS = [
 
 
 
+    // ════════════════════════════════════════════════
+    //  ASCENDENCY ACHIEVEMENTS
+    // ════════════════════════════════════════════════
+
+    // ── ASCENDENCY SELECTION & COMPLETION ──────────
+    {
+        id: 'ascendency_awakened',
+        category: 'class',
+        icon: '✨',
+        nameEn: 'Awakened',
+        nameDE: 'Erwacht',
+        descEn: 'Choose an Ascendency class for the first time.',
+        descDE: 'Wähle zum ersten Mal eine Aufstiegs-Klasse.',
+        stat: 'ascendencyChosen',
+        tiers: [
+            { threshold: 1, labelEn: 'Evolution', labelDE: 'Evolution' }
+        ]
+    },
+    {
+        id: 'ascendency_actuary_levels',
+        category: 'class',
+        icon: '⚖️',
+        nameEn: 'Risk Assessor',
+        nameDE: 'Risikoprüfer',
+        descEn: 'Complete levels as the Actuary ascendency.',
+        descDE: 'Schließe Level als Aktuar ab.',
+        stat: 'levelsAsActuary',
+        tiers: [
+            { threshold: 5, labelEn: 'Calculated Risk', labelDE: 'Kalkuliertes Risiko' },
+            { threshold: 25, labelEn: 'Actuarial Master', labelDE: 'Aktuar-Meister' },
+        ]
+    },
+    {
+        id: 'ascendency_outlier_levels',
+        category: 'class',
+        icon: '☄️',
+        nameEn: 'Beyond the Curve',
+        nameDE: 'Jenseits der Kurve',
+        descEn: 'Complete levels as the Outlier ascendency.',
+        descDE: 'Schließe Level als Ausreißer ab.',
+        stat: 'levelsAsOutlier',
+        tiers: [
+            { threshold: 5, labelEn: 'Anomaly', labelDE: 'Anomalie' },
+            { threshold: 25, labelEn: 'Statistical Ghost', labelDE: 'Statistischer Geist' },
+        ]
+    },
+    {
+        id: 'ascendency_recursionist_levels',
+        category: 'class',
+        icon: '🔁',
+        nameEn: 'Loop Weaver',
+        nameDE: 'Schleifenweber',
+        descEn: 'Complete levels as the Recursionist ascendency.',
+        descDE: 'Schließe Level als Rekursionist ab.',
+        stat: 'levelsAsRecursionist',
+        tiers: [
+            { threshold: 5, labelEn: 'Iteration', labelDE: 'Iteration' },
+            { threshold: 25, labelEn: 'Infinite Depth', labelDE: 'Unendliche Tiefe' },
+        ]
+    },
+    {
+        id: 'ascendency_markovian_levels',
+        category: 'class',
+        icon: '⛓️',
+        nameEn: 'Chain Walker',
+        nameDE: 'Kettenläufer',
+        descEn: 'Complete levels as the Markovian ascendency.',
+        descDE: 'Schließe Level als Markovianer ab.',
+        stat: 'levelsAsMarkovian',
+        tiers: [
+            { threshold: 5, labelEn: 'State Shift', labelDE: 'Zustandswechsel' },
+            { threshold: 25, labelEn: 'Memoryless Master', labelDE: 'Gedächtnisloser Meister' },
+        ]
+    },
+    {
+        id: 'ascendency_bayesian_levels',
+        category: 'class',
+        icon: '👁️',
+        nameEn: 'Prior Knowledge',
+        nameDE: 'Vorwissen',
+        descEn: 'Complete levels as the Bayesian ascendency.',
+        descDE: 'Schließe Level als Bayesianer ab.',
+        stat: 'levelsAsBayesian',
+        tiers: [
+            { threshold: 5, labelEn: 'Belief Updated', labelDE: 'Überzeugung aktualisiert' },
+            { threshold: 25, labelEn: 'Posterior Truth', labelDE: 'A-posteriori Wahrheit' },
+        ]
+    },
+    {
+        id: 'ascendency_randomwalker_levels',
+        category: 'class',
+        icon: '🐾',
+        nameEn: 'Wanderer',
+        nameDE: 'Wanderer',
+        descEn: 'Complete levels as the Random Walker ascendency.',
+        descDE: 'Schließe Level als Random Walker ab.',
+        stat: 'levelsAsRandom_walker',
+        tiers: [
+            { threshold: 5, labelEn: 'Stochastic Steps', labelDE: 'Stochastische Schritte' },
+            { threshold: 25, labelEn: 'Pathfinder', labelDE: 'Pfadfinder' },
+        ]
+    },
+
+    // ── ACTUARY SKILLS & MILESTONES ──────────────
+    {
+        id: 'actuary_regression_used',
+        category: 'class',
+        icon: '⏪',
+        nameEn: 'Revert to Mean',
+        nameDE: 'Rückkehr zum Mittelwert',
+        descEn: 'Use the Regression to Prior skill to erase mistakes.',
+        descDE: 'Nutze Regression to Prior, um Fehler zu löschen.',
+        stat: 'skillRegressionPriorUsed',
+        tiers: [
+            { threshold: 10, labelEn: 'Error Erased', labelDE: 'Fehler gelöscht' },
+            { threshold: 50, labelEn: 'Time Heals', labelDE: 'Die Zeit heilt' },
+        ]
+    },
+    {
+        id: 'actuary_sig_thresh_intercept',
+        category: 'class',
+        icon: '🛡️',
+        nameEn: 'Null Hypothesis Rejected',
+        nameDE: 'Nullhypothese abgelehnt',
+        descEn: 'Have Significance Threshold protect you from a mistake.',
+        descDE: 'Lass dich von Significance Threshold vor einem Fehler schützen.',
+        stat: 'sigThresholdIntercepts',
+        tiers: [
+            { threshold: 5, labelEn: 'Access Denied', labelDE: 'Zugriff verweigert' },
+            { threshold: 25, labelEn: 'Statistically Significant', labelDE: 'Statistisch signifikant' },
+        ]
+    },
+
+    // ── OUTLIER SKILLS & MILESTONES ──────────────
+    {
+        id: 'outlier_tail_risk_used',
+        category: 'class',
+        icon: '🧨',
+        nameEn: 'Living Dangerously',
+        nameDE: 'Gefährlich leben',
+        descEn: 'Use the Tail Risk skill.',
+        descDE: 'Nutze die Tail Risk Fähigkeit.',
+        stat: 'skillTailRiskUsed',
+        tiers: [
+            { threshold: 10, labelEn: 'Calculated Gamble', labelDE: 'Kalkuliertes Risiko' },
+            { threshold: 50, labelEn: 'Fat Tails', labelDE: 'Fat Tails' },
+        ]
+    },
+    {
+        id: 'outlier_speedforce_survive',
+        category: 'class',
+        icon: '🦅',
+        nameEn: 'Riding the Swan',
+        nameDE: 'Auf dem Schwan reiten',
+        descEn: 'Survive a full SPEEDFORCE (Black Swan) duration without breaking it.',
+        descDE: 'Überlebe eine volle SPEEDFORCE (Black Swan) Dauer ohne Abbruch.',
+        stat: 'speedforceNaturalCompletions',
+        tiers: [
+            { threshold: 1, labelEn: 'Unbroken Focus', labelDE: 'Ungebrochener Fokus' },
+            { threshold: 10, labelEn: 'Swan Tamer', labelDE: 'Schwanenbändiger' },
+        ]
+    },
+
+    // ── RECURSIONIST SKILLS & MILESTONES ─────────
+    {
+        id: 'recursionist_residual_beams',
+        category: 'class',
+        icon: '🔥',
+        nameEn: 'Crossfire',
+        nameDE: 'Kreuzfeuer',
+        descEn: 'Have Residual Totems fire tracking beams to solve cells.',
+        descDE: 'Lass Residual Totems Suchstrahlen abfeuern, um Zellen zu lösen.',
+        stat: 'residualBeamsFired',
+        tiers: [
+            { threshold: 50, labelEn: 'Laser Show', labelDE: 'Lasershow' },
+            { threshold: 250, labelEn: 'Orbital Strike', labelDE: 'Orbitaler Schlag' },
+        ]
+    },
+    {
+        id: 'recursionist_dof_used',
+        category: 'class',
+        icon: '🔗',
+        nameEn: 'Degrees of Freedom',
+        nameDE: 'Freiheitsgrade',
+        descEn: 'Confirm and solve cells using Degrees of Freedom.',
+        descDE: 'Bestätige und löse Zellen mit Degrees of Freedom.',
+        stat: 'skillDoFUsed',
+        tiers: [
+            { threshold: 10, labelEn: 'Boundless', labelDE: 'Grenzenlos' },
+            { threshold: 50, labelEn: 'Unshackled', labelDE: 'Entfesselt' },
+        ]
+    },
+
+    // ── MARKOVIAN SKILLS & MILESTONES ────────────
+    {
+        id: 'markovian_rollback_save',
+        category: 'class',
+        icon: '⏳',
+        nameEn: 'Cheat Death',
+        nameDE: 'Dem Tod entronnen',
+        descEn: 'Have State Rollback save you when the timer hits less than 10 seconds remaining.',
+        descDE: 'Lass dich von State Rollback retten, wenn nur noch weniger als 10 Sekunden Zeit sind.',
+        stat: 'rollbackSaves',
+        tiers: [
+            { threshold: 1, labelEn: 'Not Today', labelDE: 'Nicht heute' },
+            { threshold: 5, labelEn: 'Time Traveler', labelDE: 'Zeitreisender' },
+        ]
+    },
+    {
+        id: 'markovian_transition_cascades',
+        category: 'class',
+        icon: '🧩',
+        nameEn: 'Domino Effect',
+        nameDE: 'Dominoeffekt',
+        descEn: 'Trigger combo cascades using the Transition Matrix skill.',
+        descDE: 'Löse Kombi-Kaskaden mit der Transition Matrix Fähigkeit aus.',
+        stat: 'transitionMatrixCascades',
+        tiers: [
+            { threshold: 20, labelEn: 'Chain Reaction', labelDE: 'Kettenreaktion' },
+            { threshold: 100, labelEn: 'Markov Chain', labelDE: 'Markov-Kette' },
+        ]
+    },
+
+    // ── BAYESIAN SKILLS & MILESTONES ─────────────
+    {
+        id: 'bayesian_all_traps',
+        category: 'class',
+        icon: '🕸️',
+        nameEn: 'Minefield',
+        nameDE: 'Minenfeld',
+        descEn: 'Successfully place all available Bayes Traps on the grid at once.',
+        descDE: 'Platziere erfolgreich alle verfügbaren Bayes Traps gleichzeitig auf dem Raster.',
+        stat: 'bayesTrapsAllPlaced',
+        tiers: [
+            { threshold: 1, labelEn: 'Prepared', labelDE: 'Vorbereitet' },
+            { threshold: 10, labelEn: 'Master Trapper', labelDE: 'Meister-Fallensteller' },
+        ]
+    },
+    {
+        id: 'bayesian_type1_intercept',
+        category: 'class',
+        icon: '🛑',
+        nameEn: 'False Positive',
+        nameDE: 'Falsch Positiv',
+        descEn: 'Have Type I Shield intercept and convert a mistake.',
+        descDE: 'Lass ein Type I Shield einen Fehler abfangen und umwandeln.',
+        stat: 'type1Intercepts',
+        tiers: [
+            { threshold: 5, labelEn: 'Shielded', labelDE: 'Abgeschirmt' },
+            { threshold: 25, labelEn: 'Aegis', labelDE: 'Aegis' },
+        ]
+    },
+
+    // ── RANDOM WALKER SKILLS & MILESTONES ────────
+    {
+        id: 'walker_drifter_level',
+        category: 'class',
+        icon: '🐕',
+        nameEn: 'Good Boy',
+        nameDE: 'Guter Junge',
+        descEn: 'Have your summoned Drifter level up by finding correct cells.',
+        descDE: 'Lass deinen beschworenen Drifter im Level aufsteigen, indem er richtige Zellen findet.',
+        stat: 'drifterLevelUps',
+        tiers: [
+            { threshold: 1, labelEn: 'Growing Fast', labelDE: 'Schnell wachsend' },
+            { threshold: 15, labelEn: 'Alpha Beast', labelDE: 'Alpha-Tier' },
+        ]
+    },
+    {
+        id: 'walker_brownian_reveals',
+        category: 'class',
+        icon: '💨',
+        nameEn: 'Dust in the Wind',
+        nameDE: 'Staub im Wind',
+        descEn: 'Reveal cells using Brownian Motion.',
+        descDE: 'Enthülle Zellen durch Brownsche Bewegung.',
+        stat: 'brownianCellsRevealed',
+        tiers: [
+            { threshold: 50, labelEn: 'Drifting', labelDE: 'Treiben' },
+            { threshold: 200, labelEn: 'Scattered', labelDE: 'Verstreut' },
+        ]
+    }
+
+
+
 
 
 

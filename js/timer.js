@@ -115,15 +115,20 @@ function startTimer() {
         window._timedStasisNext = Date.now() + 10 * 60 * 1000;
     }
 
-    // keystone_law_of_large_numbers (219): first trigger after 3 min
+    // keystone_law_of_large_numbers (219): first trigger after 5 min
     if (ptHasSkill('keystone_law_of_large_numbers')) {
-        window._lawOfLargeNext = Date.now() + 3 * 60 * 1000;
+        window._lawOfLargeNext = Date.now() + 5 * 60 * 1000;
     }
 
     // poisson_process (270-272): schedule first auto-mark
-    // Node 3 fires every 45s; nodes 1-2 fire every 60s
+    // Base: 120s, node 271: 90s, node 272: 60s
     if (ptHasSkill('poisson_process_1') || ptHasSkill('poisson_process_2') || ptHasSkill('poisson_process_3')) {
-        const interval = ptHasSkill('poisson_process_3') ? 45 : 60;
+        let interval = 120; // Default
+        if (ptHasSkill('poisson_process_3')) {
+            interval = 60;
+        } else if (ptHasSkill('poisson_process_2')) {
+            interval = 90;
+        }
         window._poissonNext = Date.now() + interval * 1000;
     }
 
@@ -143,7 +148,7 @@ function startTimer() {
         if (typeof _markovSnapshotTick === 'function') _markovSnapshotTick();
 
         // timed_stasis (195-197): auto-freeze for 1s (+0.5s per tier 2/3) every 10 min
-        if (window._timedStasisNext && Date.now() >= window._timedStasisNext) {
+        if ( ptHasSkill('timed_stasis_1') && window._timedStasisNext && Date.now() >= window._timedStasisNext) {
             window._timedStasisNext = Date.now() + 10 * 60 * 1000; // schedule next
             let freezeDur = 1000;
             if (ptHasSkill('timed_stasis_2')) freezeDur += 500;
@@ -157,10 +162,10 @@ function startTimer() {
             }, freezeDur);
         }
 
-        // keystone_law_of_large_numbers (219): every 3 min, reveal 1 sparse row + 1 sparse col.
-        // Does not fire in the last 5 minutes (timerSecs <= 300).
-        if (window._lawOfLargeNext && Date.now() >= window._lawOfLargeNext && timerSecs > 300) {
-            window._lawOfLargeNext = Date.now() + 3 * 60 * 1000;
+        // keystone_law_of_large_numbers (219): every 5 min, reveal 1 sparse row + 1 sparse col.
+        // Does not fire in the last 15 minutes (timerSecs <= 900).
+        if (window._lawOfLargeNext && Date.now() >= window._lawOfLargeNext && timerSecs > 900) {
+            window._lawOfLargeNext = Date.now() + 5 * 60 * 1000;
             if (cur) {
                 const sol = cur.grid;
                 const rows = sol.length, cols = sol[0].length;
@@ -203,8 +208,17 @@ function startTimer() {
                 }
 
                 if (sparseRow >= 0 || sparseCol >= 0) {
+
+                    // After the existing sparseRow/sparseCol reveal block, before checkWin():
+                    if (_getBayesianBonus() > 0 && Math.random() < _getBayesianBonus()) {
+                        _resetBayesianBonus();
+                        revealTiles(1);
+                        showToast(`🔃 ${LANG === 'de' ? 'Bayessche Verstärkung!' : 'Bayesian Boost!'}`);
+                    }
                     showToast(`📉 ${LANG === 'de' ? 'Gesetz der Großen Zahlen!' : 'Law of Large Numbers!'}`);
                     checkWin();
+
+
                 }
             }
         }
@@ -241,4 +255,17 @@ function startTimer() {
             timesUp();
         }
     }, 1000);
+}
+
+
+
+function pauseTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+}
+
+function resumeTimer() {
+    if (!dead && !timerInterval) startTimer();
 }

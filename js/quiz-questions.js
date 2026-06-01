@@ -272,7 +272,7 @@ const BONUS_QUIZ_POOLS = {
         },
     ],
 
-    //todo continue
+    
 
     // ── WORLD 3 — Random Variables & Distributions ────────────────────────
     // Topics: conditional probability, law of total probability, Bayes' theorem,
@@ -316,7 +316,7 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: "The CDF F(x) of a random variable X is defined as:",
+            q: "The distribution function F(x) of a random variable X is defined as:",
             qDE: "Die Verteilungsfunktion F(x) einer Zufallsvariable X ist definiert als:",
             opts: ["P(X ≤ x)", "P(X = x)", "P(X > x)", "d/dx P(X ≤ x)"],
             optsDE: ["P(X ≤ x)", "P(X = x)", "P(X > x)", "d/dx P(X ≤ x)"],
@@ -330,8 +330,8 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: "For an exponential distribution with rate λ, the CDF for x ≥ 0 is:",
-            qDE: "Für eine Exponentialverteilung mit Rate λ lautet die VKF für x ≥ 0:",
+            q: "For an exponential distribution with rate λ, the distribution function for x ≥ 0 is:",
+            qDE: "Für eine Exponentialverteilung mit Rate λ lautet die Verteilungsfunktion für x ≥ 0:",
             opts: ["1 − e^(−λx)", "e^(−λx)", "λ·e^(−λx)", "1 − λ·e^(−x)"],
             optsDE: ["1 − e^(−λx)", "e^(−λx)", "λ·e^(−λx)", "1 − λ·e^(−x)"],
             correct: 0
@@ -381,22 +381,16 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: "The probability mass function (PMF) p(x) of a discrete RV must satisfy:",
-            qDE: "Die Zähldichte p(x) einer diskreten ZV muss erfüllen:",
+            q: "The density p(x) of a discrete random variable must satisfy:",
+            qDE: "Die Zähldichte p(x) einer diskreten Zufallsvariablen muss erfüllen:",
             opts: ["Σ p(x) = 1 and p(x) ≥ 0 for all x", "Σ p(x) = 0", "p(x) = 1 for all x", "∫ p(x) dx = 1"],
             optsDE: ["Σ p(x) = 1 und p(x) ≥ 0 für alle x", "Σ p(x) = 0", "p(x) = 1 für alle x", "∫ p(x) dx = 1"],
             correct: 0
         },
+
         {
-            q: "The CDF F(x) is non-decreasing. What does this mean?",
-            qDE: "Die Verteilungsfunktion F(x) ist monoton nicht-fallend. Was bedeutet das?",
-            opts: ["If x₁ < x₂, then F(x₁) ≤ F(x₂)", "If x₁ < x₂, then F(x₁) > F(x₂)", "F(x) is constant for all x", "F(x) can be negative for small x"],
-            optsDE: ["Wenn x₁ < x₂, dann F(x₁) ≤ F(x₂)", "Wenn x₁ < x₂, dann F(x₁) > F(x₂)", "F(x) ist für alle x konstant", "F(x) kann für kleine x negativ sein"],
-            correct: 0
-        },
-        {
-            q: "The probability density function (PDF) f(x) of a continuous RV satisfies:",
-            qDE: "Die Dichtefunktion f(x) einer stetigen ZV erfüllt:",
+            q: "The density function f(x) of a continuous random variable satisfies:",
+            qDE: "Die Dichtefunktion f(x) einer stetigen Zufallsvariable erfüllt:",
             opts: ["∫ f(x) dx = 1 over ℝ, and f(x) ≥ 0", "f(x) = P(X = x)", "Σ f(x) = 1", "f(x) > 1 is not allowed"],
             optsDE: ["∫ f(x) dx = 1 über ℝ, und f(x) ≥ 0", "f(x) = P(X = x)", "Σ f(x) = 1", "f(x) > 1 ist nicht erlaubt"],
             correct: 0
@@ -408,9 +402,6 @@ const BONUS_QUIZ_POOLS = {
             optsDE: ["Median", "Erwartungswert", "Modus", "Varianz"],
             correct: 0
         },
-
-
-
     ],
 
     // ── WORLD 4
@@ -441,8 +432,8 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: "For a Bernoulli(p) random variable, E[X] equals:",
-            qDE: "Für eine Bernoulli(p)-Zufallsvariable gilt E[X] =",
+            q: "For a Ber(p) distributed random variable, E[X] equals:",
+            qDE: "Für eine Ber(p)-verteilte Zufallsvariable gilt E[X] =",
             opts: ["p", "p(1−p)", "p²", "1−p"],
             optsDE: ["p", "p(1−p)", "p²", "1−p"],
             correct: 0
@@ -492,8 +483,8 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: "The Pearson correlation coefficient r between X and Y lies in the range:",
-            qDE: "Der Pearson-Korrelationskoeffizient r zwischen X und Y liegt im Bereich:",
+            q: "The correlation coefficient r between X and Y lies in the range:",
+            qDE: "Der Korrelationskoeffizient r zwischen X und Y liegt im Bereich:",
             opts: ["[−1, 1]", "[0, 1]", "[0, ∞)", "(−∞, ∞)"],
             optsDE: ["[−1, 1]", "[0, 1]", "[0, ∞)", "(−∞, ∞)"],
             correct: 0
@@ -543,32 +534,26 @@ const BONUS_QUIZ_POOLS = {
         {
             q: "The density transformation theorem is used when:",
             qDE: "Der Dichtetransformationssatz wird verwendet, wenn:",
-            opts: ["You know the PDF of X and want the PDF of Y = g(X)", "You need to compute E[X]", "You want to standardise a normal variable", "You need to find the CDF from a PMF"],
-            optsDE: ["Man die Dichte von X kennt und die Dichte von Y = g(X) sucht", "Man E[X] berechnen möchte", "Man eine Normalvariable standardisieren möchte", "Man die VKF aus einer Zähldichte bestimmen möchte"],
+            opts: ["You know the density of X and want the density of Y = g(X)", "You need to compute E[X]", "You want to standardise a normal variable", "You need to find the distribution function from a density function"],
+            optsDE: ["Man die Dichte von X kennt und die Dichte von Y = g(X) sucht", "Man E[X] berechnen möchte", "Man eine Normalvariable standardisieren möchte", "Man die Verteilungsfunktion aus einer Zähldichte bestimmen möchte"],
             correct: 0
         },
 
 
         // ── DENSITY TRANSFORMATION ────────────────────────────────────────────
+
         {
-            q: 'The density transformation theorem is used to find the PDF of Y = g(X) when:',
-            qDE: 'Der Dichtetransformationssatz wird verwendet, um die Dichte von Y = g(X) zu bestimmen, wenn:',
-            opts: ['You know the PDF of X and g is monotone', 'You only know E[X]', 'X is discrete', 'g is a constant'],
-            optsDE: ['Man die Dichte von X kennt und g monoton ist', 'Man nur E[X] kennt', 'X diskret ist', 'g eine Konstante ist'],
-            correct: 0
-        },
-        {
-            q: 'For Y = aX + b with a > 0 and X having PDF f_X, the PDF f_Y(y) equals:',
+            q: 'For Y = aX + b with a > 0 and X having density function f_X, the density function f_Y(y) equals:',
             qDE: 'Für Y = aX + b mit a > 0 und X mit Dichte f_X gilt für f_Y(y):',
             opts: ['f_X((y−b)/a) · (1/a)', 'f_X(ay + b)', 'a · f_X(y)', 'f_X(y − b)'],
             optsDE: ['f_X((y−b)/a) · (1/a)', 'f_X(ay + b)', 'a · f_X(y)', 'f_X(y − b)'],
             correct: 0
         },
         {
-            q: 'X ~ Uniform[0,1] and Y = 2X. What distribution does Y follow?',
-            qDE: 'X ~ Gleichverteilt[0,1] und Y = 2X. Welcher Verteilung folgt Y?',
-            opts: ['Uniform[0,2]', 'Uniform[0,1]', 'Normal(0,1)', 'Exponential(1)'],
-            optsDE: ['Gleichverteilung[0,2]', 'Gleichverteilung[0,1]', 'Normal(0,1)', 'Exponential(1)'],
+            q: 'X ~ U[0,1] and Y = 2X. What distribution does Y follow?',
+            qDE: 'X ~ U[0,1] und Y = 2X. Welcher Verteilung folgt Y?',
+            opts: ['U[0,2]', 'U[0,1]', 'N(0,1)', 'Exp(1)'],
+            optsDE: ['U[0,2]', 'U[0,1]', 'N(0,1)', 'Exp(1)'],
             correct: 0
         },
 
@@ -576,7 +561,7 @@ const BONUS_QUIZ_POOLS = {
         {
             q: 'Two random variables X and Y are independent if and only if:',
             qDE: 'Zwei Zufallsvariablen X und Y sind unabhängig genau dann, wenn:',
-            opts: ['Their joint PMF/PDF equals the product of the marginals', 'E[X] = E[Y]', 'Var(X) = Var(Y)', 'They take the same values'],
+            opts: ['Their joint density equals the product of the marginals', 'E[X] = E[Y]', 'Var(X) = Var(Y)', 'They take the same values'],
             optsDE: ['Ihre gemeinsame Zähldichte/Dichte dem Produkt der Randdichten entspricht', 'E[X] = E[Y]', 'Var(X) = Var(Y)', 'Sie dieselben Werte annehmen'],
             correct: 0
         },
@@ -588,7 +573,7 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: 'If X and Y are independent with continuous distributions, their joint PDF f_{X,Y}(x,y) equals:',
+            q: 'If X and Y are independent with continuous distributions, their joint density function f_{X,Y}(x,y) equals:',
             qDE: 'Wenn X und Y unabhängig mit stetiger Verteilung sind, gilt für die gemeinsame Dichte f_{X,Y}(x,y):',
             opts: ['f_X(x) · f_Y(y)', 'f_X(x) + f_Y(y)', 'f_X(x) / f_Y(y)', 'f_X(x·y)'],
             optsDE: ['f_X(x) · f_Y(y)', 'f_X(x) + f_Y(y)', 'f_X(x) / f_Y(y)', 'f_X(x·y)'],
@@ -605,7 +590,7 @@ const BONUS_QUIZ_POOLS = {
         },
         {
             q: 'For n i.i.d. random variables X₁,…,Xₙ with E[Xᵢ]=μ and Var(Xᵢ)=σ², what is Var(X̄) where X̄ = (1/n)ΣXᵢ?',
-            qDE: 'Für n i.i.d. Zufallsvariablen X₁,…,Xₙ mit E[Xᵢ]=μ und Var(Xᵢ)=σ²: Wie groß ist Var(X̄) mit X̄ = (1/n)ΣXᵢ?',
+            qDE: 'Für n i.i.d. Zufallsvariablen X₁,…,Xₙ mit E[Xᵢ]=μ und Var(Xᵢ)=σ²: Was ist Var(X̄) mit X̄ = (1/n)ΣXᵢ?',
             opts: ['σ²/n', 'σ²·n', 'σ²', 'σ/n'],
             optsDE: ['σ²/n', 'σ²·n', 'σ²', 'σ/n'],
             correct: 0
@@ -613,14 +598,14 @@ const BONUS_QUIZ_POOLS = {
 
         // ── EXPECTED VALUE ────────────────────────────────────────────────────
         {
-            q: 'The expected value of a continuous random variable X with PDF f is:',
+            q: 'The expected value of a continuous random variable X with density function f is:',
             qDE: 'Der Erwartungswert einer stetigen Zufallsvariable X mit Dichte f ist:',
             opts: ['∫ x·f(x) dx over ℝ', 'Σ x·P(X=x)', 'f(0)', '∫ f(x) dx'],
             optsDE: ['∫ x·f(x) dx über ℝ', 'Σ x·P(X=x)', 'f(0)', '∫ f(x) dx'],
             correct: 0
         },
         {
-            q: 'The expected value of a discrete random variable X with PMF p is:',
+            q: 'The expected value of a discrete random variable X with density p is:',
             qDE: 'Der Erwartungswert einer diskreten Zufallsvariable X mit Zähldichte p ist:',
             opts: ['Σ x·p(x)', '∫ x·p(x) dx', 'max p(x)', 'Σ p(x)'],
             optsDE: ['Σ x·p(x)', '∫ x·p(x) dx', 'max p(x)', 'Σ p(x)'],
@@ -629,29 +614,29 @@ const BONUS_QUIZ_POOLS = {
 
         // ── BERNOULLI DISTRIBUTION ────────────────────────────────────────────
         {
-            q: 'For X ~ Bernoulli(p), what is E[X]?',
-            qDE: 'Für X ~ Bernoulli(p), wie groß ist E[X]?',
+            q: 'For X ~ Ber(p), what is E[X]?',
+            qDE: 'Für X ~ Ber(p), was ist E[X]?',
             opts: ['p', 'p(1−p)', '1−p', 'p²'],
             optsDE: ['p', 'p(1−p)', '1−p', 'p²'],
             correct: 0
         },
         {
-            q: 'For X ~ Bernoulli(p), what is Var(X)?',
-            qDE: 'Für X ~ Bernoulli(p), wie groß ist Var(X)?',
+            q: 'For X ~ Ber(p), what is Var(X)?',
+            qDE: 'Für X ~ Ber(p), wie groß ist Var(X)?',
             opts: ['p(1−p)', 'p', 'p²', '(1−p)²'],
             optsDE: ['p(1−p)', 'p', 'p²', '(1−p)²'],
             correct: 0
         },
         {
-            q: 'A Bernoulli(p) random variable takes the value 1 with probability p and 0 with probability:',
-            qDE: 'Eine Bernoulli(p)-Zufallsvariable nimmt den Wert 1 mit Wahrscheinlichkeit p und 0 mit Wahrscheinlichkeit:',
+            q: 'A Ber(p) random variable takes the value 1 with probability p and 0 with probability:',
+            qDE: 'Eine Ber(p)-Zufallsvariable nimmt den Wert 1 mit Wahrscheinlichkeit p und 0 mit Wahrscheinlichkeit:',
             opts: ['1−p', 'p', 'p(1−p)', '1/p'],
             optsDE: ['1−p', 'p', 'p(1−p)', '1/p'],
             correct: 0
         },
         {
-            q: 'For which value of p is Var(X) = p(1−p) maximised for X ~ Bernoulli(p)?',
-            qDE: 'Bei welchem Wert von p ist Var(X) = p(1−p) für X ~ Bernoulli(p) maximal?',
+            q: 'For which value of p is Var(X) = p(1−p) maximised for X ~ Ber(p)?',
+            qDE: 'Bei welchem Wert von p ist Var(X) = p(1−p) für X ~ Ber(p) maximal?',
             opts: ['p = 0.5', 'p = 0', 'p = 1', 'p = 0.25'],
             optsDE: ['p = 0,5', 'p = 0', 'p = 1', 'p = 0,25'],
             correct: 0
@@ -696,7 +681,7 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: 'The Verschiebungssatz (computational formula for variance) states:',
+            q: 'The Shift-Theorem states:',
             qDE: 'Der Verschiebungssatz lautet:',
             opts: ['Var(X) = E[X²] − (E[X])²', 'Var(X) = E[X²] + (E[X])²', 'Var(X) = (E[X])² − E[X²]', 'Var(X) = E[(X−1)²]'],
             optsDE: ['Var(X) = E[X²] − (E[X])²', 'Var(X) = E[X²] + (E[X])²', 'Var(X) = (E[X])² − E[X²]', 'Var(X) = E[(X−1)²]'],
@@ -719,14 +704,14 @@ const BONUS_QUIZ_POOLS = {
 
         // ── TRANSFORMATION THEOREM FOR E[g(X)] ───────────────────────────────
         {
-            q: 'The transformation theorem (LOTUS) for discrete X states E[g(X)] equals:',
-            qDE: 'Der Transformationssatz (LOTUS) für diskrete X besagt E[g(X)] =',
+            q: 'The transformation theorem for discrete X states E[g(X)] equals:',
+            qDE: 'Der Transformationssatz für diskrete X besagt E[g(X)] =',
             opts: ['Σ g(x)·p(x)', 'g(E[X])', '∫ g(x) dx', 'Σ g(x)'],
             optsDE: ['Σ g(x)·p(x)', 'g(E[X])', '∫ g(x) dx', 'Σ g(x)'],
             correct: 0
         },
         {
-            q: 'For continuous X with PDF f, E[g(X)] equals:',
+            q: 'For continuous X with density function f, E[g(X)] equals:',
             qDE: 'Für stetige X mit Dichte f gilt E[g(X)] =',
             opts: ['∫ g(x)·f(x) dx', 'g(E[X])', 'Σ g(x)·f(x)', '∫ g(x) dx'],
             optsDE: ['∫ g(x)·f(x) dx', 'g(E[X])', 'Σ g(x)·f(x)', '∫ g(x) dx'],
@@ -736,14 +721,14 @@ const BONUS_QUIZ_POOLS = {
         // ── BINOMIAL DISTRIBUTION ─────────────────────────────────────────────
         {
             q: 'For X ~ Bin(n, p), what is E[X]?',
-            qDE: 'Für X ~ Bin(n, p), wie groß ist E[X]?',
+            qDE: 'Für X ~ Bin(n, p), was ist E[X]?',
             opts: ['n·p', 'n·p·(1−p)', 'p/n', 'n/p'],
             optsDE: ['n·p', 'n·p·(1−p)', 'p/n', 'n/p'],
             correct: 0
         },
         {
             q: 'For X ~ Bin(n, p), what is Var(X)?',
-            qDE: 'Für X ~ Bin(n, p), wie groß ist Var(X)?',
+            qDE: 'Für X ~ Bin(n, p), was ist Var(X)?',
             opts: ['n·p·(1−p)', 'n·p', 'p·(1−p)', 'n²·p'],
             optsDE: ['n·p·(1−p)', 'n·p', 'p·(1−p)', 'n²·p'],
             correct: 0
@@ -756,8 +741,8 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: 'The PMF of X ~ Bin(n,p) for X = k is given by:',
-            qDE: 'Die Zähldichte von X ~ Bin(n,p) für X = k lautet:',
+            q: 'The density of X ~ Bin(n,p) for X = k is given by: (C denotes the binomial coefficient)',
+            qDE: 'Die Zähldichte von X ~ Bin(n,p) für X = k lautet: (C stellt den Binomialkoeffizienten dar)',
             opts: ['C(n,k)·pᵏ·(1−p)^(n−k)', 'pᵏ·(1−p)^(n−k)', 'C(n,k)·pᵏ', 'n!·pᵏ'],
             optsDE: ['C(n,k)·pᵏ·(1−p)^(n−k)', 'pᵏ·(1−p)^(n−k)', 'C(n,k)·pᵏ', 'n!·pᵏ'],
             correct: 0
@@ -772,15 +757,15 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: 'C(n, 0) equals:',
-            qDE: 'C(n, 0) ist gleich:',
+            q: 'The binomial coefficient C(n, 0) equals:',
+            qDE: 'Der Binomialkoeffizient C(n, 0) ist gleich:',
             opts: ['1 for any n ≥ 0', 'n', '0', 'n!'],
             optsDE: ['1 für beliebiges n ≥ 0', 'n', '0', 'n!'],
             correct: 0
         },
         {
-            q: 'C(n, k) = C(n, n−k). This symmetry means:',
-            qDE: 'C(n, k) = C(n, n−k). Diese Symmetrie bedeutet:',
+            q: 'For the binomial coefficient we have C(n, k) = C(n, n−k). This symmetry means:',
+            qDE: 'Für den Binomialkoeffizit gilt C(n, k) = C(n, n−k). Diese Symmetrie bedeutet:',
             opts: ['Choosing k items is equivalent to leaving out n−k items', 'C(n,k) is always even', 'k must equal n−k', 'The formula only works for k < n/2'],
             optsDE: ['k Elemente wählen ist gleichwertig dazu, n−k Elemente wegzulassen', 'C(n,k) ist immer gerade', 'k muss gleich n−k sein', 'Die Formel gilt nur für k < n/2'],
             correct: 0
@@ -825,7 +810,7 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: 'Which combinatorial model is used in the binomial distribution PMF?',
+            q: 'Which combinatorial model is used in the binomial distribution density?',
             qDE: 'Welches kombinatorische Modell wird in der Zähldichte der Binomialverteilung verwendet?',
             opts: ['Drawing without replacement, no order (binomial coefficient)', 'Drawing with replacement, with order', 'Drawing without replacement, with order', 'Drawing with replacement, no order'],
             optsDE: ['Ziehen ohne Zurücklegen, ohne Reihenfolge (Binomialkoeffizient)', 'Ziehen mit Zurücklegen, mit Reihenfolge', 'Ziehen ohne Zurücklegen, mit Reihenfolge', 'Ziehen mit Zurücklegen, ohne Reihenfolge'],
@@ -837,10 +822,7 @@ const BONUS_QUIZ_POOLS = {
 
     ],
 
-    
     5: [
-
-        // ── Paste this into BONUS_QUIZ_POOLS[5] = [ ... ] ──────────────────────
 
         // --- Hypergeometrische Verteilung ---
         {
@@ -868,7 +850,7 @@ const BONUS_QUIZ_POOLS = {
         // --- Geometrische Verteilung ---
         {
             q: 'The geometric distribution models the number of trials until the first success. If p=0.25, what is E[X]?',
-            qDE: 'Die geometrische Verteilung modelliert Versuche bis zum ersten Erfolg. Bei p=0.25: Wie groß ist E[X]?',
+            qDE: 'Die geometrische Verteilung modelliert Versuche bis zum ersten Erfolg. Bei p=0.25: Was ist E[X]?',
             opts: ['4', '0.25', '3', '2'],
             optsDE: ['4', '0.25', '3', '2'],
             correct: 0,
@@ -898,7 +880,7 @@ const BONUS_QUIZ_POOLS = {
         },
         {
             q: 'In a Bernoulli sequence with n=10 and p=0.3, X counts the successes. What is Var(X)?',
-            qDE: 'In einer Bernoulli-Folge mit n=10 und p=0.3 zählt X die Erfolge. Wie groß ist Var(X)?',
+            qDE: 'In einer Bernoulli-Folge mit n=10 und p=0.3 zählt X die Erfolge. Was ist Var(X)?',
             opts: ['2.1', '3', '0.3', '0.9'],
             optsDE: ['2.1', '3', '0.3', '0.9'],
             correct: 0,
@@ -921,7 +903,7 @@ const BONUS_QUIZ_POOLS = {
         },
         {
             q: 'For a negative binomial distribution with r=3 and p=0.5, what is E[X] (number of trials until r-th success)?',
-            qDE: 'Für eine negative Binomialverteilung mit r=3 und p=0.5: Wie groß ist E[X] (Versuche bis zum r-ten Erfolg)?',
+            qDE: 'Für eine negative Binomialverteilung mit r=3 und p=0.5: Was ist E[X] (Versuche bis zum r-ten Erfolg)?',
             opts: ['6', '3', '1.5', '9'],
             optsDE: ['6', '3', '1.5', '9'],
             correct: 0,
@@ -959,7 +941,7 @@ const BONUS_QUIZ_POOLS = {
 
         // --- Poisson-Grenzwertsatz (Binomial → Poisson) ---
         {
-            q: 'The Poisson limit theorem states that as n→∞ and p→0, the binomial distribution converges to Poisson with parameter:',
+            q: 'The Poisson limit theorem states that as n → ∞ and p → 0, the binomial distribution converges to Poisson with parameter:',
             qDE: 'Der Poisson-Grenzwertsatz besagt: Für n→∞ und p→0 konvergiert die Binomialverteilung gegen Poisson mit Parameter:',
             opts: ['λ = n·p', 'λ = n/p', 'λ = p/n', 'λ = n+p'],
             optsDE: ['λ = n·p', 'λ = n/p', 'λ = p/n', 'λ = n+p'],
@@ -974,7 +956,7 @@ const BONUS_QUIZ_POOLS = {
         },
         {
             q: 'In n=500 trials each with p=0.004, we approximate X ~ Bin(500, 0.004) by a Poisson. What is λ?',
-            qDE: 'Bei n=500 Versuchen mit p=0.004 nähern wir X ~ Bin(500, 0.004) durch Poisson an. Wie groß ist λ?',
+            qDE: 'Bei n=500 Versuchen mit p=0.004 nähern wir X ~ Bin(500, 0.004) durch eine Poissonverteilung an. Was ist λ?',
             opts: ['2', '0.004', '500', '0.5'],
             optsDE: ['2', '0.004', '500', '0.5'],
             correct: 0,
@@ -982,15 +964,15 @@ const BONUS_QUIZ_POOLS = {
 
         // --- Stetige Gleichverteilung ---
         {
-            q: 'For X ~ Uniform(a, b), what is the expected value E[X]?',
-            qDE: 'Für X ~ Gleichverteilung(a, b): Wie lautet der Erwartungswert E[X]?',
+            q: 'For X ~ U(a, b), what is the expected value E[X]?',
+            qDE: 'Für X ~ U(a, b): Wie lautet der Erwartungswert E[X]?',
             opts: ['(a+b)/2', '(b−a)/2', 'a·b', '1/(b−a)'],
             optsDE: ['(a+b)/2', '(b−a)/2', 'a·b', '1/(b−a)'],
             correct: 0,
         },
         {
-            q: 'For X ~ Uniform(0, 6), what is Var(X)?',
-            qDE: 'Für X ~ Gleichverteilung(0, 6): Wie groß ist Var(X)?',
+            q: 'For X ~ U(0, 6), what is Var(X)?',
+            qDE: 'Für X ~ U(0, 6): Wie groß ist Var(X)?',
             opts: ['3', '6', '36', '1'],
             optsDE: ['3', '6', '36', '1'],
             correct: 0,
@@ -1020,7 +1002,7 @@ const BONUS_QUIZ_POOLS = {
         },
         {
             q: 'For X ~ Exp(2), what is Var(X)?',
-            qDE: 'Für X ~ Exp(2): Wie groß ist Var(X)?',
+            qDE: 'Für X ~ Exp(2): Was ist Var(X)?',
             opts: ['0.25', '0.5', '2', '4'],
             optsDE: ['0.25', '0.5', '2', '4'],
             correct: 0,
@@ -1170,7 +1152,6 @@ const BONUS_QUIZ_POOLS = {
 
     6: [
 
-        // ── Paste this into BONUS_QUIZ_POOLS[6] = [ ... ] ──────────────────────
 
         // --- Simpsons Paradoxon ---
         {
@@ -1451,8 +1432,212 @@ const BONUS_QUIZ_POOLS = {
 
     ],
 
-    // Worlds 7–13: empty for now — add questions here as you build those worlds.
-    7: [], 8: [], 9: [], 10: [], 11: [], 12: [],
+
+    // ── WORLD 7 — Convergence & Limit Theorems ────────────────────────────
+    // Topics: arithmetisches Mittel, schwaches GGZ, Tschebyscheff-Ungleichung,
+    //         stochastische Konvergenz, starkes GGZ, Hauptsatz der Statistik,
+    //         fast sichere Konvergenz, Zentraler Grenzwertsatz
+
+    7: [
+
+        // --- Arithmetisches Mittel ---
+        {
+            q: "The sample mean X̄ of n observations x₁, …, xₙ is defined as:",
+            qDE: "Das arithmetische Mittel X̄ von n Beobachtungen x₁, …, xₙ ist definiert als:",
+            opts: ["(x₁ + … + xₙ) / n", "(x₁ + … + xₙ) · n", "√(x₁ · … · xₙ)", "max(x₁, …, xₙ) / n"],
+            optsDE: ["(x₁ + … + xₙ) / n", "(x₁ + … + xₙ) · n", "√(x₁ · … · xₙ)", "max(x₁, …, xₙ) / n"],
+            correct: 0
+        },
+        {
+            q: "For i.i.d. random variables X₁, …, Xₙ with E[Xᵢ] = μ, what is E[X̄]?",
+            qDE: "Für i.i.d. Zufallsvariablen X₁, …, Xₙ mit E[Xᵢ] = μ gilt E[X̄] =",
+            opts: ["μ", "μ / n", "n · μ", "0"],
+            optsDE: ["μ", "μ / n", "n · μ", "0"],
+            correct: 0
+        },
+        {
+            q: "For i.i.d. random variables with variance σ², what is Var(X̄)?",
+            qDE: "Für i.i.d. Zufallsvariablen mit Varianz σ² gilt Var(X̄) =",
+            opts: ["σ² / n", "σ²", "σ² · n", "σ / n"],
+            optsDE: ["σ² / n", "σ²", "σ² · n", "σ / n"],
+            correct: 0
+        },
+
+        // --- Tschebyscheff-Ungleichung ---
+        {
+            q: "Chebyshev's inequality states that for any ε > 0:",
+            qDE: "Die Tschebyscheff-Ungleichung besagt für beliebiges ε > 0:",
+            opts: ["P(|X − μ| ≥ ε) ≤ Var(X) / ε²", "P(|X − μ| ≥ ε) ≤ E[X] / ε", "P(|X − μ| ≥ ε) ≥ Var(X) / ε²", "P(|X − μ| ≥ ε) = 1 / ε"],
+            optsDE: ["P(|X − μ| ≥ ε) ≤ Var(X) / ε²", "P(|X − μ| ≥ ε) ≤ E[X] / ε", "P(|X − μ| ≥ ε) ≥ Var(X) / ε²", "P(|X − μ| ≥ ε) = 1 / ε"],
+            correct: 0
+        },
+        {
+            q: "Chebyshev's inequality requires knowledge of which quantity to give a bound on P(|X − μ| ≥ ε)?",
+            qDE: "Die Tschebyscheff-Ungleichung benötigt welche Größe, um P(|X − μ| ≥ ε) zu beschränken?",
+            opts: ["The variance Var(X)", "The full distribution of X", "The median of X", "The moment generating function"],
+            optsDE: ["Die Varianz Var(X)", "Die vollständige Verteilung von X", "Den Median von X", "Die momenterzeugende Funktion"],
+            correct: 0
+        },
+        {
+            q: "Applied to the sample mean X̄, Chebyshev's inequality gives P(|X̄ − μ| ≥ ε) ≤",
+            qDE: "Angewandt auf den Stichprobenmittelwert X̄ ergibt die Tschebyscheff-Ungleichung P(|X̄ − μ| ≥ ε) ≤",
+            opts: ["σ² / (n · ε²)", "σ² / ε²", "σ / (n · ε)", "n · σ² / ε²"],
+            optsDE: ["σ² / (n · ε²)", "σ² / ε²", "σ / (n · ε)", "n · σ² / ε²"],
+            correct: 0
+        },
+
+        // --- Stochastische Konvergenz ---
+        {
+            q: "A sequence of random variables Xₙ converges in probability to X if:",
+            qDE: "Eine Folge von Zufallsvariablen Xₙ konvergiert stochastisch gegen X, wenn:",
+            opts: ["P(|Xₙ − X| ≥ ε) → 0 as n → ∞ for all ε > 0", "P(Xₙ = X) = 1 for all n", "E[Xₙ] → 0 for all n", "Var(Xₙ) → ∞"],
+            optsDE: ["P(|Xₙ − X| ≥ ε) → 0 für n → ∞ für alle ε > 0", "P(Xₙ = X) = 1 für alle n", "E[Xₙ] → 0 für alle n", "Var(Xₙ) → ∞"],
+            correct: 0
+        },
+        {
+            q: "The notation Xₙ →ᵖ X means:",
+            qDE: "Die Schreibweise Xₙ →ᵖ X bedeutet:",
+            opts: ["Convergence in probability", "Almost sure convergence", "Convergence in distribution", "Convergence in mean square"],
+            optsDE: ["Konvergenz in Wahrscheinlichkeit (stochastische Konvergenz)", "Fast sichere Konvergenz", "Konvergenz in Verteilung", "Konvergenz im quadratischen Mittel"],
+            correct: 0
+        },
+        {
+            q: "Which type of convergence is implied by almost sure convergence?",
+            qDE: "Welche Konvergenzart wird durch fast sichere Konvergenz impliziert?",
+            opts: ["Convergence in probability", "Convergence in distribution only", "No other type", "Mean square convergence"],
+            optsDE: ["Stochastische Konvergenz", "Nur Konvergenz in Verteilung", "Keine andere Konvergenzart", "Konvergenz im quadratischen Mittel"],
+            correct: 0
+        },
+
+        // --- Schwaches Gesetz der großen Zahlen ---
+        {
+            q: "The Weak Law of Large Numbers states that for i.i.d. variables with mean μ:",
+            qDE: "Das schwache Gesetz der großen Zahlen besagt für i.i.d. Variablen mit Erwartungswert μ:",
+            opts: ["X̄ₙ →ᵖ μ as n → ∞", "X̄ₙ → 0 as n → ∞", "X̄ₙ = μ for all n", "X̄ₙ →ᵃ·ˢ· μ"],
+            optsDE: ["X̄ₙ →ᵖ μ für n → ∞", "X̄ₙ → 0 für n → ∞", "X̄ₙ = μ für alle n", "X̄ₙ →ᵃ·ˢ· μ"],
+            correct: 0
+        },
+        {
+            q: "The Weak Law of Large Numbers guarantees convergence in which sense?",
+            qDE: "Das schwache Gesetz der großen Zahlen garantiert Konvergenz in welchem Sinne?",
+            opts: ["In probability", "Almost surely", "In distribution only", "In the L² sense only"],
+            optsDE: ["In Wahrscheinlichkeit (stochastisch)", "Fast sicher", "Nur in Verteilung", "Nur im L²-Sinne"],
+            correct: 0
+        },
+        {
+            q: "Which condition is sufficient to prove the Weak Law of Large Numbers via Chebyshev's inequality?",
+            qDE: "Welche Bedingung reicht aus, um das schwache Gesetz der großen Zahlen mittels Tschebyscheff zu beweisen?",
+            opts: ["Finite variance σ² < ∞", "The distribution must be normal", "The variables must be bounded", "The mean must be zero"],
+            optsDE: ["Endliche Varianz σ² < ∞", "Die Verteilung muss normal sein", "Die Variablen müssen beschränkt sein", "Der Erwartungswert muss null sein"],
+            correct: 0
+        },
+
+        // --- Starkes Gesetz der großen Zahlen ---
+        {
+            q: "The Strong Law of Large Numbers states that X̄ₙ converges to μ:",
+            qDE: "Das starke Gesetz der großen Zahlen besagt, dass X̄ₙ gegen μ konvergiert:",
+            opts: ["Almost surely (with probability 1)", "In probability only", "In distribution only", "For finitely many n"],
+            optsDE: ["Fast sicher (mit Wahrscheinlichkeit 1)", "Nur in Wahrscheinlichkeit", "Nur in Verteilung", "Für endlich viele n"],
+            correct: 0
+        },
+        {
+            q: "The Strong Law of Large Numbers is a stronger statement than the Weak Law because:",
+            qDE: "Das starke Gesetz der großen Zahlen ist eine stärkere Aussage als das schwache, weil:",
+            opts: ["Almost sure convergence implies convergence in probability, but not vice versa", "It requires fewer assumptions", "It applies to dependent variables", "It only works for symmetric distributions"],
+            optsDE: ["Fast sichere Konvergenz impliziert stochastische Konvergenz, aber nicht umgekehrt", "Es weniger Voraussetzungen braucht", "Es für abhängige Variablen gilt", "Es nur für symmetrische Verteilungen gilt"],
+            correct: 0
+        },
+        {
+            q: "Almost sure convergence Xₙ →ᵃ·ˢ· X means:",
+            qDE: "Fast sichere Konvergenz Xₙ →ᵃ·ˢ· X bedeutet:",
+            opts: ["P(lim_{n→∞} Xₙ = X) = 1", "P(|Xₙ − X| ≥ ε) → 0 for all ε > 0", "E[Xₙ] → E[X]", "Xₙ = X for all large n with high probability"],
+            optsDE: ["P(lim_{n→∞} Xₙ = X) = 1", "P(|Xₙ − X| ≥ ε) → 0 für alle ε > 0", "E[Xₙ] → E[X]", "Xₙ = X für alle großen n mit hoher Wahrscheinlichkeit"],
+            correct: 0
+        },
+
+        // --- Fast sichere Konvergenz ---
+        {
+            q: "Almost sure convergence is also called:",
+            qDE: "Fast sichere Konvergenz wird auch genannt:",
+            opts: ["Convergence with probability 1", "Weak convergence", "Convergence in measure", "L¹ convergence"],
+            optsDE: ["Konvergenz mit Wahrscheinlichkeit 1", "Schwache Konvergenz", "Konvergenz im Maß", "L¹-Konvergenz"],
+            correct: 0
+        },
+        {
+            q: "Which convergence concept is used in the Strong Law of Large Numbers?",
+            qDE: "Welcher Konvergenzbegriff wird im starken Gesetz der großen Zahlen verwendet?",
+            opts: ["Almost sure convergence", "Convergence in probability", "Convergence in distribution", "Convergence in L²"],
+            optsDE: ["Fast sichere Konvergenz", "Stochastische Konvergenz", "Konvergenz in Verteilung", "Konvergenz in L²"],
+            correct: 0
+        },
+        {
+            q: "If Xₙ → X almost surely, which of the following is guaranteed?",
+            qDE: "Wenn Xₙ → X fast sicher gilt, was ist dann garantiert?",
+            opts: ["Xₙ →ᵖ X (convergence in probability)", "Xₙ = X for all n ≥ 1", "E[Xₙ] → E[X] in all cases", "Var(Xₙ) → 0"],
+            optsDE: ["Xₙ →ᵖ X (stochastische Konvergenz)", "Xₙ = X für alle n ≥ 1", "E[Xₙ] → E[X] in allen Fällen", "Var(Xₙ) → 0"],
+            correct: 0
+        },
+
+        // --- Hauptsatz der Statistik (Glivenko-Cantelli) ---
+        {
+            q: "The Fundamental Theorem of Statistics (Glivenko–Cantelli) states that the empirical CDF F̂ₙ(x):",
+            qDE: "Der Hauptsatz der Statistik (Glivenko–Cantelli) besagt, dass die empirische Verteilungsfunktion F̂ₙ(x):",
+            opts: ["Converges almost surely to the true CDF F(x) uniformly in x", "Converges to 0 for all x", "Equals F(x) for all n", "Only converges at the median"],
+            optsDE: ["Fast sicher gleichmäßig in x gegen die wahre Verteilungsfunktion F(x) konvergiert", "Für alle x gegen 0 konvergiert", "Für alle n gleich F(x) ist", "Nur am Median konvergiert"],
+            correct: 0
+        },
+        {
+            q: "The empirical CDF F̂ₙ(x) based on n i.i.d. observations is defined as:",
+            qDE: "Die empirische Verteilungsfunktion F̂ₙ(x) basierend auf n i.i.d. Beobachtungen ist definiert als:",
+            opts: ["(number of observations ≤ x) / n", "P(X ≤ x)", "The density evaluated at x", "(number of observations = x) / n"],
+            optsDE: ["(Anzahl der Beobachtungen ≤ x) / n", "P(X ≤ x)", "Die Dichte ausgewertet an der Stelle x", "(Anzahl der Beobachtungen = x) / n"],
+            correct: 0
+        },
+        {
+            q: "The Glivenko–Cantelli theorem implies that the supremum sup_x |F̂ₙ(x) − F(x)| converges:",
+            qDE: "Der Satz von Glivenko–Cantelli impliziert, dass sup_x |F̂ₙ(x) − F(x)| konvergiert:",
+            opts: ["To 0 almost surely as n → ∞", "To 1 as n → ∞", "To σ² as n → ∞", "To a normal distribution"],
+            optsDE: ["Fast sicher gegen 0 für n → ∞", "Gegen 1 für n → ∞", "Gegen σ² für n → ∞", "Gegen eine Normalverteilung"],
+            correct: 0
+        },
+
+        // --- Zentraler Grenzwertsatz ---
+        {
+            q: "The Central Limit Theorem states that for i.i.d. Xᵢ with mean μ and variance σ², the standardised sum (X̄ₙ − μ) / (σ/√n) converges in distribution to:",
+            qDE: "Der Zentrale Grenzwertsatz besagt, dass für i.i.d. Xᵢ mit Erwartungswert μ und Varianz σ² die standardisierte Summe (X̄ₙ − μ) / (σ/√n) in Verteilung konvergiert gegen:",
+            opts: ["N(0, 1)", "N(μ, σ²)", "Exp(1)", "U(0, 1)"],
+            optsDE: ["N(0, 1)", "N(μ, σ²)", "Exp(1)", "U(0, 1)"],
+            correct: 0
+        },
+        {
+            q: "The Central Limit Theorem applies regardless of the underlying distribution of Xᵢ, provided that:",
+            qDE: "Der Zentrale Grenzwertsatz gilt unabhängig von der Verteilung der Xᵢ, sofern:",
+            opts: ["The variables are i.i.d. with finite variance", "The variables follow a normal distribution", "The sample size n is exactly 30", "The variables are discrete"],
+            optsDE: ["Die Variablen i.i.d. mit endlicher Varianz sind", "Die Variablen normalverteilt sind", "Der Stichprobenumfang n genau 30 beträgt", "Die Variablen diskret sind"],
+            correct: 0
+        },
+        {
+            q: "The CLT is used in practice to approximate probabilities about X̄ₙ. Which distribution is used for the approximation?",
+            qDE: "Der ZGS wird in der Praxis genutzt, um Wahrscheinlichkeiten über X̄ₙ zu approximieren. Welche Verteilung wird verwendet?",
+            opts: ["Normal distribution N(μ, σ²/n)", "Poisson distribution with λ = μ", "Exponential distribution Exp(μ)", "Uniform distribution U(0, μ)"],
+            optsDE: ["Normalverteilung N(μ, σ²/n)", "Poisson-Verteilung mit λ = μ", "Exponentialverteilung Exp(μ)", "Gleichverteilung U(0, μ)"],
+            correct: 0
+        },
+
+    ],
+
+
+
+
+
+
+
+
+
+
+
+
+    8: [], 9: [], 10: [], 11: [], 12: [],
 
 
 

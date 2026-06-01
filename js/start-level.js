@@ -49,7 +49,7 @@ function _resetLevelState() {
     quizAnsweredCorrectly = false;
     consecutiveCorrectFills = 0;
     _lawOfLargeNumbersNext = null;
-    window._veiled_cursedUsed = false; 
+    window._veiled_cursedUsed = false;
     _confidenceIntervalActive = false;
     _streakBonusFills = 0;
     window._asymptoticLinesCompleted = 0;
@@ -61,9 +61,18 @@ function _resetLevelState() {
     window._sigThresholdProtected = new Set();
     window._dofRevertedCells = new Set();
     window._sigThreshBonusReveal = false;
+    window._regressionRewardedLines = new Set();
+    resetToastQueue();
 
     _resetNewNodeState();
     resetWitchImmunityLevelCounter();
+
+    resetQuestLevelCounters();
+
+    // Hide completion glimpse bar from previous level
+    const _cgBar = document.getElementById('completion-glimpse-bar');
+    if (_cgBar) _cgBar.classList.add('hidden');
+    if (window._completionGlimpseTimer) { clearTimeout(window._completionGlimpseTimer); window._completionGlimpseTimer = null; }
 }
 
 
@@ -78,7 +87,7 @@ function _resetLevelState() {
 // Scale: 0 tiles for ≤25 cells, up to 1/2/3 for larger grids (randomised).
 function _initLuckyTiles() {
     luckyTiles = new Set();
-    luckyRewardClaimed = false;
+    luckyRewardClaimed = 0;
 
     const rows = cur.grid.length;
     const cols = cur.grid[0].length;
@@ -102,8 +111,8 @@ function _initLuckyTiles() {
         } else {
             maxTiles = 2;  // up to 2 for massive
         }
-    } 
-    
+    }
+
 
     // fortunes_tile nodes (189-191): extra chance for an additional lucky tile on large/massive
     let extraTileChance = 0;
@@ -174,6 +183,7 @@ function _initLuckyTiles() {
 // error_elimination (mark a wrong cell) chances at level start.
 // Each allocated node is an independent 10% roll.
 function _applyPassiveStartEffects() {
+    if (ptHasSkill('keystone_ergodic_field')) return;
     let reveals = 0;
     if (ptHasSkill('probabilistic_start_1') && Math.random() < 0.10) reveals++;
     if (ptHasSkill('probabilistic_start_2') && Math.random() < 0.15) reveals++;
@@ -182,8 +192,8 @@ function _applyPassiveStartEffects() {
 
     let marks = 0;
     if (ptHasSkill('error_elimination_1') && Math.random() < 0.10) marks++;
-    if (ptHasSkill('error_elimination_2') && Math.random() < 0.10) marks++;
-    if (ptHasSkill('error_elimination_3') && Math.random() < 0.10) marks++;
+    if (ptHasSkill('error_elimination_2') && Math.random() < 0.15) marks++;
+    if (ptHasSkill('error_elimination_3') && Math.random() < 0.20) marks++;
     if (marks > 0) markWrongTiles(marks);
 
     _applyNullHypothesis();
@@ -198,8 +208,13 @@ function _applyPassiveStartEffects() {
 
 
 //------------------------------------------------------------------------
-// central_tendency (234-236): reveal 1 filled cell in the center row
-// and center column per allocated node.
+// central_tendency (node id 234-236): reveal 1 filled cell near the true
+// centre of the grid per allocated node.
+//
+// All unrevealed filled cells are sorted by their Euclidean distance from
+// the exact centre point (cx, cy).  Each node reveals the next-closest
+// cell from that list, so with 3 nodes you get the 3 nearest filled cells
+// to the grid centre revealed at level start.
 //------------------------------------------------------------------------
 function _applyCentralTendency() {
     const nodes = (ptHasSkill('central_tendency_1') ? 1 : 0)
@@ -207,51 +222,45 @@ function _applyCentralTendency() {
         + (ptHasSkill('central_tendency_3') ? 1 : 0);
     if (nodes === 0) return;
 
+    if (window._oracleActive) return;
+    if (ptHasSkill('keystone_ergodic_field')) return;
+
     const sol = cur.grid;
     const rows = sol.length, cols = sol[0].length;
-    const centerRow = Math.floor(rows / 2);
-    const centerCol = Math.floor(cols / 2);
+    const cx = (rows - 1) / 2;   // exact fractional centre row
+    const cy = (cols - 1) / 2;   // exact fractional centre col
 
-    // Gather unrevealed filled candidates in the center row and center col
-    const rowCands = [];
-    for (let c = 0; c < cols; c++)
-        if (sol[centerRow][c] === 1 && userGrid[centerRow][c] !== 1 && !revealedGrid[centerRow][c])
-            rowCands.push([centerRow, c]);
+    // Normalised Euclidean distance from grid centre
+    const dist = (r, c) => {
+        const dr = (r - cx) / (rows / 2);
+        const dc = (c - cy) / (cols / 2);
+        return Math.sqrt(dr * dr + dc * dc);
+    };
 
-    const colCands = [];
+    // Build a single pool of all unrevealed filled cells, sorted nearest-first
+    const pool = [];
     for (let r = 0; r < rows; r++)
-        if (sol[r][centerCol] === 1 && userGrid[r][centerCol] !== 1 && !revealedGrid[r][centerCol])
-            colCands.push([r, centerCol]);
+        for (let c = 0; c < cols; c++)
+            if (sol[r][c] === 1 && userGrid[r][c] !== 1 && !revealedGrid[r][c])
+                pool.push([r, c]);
+    pool.sort((a, b) => dist(a[0], a[1]) - dist(b[0], b[1]));
 
     const affected = [];
     for (let n = 0; n < nodes; n++) {
-        // Reveal 1 from center row
-        if (rowCands.length > 0) {
-            const idx = Math.floor(Math.random() * rowCands.length);
-            const [r, c] = rowCands.splice(idx, 1)[0];
-            revealedGrid[r][c] = true;
-            userGrid[r][c] = 1;
-            renderCell(r, c);
-            updClues(r, c);
-            affected.push(`g-${r}-${c}`);
-        }
-        // Reveal 1 from center col
-        if (colCands.length > 0) {
-            const idx = Math.floor(Math.random() * colCands.length);
-            const [r, c] = colCands.splice(idx, 1)[0];
-            revealedGrid[r][c] = true;
-            userGrid[r][c] = 1;
-            renderCell(r, c);
-            updClues(r, c);
-            affected.push(`g-${r}-${c}`);
-        }
+        if (pool.length === 0) break;
+        const [r, c] = pool.shift();
+        revealedGrid[r][c] = true;
+        userGrid[r][c] = 1;
+        renderCell(r, c);
+        updClues(r, c, true);
+        affected.push(`g-${r}-${c}`);
     }
+
     if (affected.length > 0) {
         if (typeof _applyCellEffect === 'function') {
             _applyCellEffect(affected, 'reveal');
             if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
         }
-            
         checkWin();
     }
 }
@@ -266,6 +275,9 @@ function _applyDensityMapping() {
         + (ptHasSkill('density_mapping_2') ? 1 : 0)
         + (ptHasSkill('density_mapping_3') ? 1 : 0);
     if (nodes === 0) return;
+
+    if (window._oracleActive) return;
+    if (ptHasSkill('keystone_ergodic_field')) return;
 
     const sol = cur.grid;
     const rows = sol.length, cols = sol[0].length;
@@ -313,7 +325,7 @@ function _applyDensityMapping() {
 
 
 //------------------------------------------------------------------------
-// sparse_region (240-242): mark 3 wrong empty cells in the sparsest
+// sparse_region (240-242): mark 1 wrong empty cells in the sparsest
 // row or column per allocated node (each node is independent).
 //------------------------------------------------------------------------
 function _applySparseRegion() {
@@ -321,6 +333,9 @@ function _applySparseRegion() {
         + (ptHasSkill('sparse_region_2') ? 1 : 0)
         + (ptHasSkill('sparse_region_3') ? 1 : 0);
     if (nodes === 0) return;
+
+    if (window._oracleActive) return;
+    if (ptHasSkill('keystone_ergodic_field')) return;
 
     const sol = cur.grid;
     const rows = sol.length, cols = sol[0].length;
@@ -351,7 +366,7 @@ function _applySparseRegion() {
                 if (sol[sparsestRow][c] === 0 && (userGrid[sparsestRow][c] === 0 || userGrid[sparsestRow][c] === 3) && !wrongGrid[sparsestRow][c])
                     cands.push(c);
             shuffle(cands);
-            cands.slice(0, 3).forEach(c => {
+            cands.slice(0, 1).forEach(c => {
                 userGrid[sparsestRow][c] = 2;
                 renderCell(sparsestRow, c);
             });
@@ -361,7 +376,7 @@ function _applySparseRegion() {
                 if (sol[r][sparsestCol] === 0 && (userGrid[r][sparsestCol] === 0 || userGrid[r][sparsestCol] === 3) && !wrongGrid[r][sparsestCol])
                     cands.push(r);
             shuffle(cands);
-            cands.slice(0, 3).forEach(r => {
+            cands.slice(0, 1).forEach(r => {
                 userGrid[r][sparsestCol] = 2;
                 renderCell(r, sparsestCol);
             });
@@ -369,10 +384,10 @@ function _applySparseRegion() {
     }
 }
 
-
 //------------------------------------------------------------------------
-// marginal_distribution (246-248): reveal cells in the outermost row
-// and column. Node 1: 2 cells each. Nodes 2 & 3: +2 cells each per node.
+// marginal_distribution (246-248): reveal 1 filled cell per node (up to 3)
+// chosen randomly from any of the 4 outermost edges (top row, bottom row,
+// left col, right col).
 //------------------------------------------------------------------------
 function _applyMarginalDistribution() {
     const nodes = (ptHasSkill('marginal_distribution_1') ? 1 : 0)
@@ -380,49 +395,47 @@ function _applyMarginalDistribution() {
         + (ptHasSkill('marginal_distribution_3') ? 1 : 0);
     if (nodes === 0) return;
 
-    const count = nodes * 2; // 2 per node (2, 4, or 6 total)
+    if (window._oracleActive) return;
+    if (ptHasSkill('keystone_ergodic_field')) return;
+
     const sol = cur.grid;
     const rows = sol.length, cols = sol[0].length;
 
-    // Outermost row = row 0, outermost col = col 0
-    // Reveal up to `count` filled cells in row 0
-    const rowCands = [];
-    for (let c = 0; c < cols; c++)
-        if (sol[0][c] === 1 && userGrid[0][c] !== 1 && !revealedGrid[0][c])
-            rowCands.push([0, c]);
+    // Build a deduplicated pool of all unrevealed filled cells on the 4 outer edges
+    const seen = new Set();
+    const pool = [];
+    const addCell = (r, c) => {
+        const key = `${r}-${c}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+        if (sol[r][c] === 1 && userGrid[r][c] !== 1 && !revealedGrid[r][c])
+            pool.push([r, c]);
+    };
 
-    // Reveal up to `count` filled cells in col 0
-    const colCands = [];
-    for (let r = 1; r < rows; r++) // start at 1 to avoid double-counting corner
-        if (sol[r][0] === 1 && userGrid[r][0] !== 1 && !revealedGrid[r][0])
-            colCands.push([r, 0]);
+    for (let c = 0; c < cols; c++) addCell(0, c);           // top row
+    for (let c = 0; c < cols; c++) addCell(rows - 1, c);    // bottom row
+    for (let r = 0; r < rows; r++) addCell(r, 0);           // left col
+    for (let r = 0; r < rows; r++) addCell(r, cols - 1);    // right col
+
+    shuffle(pool);
 
     const affected = [];
-    shuffle(rowCands);
-    shuffle(colCands);
-    rowCands.slice(0, count).forEach(([r, c]) => {
+    for (let n = 0; n < nodes; n++) {
+        if (pool.length === 0) break;
+        const [r, c] = pool.shift();
         revealedGrid[r][c] = true;
         userGrid[r][c] = 1;
         renderCell(r, c);
-        updClues(r, c);
+        updClues(r, c, true);
         affected.push(`g-${r}-${c}`);
-    });
-    colCands.slice(0, count).forEach(([r, c]) => {
-        revealedGrid[r][c] = true;
-        userGrid[r][c] = 1;
-        renderCell(r, c);
-        updClues(r, c);
-        affected.push(`g-${r}-${c}`);
-    });
+    }
 
     if (affected.length > 0) {
         if (typeof _applyCellEffect === 'function') {
             _applyCellEffect(affected, 'reveal');
             if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
         }
-
-
-            checkWin();
+        checkWin();
     }
 }
 
@@ -433,12 +446,13 @@ function _applyMarginalDistribution() {
 //------------------------------------------------------------------------
 function _applyInterquartileVision() {
     if (!ptHasSkill('interquartile_vision_1')) return;
+    if (window._oracleActive) return;
+
     if (!cur) return;
     const rows = cur.grid.length, cols = cur.grid[0].length;
     if (rows * cols < 200) return; // only fires on large grids
 
     let scanDur = _interquartileVisionDuration();
-    if (ptHasSkill('interquartile_vision_2')) scanDur += 1000;
 
     // Use the larger grid dimension as scan size so the scan covers the whole centre region
     const scanSize = Math.max(rows, cols);
@@ -541,20 +555,19 @@ function _initTimer() {
         if (ptHasSkill('extended_session_3')) timerSecs += 180;
     }
 
-    // expected_value (252-254): +1s per 10 cells per node; node 3 gives +2s per 10 cells
-    // All three nodes stack: nodes 1+2 = +1s each, node 3 = +2s (total +4s per 10 cells with all three)
+    // expected_value nodes
     if (!ptHasSkill('keystone_gamblers_ruin') && (ptHasSkill('expected_value_1') || ptHasSkill('expected_value_2') || ptHasSkill('expected_value_3'))) {
         const rows = cur.grid.length, cols = cur.grid[0].length;
         const totalCells = rows * cols;
         let secsPerTen = 0;
-        if (ptHasSkill('expected_value_1')) secsPerTen += 1;
-        if (ptHasSkill('expected_value_2')) secsPerTen += 1;
-        if (ptHasSkill('expected_value_3')) secsPerTen += 2;
+        if (ptHasSkill('expected_value_1')) secsPerTen += 5;
+        if (ptHasSkill('expected_value_2')) secsPerTen += 2;
+        if (ptHasSkill('expected_value_3')) secsPerTen += 3;
         timerSecs += Math.floor(totalCells / 10) * secsPerTen;
     }
 
     // keystone_dead_reckoning (264): +10 minutes at level start
-    if (ptHasSkill('keystone_dead_reckoning')) timerSecs += 600;
+    if (ptHasSkill('keystone_dead_reckoning') && !ptHasSkill('keystone_gamblers_ruin')) timerSecs += 600;
 }
 
 
@@ -690,7 +703,19 @@ function _applyCompletionGlimpse() {
     if (ptHasSkill('completion_glimpse_3')) duration += 30000;
     const text = lvText(cur, 'reveal');
     if (!text) return;
-    showToast(`📋 "${text}"`, duration);
+
+    const bar = document.getElementById('completion-glimpse-bar');
+    const textEl = document.getElementById('completion-glimpse-text');
+    if (!bar || !textEl) return;
+
+    textEl.textContent = text;
+    bar.classList.remove('hidden');
+
+    // Clear any previous timer
+    if (window._completionGlimpseTimer) clearTimeout(window._completionGlimpseTimer);
+    window._completionGlimpseTimer = setTimeout(() => {
+        bar.classList.add('hidden');
+    }, duration);
 }
 
 
@@ -702,6 +727,8 @@ function _applyCompletionGlimpse() {
 // with the fewest correct filled cells and mark all wrong empty cells in them.
 function _applyNullHypothesis() {
     if (!ptHasSkill('keystone_null_hypothesis')) return;
+    if (window._oracleActive) return;
+    if (ptHasSkill('keystone_ergodic_field')) return;
     const sol = cur.grid;
     const rows = sol.length, cols = sol[0].length;
 
@@ -751,6 +778,8 @@ function _doStartLevel(gi) {
     _closeLeftoverOverlays();
     _updateHUD();
     _startSystems();
+    _entropyDrainInit();
+    if (ptHasSkill('keystone_the_oracle') && cur.grid.length * cur.grid[0].length >= 200) window._oracleActive = true;
     _applyPassiveStartEffects();
 
     // adjacency_matrix (302): populate neighbour-count overlays after grid and passives are ready
@@ -765,6 +794,7 @@ function _doStartLevel(gi) {
     _applySignalToNoise();
     _applyDegreesOfFreedom();
     _applyTheOracle();
+
 
     Audio_Manager.playBGM(Audio_Manager.trackForLevel(cur.world, cur.li));
 
