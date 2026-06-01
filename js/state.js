@@ -61,6 +61,8 @@ let _streakBonusFills = 0;             // streak_bonus: consecutive correct fill
 
 let axisLockEnabled = false;   // when true, drag strokes are locked to the row or column of the starting cell
 
+let test = true;
+
 
 
 
