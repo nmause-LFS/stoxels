@@ -26,24 +26,34 @@ function _ptApplyNodeStyle(id) {
 
     const isStart = (id === PT_START_ID);
     const state = _ptGetNodeVisualState(id);
+    const skill = _pt_skillMap[id];
+    const def = skill ? skill._def : null;
+    const isKeystone = def && (
+        (def.statKey && def.statKey.startsWith('keystone_')) ||
+        (def.nameEn && def.nameEn.startsWith('Keystone:')) ||
+        (def.nameDe && def.nameDe.startsWith('Schlüsselfertigkeit:'))
+    );
 
     let bg, border, shadow, dotColor, cursor;
 
     if (state === 'allocated') {
-        bg = PT_COL_ALLOCATED_BG;
-        border = `2px solid ${PT_COL_ALLOCATED_BORDER}`;
-        shadow = '0 0 10px rgba(109,191,64,0.55), inset 0 0 4px rgba(0,0,0,0.3)';
-        dotColor = PT_COL_ALLOCATED_DOT;
+        bg = isKeystone ? '#1a1000' : PT_COL_ALLOCATED_BG;
+        border = isKeystone ? '2px solid #e8a020' : `2px solid ${PT_COL_ALLOCATED_BORDER}`;
+        shadow = isKeystone
+            ? '0 0 14px rgba(232,160,32,0.75), inset 0 0 6px rgba(0,0,0,0.4)'
+            : '0 0 10px rgba(109,191,64,0.55), inset 0 0 4px rgba(0,0,0,0.3)';
+        dotColor = isKeystone ? '#e8a020' : PT_COL_ALLOCATED_DOT;
         cursor = 'pointer';
     } else if (state === 'unlockable') {
-        bg = PT_COL_UNLOCKED_BG;
+        bg = isKeystone ? '#100800' : PT_COL_UNLOCKED_BG;
         border = isStart
             ? `3px solid ${PT_COL_START}`
-            : `2px solid ${PT_COL_UNLOCKED_BORDER}`;
+            : isKeystone ? '2px solid #c07818' : `2px solid ${PT_COL_UNLOCKED_BORDER}`;
         shadow = isStart
             ? '0 0 12px rgba(255,215,0,0.6), inset 0 0 6px rgba(255,215,0,0.15)'
-            : '0 0 6px rgba(184,154,80,0.3), inset 0 0 4px rgba(0,0,0,0.4)';
-        dotColor = isStart ? PT_COL_START : PT_COL_UNLOCKED_DOT;
+            : isKeystone ? '0 0 8px rgba(192,120,24,0.45), inset 0 0 4px rgba(0,0,0,0.4)'
+                : '0 0 6px rgba(184,154,80,0.3), inset 0 0 4px rgba(0,0,0,0.4)';
+        dotColor = isStart ? PT_COL_START : isKeystone ? '#c07818' : PT_COL_UNLOCKED_DOT;
         cursor = 'pointer';
     } else {
         // locked
@@ -276,6 +286,9 @@ function _ptDrawNodes(bounds) {
     const offsetX = PT_PADDING + PT_NODE_RADIUS - bounds.minX;
     const offsetY = PT_PADDING + PT_NODE_RADIUS - bounds.minY;
 
+
+    /*
+
     _pt_skills.forEach(skill => {
         const cx = skill.x + offsetX;
         const cy = skill.y + offsetY;
@@ -300,8 +313,63 @@ function _ptDrawNodes(bounds) {
             box-sizing: border-box;
         `;
 
-        // Resolve icon: prefer PT_SKILL_DEFS, fall back to layout data
+        */
+
+
+    _pt_skills.forEach(skill => {
+        const cx = skill.x + offsetX;
+        const cy = skill.y + offsetY;
+        const isStart = (skill.id === PT_START_ID);
         const def = skill._def || null;
+        const isKeystone = def && (
+            (def.statKey && def.statKey.startsWith('keystone_')) ||
+            (def.nameEn && def.nameEn.startsWith('Keystone:')) ||
+            (def.nameDe && def.nameDe.startsWith('Schlüsselfertigkeit:'))
+        );
+        const r = isStart ? PT_NODE_RADIUS * 1.4 : PT_NODE_RADIUS;
+
+        const node = document.createElement('div');
+        node.className = isKeystone ? 'pt-node pt-node-keystone' : 'pt-node';
+        node.dataset.id = skill.id;
+
+        if (isKeystone) {
+            // Diamond: rotated square, centered on same cx/cy
+            const side = r * 2 * 0.92; // slightly smaller so diamond fits the same footprint
+            node.style.cssText = `
+            position: absolute;
+            left: ${cx - side / 2}px;
+            top:  ${cy - side / 2}px;
+            width:  ${side}px;
+            height: ${side}px;
+            border-radius: 4px;
+            transform: rotate(45deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s, box-shadow 0.15s, transform 0.12s, opacity 0.15s;
+            z-index: 2;
+            box-sizing: border-box;
+        `;
+        } else {
+            node.style.cssText = `
+            position: absolute;
+            left: ${cx - r}px;
+            top:  ${cy - r}px;
+            width:  ${r * 2}px;
+            height: ${r * 2}px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s, box-shadow 0.15s, transform 0.12s, opacity 0.15s;
+            z-index: 2;
+            box-sizing: border-box;
+        `;
+        }
+
+
+
+        // Resolve icon: prefer PT_SKILL_DEFS, fall back to layout data
         const icon = (def && def.icon) ? def.icon : skill.image;
 
         const isImageUrl = icon && (icon.startsWith('/') || icon.startsWith('http'));
@@ -318,6 +386,11 @@ function _ptDrawNodes(bounds) {
                 pointer-events: none;
             `;
             node.appendChild(img);
+            // Counter-rotate inner content for keystone diamonds
+            if (isKeystone) {
+                const inner = node.firstChild;
+                if (inner) inner.style.transform = 'rotate(-45deg)';
+            }
         } else if (isEmoji) {
             const span = document.createElement('span');
             span.textContent = icon;
@@ -328,6 +401,11 @@ function _ptDrawNodes(bounds) {
                 user-select: none;
             `;
             node.appendChild(span);
+            // Counter-rotate inner content for keystone diamonds
+            if (isKeystone) {
+                const inner = node.firstChild;
+                if (inner) inner.style.transform = 'rotate(-45deg)';
+            }
         } else {
             const dot = document.createElement('div');
             dot.className = 'pt-dot';
@@ -338,12 +416,17 @@ function _ptDrawNodes(bounds) {
                 pointer-events: none;
             `;
             node.appendChild(dot);
+            // Counter-rotate inner content for keystone diamonds
+            if (isKeystone) {
+                const inner = node.firstChild;
+                if (inner) inner.style.transform = 'rotate(-45deg)';
+            }
         }
 
         // Mouse events 
         node.addEventListener('mouseenter', e => {
             if (_ptGetNodeVisualState(skill.id) !== 'locked') {
-                node.style.transform = 'scale(1.15)';
+                node.style.transform = isKeystone ? 'rotate(45deg) scale(1.15)' : 'scale(1.15)';
                 node.style.zIndex = '10';
             }
             _ptShowTooltip(skill.id, e.clientX, e.clientY);
@@ -354,7 +437,7 @@ function _ptDrawNodes(bounds) {
         });
 
         node.addEventListener('mouseleave', () => {
-            node.style.transform = 'scale(1)';
+            node.style.transform = isKeystone ? 'rotate(45deg)' : 'scale(1)';
             node.style.zIndex = '2';
             _ptHideTooltip();
         });

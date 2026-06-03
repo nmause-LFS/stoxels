@@ -35,6 +35,8 @@ function _executeBayesTraps(trapCount, availableTraps) {
     };
 
     _bayesTrapsShowSelectPhase();
+
+    trackAchStat('skillBayesTrapsUsed');
 }
 
 
@@ -431,6 +433,7 @@ function _bayesTrapElimination(row, col) {
                 userGrid[r][c] = 2; // ✕ mark
                 questStat_classMarkUsed(1);
                 renderCell(r, c);
+                trackAchStat('tilesMarkedWrong', 1);
                 affected.push(`g-${r}-${c}`);
             }
         }
@@ -880,6 +883,8 @@ function _executeTypeIShield(seedCount, bonusReveal) {
 
     Audio_Manager.playSFX('type1errorShieldHide'); 
     buildClassHUD();
+    trackAchStat('skillType1ErrorShieldUsed');
+
 }
 
 
@@ -896,6 +901,7 @@ function _typeIShieldIntercept(row, col) {
 
     userGrid[row][col] = 2; // ✕
     renderCell(row, col);
+    trackAchStat('tilesMarkedWrong', 1);
 
     // Dynamic shield shatter burst effect over the clicked grid space
     _typeIShowShieldBreakEffect(row, col);

@@ -33,7 +33,7 @@ function reshuffleRightClickItem(uid) {
     const def = ITEM_DEFS[STATE.inventory[idx].defId];
     STATE.inventory.splice(idx, 1);
     reshuffleCount++;
-
+    trackAchStat('itemsSold');
     save();
     buildInventoryPanel(); // also calls updateReshuffleCounter()
     showToast(`${def.icon} Tossed into the reshuffle pile… (${reshuffleCount}/${RESHUFFLE_GOAL})`);
@@ -95,8 +95,6 @@ function openReshuffleModal() {
             // Add chosen item to inventory
             STATE.inventory.push({ uid: `item_${Date.now()}_${Math.random().toString(36).slice(2)}`, defId: chosenId });
 
-            // Count toward merchant achievement (same as a sell/trade action)
-            trackAchStat('itemsSold');
 
             save();
             buildInventoryPanel();

@@ -31,6 +31,7 @@ function _executePrecisionMark(row, col, extraLines) {
     showToast(`🎯 ${affected.length} ${LANG === 'de' ? 'Zellen markiert!' : 'cells marked!'}`);
 
     Audio_Manager.playSFX('precisionMark');
+    trackAchStat('tilesMarkedWrong', affected.length);
 
     // momentum_of_certainty: build the window from ALL filled cells in the target rows/cols,
     // not just the marked empty ones — affected only contains sol===0 cells.
@@ -124,6 +125,7 @@ function _precisionMarkBonusLine(rows, cols, sol, affected) {
                 userGrid[pick.idx][c] = 2;
                 renderCell(pick.idx, c);
                 questStat_classMarkUsed(1);
+                trackAchStat('tilesMarkedWrong', 1);
                 affected.push(`g-${pick.idx}-${c}`);
             }
         }
@@ -133,6 +135,7 @@ function _precisionMarkBonusLine(rows, cols, sol, affected) {
                 userGrid[r][pick.idx] = 2;
                 renderCell(r, pick.idx);
                 questStat_classMarkUsed(1);
+                trackAchStat('tilesMarkedWrong', 1);
                 affected.push(`g-${r}-${pick.idx}`);
             }
         }

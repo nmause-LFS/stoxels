@@ -303,6 +303,8 @@ function _executeArcaneFreeze(durationMs) {
 
     Audio_Manager.playSFX('absoluteZero');
 
+    if (timerSecs <= 10) trackAchStat('freezeClutches');
+
     const tick = _arcaneFreezeStartCountdown(secs);
     setTimeout(() => _arcaneFreezeEnd(tick), effectiveDuration);
 }

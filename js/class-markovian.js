@@ -125,7 +125,7 @@ function _executeStateRollback(windowSeconds, rewindSeconds, clearOldMistakes) {
     }
 
     if (timerSecs <= 10) {
-        trackAchStat('rollbackSaves'); // 🏆 ACHIEVEMENT TRACKER
+        trackAchStat('rollbackSaves'); 
         showToast('⏳ State Rollback: Cheat Death!');
     }
 
@@ -169,6 +169,7 @@ function _executeStateRollback(windowSeconds, rewindSeconds, clearOldMistakes) {
         : `State Rollback! Rewound ~${approxSecs}s. +${rewindSeconds}s added.`}`);
 
     Audio_Manager.playSFX('stateReversal'); 
+    trackAchStat('skillRollbackUsed');
 
     checkWin();
 }
@@ -398,6 +399,8 @@ function _executeTransitionMatrix(durationMs, cascadeChance, maxDepth) {
         : `⏳ Transition Matrix active! ${secs}s — ${Math.round(cascadeChance * 100)}% cascade chance.`);
 
     Audio_Manager.playSFX('transitionMatrix');
+
+    trackAchStat('skillTransitionMatrixUsed');
 
     // ── Start the background overlay ──────────────────────────────
     _transitionMatrixStartOverlay(durationMs);

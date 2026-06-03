@@ -1834,32 +1834,32 @@ const MATH_GATE_POOLS = {
         // ── 1. ARITHMETISCHES MITTEL ─────────────────────────────────────────────
 
         {
-            q: 'You observe x₁=2, x₂=5, x₃=8, x₄=1, x₅=4. What is the sample mean x̄?',
-            qDE: 'Sie beobachten x₁=2, x₂=5, x₃=8, x₄=1, x₅=4. Was ist das arithmetische Mittel x̄?',
+            q: 'You observe x₁=2, x₂=5, x₃=8, x₄=1, x₅=4. What is the sample mean (1/n)∑Xᵢ?',
+            qDE: 'Sie beobachten x₁=2, x₂=5, x₃=8, x₄=1, x₅=4. Was ist das arithmetische Mittel (1/n)∑Xᵢ?',
             answer: 4, tolerance: 0.001, unit: '',
             hintEn: 'Add all values and divide by the number of observations.',
             hintDE: 'Addiere alle Werte und teile durch die Anzahl der Beobachtungen.'
         },
         {
-            q: 'X₁, …, Xₙ are i.i.d. with E[Xᵢ] = 7. What is E[X̄]?',
-            qDE: 'X₁, …, Xₙ sind i.i.d. mit E[Xᵢ] = 7. Was ist E[X̄]?',
+            q: 'X₁, …, Xₙ are i.i.d. with E[Xᵢ] = 7. What is E[(1/n)∑Xᵢ]?',
+            qDE: 'X₁, …, Xₙ sind i.i.d. mit E[Xᵢ] = 7. Was ist E[(1/n)∑Xᵢ]?',
             answer: 7, tolerance: 0.001, unit: '',
             hintEn: 'The expected value of the sample mean equals the expected value of each individual variable.',
             hintDE: 'Der Erwartungswert des Stichprobenmittelwerts entspricht dem Erwartungswert jeder einzelnen Variable.'
         },
         {
-            q: 'X₁, …, X₂₅ are i.i.d. with Var(Xᵢ) = 100. What is Var(X̄)?',
-            qDE: 'X₁, …, X₂₅ sind i.i.d. mit Var(Xᵢ) = 100. Was ist Var(X̄)?',
+            q: 'X₁, …, X₂₅ are i.i.d. with Var(Xᵢ) = 100. What is Var((1/n)∑Xᵢ)?',
+            qDE: 'X₁, …, X₂₅ sind i.i.d. mit Var(Xᵢ) = 100. Was ist Var((1/n)∑Xᵢ)?',
             answer: 4, tolerance: 0.001, unit: '',
             hintEn: 'The variance of the sample mean is σ² divided by n.',
             hintDE: 'Die Varianz des Stichprobenmittelwerts ist σ² geteilt durch n.'
         },
         {
-            q: 'X₁, …, X₄ are i.i.d. with Var(Xᵢ) = 16. What is the standard deviation of X̄?',
-            qDE: 'X₁, …, X₄ sind i.i.d. mit Var(Xᵢ) = 16. Was ist die Standardabweichung von X̄?',
+            q: 'X₁, …, X₄ are i.i.d. with Var(Xᵢ) = 16. What is the standard deviation of (1/n)∑Xᵢ?',
+            qDE: 'X₁, …, X₄ sind i.i.d. mit Var(Xᵢ) = 16. Was ist die Standardabweichung von (1/n)∑Xᵢ?',
             answer: 2, tolerance: 0.001, unit: '',
-            hintEn: 'First compute Var(X̄), then take the square root.',
-            hintDE: 'Berechne zunächst Var(X̄) und ziehe dann die Wurzel.'
+            hintEn: 'First compute Var((1/n)∑Xᵢ), then take the square root.',
+            hintDE: 'Berechne zunächst Var((1/n)∑Xᵢ) und ziehe dann die Wurzel.'
         },
 
         // ── 2. TSCHEBYSCHEFF-UNGLEICHUNG ─────────────────────────────────────────
@@ -1879,11 +1879,11 @@ const MATH_GATE_POOLS = {
             hintDE: 'Die Tschebyscheff-Schranke ist Var(X) geteilt durch ε².'
         },
         {
-            q: 'X̄ is the mean of n=100 i.i.d. variables with σ²=25 and μ=50. Use Chebyshev to bound P(|X̄−50| ≥ 1). Enter as a decimal.',
-            qDE: 'X̄ ist der Mittelwert von n=100 i.i.d. Variablen mit σ²=25 und μ=50. Was ist die Tschebyscheff-Schranke für P(|X̄−50| ≥ 1)? Gib als Dezimalzahl ein.',
+            q: '(1/n)∑Xᵢ is the mean of n=100 i.i.d. variables with σ²=25 and μ=50. Use Chebyshev to bound P(|(1/n)∑Xᵢ−50| ≥ 1). Enter as a decimal.',
+            qDE: '(1/n)∑Xᵢ ist der Mittelwert von n=100 i.i.d. Variablen mit σ²=25 und μ=50. Was ist die Tschebyscheff-Schranke für P(|(1/n)∑Xᵢ−50| ≥ 1)? Gib als Dezimalzahl ein.',
             answer: 0.25, tolerance: 0.001, unit: '',
-            hintEn: 'First find Var(X̄) = σ²/n, then apply the Chebyshev bound.',
-            hintDE: 'Bestimme zunächst Var(X̄) = σ²/n und wende dann die Tschebyscheff-Ungleichung an.'
+            hintEn: 'First find Var((1/n)∑Xᵢ) = σ²/n, then apply the Chebyshev bound.',
+            hintDE: 'Bestimme zunächst Var((1/n)∑Xᵢ) = σ²/n und wende dann die Tschebyscheff-Ungleichung an.'
         },
         {
             q: 'Var(X) = 16. What is the Chebyshev upper bound for P(|X − μ| ≥ 2)? Enter as a decimal.',
@@ -1896,22 +1896,22 @@ const MATH_GATE_POOLS = {
         // ── 3. SCHWACHES GESETZ DER GROSSEN ZAHLEN ───────────────────────────────
 
         {
-            q: 'X₁, …, Xₙ are i.i.d. with E[Xᵢ]=3 and Var(Xᵢ)=9. The weak law of large numbers guarantees X̄ₙ converges in probability to which value?',
-            qDE: 'X₁, …, Xₙ sind i.i.d. mit E[Xᵢ]=3 und Var(Xᵢ)=9. Das schwache Gesetz der großen Zahlen garantiert, dass X̄ₙ stochastisch gegen welchen Wert konvergiert?',
+            q: 'X₁, …, Xₙ are i.i.d. with E[Xᵢ]=3 and Var(Xᵢ)=9. The weak law of large numbers guarantees (1/n)∑Xᵢₙ converges in probability to which value?',
+            qDE: 'X₁, …, Xₙ sind i.i.d. mit E[Xᵢ]=3 und Var(Xᵢ)=9. Das schwache Gesetz der großen Zahlen garantiert, dass (1/n)∑Xᵢₙ stochastisch gegen welchen Wert konvergiert?',
             answer: 3, tolerance: 0.001, unit: '',
             hintEn: 'The sample mean converges to the true expected value of each variable.',
             hintDE: 'Der Stichprobenmittelwert konvergiert gegen den wahren Erwartungswert jeder Variable.'
         },
         {
-            q: 'By the weak law of large numbers, P(|X̄ₙ − μ| ≥ ε) approaches which value as n → ∞?',
-            qDE: 'Nach dem schwachen Gesetz der großen Zahlen: Gegen welchen Wert strebt P(|X̄ₙ − μ| ≥ ε) für n → ∞?',
+            q: 'By the weak law of large numbers, P(|(1/n)∑Xᵢₙ − μ| ≥ ε) approaches which value as n → ∞?',
+            qDE: 'Nach dem schwachen Gesetz der großen Zahlen: Gegen welchen Wert strebt P(|(1/n)∑Xᵢₙ − μ| ≥ ε) für n → ∞?',
             answer: 0, tolerance: 0.001, unit: '',
             hintEn: 'This is what convergence in probability to μ means.',
             hintDE: 'Das ist genau die Bedeutung der stochastischen Konvergenz gegen μ.'
         },
         {
-            q: 'For σ²=1, ε=0.1, n=100: what is the Chebyshev bound σ²/(n·ε²) on P(|X̄ₙ − μ| ≥ ε)?',
-            qDE: 'Für σ²=1, ε=0,1, n=100: Was ist die Tschebyscheff-Schranke σ²/(n·ε²) für P(|X̄ₙ − μ| ≥ ε)?',
+            q: 'For σ²=1, ε=0.1, n=100: what is the Chebyshev bound σ²/(n·ε²) on P(|(1/n)∑Xᵢₙ − μ| ≥ ε)?',
+            qDE: 'Für σ²=1, ε=0,1, n=100: Was ist die Tschebyscheff-Schranke σ²/(n·ε²) für P(|(1/n)∑Xᵢₙ − μ| ≥ ε)?',
             answer: 1, tolerance: 0.001, unit: '',
             hintEn: 'Plug the values directly into σ²/(n·ε²).',
             hintDE: 'Setze die Werte direkt in σ²/(n·ε²) ein.'
@@ -1944,8 +1944,8 @@ const MATH_GATE_POOLS = {
         // ── 5. STARKES GESETZ DER GROSSEN ZAHLEN ────────────────────────────────
 
         {
-            q: 'The strong law of large numbers guarantees X̄ₙ → μ with probability equal to?',
-            qDE: 'Das starke Gesetz der großen Zahlen garantiert X̄ₙ → μ mit welcher Wahrscheinlichkeit?',
+            q: 'The strong law of large numbers guarantees (1/n)∑Xᵢₙ → μ with probability equal to?',
+            qDE: 'Das starke Gesetz der großen Zahlen garantiert (1/n)∑Xᵢₙ → μ mit welcher Wahrscheinlichkeit?',
             answer: 1, tolerance: 0, unit: '',
             hintEn: 'The strong law guarantees almost sure convergence.',
             hintDE: 'Das starke Gesetz garantiert fast sichere Konvergenz.'
@@ -1958,8 +1958,8 @@ const MATH_GATE_POOLS = {
             hintDE: 'Eine der beiden impliziert die andere, aber nicht umgekehrt.'
         },
         {
-            q: 'You simulate X̄ₙ for i.i.d. Bernoulli(0.4) variables. As n → ∞, X̄ₙ converges almost surely to which value?',
-            qDE: 'Sie simulieren X̄ₙ für i.i.d. Bernoulli(0,4)-Variablen. Für n → ∞ konvergiert X̄ₙ fast sicher gegen welchen Wert?',
+            q: 'You simulate (1/n)∑Xᵢₙ for i.i.d. Bernoulli(0.4) variables. As n → ∞, (1/n)∑Xᵢₙ converges almost surely to which value?',
+            qDE: 'Sie simulieren (1/n)∑Xᵢₙ für i.i.d. Bernoulli(0,4)-Variablen. Für n → ∞ konvergiert (1/n)∑Xᵢₙ fast sicher gegen welchen Wert?',
             answer: 0.4, tolerance: 0.001, unit: '',
             hintEn: 'The sample mean converges to the true mean of the distribution.',
             hintDE: 'Der Stichprobenmittelwert konvergiert gegen den wahren Erwartungswert der Verteilung.'
@@ -2016,29 +2016,29 @@ const MATH_GATE_POOLS = {
         // ── 8. ZENTRALER GRENZWERTSATZ ───────────────────────────────────────────
 
         {
-            q: 'X₁, …, X₃₆ are i.i.d. with μ=10 and σ²=9. By the central limit theorem, X̄₃₆ is approximately normal. What is the variance of this approximation?',
-            qDE: 'X₁, …, X₃₆ sind i.i.d. mit μ=10 und σ²=9. Nach dem zentralen Grenzwertsatz ist X̄₃₆ näherungsweise normalverteilt. Was ist die Varianz dieser Näherung?',
+            q: 'X₁, …, X₃₆ are i.i.d. with μ=10 and σ²=9. By the central limit theorem, (1/n)∑Xᵢ₃₆ is approximately normal. What is the variance of this approximation?',
+            qDE: 'X₁, …, X₃₆ sind i.i.d. mit μ=10 und σ²=9. Nach dem zentralen Grenzwertsatz ist (1/n)∑Xᵢ₃₆ näherungsweise normalverteilt. Was ist die Varianz dieser Näherung?',
             answer: 0.25, tolerance: 0.001, unit: '',
             hintEn: 'The variance of the sample mean is σ² divided by n.',
             hintDE: 'Die Varianz des Stichprobenmittelwerts ist σ² geteilt durch n.'
         },
         {
-            q: 'X₁,…,Xₙ i.i.d. with μ=5, σ²=16, n=64. The standardised mean Zₙ = (X̄ₙ − μ)/(σ/√n) follows approximately which distribution? Enter 1 for N(0,1), 2 for N(μ,σ²), 3 for Exp(1).',
-            qDE: 'X₁,…,Xₙ i.i.d. mit μ=5, σ²=16, n=64. Die standardisierte Größe Zₙ = (X̄ₙ − μ)/(σ/√n) folgt näherungsweise welcher Verteilung? Gib 1 für N(0,1), 2 für N(μ,σ²), 3 für Exp(1) ein.',
+            q: 'X₁,…,Xₙ i.i.d. with μ=5, σ²=16, n=64. The standardised mean Zₙ = ((1/n)∑Xᵢₙ − μ)/(σ/√n) follows approximately which distribution? Enter 1 for N(0,1), 2 for N(μ,σ²), 3 for Exp(1).',
+            qDE: 'X₁,…,Xₙ i.i.d. mit μ=5, σ²=16, n=64. Die standardisierte Größe Zₙ = ((1/n)∑Xᵢₙ − μ)/(σ/√n) folgt näherungsweise welcher Verteilung? Gib 1 für N(0,1), 2 für N(μ,σ²), 3 für Exp(1) ein.',
             answer: 1, tolerance: 0, unit: '',
             hintEn: 'Standardising a sum of i.i.d. variables always leads to the same limit distribution.',
             hintDE: 'Die Standardisierung einer Summe i.i.d. Variablen führt stets zur selben Grenzverteilung.'
         },
         {
-            q: 'X₁, …, X₁₀₀ are i.i.d. Bernoulli(0.3). The central limit theorem approximates X̄₁₀₀ as normal with variance σ²/n. What is σ²/n here? Enter as a decimal.',
-            qDE: 'X₁, …, X₁₀₀ sind i.i.d. Bernoulli(0,3). Der zentrale Grenzwertsatz nähert X̄₁₀₀ durch eine Normalverteilung mit Varianz σ²/n an. Was ist σ²/n? Gib als Dezimalzahl ein.',
+            q: 'X₁, …, X₁₀₀ are i.i.d. Bernoulli(0.3). The central limit theorem approximates (1/n)∑Xᵢ₁₀₀ as normal with variance σ²/n. What is σ²/n here? Enter as a decimal.',
+            qDE: 'X₁, …, X₁₀₀ sind i.i.d. Bernoulli(0,3). Der zentrale Grenzwertsatz nähert (1/n)∑Xᵢ₁₀₀ durch eine Normalverteilung mit Varianz σ²/n an. Was ist σ²/n? Gib als Dezimalzahl ein.',
             answer: 0.0021, tolerance: 0.0001, unit: '',
             hintEn: 'For a Bernoulli(p) variable, σ² = p·(1−p).',
             hintDE: 'Für eine Bernoulli(p)-Variable gilt σ² = p·(1−p).'
         },
         {
-            q: 'X₁,…,X₄₉ are i.i.d. with μ=0 and σ=7. What is the standard deviation of X̄₄₉?',
-            qDE: 'X₁,…,X₄₉ sind i.i.d. mit μ=0 und σ=7. Was ist die Standardabweichung von X̄₄₉?',
+            q: 'X₁,…,X₄₉ are i.i.d. with μ=0 and σ=7. What is the standard deviation of (1/n)∑Xᵢ₄₉?',
+            qDE: 'X₁,…,X₄₉ sind i.i.d. mit μ=0 und σ=7. Was ist die Standardabweichung von (1/n)∑Xᵢ₄₉?',
             answer: 1, tolerance: 0.001, unit: '',
             hintEn: 'The standard deviation of the sample mean is σ divided by the square root of n.',
             hintDE: 'Die Standardabweichung des Stichprobenmittelwerts ist σ geteilt durch die Wurzel von n.'

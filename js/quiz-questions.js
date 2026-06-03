@@ -589,8 +589,8 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: 'For n i.i.d. random variables X₁,…,Xₙ with E[Xᵢ]=μ and Var(Xᵢ)=σ², what is Var(X̄) where X̄ = (1/n)ΣXᵢ?',
-            qDE: 'Für n i.i.d. Zufallsvariablen X₁,…,Xₙ mit E[Xᵢ]=μ und Var(Xᵢ)=σ²: Was ist Var(X̄) mit X̄ = (1/n)ΣXᵢ?',
+            q: 'For n i.i.d. random variables X₁,…,Xₙ with E[Xᵢ]=μ and Var(Xᵢ)=σ², what is Var((1/n)∑Xᵢ) where (1/n)∑Xᵢ = (1/n)ΣXᵢ?',
+            qDE: 'Für n i.i.d. Zufallsvariablen X₁,…,Xₙ mit E[Xᵢ]=μ und Var(Xᵢ)=σ²: Was ist Var((1/n)∑Xᵢ) mit (1/n)∑Xᵢ = (1/n)ΣXᵢ?',
             opts: ['σ²/n', 'σ²·n', 'σ²', 'σ/n'],
             optsDE: ['σ²/n', 'σ²·n', 'σ²', 'σ/n'],
             correct: 0
@@ -1442,22 +1442,22 @@ const BONUS_QUIZ_POOLS = {
 
         // --- Arithmetisches Mittel ---
         {
-            q: "The sample mean X̄ of n observations x₁, …, xₙ is defined as:",
-            qDE: "Das arithmetische Mittel X̄ von n Beobachtungen x₁, …, xₙ ist definiert als:",
+            q: "The sample mean (1/n)∑Xᵢ of n observations x₁, …, xₙ is defined as:",
+            qDE: "Das arithmetische Mittel (1/n)∑Xᵢ von n Beobachtungen x₁, …, xₙ ist definiert als:",
             opts: ["(x₁ + … + xₙ) / n", "(x₁ + … + xₙ) · n", "√(x₁ · … · xₙ)", "max(x₁, …, xₙ) / n"],
             optsDE: ["(x₁ + … + xₙ) / n", "(x₁ + … + xₙ) · n", "√(x₁ · … · xₙ)", "max(x₁, …, xₙ) / n"],
             correct: 0
         },
         {
-            q: "For i.i.d. random variables X₁, …, Xₙ with E[Xᵢ] = μ, what is E[X̄]?",
-            qDE: "Für i.i.d. Zufallsvariablen X₁, …, Xₙ mit E[Xᵢ] = μ gilt E[X̄] =",
+            q: "For i.i.d. random variables X₁, …, Xₙ with E[Xᵢ] = μ, what is E[(1/n)∑Xᵢ]?",
+            qDE: "Für i.i.d. Zufallsvariablen X₁, …, Xₙ mit E[Xᵢ] = μ gilt E[(1/n)∑Xᵢ] =",
             opts: ["μ", "μ / n", "n · μ", "0"],
             optsDE: ["μ", "μ / n", "n · μ", "0"],
             correct: 0
         },
         {
-            q: "For i.i.d. random variables with variance σ², what is Var(X̄)?",
-            qDE: "Für i.i.d. Zufallsvariablen mit Varianz σ² gilt Var(X̄) =",
+            q: "For i.i.d. random variables with variance σ², what is Var((1/n)∑Xᵢ)?",
+            qDE: "Für i.i.d. Zufallsvariablen mit Varianz σ² gilt Var((1/n)∑Xᵢ) =",
             opts: ["σ² / n", "σ²", "σ² · n", "σ / n"],
             optsDE: ["σ² / n", "σ²", "σ² · n", "σ / n"],
             correct: 0
@@ -1479,8 +1479,8 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: "Applied to the sample mean X̄, Chebyshev's inequality gives P(|X̄ − μ| ≥ ε) ≤",
-            qDE: "Angewandt auf den Stichprobenmittelwert X̄ ergibt die Tschebyscheff-Ungleichung P(|X̄ − μ| ≥ ε) ≤",
+            q: "Applied to the sample mean (1/n)∑Xᵢ, Chebyshev's inequality gives P(|(1/n)∑Xᵢ − μ| ≥ ε) ≤",
+            qDE: "Angewandt auf den Stichprobenmittelwert (1/n)∑Xᵢ ergibt die Tschebyscheff-Ungleichung P(|(1/n)∑Xᵢ − μ| ≥ ε) ≤",
             opts: ["σ² / (n · ε²)", "σ² / ε²", "σ / (n · ε)", "n · σ² / ε²"],
             optsDE: ["σ² / (n · ε²)", "σ² / ε²", "σ / (n · ε)", "n · σ² / ε²"],
             correct: 0
@@ -1513,8 +1513,8 @@ const BONUS_QUIZ_POOLS = {
         {
             q: "The Weak Law of Large Numbers states that for i.i.d. variables with mean μ:",
             qDE: "Das schwache Gesetz der großen Zahlen besagt für i.i.d. Variablen mit Erwartungswert μ:",
-            opts: ["X̄ₙ →ᵖ μ as n → ∞", "X̄ₙ → 0 as n → ∞", "X̄ₙ = μ for all n", "X̄ₙ →ᵃ·ˢ· μ"],
-            optsDE: ["X̄ₙ →ᵖ μ für n → ∞", "X̄ₙ → 0 für n → ∞", "X̄ₙ = μ für alle n", "X̄ₙ →ᵃ·ˢ· μ"],
+            opts: ["(1/n)∑Xᵢₙ →ᵖ μ as n → ∞", "(1/n)∑Xᵢₙ → 0 as n → ∞", "(1/n)∑Xᵢₙ = μ for all n", "(1/n)∑Xᵢₙ →ᵃ·ˢ· μ"],
+            optsDE: ["(1/n)∑Xᵢₙ →ᵖ μ für n → ∞", "(1/n)∑Xᵢₙ → 0 für n → ∞", "(1/n)∑Xᵢₙ = μ für alle n", "(1/n)∑Xᵢₙ →ᵃ·ˢ· μ"],
             correct: 0
         },
         {
@@ -1534,8 +1534,8 @@ const BONUS_QUIZ_POOLS = {
 
         // --- Starkes Gesetz der großen Zahlen ---
         {
-            q: "The Strong Law of Large Numbers states that X̄ₙ converges to μ:",
-            qDE: "Das starke Gesetz der großen Zahlen besagt, dass X̄ₙ gegen μ konvergiert:",
+            q: "The Strong Law of Large Numbers states that (1/n)∑Xᵢₙ converges to μ:",
+            qDE: "Das starke Gesetz der großen Zahlen besagt, dass (1/n)∑Xᵢₙ gegen μ konvergiert:",
             opts: ["Almost surely (with probability 1)", "In probability only", "In distribution only", "For finitely many n"],
             optsDE: ["Fast sicher (mit Wahrscheinlichkeit 1)", "Nur in Wahrscheinlichkeit", "Nur in Verteilung", "Für endlich viele n"],
             correct: 0
@@ -1603,8 +1603,8 @@ const BONUS_QUIZ_POOLS = {
 
         // --- Zentraler Grenzwertsatz ---
         {
-            q: "The Central Limit Theorem states that for i.i.d. Xᵢ with mean μ and variance σ², the standardised sum (X̄ₙ − μ) / (σ/√n) converges in distribution to:",
-            qDE: "Der Zentrale Grenzwertsatz besagt, dass für i.i.d. Xᵢ mit Erwartungswert μ und Varianz σ² die standardisierte Summe (X̄ₙ − μ) / (σ/√n) in Verteilung konvergiert gegen:",
+            q: "The Central Limit Theorem states that for i.i.d. Xᵢ with mean μ and variance σ², the standardised sum ((1/n)∑Xᵢₙ − μ) / (σ/√n) converges in distribution to:",
+            qDE: "Der Zentrale Grenzwertsatz besagt, dass für i.i.d. Xᵢ mit Erwartungswert μ und Varianz σ² die standardisierte Summe ((1/n)∑Xᵢₙ − μ) / (σ/√n) in Verteilung konvergiert gegen:",
             opts: ["N(0, 1)", "N(μ, σ²)", "Exp(1)", "U(0, 1)"],
             optsDE: ["N(0, 1)", "N(μ, σ²)", "Exp(1)", "U(0, 1)"],
             correct: 0
@@ -1617,8 +1617,8 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: "The CLT is used in practice to approximate probabilities about X̄ₙ. Which distribution is used for the approximation?",
-            qDE: "Der ZGS wird in der Praxis genutzt, um Wahrscheinlichkeiten über X̄ₙ zu approximieren. Welche Verteilung wird verwendet?",
+            q: "The CLT is used in practice to approximate probabilities about (1/n)∑Xᵢₙ. Which distribution is used for the approximation?",
+            qDE: "Der ZGS wird in der Praxis genutzt, um Wahrscheinlichkeiten über (1/n)∑Xᵢₙ zu approximieren. Welche Verteilung wird verwendet?",
             opts: ["Normal distribution N(μ, σ²/n)", "Poisson distribution with λ = μ", "Exponential distribution Exp(μ)", "Uniform distribution U(0, μ)"],
             optsDE: ["Normalverteilung N(μ, σ²/n)", "Poisson-Verteilung mit λ = μ", "Exponentialverteilung Exp(μ)", "Gleichverteilung U(0, μ)"],
             correct: 0
@@ -1696,8 +1696,8 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: "The variance of the sample mean X̄ of n i.i.d. variables with variance σ² is:",
-            qDE: "Die Varianz des Stichprobenmittelwerts X̄ von n i.i.d. Variablen mit Varianz σ² beträgt:",
+            q: "The variance of the sample mean (1/n)∑Xᵢ of n i.i.d. variables with variance σ² is:",
+            qDE: "Die Varianz des Stichprobenmittelwerts (1/n)∑Xᵢ von n i.i.d. Variablen mit Varianz σ² beträgt:",
             opts: ["σ² / n", "σ²", "n · σ²", "σ / n"],
             optsDE: ["σ² / n", "σ²", "n · σ²", "σ / n"],
             correct: 0

@@ -100,19 +100,43 @@ function fireAchievements({ gi, rows, cols, elapsed, pts, ptsAwarded, prevBest, 
         for (let c = 0; c < cols; c++)
             if (sol[r][c] === 1) cellsFilled++;
 
+    // Scan the player grid for cross-marks
+    let tilesMarked = 0;
+    if (userGrid) {
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                if (userGrid[r][c] === 2) {
+                    tilesMarked++;
+                }
+            }
+        }
+    }
+
+
     onLevelCompleteAch({
         mistakes: mistakeCount,
         itemsUsed: itemsUsedThisLevel,
         diff: curDiff,
         mods: curMods,
         playerClass: STATE.playerClass || null,
+        playerAscendency: STATE.playerAscendency || null,
         absorbedMistakes: absorbedMistakes,
         absorbedThisLevel: absorbedMistakes,
-        cellsFilled, totalCells, rows, cols,
-        scoreEarned: ptsAwarded,
+        cellsFilled,
+        tilesMarked,
+        totalCells,
+        rows,
+        cols,
+        scoreEarned: pts,
         world: cur.world,
-        gi, elapsed, timerSecs, pts, prevBest, mult, isFirstClear,
-        hadPenaltyClutwch: !!window._hadPenaltyClutch,
+        gi,
+        elapsed,
+        timerSecs,
+        pts,
+        prevBest,
+        mult,
+        isFirstClear,
+        hadPenaltyClutch: !!window._hadPenaltyClutch,
         isBouncebackWin: window._lastFailedGi === gi,
     });
 
@@ -357,6 +381,14 @@ function checkWin() {
     const isFirstClear = !STATE.done.includes(gi);
 
     if (isFirstClear) STATE.done.push(gi);
+
+    // Record mistakes for this level (used by flawless world achievement)
+    // Always keep the best (lowest) value across replays
+    if (!STATE.levelMistakes) STATE.levelMistakes = {};
+    const prev = STATE.levelMistakes[gi];
+    if (prev === undefined || mistakeCount < prev) {
+        STATE.levelMistakes[gi] = mistakeCount;
+    }
 
     const elapsed = Math.round((Date.now() - levelStartTime) / 1000);
 

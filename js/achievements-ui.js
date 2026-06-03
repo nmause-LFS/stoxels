@@ -9,15 +9,17 @@ let _achToastBusy = false;      // true while a toast is currently visible; prev
 // ordered list of all categories shown in the achievement screen.
 const ACH_CATEGORIES = [
     { key: 'completion', icon: '🏁', labelEn: 'Completion', labelDE: 'Abschluss' },
+    { key: 'difficulty', icon: '🔥', labelEn: 'Difficulty', labelDE: 'Schwierigkeit' },
+    { key: 'grid', icon: '🔲', labelEn: 'Grid & Puzzles', labelDE: 'Gitter & Rätsel' },
+    { key: 'score', icon: '💰', labelEn: 'Score', labelDE: 'Punkte' },
+    { key: 'time', icon: '⏱', labelEn: 'Time & Speed', labelDE: 'Zeit & Geschwindigkeit' },
     { key: 'mistakes', icon: '💥', labelEn: 'Mistakes & Comebacks', labelDE: 'Fehler & Comebacks' },
     { key: 'items', icon: '🎁', labelEn: 'Items & Inventory', labelDE: 'Items & Inventar' },
-    { key: 'time', icon: '⏱', labelEn: 'Time & Speed', labelDE: 'Zeit & Geschwindigkeit' },
-    { key: 'score', icon: '💰', labelEn: 'Score', labelDE: 'Punkte' },
-    { key: 'grid', icon: '🔲', labelEn: 'Grid & Puzzles', labelDE: 'Gitter & Rätsel' },
-    { key: 'class', icon: '🔮', labelEn: 'Classes & Skills', labelDE: 'Klassen & Fähigkeiten' },
-    { key: 'difficulty', icon: '🔥', labelEn: 'Difficulty', labelDE: 'Schwierigkeit' },
-    { key: 'quiz', icon: '🧠', labelEn: 'Quiz & Gates', labelDE: 'Quiz & Tore' },
-    { key: 'meta', icon: '🗺️', labelEn: 'Meta & Exploration', labelDE: 'Meta & Erkundung' },
+    { key: 'quiz', icon: '🧠', labelEn: 'Quiz & Excercises', labelDE: 'Quiz & Aufgaben' },
+    { key: 'class', icon: '🔮', labelEn: 'Classes & Abilities', labelDE: 'Klassen & Fähigkeiten' },
+    { key: 'tree', icon: '🌳', labelEn: 'Probability Tree', labelDE: 'Wahrscheinlichkeitsbaum' },
+    { key: 'inference', icon: '🔍', labelEn: 'Inference', labelDE: 'Inferenz' },
+    { key: 'meta', icon: '🗺️', labelEn: 'Progression & Meta', labelDE: 'Fortschritt & Meta' },
 ];
 
 
@@ -70,7 +72,7 @@ function _showAchToast(def, tier) {
     document.body.appendChild(el);
 
     requestAnimationFrame(() => el.classList.add('show'));
-    setTimeout(() => _dismissAchToast(el), 3500);
+    setTimeout(() => _dismissAchToast(el), 10000);
 
     Audio_Manager.playSFX('achievement');
 }
@@ -81,6 +83,14 @@ function _buildToastElement(def, tier) {
     const label = lang === 'de' ? tier.labelDE : tier.labelEn;
     const name = lang === 'de' ? def.nameDE : def.nameEn;
 
+    // Extract description base
+    const baseDesc = lang === 'de' ? def.descDE : def.descEn;
+
+    // Format the requirement text cleanly (e.g., "Complete levels: 10")
+    const requirementText = lang === 'de'
+        ? `${baseDesc} Ziel: ${tier.threshold.toLocaleString()}`
+        : `${baseDesc} Target: ${tier.threshold.toLocaleString()}`;
+
     const el = document.createElement('div');
     el.id = 'ach-toast';
     el.innerHTML = `
@@ -89,6 +99,7 @@ function _buildToastElement(def, tier) {
             <div class="ach-toast-text">
                 <div class="ach-toast-title">🏆 Achievement Unlocked!</div>
                 <div class="ach-toast-name">${name}: <em>${label}</em></div>
+                <div class="ach-toast-requirement" style="font-size: 0.85em; opacity: 0.8; margin-top: 2px;">📋 ${requirementText}</div>
             </div>
         </div>`;
     return el;
@@ -120,12 +131,20 @@ function buildAchievementsScreen() {
     if (!body) return;
 
     const lang = _getAchLang();
+
+    // Milestone counter (existing)
     const totalTiers = _countTotalTiers();
-    const unlockedCount = ACH_STATE.unlocked.length;
-    const pct = _calcProgressPct(unlockedCount, totalTiers);
+    const unlockedTiers = ACH_STATE.unlocked.length;
+    const milestonePct = _calcProgressPct(unlockedTiers, totalTiers);
+
+    // Full-achievement counter (new)
+    const totalAchs = _countTotalAchievements();
+    const fullAchs = _countFullyUnlockedAchievements();
+    const fullPct = _calcProgressPct(fullAchs, totalAchs);
+
     const grouped = _groupDefsByCategory();
 
-    let html = _buildOverallHeaderHtml(unlockedCount, totalTiers, pct);
+    let html = _buildOverallHeaderHtml(fullAchs, totalAchs, fullPct, unlockedTiers, totalTiers, milestonePct, lang);
     html += ACH_CATEGORIES
         .map(cat => _buildCategoryHtml(cat, grouped[cat.key] || [], lang))
         .join('');
@@ -148,6 +167,18 @@ function _calcProgressPct(unlocked, total) {
     return Math.round((unlocked / total) * 100);
 }
 
+// _countTotalAchievements — total number of achievement definitions (ignoring tiers).
+function _countTotalAchievements() {
+    return ACHIEVEMENT_DEFS.length;
+}
+
+// _countFullyUnlockedAchievements — counts defs where every tier has been unlocked.
+function _countFullyUnlockedAchievements() {
+    return ACHIEVEMENT_DEFS.filter(def =>
+        def.tiers.every((_, ti) => ACH_STATE.unlocked.includes(`${def.id}__${ti}`))
+    ).length;
+}
+
 // _groupDefsByCategory — returns a plain object keyed by category string,
 //   each value being the array of achievement defs that belong to it.
 function _groupDefsByCategory() {
@@ -160,15 +191,28 @@ function _groupDefsByCategory() {
     return grouped;
 }
 
-// _buildOverallHeaderHtml — returns the HTML for the top-of-screen overall
-//   progress bar showing total unlocked / total tiers.
-function _buildOverallHeaderHtml(unlockedCount, totalTiers, pct) {
+// _buildOverallHeaderHtml — renders two progress counters side by side:
+//   left = fully completed achievements, right = milestone tiers unlocked.
+function _buildOverallHeaderHtml(fullAchs, totalAchs, fullPct, unlockedTiers, totalTiers, milestonePct, lang) {
+    const achLabel = lang === 'de' ? 'Achievements abgeschlossen' : 'Achievements Completed';
+    const mileLabel = lang === 'de' ? 'Achievement Meilensteine' : 'Achievement Milestones';
+
     return `
         <div class="ach-header">
-            <div class="ach-progress-line">
-                <span class="ach-progress-text">${unlockedCount} / ${totalTiers} unlocked &nbsp;(${pct}%)</span>
-                <div class="ach-progress-bar-outer">
-                    <div class="ach-progress-bar-inner" style="width:${pct}%"></div>
+            <div class="ach-progress-dual">
+                <div class="ach-progress-block">
+                    <span class="ach-progress-label">${achLabel}</span>
+                    <span class="ach-progress-text">${fullAchs} / ${totalAchs} &nbsp;(${fullPct}%)</span>
+                    <div class="ach-progress-bar-outer">
+                        <div class="ach-progress-bar-inner" style="width:${fullPct}%"></div>
+                    </div>
+                </div>
+                <div class="ach-progress-block">
+                    <span class="ach-progress-label">${mileLabel}</span>
+                    <span class="ach-progress-text">${unlockedTiers} / ${totalTiers} &nbsp;(${milestonePct}%)</span>
+                    <div class="ach-progress-bar-outer">
+                        <div class="ach-progress-bar-inner ach-progress-bar-milestones" style="width:${milestonePct}%"></div>
+                    </div>
                 </div>
             </div>
         </div>`;

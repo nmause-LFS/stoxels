@@ -158,6 +158,8 @@ function _tailRiskResolve() {
     questStat_classRevealUsed(revealedCount);
     updateQuestStats('classAbilityUsedThisLevel', {});
 
+    if (revealedCount === 20) trackAchStat('outlierInfiniteHunger20Reveals');
+
     checkWin();
 }
 
@@ -173,6 +175,7 @@ function _executeBlackSwan(durationMs) {
 
     showToast(LANG === 'de' ? '📉 BETRETE SPEEDFORCE' : '📉 ENTERING SPEEDFORCE');
     Audio_Manager.playSFX('speedforceEnter');
+    trackAchStat('skillSpeedforceUsed');
 
     if (window._blackSwanTimeout) clearTimeout(window._blackSwanTimeout);
     if (window._blackSwanTickInterval) clearInterval(window._blackSwanTickInterval);

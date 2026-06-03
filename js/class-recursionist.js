@@ -71,6 +71,8 @@ function _executeResidual(row, col, effect) {
     // Generate a unique ID for this totem instance
     const totemId = `totem-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
     _spawnResidualTotem(totemId, totemRow, totemCol, beamRadius, charges, fires);
+
+    trackAchStat('skillResidualUsed');
 }
 
 
@@ -407,6 +409,8 @@ function _confirmDegreesOfFreedom() {
     showToast(`💀 Degrees of Freedom! ${picked.length} cell(s) corrected. +${totalRecovered}s recovered (${recoverPctDisplay}%).`);
     Audio_Manager.playSFX('arcaneReveal')
     Audio_Manager.playSFX('dofBurn');
+
+    if (totalRecovered >= 300) trackAchStat('doftimerecovered');
 
     setTimeout(() => {
         if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();

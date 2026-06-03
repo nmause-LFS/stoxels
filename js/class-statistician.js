@@ -370,6 +370,7 @@ function _diagonalStrikeMarkWrong(affected, sol) {
         if (sol[r][c] === 0 && userGrid[r][c] === 1) {
             userGrid[r][c] = 3; // wrong-mark state
             renderCell(r, c);
+            trackAchStat('tilesMarkedWrong', 1);
         }
     });
 }
@@ -486,7 +487,7 @@ function _statisticianTriggerMomentum(bonusSeconds) {
     updateQuestStats('momentumTriggered', {});
 
     window._momentumThisLevel = (window._momentumThisLevel || 0) + 1;
-    if (window._momentumThisLevel === 3) trackAchStat('statistician3MomentumOneLevel');
+    if (window._momentumThisLevel === 10) trackAchStat('statistician3MomentumOneLevel');
 
     Audio_Manager.playSFX('momentum');
     updateMomentumBar(0, 15); // reset bar after momentum fires

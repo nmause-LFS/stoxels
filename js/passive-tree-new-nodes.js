@@ -108,6 +108,7 @@ function _binomialBurstOnCorrectFill() {
     if (_bayesianRoll(chance)) {
         markWrongTiles(1);
         showToast(`💢 ${LANG === 'de' ? 'Binomialer Ausbruch! 1 Zelle markiert.' : 'Binomial Burst! 1 cell marked.'}`);
+        PassiveTracker.onBinomialTrigger()
     }
 }
 

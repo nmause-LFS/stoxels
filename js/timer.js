@@ -56,6 +56,7 @@ function updTimer() {
     } else {
         el.style.color = '';        // default accent colour from CSS
     }
+    if (typeof PassiveTracker !== 'undefined') PassiveTracker.onTimerTick();
 }
 
 

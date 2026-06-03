@@ -105,6 +105,7 @@ function initState() {
         if (!s.classActiveChoice || typeof s.classActiveChoice === 'number') s.classActiveChoice = 'active1';
         if (!s.achStats) s.achStats = {};
         if (!s.convergenceDone) s.convergenceDone = [];
+        if (!s.levelMistakes) s.levelMistakes = {};
         if (s.passiveTreePoints === undefined) s.passiveTreePoints = 0;
         // Ascendency migration guards
         if (s.playerAscendency === undefined) s.playerAscendency = null;
@@ -117,12 +118,14 @@ function initState() {
             s.passiveTreeAllocated = new Set(s.passiveTreeAllocated);
         }
         migrateQuestState(s);
+
         return s;
     }
     // Fresh save structure 
     return {
         totalScore: 0,
         levelHS: {},
+        levelMistakes: {},
         inventory: [],
         unlockedCodes: [],
         done: [],

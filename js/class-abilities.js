@@ -498,6 +498,7 @@ function applyClassPassiveOnLevelStart() {
 
             markWrongTiles(markCount);
             Audio_Manager.playSFX('bayesianInsight');
+            trackAchStat('bayesianInsightUsed');
 
             // Collect newly-marked cell ids for the animation
             const newlyMarked = [];

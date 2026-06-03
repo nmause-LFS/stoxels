@@ -555,6 +555,7 @@ function applyAscendencyUpgrade(type) {
     Audio_Manager.playSFX('classUpgraded');
     showToast(`✨ ${t(skillDef.nameEn, skillDef.nameDE)} → ${t('Level', 'Stufe')} ${newLv}!`);
     updateQuestStats('ascendencyUpgradeApplied', {});
+    trackAchStat('ascendencyUpgradesApplied');
     closeClassOverlay();
     buildClassHUD();
 }

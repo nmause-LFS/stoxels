@@ -340,3 +340,30 @@
 .ach-topbar #btn-reset-achievements {
     margin-left: auto;
 }
+
+
+.ach-progress-dual {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.ach-progress-block {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ach-progress-label {
+    font-size: 0.75em;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.7;
+}
+
+/* Optional: give milestones a different accent colour */
+.ach-progress-bar-milestones {
+    background: var(--accent2, #a78bfa); /* adjust to your palette */
+}

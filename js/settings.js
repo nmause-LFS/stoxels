@@ -10,8 +10,8 @@ const SETTINGS_DEFAULTS = {
     bgmVolume: 0.4,    // 0–1
     sfxEnabled: true,
     sfxVolume: 0.7,    // 0–1
-    axisLock: false,
-    questionMark: true,
+    axisLock: true,
+    questionMark: false,
 };
 
 // Load from localStorage, falling back to defaults for any missing keys

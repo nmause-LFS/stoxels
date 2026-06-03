@@ -327,6 +327,13 @@ const LEDGER_CATEGORIES = [
             {
                 id: 'ach_3', labelEn: '50 achievements unlocked', labelDE: '50 Erfolge freigeschaltet',
                 check: qs => ({ current: qs.achievementsUnlocked || 0, target: 50 }),
+                reward: { items: ['rowSolve', 'mistakeEraserAll'] }
+            },
+
+
+            {
+                id: 'ach_4', labelEn: '100 achievements unlocked', labelDE: '100 Erfolge freigeschaltet',
+                check: qs => ({ current: qs.achievementsUnlocked || 0, target: 100 }),
                 reward: { ptPoints: 1, items: ['colSolve', 'mistakeEraserAll'] }
             },
         ]

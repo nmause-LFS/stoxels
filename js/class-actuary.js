@@ -87,6 +87,8 @@ function _executeRegressionToPrior(correctCount, recoverPct) {
 
     Audio_Manager.playSFX('holyHealing');
 
+    if (recovered >= 120) trackAchStat('correct120smistake');
+
     checkWin();
     buildClassHUD();
 }
@@ -141,7 +143,7 @@ function _executeSignificanceThreshold(protectCount, bonusReveal) {
     window._sigThreshData = { protectCount, bonusReveal, chosen: [] };
     window._sigThreshBonusReveal = bonusReveal;
 
-    trackAchStat('skillSigThresholdUsed');
+    trackAchStat('skillSignificanceTreshold');
 
     // Show the line-picker modal immediately — no intermediate grid click needed
     _sigThreshShowLinePicker(protectCount);
@@ -508,6 +510,7 @@ function _sigThresholdIntercept(row, col) {
         userGrid[row][col] = 2; // ✕ mark
         questStat_classMarkUsed(count);
         renderCell(row, col);
+        trackAchStat('tilesMarkedWrong', 1);
     }
 
     // Consume this shield charge

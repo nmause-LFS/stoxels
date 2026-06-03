@@ -129,50 +129,71 @@ function checkAchievements() {
 function trackBaseCompletionStats(ctx) {
     trackAchStat('levelsCompleted');
     trackAchStat('cellsFilled', ctx.cellsFilled || 0);
+
+    // Track total correct crosses left on the board upon victory
+    if (ctx.tilesMarked !== undefined) {
+        trackAchStat('tilesMarked', ctx.tilesMarked);
+    }
 }
 
 function trackAccuracyStats(ctx) {
     if (ctx.mistakes === 0) trackAchStat('perfectLevels');
     if (ctx.itemsUsed === 0) trackAchStat('noItemLevels');
     if (ctx.mistakes === 0 && ctx.itemsUsed === 0) trackAchStat('pureLevels');
-    if (ctx.mistakes >= 3) trackAchStat('comebackWins');
-    if (ctx.itemsUsed >= 3) trackAchStat('threeItemsOneLevelCount');
+    if (ctx.mistakes >= 5) trackAchStat('comebackWins');
     if (ctx.isBouncebackWin) trackAchStat('bouncebackWins');
-    if (ctx.hadPenaltyClutwch) trackAchStat('penaltyClutwins');
+    if (ctx.hadPenaltyClutch) trackAchStat('penaltyClutchwins');
 }
 
 function trackDifficultyAndModStats(ctx) {
+
+    // Difficulties
+    if (ctx.diff === 'easy') trackAchStat('easyLevels');
+    if (ctx.diff === 'normal') trackAchStat('normalLevels');
     if (ctx.diff === 'hard') trackAchStat('hardLevels');
+
+
+    // Modifiers
     if (ctx.mods && ctx.mods.hardcore) trackAchStat('hardcoreLevels');
     if (ctx.mods && ctx.mods.timetrial) trackAchStat('timeTrialLevels');
+    if (ctx.mods && ctx.mods.ironman) trackAchStat('ironmanLevels');
+    if (ctx.mods && ctx.mods.classless) trackAchStat('classlessLevels');
+    if (ctx.mods && ctx.mods.treeless) trackAchStat('treelessLevels');
 }
 
 function trackClassStats(ctx) {
+    // Base Classes
     if (ctx.playerClass === 'mathmagician') trackAchStat('levelsAsMathmagician');
     if (ctx.playerClass === 'statistician') trackAchStat('levelsAsStatistician');
     if (ctx.playerClass === 'probabilist') trackAchStat('levelsAsProbabilist');
 
-    // NEW: Ascendency Level Completion Tracking
-    if (ctx.playerAscendency) {
-        // Capitalizes the first letter (e.g. 'actuary' -> 'levelsAsActuary')
-        const ascKey = 'levelsAs' + ctx.playerAscendency.charAt(0).toUpperCase() + ctx.playerAscendency.slice(1);
-        trackAchStat(ascKey);
-    }
+    // Ascendency Classes
+    if (ctx.playerAscendency === 'outlier') trackAchStat('levelsAsOutlier');
+    if (ctx.playerAscendency === 'actuary') trackAchStat('levelsAsActuary');
+    if (ctx.playerAscendency === 'recursionist') trackAchStat('levelsAsRecursionist');
+    if (ctx.playerAscendency === 'markovian') trackAchStat('levelsAsMarkovian');
+    if (ctx.playerAscendency === 'bayesian') trackAchStat('levelsAsBayesian');
+    if (ctx.playerAscendency === 'random_walker') trackAchStat('levelsAsRandomWalker');
 
     // Mathmagician absorb streak in a single level
-    if (ctx.playerClass === 'mathmagician' && ctx.absorbedThisLevel >= 3) {
+    if (ctx.playerClass === 'mathmagician' && ctx.absorbedThisLevel >= 5) {
         trackAchStat('mathmagician3AbsorbOneLevel');
     }
 }
 
 function trackTimeStats(ctx) {
     if (ctx.elapsed !== undefined && ctx.elapsed <= 30) trackAchStat('fastClears');
-    if (ctx.timerSecs !== undefined && ctx.timerSecs >= 300) trackAchStat('bigTimeLeftWins');
+    if (ctx.timerSecs !== undefined && ctx.timerSecs > 1800) trackAchStat('bigTimeLeftWins');
     if (ctx.timerSecs !== undefined && ctx.timerSecs <= 10) trackAchStat('clutchWins');
 }
 
 function trackScoreStats(ctx) {
-    if (ctx.scoreEarned) trackAchStat('totalScoreEarned', ctx.scoreEarned);
+
+    // Explicitly check for undefined instead of truthiness so 0 or any valid number passes
+    if (ctx.scoreEarned !== undefined) {
+        trackAchStat('totalScoreEarned', ctx.scoreEarned);
+    }
+
     if (ctx.pts !== undefined && ctx.pts >= 500) trackAchStat('highScoreLevels');
     if (ctx.mult !== undefined && ctx.mult >= 2.0) trackAchStat('highMultiplierWins');
 
@@ -184,11 +205,23 @@ function trackScoreStats(ctx) {
 }
 
 function trackGridStats(ctx) {
-    if (ctx.totalCells !== undefined && ctx.totalCells >= 400) trackAchStat('largeGridClears');
 
-    const isSmallPerfectClear = ctx.rows === 5 && ctx.cols === 5 &&
-        ctx.mistakes === 0 && ctx.itemsUsed === 0;
-    if (isSmallPerfectClear) trackAchStat('smallPerfectClears');
+    const totalCells = ctx.rows * ctx.cols;
+    const isPerfect = ctx.mistakes === 0 && ctx.itemsUsed === 0;
+
+
+    // Evaluate cellCount categorization matching lucky tiles logic
+    if (isPerfect) {
+        if (totalCells < 100) {
+            trackAchStat('smallPerfectClears');
+        } else if (totalCells >= 100 && totalCells <= 199) {
+            trackAchStat('mediumPerfectClears');
+        } else if (totalCells >= 200 && totalCells <= 399) {
+            trackAchStat('largePerfectClears');
+        } else if (totalCells >= 400) {
+            trackAchStat('massivePerfectClears');
+        }
+    }
 
     const isDenseGrid = ctx.totalCells !== undefined &&
         ctx.cellsFilled !== undefined &&
@@ -220,7 +253,7 @@ function countUniqueWorldsPlayed() {
 // ctx shape: { mistakes, itemsUsed, diff, mods, playerClass, absorbedThisLevel,
 //              bonusMet, bonusType, world, gi, cellsFilled, totalCells, rows, cols,
 //              elapsed, timerSecs, pts, prevBest, mult, scoreEarned,
-//              isFirstClear, isBouncebackWin, hadPenaltyClutwch }
+//              isFirstClear, isBouncebackWin, hadPenaltyClutch }
 function onLevelCompleteAch(ctx) {
     trackBaseCompletionStats(ctx);
     trackAccuracyStats(ctx);
@@ -257,7 +290,7 @@ function areAllLevelsCompleted(levelIndices) {
 function areAllLevelsFlawless(levelIndices) {
     if (typeof STATE.levelMistakes === 'undefined') return false;
     const totalMistakes = levelIndices.reduce(
-        (sum, gi) => sum + (STATE.levelMistakes[gi] || 999), 0
+        (sum, gi) => sum + (STATE.levelMistakes[gi] ?? 999), 0
     );
     return totalMistakes === 0;
 }

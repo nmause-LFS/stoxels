@@ -100,6 +100,7 @@ function claimQuest(milestoneId) {
     _claim_grantRewards(ms);
 
     save();
+    _trackInferenceAchievements(ms, cat);
     _showClaimBanner(ms, cat);
     _refreshQuestBadge();
     renderQuestLog();
@@ -280,4 +281,123 @@ function _refreshQuestBadge() {
  */
 function buildQuestLogButton() {
     _refreshQuestBadge();
+}
+
+// ─────────────────────────────────────────────────────────────
+//  INFERENCE ACHIEVEMENT TRACKING
+//  Called every time a milestone is successfully claimed.
+//  Maps milestone IDs and category IDs onto achievement stats.
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * Fires all relevant achievement stat calls for the milestone that was
+ * just claimed. Uses trackAchStat / setAchStat from achievements.js.
+ * @param {Object} ms  - The milestone object
+ * @param {Object} cat - The parent category object
+ */
+function _trackInferenceAchievements(ms, cat) {
+    if (typeof trackAchStat !== 'function') return;
+
+    // ── 1. Every claim increments the global claims counter ───────────────
+    trackAchStat('inferenceQuestsClaimed');
+
+    // ── 2. Passive-tree points granted by this milestone ──────────────────
+    if (ms.reward && ms.reward.ptPoints) {
+        trackAchStat('inferencePtPointsEarned', ms.reward.ptPoints);
+    }
+
+    // ── 3. Keystone quest detection ───────────────────────────────────────
+    //  Any milestone whose category id contains a known keystone keyword
+    //  counts as a keystone quest.
+    const _KEYSTONE_CATEGORY_IDS = new Set([
+        'signal_noise_master', 'oracle_vision', 'degrees_of_freedom_master',
+        'random_walk_master', 'entropy_drain_master', 'overfitting_gambler',
+        'countdown_crisis_master', 'sparse_prior_master', 'dead_reckoning_master',
+        'frequentists_burden_master', 'adjacency_matrix_master', 'minesweeper_mind',
+        'ergodic_field_master', 'gamblers_ruin_master', 'asymptotic_master',
+        'stochastic_resonance_master', 'random_walk_survivor',
+    ]);
+    if (_KEYSTONE_CATEGORY_IDS.has(cat.id)) {
+        trackAchStat('inferenceKeystoneQuestsDone');
+    }
+
+    // ── 4. Mirror specific ledger category milestones as tiered stats ─────
+    //  Each mapping: { categoryId, milestoneIds[] } → achievementStat, incrementing
+    //  the stat by 1 per milestone claimed (so tiers reflect how many ms are done).
+
+    // Expected Value (score milestones)
+    if (cat.id === 'expected_value') {
+        trackAchStat('inferenceScoreMilestones');
+    }
+
+    // Sample Size (levels completed milestones)
+    if (cat.id === 'sample_size') {
+        trackAchStat('inferenceSampleMilestones');
+    }
+
+    // Parameter Space (worlds completed)
+    if (cat.id === 'parameter_space') {
+        trackAchStat('inferenceWorldMilestones');
+    }
+
+    // Conditional Probability (gates passed)
+    if (cat.id === 'probability_gate') {
+        trackAchStat('inferenceGateMilestones');
+    }
+
+    // Convergence (convergence levels)
+    if (cat.id === 'convergence') {
+        trackAchStat('inferenceConvergenceMilestones');
+    }
+
+    // Probability Tree (pt points spent)
+    if (cat.id === 'probability_tree') {
+        trackAchStat('inferencePTMilestones');
+    }
+
+    // Maximum Likelihood (class upgrades)
+    if (cat.id === 'max_likelihood') {
+        trackAchStat('inferenceClassUpgradeMilestones');
+    }
+
+    // Choose Your Ascendency + Ascendency Mastery
+    if (cat.id === 'choose_ascendency' || cat.id === 'ascendency_mastery') {
+        trackAchStat('inferenceAscendencyMilestones');
+    }
+
+    // Descriptive Statistics (achievements unlocked)
+    if (cat.id === 'descriptive_stats') {
+        trackAchStat('inferenceAchievementMilestones');
+    }
+
+    // Confidence Interval (correct answers)
+    if (cat.id === 'confidence_interval') {
+        trackAchStat('inferenceAnswerMilestones');
+    }
+
+    // Rare Event Probability (lucky drops)
+    if (cat.id === 'lucky_drop_event') {
+        trackAchStat('inferenceLuckyMilestones');
+    }
+
+    // Zero Variance (flawless levels)
+    if (cat.id === 'zero_variance') {
+        trackAchStat('inferenceFlawlessMilestones');
+    }
+
+    // ── 5. Full-category completion check ─────────────────────────────────
+    //  After claiming this milestone, check if every milestone in its
+    //  category is now claimed. If so, award inferenceFullCategoriesClaimed.
+    if (typeof setAchStat === 'function') {
+        const allClaimed = cat.milestones.every(m =>
+            (STATE.questsClaimed || []).includes(m.id)
+        );
+        if (allClaimed) {
+            // Count total fully-claimed categories
+            const fullCount = LEDGER_CATEGORIES.filter(c =>
+                c.milestones.every(m => (STATE.questsClaimed || []).includes(m.id))
+            ).length;
+            setAchStat('inferenceFullCategoriesClaimed', fullCount);
+        }
+    }
 }

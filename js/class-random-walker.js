@@ -44,6 +44,7 @@ function _executeBrownianMotion(row, col, paths, rank) {
         showToast(`🐻 Browney unleashed!`);
     } else {
         showToast(`🐻 Browney & Wiener unleashed!`);
+        trackAchStat('skillBrowneyWienerSummon');
     }
 
     Audio_Manager.playSFX('browneySummon');
@@ -206,6 +207,7 @@ function _executeSummonDrifter(duration, interval, smartTarget) {
 
     showToast(`🐶 Drifter is roaming!`);
     Audio_Manager.playSFX('drifterSummon');
+    trackAchStat('skillSummonDrifter');
 
     const drifterEl = document.createElement('div');
     drifterEl.id = 'drifter-agent';

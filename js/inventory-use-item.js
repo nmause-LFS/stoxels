@@ -220,7 +220,7 @@ function markWrongTiles(count) {
         affected.push(`g-${r}-${c}`);
     });
     _applyCellEffect(affected, 'mark');
-    trackAchStat('tilesMarked', affected.length);
+    trackAchStat('tilesMarkedWrong', affected.length);
 }
 
 
@@ -1178,10 +1178,9 @@ function _trackItemAchievements(id, def) {
     if (id === 'cursedRowSolve') trackAchStat('tidalWaveUsed');
     if (id === 'cursedColSolve') trackAchStat('vortexUsed');
     if (id === 'cursedRowCol') trackAchStat('chaosGridUsed');
+    if (id === 'scoutPrimer') trackAchStat('scoutPrimerUsed');
 
-    if (id === 'rowSolve' || id === 'colSolve'
-        || id.startsWith('cursedRow') || id.startsWith('cursedCol')
-        || id === 'cursedRowCol') trackAchStat('rowColSolved');
+    if (id === 'rowSolve' || id === 'colSolve') trackAchStat('rowColSolved');
 
     if (id.startsWith('addTime')) {
         const secs = parseInt(id.replace('addTime', '')) || 0;
@@ -1189,7 +1188,7 @@ function _trackItemAchievements(id, def) {
     }
     if (id === 'cursedTime') trackAchStat('timeAdded', 1200);
 
-    if (itemsUsedThisLevel === 3) trackAchStat('threeItemsOneLevelCount');
+    if (itemsUsedThisLevel >= 3) trackAchStat('threeItemsOneLevelCount');
 
     if (def.rarity === 'cursed' && !STATE.done.includes(cur.gIdx)) {
         trackAchStat('cursedFirstAttempts');

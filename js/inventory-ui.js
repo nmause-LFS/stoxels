@@ -218,24 +218,6 @@ function _discardOneByDefId(defId) {
 
 
 
-// After the grid is drawn, push the inv-panel right if it overlaps the grid
-
-/*
-function _repositionInvPanel() {
-    const grid = document.getElementById('ptable'); 
-    const panel = document.getElementById('inv-panel');
-    if (!grid || !panel) return;
-    const gr = grid.getBoundingClientRect();
-    const minLeft = gr.right + 10;
-    panel.style.left = Math.max(16, Math.min(minLeft, window.innerWidth - 226)) + 'px';
-}
-
-
-*/
-
-
-
-
 function _repositionInvPanel() {
     const grid = document.getElementById('ptable');
     const panel = document.getElementById('inv-panel');

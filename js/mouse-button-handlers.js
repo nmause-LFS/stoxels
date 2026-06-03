@@ -124,6 +124,8 @@ function ac(row, col) {
             consecutiveCorrectFills = 0; // sample_efficiency: streak broken by real mistake
             _streakBonusFills = 0;       // streak_bonus: streak broken by real mistake
 
+            if (typeof PassiveTracker !== 'undefined') PassiveTracker.onMistake();
+
             // Instantly banish animals upon a real mistake 
             if (typeof clearActiveRandomWalkers === "function") {
                 clearActiveRandomWalkers();
@@ -179,6 +181,7 @@ function ac(row, col) {
     if (pval === 2 && luckyTiles && luckyTiles.has(`${row}-${col}`)) {
         luckyRewardClaimed++;
         trackAchStat('luckyTilesFound');
+        Audio_Manager.playSFX('luckyTileActivate');
         luckyTiles.delete(`${row}-${col}`);
 
         const _wonItemId = pickLuckyItem();
@@ -273,6 +276,7 @@ function ac(row, col) {
         if (typeof feedDrifter === "function") feedDrifter();
 
         onCorrectFill(row, col); // class.js
+        if (typeof PassiveTracker !== 'undefined') PassiveTracker.onCorrectFill();
 
         _binomialBurstOnCorrectFill();
         _gamblersRuinOnCorrectFill();
@@ -294,6 +298,7 @@ function ac(row, col) {
                 }
 
                 showToast(`📈 ${LANG === 'de' ? 'Stichprobeneffizienz! 1 Zelle aufgedeckt.' : 'Sample Efficiency! 1 cell revealed.'}`);
+                PassiveTracker.onSampleEffTrigger();
             }
         }
 
@@ -310,6 +315,7 @@ function ac(row, col) {
                 timerSecs += bonus;
                 updTimer();
                 showToast(`🔥 ${LANG === 'de' ? `Serienbonus! +${bonus}s` : `Streak Bonus! +${bonus}s`}`);
+                PassiveTracker.onStreakBonusTrigger()
             }
         }
     }

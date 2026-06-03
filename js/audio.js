@@ -381,6 +381,12 @@ const Audio_Manager = (() => {
         milesstone: 'audio/sfx_milestone.mp3',
 
         abilityReady: 'audio/sfx_ability_ready.mp3',
+
+        // Passive Tree Effects
+
+        luckyTileActivate: 'audio/sfx_lucky_tile_activate.mp3',
+
+
     };
 
     // ── Pre-load SFX into cache ───────────────────────────────

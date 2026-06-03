@@ -62,6 +62,10 @@ function _resetLevelState() {
     window._dofRevertedCells = new Set();
     window._sigThreshBonusReveal = false;
     window._regressionRewardedLines = new Set();
+    window._hadPenaltyClutch = false;
+    window._maxInventoryTrackedThisLevel = false;
+    window._collectorTrackedThisLevel = false;
+
     resetToastQueue();
 
     _resetNewNodeState();
@@ -644,6 +648,11 @@ function _startSystems() {
     startTimer();         // timer.js — begin the countdown
     buildGrid();          // grid.js  — render the puzzle table
     buildInventoryPanel(); // inventory.js — render current items
+
+    // Clear bounceback flag unless this is the same level we just failed
+    if (window._lastFailedGi !== undefined && cur && cur.gIdx !== window._lastFailedGi) {
+        window._lastFailedGi = null;
+    }
 }
 
 
@@ -789,6 +798,7 @@ function _doStartLevel(gi) {
     _checkPrimerPending();
     _initClassSystems();
     _navigateToGameScreen();
+    PassiveTracker.init();
     _applySparsePrior();
     _applyFrequentistsBurden();
     _applySignalToNoise();
