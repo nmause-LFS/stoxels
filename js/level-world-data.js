@@ -2228,7 +2228,8 @@ const WORLDS = [
     { label: 'World 11', labelDE: 'Welt 11', data: W11 },
     { label: 'World 12', labelDE: 'Welt 12', data: W12 },
     { label: 'World 13', labelDE: 'Welt 13', data: W13 },
-    
+
+    /*
     { label: 'DevWorld1', labelDE: 'DevWorld1', data: W14 },
     { label: 'DevWorld2', labelDE: 'DevWorld2', data: W15 },
     { label: 'DevWorld3', labelDE: 'DevWorld3', data: W16 },
@@ -2241,5 +2242,5 @@ const WORLDS = [
 
     // ENDGAME SANDBOX
     { label: '⚔ ENDGAME SANDBOX', labelDE: '⚔ ENDGAME SANDBOX', data: W_ENDGAME },
-    
+    */
 ];
