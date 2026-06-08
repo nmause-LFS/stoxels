@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STOXELS - v0.23 BETA</title>
+    <title>STOXELS - v0.24 BETA</title>
     <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/pause.css">
     <link rel="stylesheet" href="css/screens.css">
-    <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/game.css">
     <link rel="stylesheet" href="css/game-setup.css">
     <link rel="stylesheet" href="css/inventory.css">
@@ -16,28 +16,46 @@
     <link rel="stylesheet" href="css/achievements.css">
     <link rel="stylesheet" href="css/item_effects.css">
     <link rel="stylesheet" href="css/probability_tree.css">
+    <link rel="stylesheet" href="css/passive_effects.css">
     <link rel="stylesheet" href="css/quests.css">
     <link rel="stylesheet" href="css/passive-tracker.css">
+    <link rel="stylesheet" href="css/changelog.css">
+    <link rel="stylesheet" href="css/classes/actuary.css">
+    <link rel="stylesheet" href="css/classes/bayesian.css">
+    <link rel="stylesheet" href="css/classes/markovian.css">
+    <link rel="stylesheet" href="css/classes/mathmagician.css">
+    <link rel="stylesheet" href="css/classes/outlier.css">
+    <link rel="stylesheet" href="css/classes/probabilist.css">
+    <link rel="stylesheet" href="css/classes/random-walker.css">
+    <link rel="stylesheet" href="css/classes/recursionist.css">
+    <link rel="stylesheet" href="css/classes/statistician.css">
+    <link rel="stylesheet" href="css/endgame/monsters.css">
 </head>
 <body>
 
     <!-- TITLE SCREEN -->
     <div id="screen-title" class="screen active">
-        <h1 class="title-glow">STOXELS<br><span class="title-version">v0.23 BETA</span></h1>
+        <h1 class="title-glow">STOXELS<br><span class="title-version">v0.24 BETA</span></h1>
         <p class="title-tag" data-t="tagline">STOCHASTICS &amp; STATISTICS NONOGRAMS</p>
+        <div></div>
+        <div></div>
         <div class="lang-switch">
             <button class="lang-btn active" data-lang="en">EN</button>
             <button class="lang-btn" data-lang="de">DE</button>
         </div>
+        <div></div>
+        <div></div>
 
         <div class="title-btns">
-            <button class="title-btn" id="btn-play" data-t="btn_play">▶ PLAY</button>
+            <button class="play-btn" id="btn-play" data-t="btn_play">▶ PLAY</button>
         </div>
+        <div></div>
+        <div></div>
 
         <div class="title-btns">
-            <button class="title-btn sec" id="btn-settings">⚙ SETTINGS</button>
+            <button class="title-btn sec" id="btn-settings" data-t="btn_settings">⚙ SETTINGS</button>
             <button class="title-btn sec" id="btn-how-to-play" data-t="btn_howtoplay">? HOW TO PLAY</button>
-            <button class="title-btn sec btn-danger btn-px" id="btn-reset">🗑 RESET</button>
+            <button class="title-btn sec" id="btn-changelog">📝 CHANGELOG</button>
         </div>
 
         <div class="title-btns">
@@ -45,6 +63,13 @@
             <button class="title-btn sec" id="btn-codes" data-t="btn_codes">🔑 MOODLE CODES</button>
             <button class="title-btn sec" id="btn-achievements" data-t="btn_achievements">🏆 ACHIEVEMENTS</button>
         </div>
+        <div></div>
+        <div></div>
+        <div class="title-btns">
+            <button class="title-btn sec btn-danger btn-px" id="btn-reset">🗑 RESET</button>
+        </div>
+        <div></div>
+        <div></div>
         <div class="title-deco" id="tdeco"></div>
     </div>
 
@@ -171,15 +196,15 @@
     <!-- SETTINGS MODAL -->
     <div id="settings-modal" class="modal-bg">
         <div class="modal-box settings-box">
-            <button class="modal-close" data-modal-close="settings-modal">✕ CLOSE</button>
-            <div class="modal-title">⚙ SETTINGS</div>
+            <button class="modal-close" data-modal-close="settings-modal" data-t="btn_settings_close">✕ CLOSE</button>
+            <div class="modal-title" data-t="settings_title">⚙ SETTINGS</div>
 
             <!-- AUDIO -->
             <div class="settings-section">
-                <div class="settings-section-title">🎵 AUDIO</div>
+                <div class="settings-section-title" data-t="settings_audio">🎵 AUDIO</div>
 
                 <div class="settings-row">
-                    <label class="settings-label">Background Music</label>
+                    <label class="settings-label" data-t="settings_bgm">Background Music</label>
                     <div class="settings-controls">
                         <button class="settings-toggle" id="stt-bgm">ON</button>
                         <input type="range" class="settings-slider" id="sld-bgm"
@@ -189,7 +214,7 @@
                 </div>
 
                 <div class="settings-row">
-                    <label class="settings-label">Sound Effects</label>
+                    <label class="settings-label" data-t="settings_sfx">Sound Effects</label>
                     <div class="settings-controls">
                         <button class="settings-toggle" id="stt-sfx">ON</button>
                         <input type="range" class="settings-slider" id="sld-sfx"
@@ -201,24 +226,34 @@
 
             <!-- CONTROLS -->
             <div class="settings-section">
-                <div class="settings-section-title">🖱 CONTROLS</div>
+                <div class="settings-section-title" data-t="settings_controls">🖱 CONTROLS</div>
 
                 <div class="settings-row">
                     <label class="settings-label">
-                        Axis Lock
-                        <span class="settings-hint">Lock drag to starting row or column</span>
+                        <span data-t="settings_axis_lock">Axis Lock</span>
+                        <span class="settings-hint" data-t="settings_axis_lock_hint">Lock drag to starting row or column</span>
                     </label>
                     <button class="settings-toggle" id="stt-axis">OFF</button>
                 </div>
                 <div class="settings-row">
                     <label class="settings-label">
-                        Question Mark
-                        <span class="settings-hint">Right Click a X - marked cell to add a yellow ?  </span>
+                        <span data-t="settings_qmark">Question Mark</span>
+                        <span class="settings-hint" data-t="settings_qmark_hint">Right Click a X - marked cell to add a yellow ?  </span>
                     </label>
                     <button class="settings-toggle" id="stt-qmark">ON</button>
                 </div>
             </div>
 
+        </div>
+    </div>
+
+    <!-- CHANGELOG MODAL-->
+    <div id="changelog-modal" class="modal-bg">
+        <div class="modal-box changelog-box">
+            <button class="modal-close" data-modal-close="changelog-modal">✕ CLOSE</button>
+            <div class="modal-title">📝 CHANGELOG (English Only)</div>
+
+            <div id="changelog-content" class="changelog-scroll-area"></div>
         </div>
     </div>
 
@@ -290,7 +325,6 @@
                     </div>
                     <button class="gtb-btn" id="btn-go-levels" data-t="btn_levels">◀ LEVELS</button>
                 </div>
-
             </div>
 
             <!-- PUZZLE AREA: timer sits above the grid, inside puzzle-scaler -->
@@ -307,8 +341,10 @@
                         </div>
                     </div>
                 </div>
+                <div id="eg-monster-wrapper" class="eg-hidden">
+                    <div id="eg-monster-panel"></div>
+                </div>
             </div>
-
             <div class="item-use-toast" id="item-toast"></div>
             <div id="inv-panel"></div>
         </div>
@@ -318,8 +354,10 @@
     <!-- HIGHSCORES SCREEN -->
     <div id="screen-hs" class="screen">
         <div class="ls-topbar">
-            <button class="back-btn" id="btn-hs-back">◀ <span data-t="btn_menu">MENU</span></button>
-            <span class="ls-title" data-t="hs_title">HIGHSCORES</span>
+            <div class="ls-topbar-row1">
+                <button class="back-btn" id="btn-hs-back">◀ <span data-t="btn_menu">MENU</span></button>
+                <span class="ls-title" data-t="hs_title">HIGHSCORES</span>
+            </div>
         </div>
         <div class="hs-body" id="hs-body"></div>
     </div>
@@ -328,8 +366,10 @@
     <!-- MOODLE CODES SCREEN -->
     <div id="screen-codes" class="screen">
         <div class="ls-topbar">
-            <button class="back-btn" id="btn-codes-back">◀ <span data-t="btn_menu">MENU</span></button>
-            <span class="ls-title" data-t="codes_title">MOODLE CODES</span>
+            <div class="ls-topbar-row1">
+                <button class="back-btn" id="btn-codes-back">◀ <span data-t="btn_menu">MENU</span></button>
+                <span class="ls-title" data-t="codes_title">MOODLE CODES</span>
+            </div>
         </div>
         <div class="ls-body" id="codes-body"></div>
     </div>
@@ -487,21 +527,17 @@
     <div class="modal-bg" id="convergence-modal">
         <div class="modal convergence-modal-box">
             <div class="convergence-modal-icon">🌿</div>
-            <div class="convergence-modal-title" data-en="Convergence!" data-de="Konvergenz!">Convergence!</div>
-            <div class="convergence-modal-desc"
-                 data-en="You've reached a milestone and earned 1 Convergence Point."
-                 data-de="Du hast einen Meilenstein erreicht und 1 Konvergenzpunkt erhalten.">
-                You've reached a milestone and earned 1 Convergence Point.
-            </div>
+            <div class="convergence-modal-title" data-t="convergence">Convergence!</div>
+            <div class="convergence-modal-desc" data-t="convergence_desc_1">You've reached a milestone and earned 1 Convergence Point.</div>
             <div class="convergence-modal-btns">
-                <button class="btn convergence-btn-tree" onclick="hideConvergenceModal(); hideOv(); showPassiveTree();">
-                    🌿 <span data-en="Open Probability Tree" data-de="Wahrscheinlichkeitsbaum öffnen">Open Probability Tree</span>
+                <button class="btn convergence-btn-tree" data-t="convergence_open_tree" onclick="hideConvergenceModal(); hideResultOverlays(); showPassiveTree();">
+                    🌿 Open Probability Tree
                 </button>
-                <button class="btn convergence-btn-next" onclick="hideConvergenceModal(); nextLvl();">
-                    ▶ <span data-en="Next Level" data-de="Nächstes Level">Next Level</span>
+                <button class="btn convergence-btn-next" data-t="convergence_next_level" onclick="hideConvergenceModal(); goToNextLevel();">
+                    ▶ <span>Next Level</span>
                 </button>
-                <button class="btn convergence-btn-levels" onclick="hideConvergenceModal(); goLevels();">
-                    ☰ <span data-en="Level Select" data-de="Levelauswahl">Level Select</span>
+                <button class="btn convergence-btn-levels" data-t="convergence_level_select" onclick="hideConvergenceModal(); goToLevelSelect();">
+                    ☰ <span>Level Select</span>
                 </button>
             </div>
         </div>
@@ -527,6 +563,12 @@
     </div>
 
 
+    <div id="pause-overlay">
+        <div id="pause-label" data-t="game_paused">PAUSED</div>
+        <div id="pause-hint" data-t="game_paused_hint">Press Esc to continue</div>
+    </div>
+
+
 
     <!-- SCRIPTS -->
     <script src="js/audio.js"></script>
@@ -544,6 +586,7 @@
     <script src="js/levels.js"></script>
     <script src="js/item-data.js"></script>
     <script src="js/items.js"></script>
+    <script src="js/cell_effects.js"></script>
     <script src="js/item_effects.js"></script>
     <script src="js/quiz-questions.js"></script>
     <script src="js/quiz.js"></script>
@@ -568,7 +611,6 @@
     <script src="js/tutorial.js"></script>
     <script src="js/mathgate-questions.js"></script>
     <script src="js/mathgate.js"></script>
-    <script src="js/class.js"></script>
     <script src="js/class-defs.js"></script>
     <script src="js/class-cooldown-state.js"></script>
     <script src="js/class-ui.js"></script>
@@ -583,7 +625,6 @@
     <script src="js/class-random-walker.js"></script>
     <script src="js/class-markovian.js"></script>
     <script src="js/class-bayesian.js"></script>
-    <script src="js/class-effects.js"></script>
     <script src="js/achievements.js"></script>
     <script src="js/achievements-data.js"></script>
     <script src="js/achievements-ui.js"></script>
@@ -591,10 +632,13 @@
     <script src="js/passive-tree-state-points.js"></script>
     <script src="js/passive-tree-ui.js"></script>
     <script src="js/passive-tree-viewport.js"></script>
-    <script src="js/passive-tree-new-nodes.js"></script>
+    <script src="js/passive-tree-special-nodes-logic.js"></script>
     <script src="js/passive-tree.js"></script>
     <script src="js/passive-tracker.js"></script>
+    <script src="js/passive-effects.js"></script>
     <script src="js/ui-events.js"></script>
+    <script src="js/changelog.js"></script>
+    <script src="js/endgame-monsters.js"></script>
     <script src="main.js"></script>
 </body>
 </html>

@@ -1,74 +1,34 @@
+//------------------------------------------------------------------------
+//-------------------QUIZ MODULE - quiz.js--------------------------------
+//------------------------------------------------------------------------
+// Handles all quiz logic: question selection, overlay rendering,
+// answer handling (MC + numeric input), reward/penalty resolution,
+// the Tutor passive skill, and quiz lifecycle (open / finish / skip / close).
+//------------------------------------------------------------------------
 
-let currentQuizQuestion = null; //current question object for the active quiz, set by showQuiz() and read by answerQuizInput()
 
+//------------------------------------------------------------------------
+//-------------------MODULE-LEVEL STATE-----------------------------------
+//------------------------------------------------------------------------
+
+// The active question object while the quiz overlay is open.
+// Set by showQuiz(), cleared by closeQuiz().
+let currentQuizQuestion = null;
+
+// Timer handle for the (currently disabled) auto-finish countdown.
 let _quizAutoFinishTimer = null;
 
 
-
-
-
-
-
 //------------------------------------------------------------------------
-// Function to draw a random quiz question from the pool of world-specific
-// quiz-questions (BONUS_QUIZ_POOLS) and math gate questions (MATH_GATE_POOLS)
+//-------------------PASSIVE TREE - CHANCE CALCULATIONS------------------
+//------------------------------------------------------------------------
+// These helpers compute additive stacking bonuses from the passive skill
+// tree and are called at the moment they are needed, so they always
+// reflect the player's current skills.
 //------------------------------------------------------------------------
 
-
-function getQuizQuestion(worldNum) {
-    const pool = [];
-
-    // World-specific MC questions
-    if (worldNum && BONUS_QUIZ_POOLS[worldNum]) {
-        BONUS_QUIZ_POOLS[worldNum].forEach(raw => pool.push({ _src: 'mc_world', raw }));
-    }
-
-    // World-specific input questions (from math gate pool)
-    if (worldNum && MATH_GATE_POOLS[worldNum]) {
-        MATH_GATE_POOLS[worldNum].forEach(raw => pool.push({ _src: 'input', raw }));
-    }
-
-    if (!pool.length) {
-        // Absolute fallback — should never happen
-        return { type: 'mc', q: '?', opts: [{ text: '?', isCorrect: true }] };
-    }
-
-    const entry = pool[Math.floor(Math.random() * pool.length)];
-
-    // ── Input question ────────────────────────────────────────────────────
-    if (entry._src === 'input') {
-        const raw = entry.raw;
-        return {
-            type: 'input',
-            q: (LANG === 'de' && raw.qDE) ? raw.qDE : raw.q,
-            answer: raw.answer,
-            tolerance: raw.tolerance ?? 0,
-            unit: raw.unit || '',
-            hintEn: raw.hintEn || '',
-            hintDE: raw.hintDE || '',
-        };
-    }
-
-    // ── Multiple-choice question ──────────────────────────────────────────
-    const raw = entry.raw;
-    const q = (LANG === 'de' && raw.qDE) ? raw.qDE : raw.q;
-    const opts = (LANG === 'de' && raw.optsDE) ? raw.optsDE : raw.opts;
-    const optsWithFlag = opts.map((o, i) => ({ text: o, isCorrect: i === raw.correct }));
-    shuffle(optsWithFlag);
-    return { type: 'mc', q, opts: optsWithFlag };
-}
-
-
-
-
-
-//------------------------------------------------------------------------
-//------------------RENDER QUIZ OVERLAY WITH QUIZ QUESTION----------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-
-// Returns the total chance of auto-removing a wrong answer (stacks additively).
+// Returns the total probability of auto-eliminating one wrong MC answer.
+// Skills stack additively.
 function _quizCalcEliminationChance() {
     let chance = 0;
     if (PT.hasSkill('predictive_intelligence')) chance += 0.10;
@@ -79,7 +39,8 @@ function _quizCalcEliminationChance() {
     return chance;
 }
 
-// Returns the total bonus item chance on a correct MC answer (stacks additively).
+// Returns the total probability of receiving a bonus item drop on a
+// correct MC answer (passive-tree roll, separate from the base reward).
 function _quizCalcMcBonusItemChance() {
     let chance = 0;
     if (PT.hasSkill('predictive_intelligence')) chance += 0.10;
@@ -90,326 +51,481 @@ function _quizCalcMcBonusItemChance() {
     return chance;
 }
 
+// Returns the total success probability for the Tutor item.
+// Base chance is 10 %; passive skills add on top.
+function _quizCalcTutorSuccessChance() {
+    let chance = 0.10;
+    if (PT.hasSkill('stochastics_tutor')) chance += 0.10;
+    if (PT.hasSkill('statistics_tutor')) chance += 0.10;
+    if (PT.hasSkill('maths_tutor')) chance += 0.10;
+    if (PT.hasSkill('professor_tutor')) chance += 0.20;
+    return chance;
+}
+
+// Returns the probability that using a Tutor item does NOT consume it.
+function _quizCalcTutorNoConsumeChance() {
+    let chance = 0;
+    if (PT.hasSkill('careful_study')) chance += 0.10;
+    if (PT.hasSkill('efficient_tutoring')) chance += 0.15;
+    if (PT.hasSkill('endless_instructions')) chance += 0.20;
+    if (PT.hasSkill('professor_tutor')) chance += 0.20;
+    return chance;
+}
 
 
+//------------------------------------------------------------------------
+//-------------------QUESTION POOL HELPERS--------------------------------
+//------------------------------------------------------------------------
 
+// Builds a flat pool from the world-specific MC pool (BONUS_QUIZ_POOLS)
+// and the math-gate input pool (MATH_GATE_POOLS) for the given world.
+// Returns an array of tagged entries: { _src: 'mc_world'|'input', raw }.
+function _quizBuildQuestionPool(worldNum) {
+    const pool = [];
+
+    if (worldNum && BONUS_QUIZ_POOLS[worldNum]) {
+        BONUS_QUIZ_POOLS[worldNum].forEach(raw => pool.push({ _src: 'mc_world', raw }));
+    }
+
+    if (worldNum && MATH_GATE_POOLS[worldNum]) {
+        MATH_GATE_POOLS[worldNum].forEach(raw => pool.push({ _src: 'input', raw }));
+    }
+
+    return pool;
+}
+
+// Converts a raw input-question entry into the normalised question object
+// used by the rest of the quiz system.
+function _quizBuildInputQuestion(raw) {
+    return {
+        type: 'input',
+        q: (LANG === 'de' && raw.qDE) ? raw.qDE : raw.q,
+        answer: raw.answer,
+        tolerance: raw.tolerance ?? 0,
+        unit: raw.unit || '',
+        hintEn: raw.hintEn || '',
+        hintDE: raw.hintDE || '',
+    };
+}
+
+// Converts a raw MC entry into the normalised question object.
+// Options are shuffled so the correct answer appears at a random position.
+function _quizBuildMcQuestion(raw) {
+    const q = (LANG === 'de' && raw.qDE) ? raw.qDE : raw.q;
+    const opts = (LANG === 'de' && raw.optsDE) ? raw.optsDE : raw.opts;
+
+    const optsWithFlag = opts.map((text, i) => ({ text, isCorrect: i === raw.correct }));
+    shuffle(optsWithFlag);
+
+    return { type: 'mc', q, opts: optsWithFlag };
+}
+
+
+//------------------------------------------------------------------------
+//-------------------QUESTION SELECTION-----------------------------------
+//------------------------------------------------------------------------
+
+// Draws a random question for the given world number.
+// Pulls from both the MC bonus pool and the numeric-input math-gate pool,
+// then normalises the result into a typed question object.
+function getQuizQuestion(worldNum) {
+    const pool = _quizBuildQuestionPool(worldNum);
+
+    if (!pool.length) {
+        // Absolute fallback — should never happen if pools are set up correctly.
+        return { type: 'mc', q: '?', opts: [{ text: '?', isCorrect: true }] };
+    }
+
+    const entry = pool[Math.floor(Math.random() * pool.length)];
+
+    return (entry._src === 'input')
+        ? _quizBuildInputQuestion(entry.raw)
+        : _quizBuildMcQuestion(entry.raw);
+}
+
+
+//------------------------------------------------------------------------
+//-------------------OVERLAY DOM HELPERS----------------------------------
+//------------------------------------------------------------------------
+// Small focused helpers that each touch exactly one part of the overlay,
+// making showQuiz() easy to read at a glance.
+//------------------------------------------------------------------------
+
+// Resets shared overlay elements to their default "clean slate" state
+// before populating a new question.
+function _quizResetOverlay() {
+    document.getElementById('quiz-result').textContent = '';
+    document.getElementById('quiz-continue').style.display = 'none';
+    document.getElementById('btn-skip-quiz').style.display = 'block';
+    document.getElementById('quiz-opts').innerHTML = '';
+}
+
+// Sets up the numeric-input row for an input-type question.
+function _quizShowInputRow(q) {
+    const inputRow = document.getElementById('quiz-input-row');
+    const inputEl = document.getElementById('quiz-input');
+    const unitEl = document.getElementById('quiz-input-unit');
+    const hintBox = document.getElementById('quiz-input-hint');
+    const submitBtn = document.getElementById('quiz-input-submit');
+
+    inputRow.style.display = 'flex';
+    inputEl.value = '';
+    inputEl.disabled = false;
+
+    unitEl.textContent = q.unit ? t(q.unit.toLowerCase()) : '';
+    unitEl.style.display = q.unit ? 'inline' : 'none';
+
+    hintBox.style.display = 'none';
+    hintBox.textContent = '';
+
+    // Allow submitting with the Enter key
+    inputEl.onkeydown = e => { if (e.key === 'Enter') answerQuizInput(); };
+
+    submitBtn.style.display = 'inline-block';
+    submitBtn.disabled = false;
+    submitBtn.onclick = answerQuizInput;
+}
+
+// Hides the numeric-input row (used when rendering an MC question).
+function _quizHideInputRow() {
+    const inputRow = document.getElementById('quiz-input-row');
+    const hintBox = document.getElementById('quiz-input-hint');
+
+    if (inputRow) inputRow.style.display = 'none';
+
+    hintBox.style.display = 'none';
+    hintBox.textContent = '';
+}
+
+// Builds the MC option buttons and appends them to the options container.
+function _quizRenderMcOptions(q) {
+    const optsEl = document.getElementById('quiz-opts');
+
+    q.opts.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-opt';
+        btn.textContent = opt.text;
+        if (opt.isCorrect) btn.dataset.isCorrect = '1';
+        btn.onclick = () => answerQuiz(opt.isCorrect, optsEl, btn);
+        optsEl.appendChild(btn);
+    });
+}
+
+// Passive-tree: tries to visually strike through one random wrong answer.
+// Called after the MC buttons have been rendered.
+function _quizTryEliminateWrongAnswer() {
+    const elimChance = _quizCalcEliminationChance();
+    if (elimChance <= 0 || Math.random() >= elimChance) return;
+
+    const optsEl = document.getElementById('quiz-opts');
+    const wrongBtns = Array.from(optsEl.children).filter(b => b.dataset.isCorrect !== '1');
+    if (!wrongBtns.length) return;
+
+    const target = wrongBtns[Math.floor(Math.random() * wrongBtns.length)];
+    target.disabled = true;
+    target.style.opacity = '0.35';
+    target.style.textDecoration = 'line-through';
+    target.onclick = null;
+
+    questStat_mcWrongAnswerEliminated();
+}
+
+
+//------------------------------------------------------------------------
+//-------------------SHOW QUIZ (MAIN ENTRY POINT)-------------------------
+//------------------------------------------------------------------------
+
+// Opens the quiz overlay for the given world, drawing a random question
+// and setting up the correct input mode (MC or numeric input).
+// Called externally when the player triggers a quiz checkpoint.
 function showQuiz(worldNum) {
     const q = getQuizQuestion(worldNum);
     currentQuizQuestion = q;
 
     document.getElementById('quiz-q').textContent = q.q;
-    document.getElementById('quiz-result').textContent = '';
-    document.getElementById('quiz-continue').style.display = 'none';
-    document.getElementById('btn-skip-quiz').style.display = 'block';
 
-    const optsEl = document.getElementById('quiz-opts');
-    optsEl.innerHTML = '';
-
-    // Hide/show the input row depending on question type
-    const inputRow = document.getElementById('quiz-input-row');
-    const inputEl = document.getElementById('quiz-input');
-    const unitEl = document.getElementById('quiz-input-unit');
-    const hintBox = document.getElementById('quiz-input-hint');
+    _quizResetOverlay();
 
     if (q.type === 'input') {
-        // ── Numeric-input question ────────────────────────────────────────
-        inputRow.style.display = 'flex';
-        inputEl.value = '';
-        inputEl.disabled = false;
-        unitEl.textContent = q.unit || '';
-        unitEl.style.display = q.unit ? 'inline' : 'none';
-        hintBox.style.display = 'none';
-        hintBox.textContent = '';
-
-        // Submit on Enter key
-        inputEl.onkeydown = e => { if (e.key === 'Enter') answerQuizInput(); };
-        const submitBtn = document.getElementById('quiz-input-submit');
-        submitBtn.style.display = 'inline-block';
-        submitBtn.disabled = false;
-        submitBtn.onclick = answerQuizInput;
-
+        _quizShowInputRow(q);
+        // Delay focus slightly so the overlay transition has time to complete
+        setTimeout(() => {
+            const inputEl = document.getElementById('quiz-input');
+            if (inputEl) inputEl.focus();
+        }, 120);
     } else {
-        // ── Multiple-choice question ──────────────────────────────────────
-        if (inputRow) inputRow.style.display = 'none';
-        hintBox.style.display = 'none';
-        hintBox.textContent = '';
-
-        q.opts.forEach(opt => {
-            const btn = document.createElement('button');
-            btn.className = 'quiz-opt';
-            btn.textContent = opt.text;
-            if (opt.isCorrect) btn.dataset.isCorrect = '1';
-            btn.onclick = () => answerQuiz(opt.isCorrect, optsEl, btn);
-            optsEl.appendChild(btn);
-        });
-
-        // Passive tree: chance to auto-remove one wrong answer
-        const elimChance = _quizCalcEliminationChance();
-        if (elimChance > 0 && Math.random() < elimChance) {
-            questStat_mcWrongAnswerEliminated();
-            const wrongBtns = Array.from(optsEl.children).filter(b => b.dataset.isCorrect !== '1');
-            if (wrongBtns.length > 0) {
-                const toRemove = wrongBtns[Math.floor(Math.random() * wrongBtns.length)];
-                toRemove.disabled = true;
-                toRemove.style.opacity = '0.35';
-                toRemove.style.textDecoration = 'line-through';
-                toRemove.onclick = null;
-            }
-        }
+        _quizHideInputRow();
+        _quizRenderMcOptions(q);
+        _quizTryEliminateWrongAnswer();
     }
 
     document.getElementById('quiz-overlay').classList.add('show');
-    if (q.type === 'input') setTimeout(() => inputEl && inputEl.focus(), 120);
-
     _quizRefreshTutorButton();
 }
 
 
-
-
 //------------------------------------------------------------------------
-//-----------QUIZ ANSWERING FOR MC AND INPUT QUESTIONS--------------------
+//-------------------ANSWER HANDLING--------------------------------------
 //------------------------------------------------------------------------
+// Two separate entry points: one for MC clicks, one for input submission.
+// Both resolve to _resolveQuizAnswer() once correctness is determined.
 //------------------------------------------------------------------------
 
-// Multiple Choice Quiz Questions
-
+// Locks all MC buttons after the player's click, highlights the correct
+// answer (and the wrong click in red if applicable), then resolves.
+// Called directly from each MC option button's onclick handler.
 function answerQuiz(correct, optsEl, clickedBtn) {
-    // Lock all buttons immediately to prevent second clicks
+    // Lock all buttons immediately to prevent double-clicks
     Array.from(optsEl.children).forEach(btn => btn.onclick = null);
 
-    // Always reveal the correct answer; also mark the wrong click if applicable
+    // Reveal correct answer; also flag the wrong button the player clicked
     Array.from(optsEl.children).forEach(btn => {
         if (btn.dataset.isCorrect === '1') {
-            btn.classList.add('correct'); // green
+            btn.classList.add('correct');
         } else if (btn === clickedBtn && !correct) {
-            btn.classList.add('wrong');   // red — only the button the player clicked
+            btn.classList.add('wrong');
         }
     });
 
     _resolveQuizAnswer(correct);
 }
 
-// Numeric Input Quiz Questions
-
+// Reads and validates the numeric input, shows a hint on a wrong answer,
+// then resolves. Called from the submit button and the Enter-key handler.
 function answerQuizInput() {
     if (!currentQuizQuestion || currentQuizQuestion.type !== 'input') return;
 
     const inputEl = document.getElementById('quiz-input');
-    const raw = (inputEl.value || '').trim().replace(',', '.');
-    const entered = parseFloat(raw);
     const resEl = document.getElementById('quiz-result');
+
+    // Normalise decimal separator so both '.' and ',' are accepted
+    const sanitised = (inputEl.value || '').trim().replace(',', '.');
+    const entered = parseFloat(sanitised);
 
     if (isNaN(entered)) {
         resEl.className = 'quiz-result bad';
-        resEl.textContent = LANG === 'de' ? '⚠ Bitte eine Zahl eingeben.' : '⚠ Please enter a number.';
+        resEl.textContent = LANG === 'de'
+            ? '⚠ Bitte eine Zahl eingeben.'
+            : '⚠ Please enter a number.';
         return;
     }
 
+    // Lock the input controls immediately
     inputEl.disabled = true;
     document.getElementById('quiz-input-submit').disabled = true;
 
     const correct = Math.abs(entered - currentQuizQuestion.answer) <= currentQuizQuestion.tolerance;
 
-    // Show hint if wrong
     if (!correct) {
-        const hint = (LANG === 'de' && currentQuizQuestion.hintDE)
-            ? currentQuizQuestion.hintDE
-            : currentQuizQuestion.hintEn;
-        if (hint) {
-            const hintBox = document.getElementById('quiz-input-hint');
-            hintBox.textContent = '💡 ' + hint;
-            hintBox.style.display = 'block';
-        }
+        _quizShowInputHint();
     }
 
     _resolveQuizAnswer(correct);
 }
 
+// Shows the localised hint text below the input field after a wrong answer.
+function _quizShowInputHint() {
+    const hint = (LANG === 'de' && currentQuizQuestion.hintDE)
+        ? currentQuizQuestion.hintDE
+        : currentQuizQuestion.hintEn;
+
+    if (!hint) return;
+
+    const hintBox = document.getElementById('quiz-input-hint');
+    hintBox.textContent = '💡 ' + hint;
+    hintBox.style.display = 'block';
+}
 
 
 //------------------------------------------------------------------------
-//-------REWARD & PENALTY LOGIC FOR QUIZ ANSWERS--------------------------
+//-------------------REWARD HELPERS---------------------------------------
 //------------------------------------------------------------------------
+// Individual helpers for each distinct reward path so _resolveQuizAnswer
+// stays readable. Each helper handles exactly one reward scenario.
 //------------------------------------------------------------------------
 
-// Rolls the passive-tree bonus item chance after a correct MC answer.
+// Creates a styled item-reward element and appends it to the reward zone.
+// Used by both the "first correct" and "already claimed" reward paths.
+function _quizAppendItemRewardElement(def, defId, labelHtml) {
+    const irz = document.getElementById('item-reward-zone');
+    if (!irz) return;
+
+    const rc = rarityColors(def.rarity);
+    const rewardEl = document.createElement('div');
+    rewardEl.className = 'item-reward';
+    rewardEl.dataset.rewardDefid = defId;
+    rewardEl.style.cssText = `border-color:${rc.border};color:${rc.color};margin-top:4px;cursor:default;`;
+    rewardEl.innerHTML = labelHtml;
+
+    irz.appendChild(rewardEl);
+    attachItemTooltip(rewardEl, defId);
+}
+
+// Adds an item to STATE.inventory and triggers a UI rebuild.
+function _quizAddItemToInventory(defId) {
+    STATE.inventory.push({
+        uid: `item_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+        defId,
+    });
+    save();
+    buildInventoryPanel();
+}
+
+// Handles the "already claimed" correct-answer path:
+// 15 % lucky-drop chance for a bonus item, no score awarded.
+function _quizHandleAlreadyClaimedReward(resEl) {
+    resEl.className = 'quiz-result ok';
+    resEl.textContent = t('quiz_correct_claimed');
+
+    if (curMods.ironman || Math.random() >= 0.15) return;
+
+    const defId = pickRandomItem();
+    if (!defId) return;
+    const def = ITEM_DEFS[defId];
+    if (!def) return;
+
+    _quizAddItemToInventory(defId);
+    _quizAppendItemRewardElement(
+        def, defId,
+        `${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong>`
+    );
+}
+
+// Handles the "first correct answer" path:
+// awards +50 score, marks the bonus as claimed, and tries to give one item.
+// Returns the display name of the rewarded item (or null if none given).
+function _quizHandleFirstCorrectReward(resEl) {
+    STATE.totalScore += 50;
+    document.getElementById('sc-disp').textContent = STATE.totalScore;
+
+    // Mark bonus as claimed regardless of Ironman mode or item availability
+    STATE.bonusDone.push(cur.gIdx);
+
+    let rewardItemName = null;
+
+    if (!curMods.ironman) {
+        const defId = pickRandomItem();
+        if (defId) {
+            const def = ITEM_DEFS[defId];
+            if (def) {
+                rewardItemName = `${def.icon} ${itemName(def)}`;
+                _quizAddItemToInventory(defId);
+                _quizAppendItemRewardElement(
+                    def, defId,
+                    `${t('ov_quiz_reward')}: ${def.icon} <strong>${itemName(def)}</strong>`
+                );
+            }
+        }
+    }
+
+    // Show result message, including the item name if one was given
+    resEl.className = 'quiz-result ok';
+    resEl.textContent = rewardItemName
+        ? (LANG === 'de'
+            ? `✓ RICHTIG! +50 Punkte & ${rewardItemName} erhalten!`
+            : `✓ CORRECT! +50 Score & ${rewardItemName} earned!`)
+        : t('quiz_correct');
+
+    save();
+}
+
+// Passive-tree bonus roll: independent item drop chance after any correct
+// MC answer, layered on top of the base reward. Skipped in Ironman mode.
 function _quizRollMcBonusItemReward() {
     if (curMods && curMods.ironman) return;
 
     const chance = _quizCalcMcBonusItemChance();
-    if (chance <= 0) return;
+    if (chance <= 0 || Math.random() >= chance) return;
 
-    if (Math.random() < chance) {
-        const defId = pickRandomItem();
-        if (!defId) return;
-        const def = ITEM_DEFS[defId];
-        if (!def) return;
+    const defId = pickRandomItem();
+    if (!defId) return;
+    const def = ITEM_DEFS[defId];
+    if (!def) return;
 
-        STATE.inventory.push({
-            uid: `item_${Date.now()}_${Math.random().toString(36).slice(2)}`,
-            defId,
-        });
-        save();
-        buildInventoryPanel();
+    _quizAddItemToInventory(defId);
 
-        const name = LANG === 'de' ? def.nameDE : def.nameEn;
-        const irz = document.getElementById('item-reward-zone');
-        const rc = rarityColors(def.rarity);
-        if (irz) {
-            irz.innerHTML += `<div class="item-reward" style="border-color:${rc.border};color:${rc.color};margin-top:4px;">
-                🎁 ${def.icon} <strong>${name}</strong>
-            </div>`;
-        }
+    // For this roll we write directly to innerHTML (legacy zone approach)
+    const irz = document.getElementById('item-reward-zone');
+    const rc = rarityColors(def.rarity);
+    if (irz) {
+        irz.innerHTML += `<div class="item-reward" style="border-color:${rc.border};color:${rc.color};margin-top:4px;">
+            🎁 ${def.icon} <strong>${LANG === 'de' ? def.nameDE : def.nameEn}</strong>
+        </div>`;
     }
 }
 
 
+//------------------------------------------------------------------------
+//-------------------ANSWER RESOLUTION------------------------------------
+//------------------------------------------------------------------------
 
-
-
+// Central resolver called by all answer paths (MC, input, and tutor).
+// Delegates reward/penalty logic to the helpers above, then updates
+// the overlay controls to reflect the answered state.
 function _resolveQuizAnswer(correct) {
-
-
     quizAnsweredCorrectly = correct;
+
     const resEl = document.getElementById('quiz-result');
     const quizAlreadyClaimed = STATE.bonusDone.includes(cur.gIdx);
 
     if (correct) {
         Audio_Manager.playSFX('quizCorrect');
-        trackAchStat('questionsCorrect');                             
+        trackAchStat('questionsCorrect');
         updateQuestStats('questionCorrect', { source: 'quiz' });
+
         if (quizAlreadyClaimed) {
-            resEl.className = 'quiz-result ok';
-            resEl.textContent = t('quiz_correct_claimed');
-            if (!curMods.ironman && Math.random() < 0.15) {
-                const defId = pickRandomItem();
-                if (defId) {
-                    const def = ITEM_DEFS[defId];
-                    if (def) {
-                        STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
-                        save();
-                        const irz = document.getElementById('item-reward-zone');
-                        const rc = rarityColors(def.rarity);
-                        const rewardEl = document.createElement('div');
-                        rewardEl.className = 'item-reward';
-                        rewardEl.dataset.rewardDefid = defId;
-                        rewardEl.style.cssText = `border-color:${rc.border};color:${rc.color};margin-top:4px;cursor:default;`;
-                        rewardEl.innerHTML = `${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong>`;
-                        irz.appendChild(rewardEl);
-                        attachItemTooltip(rewardEl, defId);
-                    }
-                }
-            }
+            _quizHandleAlreadyClaimedReward(resEl);
         } else {
-            STATE.totalScore += 50;
-            document.getElementById('sc-disp').textContent = STATE.totalScore;
-            // Always mark the bonus as claimed on a correct first-time answer,
-            // regardless of Ironman mode or whether an item reward is available.
-            STATE.bonusDone.push(cur.gIdx);
-
-            // Pick the item first so we can name it in the result message
-            let rewardItemName = null;
-            if (!curMods.ironman) {
-                const defId = pickRandomItem();
-                if (defId) {
-                    const def = ITEM_DEFS[defId];
-                    if (def) {
-                        rewardItemName = `${def.icon} ${itemName(def)}`;
-                        STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
-                        const irz = document.getElementById('item-reward-zone');
-                        const rc = rarityColors(def.rarity);
-                        const rewardEl = document.createElement('div');
-                        rewardEl.className = 'item-reward';
-                        rewardEl.dataset.rewardDefid = defId;
-                        rewardEl.style.cssText = `border-color:${rc.border};color:${rc.color};margin-top:4px;cursor:default;`;
-                        rewardEl.innerHTML = `${t('ov_quiz_reward')}: ${def.icon} <strong>${itemName(def)}</strong>`;
-                        irz.appendChild(rewardEl);
-                        attachItemTooltip(rewardEl, defId);
-                    }
-                }
-            }
-
-            // Show result text with the actual item name if we have one
-            resEl.className = 'quiz-result ok';
-            if (rewardItemName) {
-                resEl.textContent = LANG === 'de'
-                    ? `✓ RICHTIG! +50 Punkte & ${rewardItemName} erhalten!`
-                    : `✓ CORRECT! +50 Score & ${rewardItemName} earned!`;
-            } else {
-                resEl.textContent = t('quiz_correct');
-            }
-
-            save();
+            _quizHandleFirstCorrectReward(resEl);
         }
+
+        // Always roll the passive-tree bonus on top of the base reward
         _quizRollMcBonusItemReward();
+
     } else {
         resEl.className = 'quiz-result bad';
         resEl.textContent = t('quiz_wrong');
         Audio_Manager.playSFX('quizWrong');
     }
 
+    // Show the Continue button; hide Skip since the question is now answered
     document.getElementById('quiz-continue').style.display = 'block';
-
-    // Hide the skip button — question already answered
     document.getElementById('btn-skip-quiz').style.display = 'none';
 
-    // Auto-finish after 5 seconds
-    _quizAutoFinishTimer = setTimeout(() => finishQuiz(), 5000);
+    // Auto-finish timer (currently disabled; uncomment to re-enable)
+    // _quizAutoFinishTimer = setTimeout(() => finishQuiz(), 5000);
 }
 
 
-
-
-
-
 //------------------------------------------------------------------------
-//-----------------FINISH QUIZ--------------------------------------------
-//------------------------------------------------------------------------
+//-------------------QUIZ LIFECYCLE---------------------------------------
 //------------------------------------------------------------------------
 
-// either called from the "CONTINUE" button or auto-triggered after 3 seconds answering a question
-
+// Closes the overlay, runs post-quiz world checks, saves, and shows
+// the win overlay. Called from the "CONTINUE" button and (if re-enabled)
+// the auto-finish timer.
 function finishQuiz() {
     closeQuiz();
-    checkWorldCodes(); // check if the 50 points from this quiz just unlocked a world code
-    checkWorldCompletion(); // check if this quiz just completed the world (e.g. for the achievement)
+    checkWorldCodes();      // check if the +50 pts just unlocked a world code
+    checkWorldCompletion(); // check if this quiz just completed the world
     save();
     setTimeout(() => document.getElementById('ov-win').classList.add('show'), 300);
 }
 
-
-
-
-
-//------------------------------------------------------------------------
-//---------------------------SKIP QUIZ------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-
 // Called when the player clicks "SKIP" or presses Escape.
-// No points or items are awarded. Shows the win overlay immediately.
+// No points or items are awarded; shows the win overlay immediately.
 function skipQuiz() {
     closeQuiz();
     setTimeout(() => document.getElementById('ov-win').classList.add('show'), 300);
 }
 
-
-
-
-//------------------------------------------------------------------------
-//--------------------------CLOSE QUIZ------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-// Removes the 'show' class from the quiz overlay, hiding it.
-//   Called by finishQuiz(), skipQuiz(), and the Escape handler in main.js.
+// Hides the quiz overlay and clears all active state.
+// Called by finishQuiz(), skipQuiz(), and the Escape handler in main.js.
 function closeQuiz() {
     document.getElementById('quiz-overlay').classList.remove('show');
     currentQuizQuestion = null;
 
-    //cancel the time out if player has manually clicked on continue
+    // Cancel the auto-finish timer if the player clicked Continue manually
     if (_quizAutoFinishTimer) {
         clearTimeout(_quizAutoFinishTimer);
         _quizAutoFinishTimer = null;
@@ -417,194 +533,132 @@ function closeQuiz() {
 }
 
 
-
-
-
-
 //------------------------------------------------------------------------
-//------------------TUTOR PASSIVE SKILL-----------------------------------
+//-------------------TUTOR PASSIVE SKILL----------------------------------
 //------------------------------------------------------------------------
+// The Tutor item (multiple tiers) lets the player spend an inventory item
+// for a chance to have the question answered automatically.
+// The passive tree improves the success rate and may prevent item consumption.
 //------------------------------------------------------------------------
 
+// Returns the first available Tutor item from inventory, checking all
+// tiers in priority order (lowest tier first).
+function _quizGetTutorItem() {
+    const TUTOR_TIER_ORDER = [
+        'mistakeEraser',
+        'mistakeEraser4',
+        'mistakeEraser6',
+        'mistakeEraserAll',
+    ];
+    return TUTOR_TIER_ORDER
+        .flatMap(id => STATE.inventory.filter(i => i.defId === id))
+        .find(Boolean) ?? null;
+}
 
-
-
-
-function _quizRefreshTutorButton() {
-    const btn = document.getElementById('quiz-tutor-btn');
-    if (!btn) return;
-
-    const hasTutorSkill = PT.hasSkill('tutor_enable');
-
-    // Count total available tutors across all tiers in the inventory
-    const tutorCount = STATE.inventory.filter(i =>
+// Counts all Tutor items across every tier in the player's inventory.
+function _quizCountTutorItems() {
+    return STATE.inventory.filter(i =>
         i.defId === 'mistakeEraser' ||
         i.defId === 'mistakeEraser4' ||
         i.defId === 'mistakeEraser6' ||
         i.defId === 'mistakeEraserAll'
     ).length;
+}
 
-    // Only show if the player has the skill and at least 1 tutor item
+// Removes the given Tutor item from inventory and persists the change.
+function _quizConsumeTutorItem(tutorItem) {
+    STATE.inventory = STATE.inventory.filter(i => i.uid !== tutorItem.uid);
+    save();
+    buildInventoryPanel();
+}
+
+// Locks the current MC question's buttons and highlights the correct answer.
+// Called when the Tutor succeeds on an MC question.
+function _quizTutorRevealMcAnswer() {
+    const optsEl = document.getElementById('quiz-opts');
+    Array.from(optsEl.children).forEach(btn => {
+        btn.onclick = null;
+        if (btn.dataset.isCorrect === '1') btn.classList.add('correct');
+    });
+    questStat_tutorAnsweredCorrect();
+}
+
+// Locks the numeric-input controls.
+// Called when the Tutor succeeds on an input question.
+function _quizTutorLockInputQuestion() {
+    document.getElementById('quiz-input').disabled = true;
+    document.getElementById('quiz-input-submit').disabled = true;
+}
+
+// Handles the Tutor-success path: plays audio, shows feedback, reveals
+// the answer in the appropriate way, and resolves as correct.
+function _quizHandleTutorSuccess(resEl) {
+    resEl.textContent = LANG === 'de' ? '🎓 Tutor hat die Frage gelöst!' : '🎓 Tutor solved it!';
+    resEl.className = 'quiz-result ok';
+    Audio_Manager.playSFX('tutorSuccess');
+
+    if (currentQuizQuestion.type === 'mc') {
+        _quizTutorRevealMcAnswer();
+    } else {
+        _quizTutorLockInputQuestion();
+    }
+
+    _resolveQuizAnswer(true);
+}
+
+// Handles the Tutor-fail path: plays audio and shows feedback.
+// The question remains active so the player can still answer manually.
+function _quizHandleTutorFail(resEl) {
+    resEl.textContent = LANG === 'de'
+        ? '🎓 Tutor konnte die Frage nicht lösen…'
+        : '🎓 Tutor couldn\'t solve it…';
+    resEl.className = 'quiz-result bad';
+    Audio_Manager.playSFX('tutorFail');
+}
+
+// Refreshes the Tutor button visibility and label.
+// Called every time the quiz overlay opens.
+function _quizRefreshTutorButton() {
+    const btn = document.getElementById('quiz-tutor-btn');
+    if (!btn) return;
+
+    const hasTutorSkill = PT.hasSkill('tutor_enable');
+    const tutorCount = _quizCountTutorItems();
+
     if (hasTutorSkill && tutorCount > 0) {
         btn.style.display = 'inline-block';
-
-        // Dynamic localized text showing the item count
-        if (LANG === 'de') {
-            btn.textContent = `🎓 Tutor um Hilfe bitten (${tutorCount})`;
-        } else {
-            btn.textContent = `🎓 Ask Tutor for Help (${tutorCount})`;
-        }
+        btn.textContent = LANG === 'de'
+            ? `🎓 Tutor um Hilfe bitten (${tutorCount})`
+            : `🎓 Ask Tutor for Help (${tutorCount})`;
     } else {
         btn.style.display = 'none';
     }
 }
 
+// Entry point called when the player clicks the Tutor button.
+// Selects and (maybe) consumes an item, rolls for success, then
+// either resolves the question or leaves it active for manual answering.
 function quizUseTutor() {
-    const TUTOR_TIER_ORDER = ['mistakeEraser', 'mistakeEraser4', 'mistakeEraser6', 'mistakeEraserAll'];
-    const tutorItem = TUTOR_TIER_ORDER
-        .flatMap(id => STATE.inventory.filter(i => i.defId === id))
-        .find(Boolean);
+    const tutorItem = _quizGetTutorItem();
     if (!tutorItem) return;
 
-    // Build success chance from passive tree
-    let chance = 0.10;
-    if (PT.hasSkill('stochastics_tutor')) chance += 0.10;
-    if (PT.hasSkill('statistics_tutor')) chance += 0.10;
-    if (PT.hasSkill('maths_tutor')) chance += 0.10;
-    if (PT.hasSkill('professor_tutor')) chance += 0.20;
+    const successChance = _quizCalcTutorSuccessChance();
+    const noConsumeChance = _quizCalcTutorNoConsumeChance();
 
-    // Build no-consume chance
-    let noConsumeChance = 0;
-    if (PT.hasSkill('careful_study')) noConsumeChance += 0.10;
-    if (PT.hasSkill('efficient_tutoring')) noConsumeChance += 0.15;
-    if (PT.hasSkill('endless_instructions')) noConsumeChance += 0.20;
-    if (PT.hasSkill('professor_tutor')) noConsumeChance += 0.20;
-
-    const consumed = Math.random() >= noConsumeChance;
-    if (consumed) {
-        STATE.inventory = STATE.inventory.filter(i => i.uid !== tutorItem.uid);
-        save();
-        buildInventoryPanel();
+    // Consume the item unless the no-consume roll saves it
+    const isConsumed = Math.random() >= noConsumeChance;
+    if (isConsumed) {
+        _quizConsumeTutorItem(tutorItem);
     }
 
-    // Hide button regardless of outcome
+    // Always hide the button after activation (win or fail)
     document.getElementById('quiz-tutor-btn').style.display = 'none';
 
     const resEl = document.getElementById('quiz-result');
 
-    if (Math.random() < chance) {
-        // ── Tutor succeeds ────────────────────────────────────────────────
-        resEl.textContent = LANG === 'de' ? '🎓 Tutor hat die Frage gelöst!' : '🎓 Tutor solved it!';
-        Audio_Manager.playSFX('tutorSuccess'); 
-        resEl.className = 'quiz-result ok';
-
-        if (currentQuizQuestion.type === 'mc') {
-            // Lock all buttons and highlight the correct one
-            const optsEl = document.getElementById('quiz-opts');
-            Array.from(optsEl.children).forEach(btn => {
-                btn.onclick = null;
-                if (btn.dataset.isCorrect === '1') btn.classList.add('correct');
-            });
-            questStat_tutorAnsweredCorrect();
-        } else {
-            // Input question — disable the input and submit
-            document.getElementById('quiz-input').disabled = true;
-            document.getElementById('quiz-input-submit').disabled = true;
-        }
-
-        _resolveQuizAnswer(true);
-
+    if (Math.random() < successChance) {
+        _quizHandleTutorSuccess(resEl);
     } else {
-        // ── Tutor fails ───────────────────────────────────────────────────
-        resEl.textContent = LANG === 'de' ? '🎓 Tutor konnte die Frage nicht lösen…' : '🎓 Tutor couldn\'t solve it…';
-        Audio_Manager.playSFX('tutorFail');
-        resEl.className = 'quiz-result bad';
-        // Leave the question active so the player can still answer
+        _quizHandleTutorFail(resEl);
     }
 }
-
-
-
-
-
-
-
-
-
-
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

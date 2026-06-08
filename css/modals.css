@@ -1,10 +1,30 @@
-/*
+﻿/*
     ------------------------------------------------------------------------
-    ------------------------------MODAL-------------------------------------
-    -----dimmed layers that block out the main screen for popup windows-----
+    modals.css
+    Styles for all modal windows and popup dialogs.
+
+    Sections:
+        1. Shared Base Styles    — backdrop, box shell, close button, title, body sections
+        2. Math Gate Modal       — question display, answer input row, feedback, hint, buttons, footer
+        3. Moodle Code Modal     — unlock code display and glow animation
+        4. Danger / Reset Modal  — destructive-action confirmation dialogs
     ------------------------------------------------------------------------
 */
 
+
+
+/*
+    ------------------------------------------------------------------------
+    --------------------- 1. SHARED BASE STYLES ----------------------------
+    ---- Used by every modal. Defines the backdrop and content box shell. --
+    ------------------------------------------------------------------------
+*/
+
+/*
+    --- 1a. BACKDROP ---
+    Full-screen dimmed overlay. Hidden by default.
+    Add .show to display it as a flex container.
+*/
 .modal-bg {
     display: none;
     position: fixed;
@@ -21,8 +41,11 @@
         display: flex;
     }
 
-
-
+/*
+    --- 1b. CONTENT BOX ---
+    The centered white-panel container that sits on top of the backdrop.
+    Individual modals override max-width and border-left-color as needed.
+*/
 .modal-box {
     background: var(--panel);
     border: 1px solid var(--border);
@@ -35,9 +58,10 @@
     overflow-y: auto;
 }
 
-
-
-
+/*
+    --- 1c. CLOSE BUTTON ---
+    Absolute-positioned top-right corner dismiss button.
+*/
 .modal-close {
     position: absolute;
     top: 12px;
@@ -56,6 +80,10 @@
         color: var(--accent);
     }
 
+/*
+    --- 1d. TITLE ---
+    Top headline of any modal. Always accent-colored with wide letter-spacing.
+*/
 .modal-title {
     font-family: var(--PX);
     font-size: 12px;
@@ -64,6 +92,11 @@
     margin-bottom: 20px;
 }
 
+/*
+    --- 1e. CONTENT SECTIONS ---
+    Reusable content blocks inside a modal, each with a subheading and body paragraph.
+    h3 acts as a section label; p holds the main explanation text.
+*/
 .modal-section {
     margin-bottom: 16px;
 }
@@ -82,52 +115,75 @@
         line-height: 1.8;
     }
 
+        /* Highlighted/keyword text within a section paragraph */
         .modal-section p strong {
             color: var(--accent2);
         }
 
-
-
+/*
+    --- 1f. ACTION BUTTON ROW ---
+    Shared flex row used at the bottom of confirmation dialogs (e.g. danger modals).
+    Buttons inside here are defined per-modal section below.
+*/
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
 
 
 
 /*
     ------------------------------------------------------------------------
-    ----------------------MATH GATE-----------------------------------------
-    ------------------------------------------------------------------------
+    --------------------- 2. MATH GATE MODAL -------------------------------
+    ---- Presents a probability/math question the player must answer --------
+    ---- to unlock the next world. Purple accent theme. --------------------
     ------------------------------------------------------------------------
 */
 
-/* Override modal-box width for the gate modal */
+/*
+    --- 2a. BOX OVERRIDE ---
+    Wider content box for the gate — needs more horizontal space for math.
+*/
 .mg-box {
-    max-width: 750px;
+    max-width: 860px;
     width: 94%;
+    height: auto;
     border-left-color: var(--purple);
 }
 
-/* Math Gate Title Text */
+/*
+    --- 2b. HEADER ELEMENTS ---
+    World badge label and instruction line that appear above the question.
+*/
+
+/* World identifier shown at the top of the gate (e.g. "WORLD 3") */
 .mg-world-badge {
     font-family: var(--PX);
     font-size: 15px;
     color: var(--purple);
     letter-spacing: 0.12em;
-    margin-bottom: 12px;
     text-transform: uppercase;
+    margin-bottom: 12px;
 }
 
-
-/* Instruction line above the question */
+/* Short instruction prompt above the question block */
 .mg-instruction {
+    font-family: var(--PX);
     font-size: 15px;
     color: #D28888;
     margin-bottom: 10px;
-    font-family: var(--PX);
 }
 
-/* Probability Gate Question text */
+/*
+    --- 2c. QUESTION DISPLAY ---
+    Renders the math question text. Uses a math-capable font stack
+    so symbols and notation render correctly.
+*/
 .mg-question {
-    font-family: var(--F), "STIX Two Math", "Courier New", monospace; 
-    font-size: 15px;
+    font-family: "STIX Two Math", "Cambria Math", "DejaVu Sans", var(--F), monospace;
+    font-size: 20px;
     color: var(--accent2);
     line-height: 1.7;
     background: var(--surface);
@@ -135,10 +191,14 @@
     border-left: 3px solid var(--accent);
     padding: 12px 14px;
     margin-bottom: 16px;
-    white-space: pre-wrap;
+    white-space: pre-wrap; /* preserves line breaks in multi-line questions */
 }
 
-/* Answer input row */
+/*
+    --- 2d. ANSWER INPUT ROW ---
+    Flex row holding: text input, optional unit label, submit button, tutor button.
+    Wraps on narrow viewports.
+*/
 .mg-answer-row {
     display: flex;
     align-items: center;
@@ -147,10 +207,11 @@
     flex-wrap: wrap;
 }
 
+/* Text field where the player types their answer */
 .mg-input {
     flex: 1;
     min-width: 120px;
-    max-width: 200px;
+    max-width: 250px;
     background: var(--surface);
     border: 1px solid var(--border);
     color: var(--accent2);
@@ -165,9 +226,7 @@
         border-color: var(--accent);
     }
 
-
-/* Text for showing unit parameter if provided in the question */
-
+/* Static unit label next to the input (e.g. "%" or "seconds") */
 .mg-unit {
     font-family: var(--PX);
     font-size: 15px;
@@ -175,8 +234,13 @@
     white-space: nowrap;
 }
 
-/* Check button */
+/*
+    --- 2e. ACTION BUTTONS ---
+    Submit, tutor, and new-question buttons for the gate.
+    Submit is the primary action; tutor and new-question are secondary.
+*/
 
+/* Primary check/submit button — confirms the typed answer */
 .mg-submit-btn {
     background: transparent;
     border: 1px solid var(--accent);
@@ -185,8 +249,8 @@
     font-size: 15px;
     padding: 8px 16px;
     cursor: pointer;
-    transition: background 0.15s, color 0.15s;
     letter-spacing: 0.05em;
+    transition: background 0.15s, color 0.15s;
 }
 
     .mg-submit-btn:hover:not(:disabled) {
@@ -199,40 +263,25 @@
         cursor: default;
     }
 
-
-/* Feedback line */
-.mg-feedback {
+/* AI tutor button — opens a step-by-step explanation panel */
+.mg-tutor-btn {
+    background: transparent;
+    border: 1px solid var(--yellow);
+    color: var(--yellow);
     font-family: var(--PX);
-    font-size: 15px;
-    min-height: 18px;
-    margin-bottom: 8px;
+    font-size: 12px;
+    padding: 7px 14px;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: background 0.15s, color 0.15s;
 }
 
-    .mg-feedback.mg-ok {
-        color: var(--green);
+    .mg-tutor-btn:hover {
+        background: var(--yellow);
+        color: #000;
     }
 
-    .mg-feedback.mg-bad {
-        color: var(--red);
-    }
-
-/* Hint box */
-.mg-hint-box {
-    background: rgba(80, 40, 120, 0.18);
-    border: 1px solid var(--purple);
-    border-left: 3px solid var(--purple);
-    padding: 10px 14px;
-    margin-bottom: 10px;
-}
-
-.mg-hint-text {
-    font-family: var(--PX);
-    font-size: 15px;
-    color: #c8b0e8;
-    line-height: 1.6;
-}
-
-/* "Try a different question" button */
+/* Secondary button to swap in a different question of the same type */
 .mg-new-q-btn {
     background: transparent;
     border: 1px solid var(--border2);
@@ -250,11 +299,52 @@
         color: var(--accent);
     }
 
-/* Footer note */
+/*
+    --- 2f. FEEDBACK & HINT ---
+    Inline feedback line and collapsible hint panel shown after a wrong answer.
+*/
+
+/* One-line correct/incorrect result shown below the answer row */
+.mg-feedback {
+    font-family: var(--PX);
+    font-size: 15px;
+    min-height: 18px; /* reserves space so layout doesn't jump when empty */
+    margin-bottom: 8px;
+}
+
+    .mg-feedback.mg-ok {
+        color: var(--green);
+    }
+
+    .mg-feedback.mg-bad {
+        color: var(--red);
+    }
+
+/* Hint panel — revealed after a wrong attempt to guide the player */
+.mg-hint-box {
+    background: rgba(80, 40, 120, 0.18);
+    border: 1px solid var(--purple);
+    border-left: 3px solid var(--purple);
+    padding: 10px 14px;
+    margin-bottom: 10px;
+}
+
+/* Text content inside the hint panel */
+.mg-hint-text {
+    font-family: var(--PX);
+    font-size: 15px;
+    color: #c8b0e8;
+    line-height: 1.6;
+}
+
+/*
+    --- 2g. FOOTER ---
+    Small meta-info strip at the bottom of the gate (e.g. attempt counter).
+*/
 .mg-footer {
+    font-family: var(--PX);
     font-size: 10px;
     color: #D28888;
-    font-family: var(--PX);
     margin-top: 10px;
     border-top: 1px solid var(--border);
     padding-top: 8px;
@@ -262,41 +352,28 @@
 
 
 
-.mg-tutor-btn {
-    background: transparent;
-    border: 1px solid var(--yellow);
-    color: var(--yellow);
-    font-family: var(--PX);
-    font-size: 12px;
-    padding: 7px 14px;
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-    margin-left: 8px;
-}
-
-.mg-tutor-btn:hover {
-    background: var(--yellow);
-    color: #000;
-}
-
-
-
-
-
-
 /*
     ------------------------------------------------------------------------
-    ----------------------Moodle Code Modal---------------------------------
+    --------------------- 3. MOODLE CODE MODAL -----------------------------
+    ---- Shown when a player hits the score threshold for a world. ----------
+    ---- Displays an animated unlock code the player copies into Moodle. ---
     ------------------------------------------------------------------------
-    ------------------------------------------------------------------------
-    Shows up as soon as a player reaches the score treshold
 */
 
-
+/*
+    --- 3a. BOX OVERRIDE ---
+    Swaps the accent border to purple to match the completion/reward theme.
+*/
 .pw-box {
     border-left-color: var(--purple) !important;
 }
 
+/*
+    --- 3b. UNLOCK CODE DISPLAY ---
+    Glowing animated box that presents the Moodle unlock code.
+    The glow animation pulses between two shadow intensities defined
+    by --pw-anim-shadow-lo and --pw-anim-shadow-hi CSS variables.
+*/
 .pw-unlock-anim {
     font-family: var(--PX);
     font-size: 15px;
@@ -310,7 +387,7 @@
 }
 
 @keyframes pw-glow {
-    0%,100% {
+    0%, 100% {
         box-shadow: 0 0 10px var(--pw-anim-shadow-lo);
     }
 
@@ -321,36 +398,33 @@
 
 
 
-/* Red-accented modal (reset modal) */
+/*
+    ------------------------------------------------------------------------
+    --------------------- 4. DANGER / RESET MODAL --------------------------
+    ---- Confirmation dialog for destructive actions (e.g. reset progress). -
+    ---- Red accent theme signals irreversible consequences. ---------------
+    ------------------------------------------------------------------------
+*/
+
+/*
+    --- 4a. BOX OVERRIDE ---
+    Narrower box with red left-border to signal a destructive/warning context.
+*/
 .modal-box-danger {
     border-left-color: var(--red);
     max-width: 440px;
 }
 
-/* Reset modal body text */
+/*
+    --- 4b. BODY TEXT ---
+    Muted red-tinted paragraph text used inside danger modal descriptions.
+*/
 .reset-body-text {
     color: #c0a0a0;
     line-height: 2;
 }
 
-/* Reset modal action buttons row */
-.modal-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*
+    NOTE: The action button row (.modal-actions) for danger modals
+    is defined in Section 1f above — it is shared with all modals.
+*/

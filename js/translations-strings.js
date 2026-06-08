@@ -16,6 +16,8 @@ const T = {
         btn_confirm: '▶ SELECT LEVEL', btn_back: '◀ BACK',
         btn_setup: 'SETUP', btn_menu: 'MENU', btn_levels: '◀ LEVELS',
         btn_next: 'NEXT ▶', btn_retry: 'RETRY', btn_retry2: 'TRY AGAIN',
+        btn_settings: '⚙️ SETTINGS',
+        btn_achievements: '🏅 ACHIEVEMENTS',
 
         // Reset
         toast_reset: '🗑 All Progress has been reset.',
@@ -27,13 +29,13 @@ const T = {
         tut_s1p: 'A nonogram is a grid puzzle. Numbers on row and columns tell you how many consecutive filled cells exist. Reveal the full symbol to win!',
 
         tut_s2h: 'CONTROLS',
-        tut_s2p: '<strong>Left click</strong> — fill a cell<br><strong>Right click</strong> — mark a cell as empty<br><strong>Hold Left Click and Drag</strong> - fill multiple cells<br>< strong > CTRL + MouseWheel</strong> — Zoom in & out to scale <br> <strong>Left & Right Arrow Keys</strong> — Move the row clue headers towards the left/right<br> <strong>Escape</strong> — go back',
+        tut_s2p: '<strong>Left click</strong> — fill a cell<br><strong>Right click</strong> — mark a cell as empty<br><strong>Hold Left Click and Drag</strong> - fill multiple cells<br>< strong > CTRL + MouseWheel</strong> — Zoom in & out to scale <br> <strong>Left & Right Arrow Keys</strong> — Move the row clue headers towards the left/right<br> <strong>1,2,3,4</strong> - use Class Abilities <br> <strong>Escape</strong> - Pause the Game',
 
         tut_s3h: 'DIFFICULTY',
         tut_s3p: '<strong style="color:var(--green)">Easy</strong> — low time penalties for mistakes, 50% less Score<br><strong style="color:var(--yellow)">Normal</strong> — standard time penalties for mistakes<br><strong style="color:var(--red)">Hard</strong> — heavy time penalties for mistakes, 50% more score',
 
         tut_s4h: 'GAME MODIFIERS',
-        tut_s4p: '<strong style="color:var(--orange)">Time Trial</strong> — 50% less time per level, but 20% more Score <br><strong style="color:var(--red)">Hardcore</strong> — one mistake fails the level, but 30% more Score<br><strong style="color:var(--purple)">Ironman</strong> — items cannot be used, but 15% more Score <br><strong style="color:var(--accent)">Classless</strong> — Class Abilities cannot be used, but 20% more Score <br><strong style="color:var(--green)">Treeless</strong> — Probability Tree nodes have no effect, but 25% more Score <br>Modifiers can be combined with each other.',
+        tut_s4p: '<strong style="color:var(--orange)">Time Trial</strong> — 50% less time per level, but 20% more Score <br> < strong style="color:var(--red)" > Hardcore</strong> — one mistake fails the level, but 30% more Score<br>< strong style = "color:var(--purple)" > Ironman</strong> — items cannot be used, but 15 % more Score < br > <strong style="color:var(--accent)">Classless</strong> — Class Abilities cannot be used, but 20 % more Score < br > <strong style="color:var(--green)">Treeless</strong> — Probability Tree nodes have no effect, but 25 % more Score < br > Modifiers can be combined with each other.',
 
         tut_s5h: 'ITEMS & INVENTORY',
         tut_s5p: 'Complete a level\'s bonus objective to earn a random item. Cursed items are powerful but also have a negative effect.',
@@ -266,6 +268,51 @@ const T = {
         axis_lock_label: '🔒 AXIS LOCK — Lock mouse drag direction to current row or column',
 
 
+        btn_settings_close: '✕ CLOSE',
+
+        // Settings Modal
+        settings_title: '⚙ SETTINGS',
+        settings_audio: '🎵 AUDIO',
+        settings_bgm: 'Background Music',
+        settings_sfx: 'Sound Effects',
+        settings_controls: '🖱 CONTROLS',
+        settings_axis_lock: 'Axis Lock',
+        settings_axis_lock_hint: 'Lock drag to starting row or column',
+        settings_qmark: 'Question Mark',
+        settings_qmark_hint: 'Right Click a X - marked cell to add a yellow ?',
+        stt_on: 'ON',
+        stt_off: 'OFF',
+
+        game_paused: 'GAME PAUSED',
+        game_paused_hint: 'Press Esc to continue',
+
+        // Math Gate Units
+        elements: 'elements',
+        events: 'events',
+        outcomes: 'outcomes',
+
+        subsets: "Subsets",
+        elementary_events: "Elementary Events",
+        cards: "Cards",
+        meals: "Meals",
+        passwords: "Passwords",
+        ways: "Ways",
+        combinations: "Combinations",
+        terms: "Terms",
+        paths: "Paths",
+
+        mg_placeholder: 'your answer',
+
+        codes_req_score: 'Required Score:',
+        codes_req_ach: 'Required Achievement Milestones:',
+        ls_tip_optimize: 'Completed on Hard with all Modifiers, but you can still gain more Score by completing the level faster!',
+
+        convergence: 'Convergence',
+        convergence_desc_1: 'You haveve reached a milestone and earned 1 Convergence Point.',
+        convergence_open_tree: '🌿 Open Probability Tree',
+        convergence_next_level: '▶ Next Level',
+        convergence_level_Select: '☰ Select Level',
+
     },
 
     de: {
@@ -278,6 +325,8 @@ const T = {
         btn_confirm: '▶ LEVEL WÄHLEN', btn_back: '◀ ZURÜCK',
         btn_setup: 'SPIELEINRICHTUNG', btn_menu: 'MENÜ', btn_levels: '◀ LEVELS',
         btn_next: 'WEITER ▶', btn_retry: 'NOCHMAL', btn_retry2: 'NOCHMAL',
+        btn_settings: '⚙️ EINSTELLUNGEN',
+        btn_achievements: '🏅 Erfolge',
 
         // Reset:
         toast_reset: '🗑 Fortschritt zurückgesetzt. Neuer Start!',
@@ -288,7 +337,7 @@ const T = {
         tut_s1p: 'Ein Nonogramm ist ein Gitterpuzzle. Zahlen an Zeilen und Spalten stellen die Anzahl aufeinanderfolgend gefüllter Zellen dar. Enthülle das gesamte Symbol um zu gewinnen!',
 
         tut_s2h: 'STEUERUNG',
-        tut_s2p: '<strong>Linksklick</strong> — Zelle füllen<br><strong>Rechtsklick</strong> — Zelle als leer markieren<br><strong>Linksklick gedrückt halten & Ziehen</strong> — Mehrere Zellen füllen<br><strong>STRG + Mausrad</strong> — Hinein- & herauszoomen zum Skalieren<br><strong>Linke - und - Rechte Pfeiltaste</strong> — Zeilenhinweise nach links/rechts bewegen<br><strong>Escape</strong> — Zurück',
+        tut_s2p: '<strong>Linksklick</strong> — Zelle füllen<br><strong>Rechtsklick</strong> — Zelle als leer markieren<br><strong>Linksklick gedrückt halten & Ziehen</strong> — Mehrere Zellen füllen<br><strong>STRG + Mausrad</strong> — Hinein- & herauszoomen zum Skalieren<br><strong>Linke - und - Rechte Pfeiltaste</strong> — Zeilenhinweise nach links/rechts bewegen<br> <strong>1,2,3,4</strong> - Klassenfähigkeiten verwenden <br>  <strong>Escape</strong> — Spiel pausieren',
 
         tut_s3h: 'SCHWIERIGKEIT',
         tut_s3p: '<strong style="color:var(--green)">Leicht</strong> — geringe Zeitstrafen bei Fehlern, 50% weniger Punkte<br><strong style="color:var(--yellow)">Normal</strong> — normale Zeitstrafen bei Fehlern <br> <strong style="color:var(--red)">Schwer</strong> — schwere Zeitstrafen bei Fehlern, 50% mehr Punkte',
@@ -443,7 +492,7 @@ const T = {
         ov_win_new: 'neu',
         ov_win_best_was: 'Level Highscore:',
         ov_bonus_met: '🎯 BONUS ERFÜLLT!',
-        ov_item_earned: '🎁 Item erhalten',
+        ov_item_earned: '🎁 Gegenstand erhalten',
         ov_bonus_claimed_note: '✓ Bonusziel bereits geschafft.',
         ov_lucky_drop: '🍀 Glücksfund!',
         ov_quiz_reward: '🧠 Quiz-Belohnung',
@@ -526,6 +575,50 @@ const T = {
 
         setup_controls: 'STEUERUNG',
         axis_lock_label: '🔒 ACHSENSPERRE — Maus-Zug-Richtung auf aktuelle Zeile oder Spalte beschränken',
+
+        btn_settings_close: '✕ SCHLIESSEN',
+
+        // Settings Modal
+        settings_title: '⚙ EINSTELLUNGEN',
+        settings_audio: '🎵 AUDIO',
+        settings_bgm: 'Hintergrundmusik',
+        settings_sfx: 'Soundeffekte',
+        settings_controls: '🖱 STEUERUNG',
+        settings_axis_lock: 'Achsensperre',
+        settings_axis_lock_hint: 'Ziehen auf die Startzeile oder Startspalte beschränken',
+        settings_qmark: 'Fragezeichen',
+        settings_qmark_hint: 'Rechtsklick auf ein mit ✕ markiertes Feld fügt ein gelbes ? hinzu',
+        stt_on: 'AN',
+        stt_off: 'AUS',
+
+        game_paused: 'SPIEL PAUSIERT',
+        game_paused_hint: 'Esc zum Fortfahren',
+
+        // Math Gate Units
+        elements: 'Elemente',
+        events: 'Ereignisse',
+        outcomes: 'Ergebnisse',
+        subsets: 'Teilmengen',
+        elementary_events: 'Elementarereignisse',
+        cards: 'Karten',
+        meals: 'Menüs',
+        passwords: 'Passwörter',
+        ways: 'Möglichkeiten',
+        combinations: 'Kombinationen',
+        terms: 'Terme',
+        paths: 'Pfade',
+
+        mg_placeholder: 'Deine Antwort',
+
+        codes_req_score: 'Benötigte Punkte:',
+        codes_req_ach: 'Benötigte Erfolgsmeilensteine:',
+        ls_tip_optimize: 'Auf Schwer mit allen Modifikatoren geschafft, aber wenn du das Level schneller schaffst kannst du noch mehr Punkte bekommen!',
+
+        convergence: 'Konvergenz',
+        convergence_desc_1: 'Du hast einen Meilenstein erreicht und 1 Konvergenzpunkt erhalten.',
+        convergence_open_tree: '🌿 Wahrscheinlichkeitsbaum öffnen',
+        convergence_next_level: '▶ Nächstes Level',
+        convergence_level_select: '☰ Level wählen'
     }
 };
 

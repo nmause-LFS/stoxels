@@ -1,34 +1,81 @@
 ﻿//------------------------------------------------------------------------
-//-------------------GET PRE-FILLED ROWS & COLS---------------------------
+//-------------------INVENTORY — USE ITEM---------------------------------
+//------------------------------------------------------------------------
+// Handles all item-use logic: grid manipulation (reveal, mark, solve,
+// erase), blackout effects, passive/keystone modifier scaling, cursed
+// downside resolution, achievement + quest tracking, and the final
+// consume / dispatch pipeline.
+//
+// Reading order follows the helper-before-caller convention:
+//   low-level grid helpers  →  blackout helpers  →  grid-op functions
+//   →  curse-modifier helpers  →  item handlers  →  dispatch + consume
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
 
-// Snapshots which rows currently have at least one filled correct cell.
-// Used by cursedRowSolve so the negative erase only targets pre-existing rows.
+
+
+//------------------------------------------------------------------------
+//-------------------GRID STATE SNAPSHOT HELPERS--------------------------
+//------------------------------------------------------------------------
+// Snapshot helpers used by cursed items to know which rows/cols the
+// player already had filled *before* the item benefit fires, so the
+// cursed erase only targets pre-existing progress rather than the cells
+// that were just revealed by the same item.
+//------------------------------------------------------------------------
+
+// Returns a Set of row indices that contain at least one correctly-filled
+// cell (either placed by the player or revealed by a previous item).
 function _getPreFilledRows() {
-    const s = cur.grid, rows = s.length, cols = s[0].length;
-    const set = new Set();
-    for (let r = 0; r < rows; r++)
-        for (let c = 0; c < cols; c++)
-            if (s[r][c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])) { set.add(r); break; }
-    return set;
+    const sol = cur.grid;
+    const rows = sol.length;
+    const cols = sol[0].length;
+    const filledRows = new Set();
+
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            if (sol[r][c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])) {
+                filledRows.add(r);
+                break; // one filled cell is enough — move to the next row
+            }
+        }
+    }
+    return filledRows;
 }
 
-// Same as above but for columns.
+// Returns a Set of column indices that contain at least one correctly-
+// filled cell (either placed by the player or revealed by a previous item).
 function _getPreFilledCols() {
-    const s = cur.grid, rows = s.length, cols = s[0].length;
-    const set = new Set();
-    for (let c = 0; c < cols; c++)
-        for (let r = 0; r < rows; r++)
-            if (s[r][c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])) { set.add(c); break; }
-    return set;
+    const sol = cur.grid;
+    const rows = sol.length;
+    const cols = sol[0].length;
+    const filledCols = new Set();
+
+    for (let c = 0; c < cols; c++) {
+        for (let r = 0; r < rows; r++) {
+            if (sol[r][c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])) {
+                filledCols.add(c);
+                break; // one filled cell is enough — move to the next column
+            }
+        }
+    }
+    return filledCols;
 }
 
 
 
-// Tracks cursed item usage while witch immunity is active (for the quest).
-// Must be called once per cursed item use, before downside logic.
+
+//------------------------------------------------------------------------
+//-------------------QUEST TRACKING HELPERS-------------------------------
+//------------------------------------------------------------------------
+// Small wrappers that fire quest-stat updates related to item use.
+// Placed here so every item handler can call them without repeating the
+// guard logic.
+//------------------------------------------------------------------------
+
+// Records cursed-item usage while The Witch's immunity window is active.
+// Must be called once at the very top of every cursed item handler,
+// before any downside logic runs.
 function _trackWitchImmuneCursedUse() {
     if (window._cursedImmune) {
         updateQuestStats('cursedUnderImmunityUsed', {});
@@ -36,191 +83,90 @@ function _trackWitchImmuneCursedUse() {
 }
 
 
-//------------------------------------------------------------------------
-//----------------------ROW & COL BLACKOUT--------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
 
 
+//------------------------------------------------------------------------
+//-------------------CLUE BLACKOUT HELPERS--------------------------------
+//------------------------------------------------------------------------
+// DOM helpers that apply / remove the 'clue-blackout' CSS class on row
+// and column clue elements.  The class hides the clue text so the player
+// cannot read the hints for the blackout duration.
+//
+// applyCursedBlackout       — random ~50% of rows AND cols, 30–60 s
+// applyCursedRowBlackout    — ALL row clues, configurable duration
+// applyCursedColBlackout    — ALL col clues, configurable duration
+//------------------------------------------------------------------------
 
-// applyCursedBlackout — blacks out a random half of rows AND columns for 30–60 s.
+// Selects roughly half the rows and half the cols at random and blacks
+// them out for a random duration between 30 and 60 seconds.
 function applyCursedBlackout() {
     if (!cur) return;
+
     const rows = cur.grid.length;
     const cols = cur.grid[0].length;
-    const duration = (30 + Math.floor(Math.random() * 31)) * 1000; // 30–60s in ms
+    const durationMs = (30 + Math.floor(Math.random() * 31)) * 1000; // 30–60 s
 
-    // Pick roughly half the rows and half the columns to black out
+    // Pick approximately half the rows to black out
     const affectedRows = [];
     for (let r = 0; r < rows; r++) {
         if (Math.random() < 0.5) affectedRows.push(r);
     }
+
+    // Pick approximately half the columns to black out
     const affectedCols = [];
     for (let c = 0; c < cols; c++) {
         if (Math.random() < 0.5) affectedCols.push(c);
     }
 
-    // Apply blackout class to row clue cells
     affectedRows.forEach(r => {
         document.querySelectorAll(`.rct-${r}`)
             .forEach(el => el.classList.add('clue-blackout'));
     });
 
-    // Apply blackout class to column clue cells
     affectedCols.forEach(c => {
         document.querySelectorAll(`.cch-${c}`)
             .forEach(el => el.classList.add('clue-blackout'));
     });
 
-    // Lift the blackout after the duration
     setTimeout(() => {
         document.querySelectorAll('.clue-blackout')
             .forEach(el => el.classList.remove('clue-blackout'));
-    }, duration);
+    }, durationMs);
 }
 
-// applyCursedRowBlackout — blacks out ALL row clues for the given duration (ms).
-//   Defaults to 30 000 ms (30 s) when called without an argument.
-//   Used as the negative effect for cursedShield and cursedTime.
+// Blacks out ALL row clues for durationMs milliseconds.
+// Default: 30 000 ms (30 s).  Used as the downside for cursedShield and
+// cursedTime.
 function applyCursedRowBlackout(durationMs = 30000) {
     if (!cur) return;
+
     const rows = cur.grid.length;
     for (let r = 0; r < rows; r++) {
         document.querySelectorAll(`.rct-${r}`)
             .forEach(el => el.classList.add('clue-blackout'));
     }
+
     setTimeout(() => {
         document.querySelectorAll('.clue-blackout')
             .forEach(el => el.classList.remove('clue-blackout'));
     }, durationMs);
 }
 
-// applyCursedColBlackout — blacks out ALL column clues for a given duration (ms).
-//   Used as the negative effect for cursedRowCol.
+// Blacks out ALL column clues for durationMs milliseconds.
+// Used as the downside for cursedRowCol.
 function applyCursedColBlackout(durationMs) {
     if (!cur) return;
+
     const cols = cur.grid[0].length;
     for (let c = 0; c < cols; c++) {
         document.querySelectorAll(`.cch-${c}`)
             .forEach(el => el.classList.add('clue-blackout'));
     }
+
     setTimeout(() => {
         document.querySelectorAll('.clue-blackout')
             .forEach(el => el.classList.remove('clue-blackout'));
     }, durationMs);
-}
-
-
-
-
-//------------------------------------------------------------------------
-//-----------------------REVEAL TILES-------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-function revealTiles(count) {
-    // keystone_ergodic_field (291) and keystone_the_oracle (300) disable all auto-reveals
-    if (ptHasSkill('keystone_ergodic_field') || window._oracleActive) return;
-    const sol = cur.grid, rows = sol.length, cols = sol[0].length;
-    let cands = [];
-    for (let r = 0; r < rows; r++)
-        for (let c = 0; c < cols; c++)
-            if (sol[r][c] === 1 && userGrid[r][c] !== 1 && !revealedGrid[r][c])
-                cands.push([r, c]);
-
-    // Targeted Reveal: chance to bias toward the least-filled unsolved row or col
-    const targetChance = (ptHasSkill('targeted_reveal_1') ? 0.20 : 0)
-        + (ptHasSkill('targeted_reveal_2') ? 0.20 : 0)
-        + (ptHasSkill('targeted_reveal_3') ? 0.30 : 0);
-    if (targetChance > 0 && Math.random() < targetChance && cands.length > 0) {
-        // Find the unsolved row with the fewest filled correct cells
-        let bestRow = -1, bestRowFilled = Infinity;
-        for (let r = 0; r < rows; r++) {
-            const filled = sol[r].filter((v, c) => v === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])).length;
-            const total = sol[r].filter(v => v === 1).length;
-            if (filled < total && filled < bestRowFilled) { bestRowFilled = filled; bestRow = r; }
-        }
-        // Find the unsolved col with the fewest filled correct cells
-        let bestCol = -1, bestColFilled = Infinity;
-        for (let c = 0; c < cols; c++) {
-            const filled = sol.filter((row, r) => row[c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])).length;
-            const total = sol.filter(row => row[c] === 1).length;
-            if (filled < total && filled < bestColFilled) { bestColFilled = filled; bestCol = c; }
-        }
-        // Bias candidates toward cells in that row or col
-        const biased = cands.filter(([r, c]) => r === bestRow || c === bestCol);
-        if (biased.length > 0) cands = biased;
-
-        showToast('Biased Reveal!');
-    }
-
-    const affected = [];
-    shuffle(cands).slice(0, count).forEach(([r, c]) => {
-        revealedGrid[r][c] = true;
-        userGrid[r][c] = 1;
-        renderCell(r, c);
-        updClues(r, c);
-        affected.push(`g-${r}-${c}`);
-    });
-    _applyCellEffect(affected, 'reveal');
-    if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
-    trackAchStat('tilesRevealed', affected.length);
-    checkWin();
-}
-
-
-
-
-
-
-
-//------------------------------------------------------------------------
-//----------------------MARK WRONG TILES----------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-
-function markWrongTiles(count) {
-    // keystone_ergodic_field (291) and keystone_the_oracle (300) disable all auto-marks
-    if (ptHasSkill('keystone_ergodic_field') || window._oracleActive) return;
-    const sol = cur.grid, rows = sol.length, cols = sol[0].length;
-    let cands = [];
-    for (let r = 0; r < rows; r++)
-        for (let c = 0; c < cols; c++)
-            if (sol[r][c] === 0 && (userGrid[r][c] === 0 || userGrid[r][c] === 3) && !wrongGrid[r][c])
-                cands.push([r, c]);
-
-    // Dense Marker: chance to bias toward rows/cols that already have many filled cells
-    const denseChance = (ptHasSkill('dense_marker_1') ? 0.20 : 0)
-        + (ptHasSkill('dense_marker_2') ? 0.20 : 0)
-        + (ptHasSkill('dense_marker_3') ? 0.30 : 0);
-    if (denseChance > 0 && Math.random() < denseChance && cands.length > 0) {
-        // Find the row with the most filled correct cells that is not yet complete
-        let bestRow = -1, bestRowFilled = -1;
-        for (let r = 0; r < rows; r++) {
-            const filled = sol[r].filter((v, c) => v === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])).length;
-            const total = sol[r].filter(v => v === 1).length;
-            if (filled < total && filled > bestRowFilled) { bestRowFilled = filled; bestRow = r; }
-        }
-        let bestCol = -1, bestColFilled = -1;
-        for (let c = 0; c < cols; c++) {
-            const filled = sol.filter((row, r) => row[c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])).length;
-            const total = sol.filter(row => row[c] === 1).length;
-            if (filled < total && filled > bestColFilled) { bestColFilled = filled; bestCol = c; }
-        }
-        const biased = cands.filter(([r, c]) => r === bestRow || c === bestCol);
-        if (biased.length > 0) cands = biased;
-
-        showToast('Biased Mark!')
-    }
-
-    const affected = [];
-    shuffle(cands).slice(0, count).forEach(([r, c]) => {
-        userGrid[r][c] = 2;
-        renderCell(r, c);
-        affected.push(`g-${r}-${c}`);
-    });
-    _applyCellEffect(affected, 'mark');
-    trackAchStat('tilesMarkedWrong', affected.length);
 }
 
 
@@ -229,34 +175,322 @@ function markWrongTiles(count) {
 //------------------------------------------------------------------------
 //-------------------SHUFFLE HELPER---------------------------------------
 //------------------------------------------------------------------------
+// In-place Fisher-Yates shuffle.  Returns the same array for chaining.
 //------------------------------------------------------------------------
 
-function shuffle(a) {
-    for (let i = a.length - 1; i > 0; i--) {
+function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
+        [arr[i], arr[j]] = [arr[j], arr[i]];
     }
-    return a;
+    return arr;
 }
 
 
 
+
 //------------------------------------------------------------------------
-//-----------------------SOLVE ROWS & COLS--------------------------------
+//-------------------TARGETED REVEAL BIAS HELPER--------------------------
 //------------------------------------------------------------------------
+// Used by revealTiles to optionally bias the reveal candidate list toward
+// the least-filled unsolved row or column when the Targeted Reveal passive
+// nodes are invested.
 //------------------------------------------------------------------------
 
-// solveRows(count) — reveals 'count' random unsolved rows fully.
-//   Returns the number of rows actually revealed.
+// Returns the index of the unsolved row with the fewest correctly-filled
+// cells.  Returns -1 when every row is already complete.
+function _findLeastFilledUnsolvedRow(sol, rows, cols) {
+    let bestRow = -1;
+    let bestFilled = Infinity;
+
+    for (let r = 0; r < rows; r++) {
+        const filled = sol[r].filter((v, c) => v === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])).length;
+        const total = sol[r].filter(v => v === 1).length;
+        if (filled < total && filled < bestFilled) {
+            bestFilled = filled;
+            bestRow = r;
+        }
+    }
+    return bestRow;
+}
+
+// Returns the index of the unsolved column with the fewest correctly-
+// filled cells.  Returns -1 when every column is already complete.
+function _findLeastFilledUnsolvedCol(sol, rows, cols) {
+    let bestCol = -1;
+    let bestFilled = Infinity;
+
+    for (let c = 0; c < cols; c++) {
+        const filled = sol.filter((row, r) => row[c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])).length;
+        const total = sol.filter(row => row[c] === 1).length;
+        if (filled < total && filled < bestFilled) {
+            bestFilled = filled;
+            bestCol = c;
+        }
+    }
+    return bestCol;
+}
+
+// Attempts to narrow `cands` to cells in the least-filled unsolved row or
+// column based on the cumulative Targeted Reveal passive chance.
+// Returns the (possibly unchanged) candidate list and shows a toast when
+// the bias fires.
+function _applyTargetedRevealBias(cands, sol, rows, cols) {
+    const chance = (ptHasSkill('targeted_reveal_1') ? 0.20 : 0)
+        + (ptHasSkill('targeted_reveal_2') ? 0.20 : 0)
+        + (ptHasSkill('targeted_reveal_3') ? 0.30 : 0);
+
+    if (chance <= 0 || Math.random() >= chance || cands.length === 0) return cands;
+
+    const bestRow = _findLeastFilledUnsolvedRow(sol, rows, cols);
+    const bestCol = _findLeastFilledUnsolvedCol(sol, rows, cols);
+
+    const biased = cands.filter(([r, c]) => r === bestRow || c === bestCol);
+    if (biased.length > 0) {
+        showToast('Biased Reveal!');
+        return biased;
+    }
+    return cands;
+}
+
+
+
+
+//------------------------------------------------------------------------
+//-------------------REVEAL TILES-----------------------------------------
+//------------------------------------------------------------------------
+// Reveals `count` random unrevealed solution cells, applying optional
+// passive biasing.  Blocked by keystone_ergodic_field and the Oracle.
+//------------------------------------------------------------------------
+
+function revealTiles(count) {
+    // Ergodic Field (291) and The Oracle (300) disable all auto-reveals
+    if (ptHasSkill('keystone_ergodic_field') || window._oracleActive) return;
+
+    const sol = cur.grid;
+    const rows = sol.length;
+    const cols = sol[0].length;
+
+    // Collect every solution cell that has not yet been filled or revealed
+    let cands = [];
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            if (sol[r][c] === 1 && userGrid[r][c] !== 1 && !revealedGrid[r][c]) {
+                cands.push([r, c]);
+            }
+        }
+    }
+
+    // Optionally bias toward the least-filled unsolved row / column
+    cands = _applyTargetedRevealBias(cands, sol, rows, cols);
+
+
+    // Reveal up to `count` cells from the (shuffled) candidate list
+    const affected = [];
+    const revealedCoords = []; // Create an array to track selected tile coordinates
+    shuffle(cands).slice(0, count).forEach(([r, c]) => {
+        revealedGrid[r][c] = true;
+        userGrid[r][c] = 1;
+        renderCell(r, c);
+        updClues(r, c);
+        affected.push(`g-${r}-${c}`);
+
+        // Push coordinates into tracker array
+        revealedCoords.push({ row: r, col: c });
+    });
+
+    _applyCellEffect(affected, 'reveal');
+    if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
+    trackAchStat('tilesRevealed', affected.length);
+    checkWin();
+
+    return revealedCoords; // Return the gathered coordinates
+}
+
+
+
+
+//------------------------------------------------------------------------
+//-------------------DENSE MARKER BIAS HELPER-----------------------------
+//------------------------------------------------------------------------
+// Used by markWrongTiles to optionally bias the mark candidate list toward
+// the row or column with the most already-filled correct cells, so marks
+// cluster near almost-complete lines.
+//------------------------------------------------------------------------
+
+// Returns the index of the incomplete row with the most correctly-filled
+// cells.  Returns -1 when no incomplete rows exist.
+function _findDensestUnsolvedRow(sol, rows, cols) {
+    let bestRow = -1;
+    let bestFilled = -1;
+
+    for (let r = 0; r < rows; r++) {
+        const filled = sol[r].filter((v, c) => v === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])).length;
+        const total = sol[r].filter(v => v === 1).length;
+        if (filled < total && filled > bestFilled) {
+            bestFilled = filled;
+            bestRow = r;
+        }
+    }
+    return bestRow;
+}
+
+// Returns the index of the incomplete column with the most correctly-
+// filled cells.  Returns -1 when no incomplete columns exist.
+function _findDensestUnsolvedCol(sol, rows, cols) {
+    let bestCol = -1;
+    let bestFilled = -1;
+
+    for (let c = 0; c < cols; c++) {
+        const filled = sol.filter((row, r) => row[c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])).length;
+        const total = sol.filter(row => row[c] === 1).length;
+        if (filled < total && filled > bestFilled) {
+            bestFilled = filled;
+            bestCol = c;
+        }
+    }
+    return bestCol;
+}
+
+// Attempts to narrow `cands` to cells in the densest unsolved row or
+// column based on the Dense Marker passive chance.
+// Returns the (possibly unchanged) candidate list and shows a toast when
+// the bias fires.
+function _applyDenseMarkerBias(cands, sol, rows, cols) {
+    const chance = (ptHasSkill('dense_marker_1') ? 0.20 : 0)
+        + (ptHasSkill('dense_marker_2') ? 0.20 : 0)
+        + (ptHasSkill('dense_marker_3') ? 0.30 : 0);
+
+    if (chance <= 0 || Math.random() >= chance || cands.length === 0) return cands;
+
+    const bestRow = _findDensestUnsolvedRow(sol, rows, cols);
+    const bestCol = _findDensestUnsolvedCol(sol, rows, cols);
+
+    const biased = cands.filter(([r, c]) => r === bestRow || c === bestCol);
+    if (biased.length > 0) {
+        showToast('Biased Mark!');
+        return biased;
+    }
+    return cands;
+}
+
+
+
+
+//------------------------------------------------------------------------
+//-------------------MARK WRONG TILES-------------------------------------
+//------------------------------------------------------------------------
+// Marks `count` random empty non-solution cells as wrong (value 2),
+// applying optional passive biasing.  Blocked by keystone_ergodic_field
+// and the Oracle.  Returns an array of [row, col] coordinates that were
+// marked, so callers can act on them if needed.
+//------------------------------------------------------------------------
+
+function markWrongTiles(count) {
+    // Ergodic Field (291) and The Oracle (300) disable all auto-marks
+    if (ptHasSkill('keystone_ergodic_field') || window._oracleActive) return;
+
+    const sol = cur.grid;
+    const rows = sol.length;
+    const cols = sol[0].length;
+
+    // Collect empty non-solution cells that have not already been marked
+    let cands = [];
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            const isEmptyCell = sol[r][c] === 0;
+            const isUnmarked = userGrid[r][c] === 0 || userGrid[r][c] === 3;
+            const notWrongAlready = !wrongGrid[r][c];
+            if (isEmptyCell && isUnmarked && notWrongAlready) {
+                cands.push([r, c]);
+            }
+        }
+    }
+
+    // Optionally bias toward the densest unsolved row / column
+    cands = _applyDenseMarkerBias(cands, sol, rows, cols);
+
+    // Mark up to `count` cells from the (shuffled) candidate list
+    const affected = [];
+    const markedCoords = [];
+    shuffle(cands).slice(0, count).forEach(([r, c]) => {
+        userGrid[r][c] = 2;
+        renderCell(r, c);
+        affected.push(`g-${r}-${c}`);
+        markedCoords.push([r, c]);
+    });
+
+    _applyCellEffect(affected, 'mark');
+    trackAchStat('tilesMarkedWrong', affected.length);
+
+    return markedCoords;
+}
+
+
+
+
+//------------------------------------------------------------------------
+//-------------------SOLVE / UNSOLVE ROWS & COLS--------------------------
+//------------------------------------------------------------------------
+// solveRows / solveCols      — reveal complete rows / columns
+// unsolveRows / unsolveCols  — erase filled cells in complete rows / cols
+//                              (used internally; not called by cursed items)
+// unsolveRowsExcluding /
+// unsolveColsExcluding       — cursed-item variant that restricts erasure
+//                              to rows / cols that were pre-filled before
+//                              the item fired
+//------------------------------------------------------------------------
+
+// Helper: erases all correctly-filled cells in a single row and updates
+// the DOM.  Returns an array of cell IDs for the visual erase effect.
+function _eraseFilledCellsInRow(r, sol, cols) {
+    const erased = [];
+    for (let c = 0; c < cols; c++) {
+        if (sol[r][c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])) {
+            userGrid[r][c] = 0;
+            revealedGrid[r][c] = false;
+            renderCell(r, c);
+            updClues(r, c);
+            erased.push(`g-${r}-${c}`);
+        }
+    }
+    return erased;
+}
+
+// Helper: erases all correctly-filled cells in a single column and updates
+// the DOM.  Returns an array of cell IDs for the visual erase effect.
+function _eraseFilledCellsInCol(c, sol, rows) {
+    const erased = [];
+    for (let r = 0; r < rows; r++) {
+        if (sol[r][c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])) {
+            userGrid[r][c] = 0;
+            revealedGrid[r][c] = false;
+            renderCell(r, c);
+            updClues(r, c);
+            erased.push(`g-${r}-${c}`);
+        }
+    }
+    return erased;
+}
+
+// Fully reveals `count` random unsolved rows.
+// Returns the number of rows actually revealed (may be less than count if
+// fewer unsolved rows exist).
 function solveRows(count) {
-    const sol = cur.grid, rows = sol.length, cols = sol[0].length;
+    const sol = cur.grid;
+    const rows = sol.length;
+    const cols = sol[0].length;
+
+    // Collect every row that still has at least one unrevealed solution cell
     const unsolved = [];
     for (let r = 0; r < rows; r++) {
-        const done = sol[r].every((v, c) => v === 0 || userGrid[r][c] === 1 || revealedGrid[r][c]);
-        if (!done) unsolved.push(r);
+        const isDone = sol[r].every((v, c) => v === 0 || userGrid[r][c] === 1 || revealedGrid[r][c]);
+        if (!isDone) unsolved.push(r);
     }
+
     shuffle(unsolved);
     const affected = [];
+
     unsolved.slice(0, count).forEach(r => {
         for (let c = 0; c < cols; c++) {
             if (sol[r][c] === 1 && userGrid[r][c] !== 1) {
@@ -268,20 +502,29 @@ function solveRows(count) {
             }
         }
     });
+
     _applyCellEffect(affected, 'reveal');
     if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
     return Math.min(count, unsolved.length);
 }
 
+// Fully reveals `count` random unsolved columns.
+// Returns the number of columns actually revealed.
 function solveCols(count) {
-    const sol = cur.grid, rows = sol.length, cols = sol[0].length;
+    const sol = cur.grid;
+    const rows = sol.length;
+    const cols = sol[0].length;
+
+    // Collect every column that still has at least one unrevealed solution cell
     const unsolved = [];
     for (let c = 0; c < cols; c++) {
-        const done = sol.every((row, r) => row[c] === 0 || userGrid[r][c] === 1 || revealedGrid[r][c]);
-        if (!done) unsolved.push(c);
+        const isDone = sol.every((row, r) => row[c] === 0 || userGrid[r][c] === 1 || revealedGrid[r][c]);
+        if (!isDone) unsolved.push(c);
     }
+
     shuffle(unsolved);
     const affected = [];
+
     unsolved.slice(0, count).forEach(c => {
         for (let r = 0; r < rows; r++) {
             if (sol[r][c] === 1 && userGrid[r][c] !== 1) {
@@ -293,150 +536,134 @@ function solveCols(count) {
             }
         }
     });
+
     _applyCellEffect(affected, 'reveal');
     if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
     return Math.min(count, unsolved.length);
 }
 
-
-
-
-
-//------------------------------------------------------------------------
-//-------------------------UNSOLVE ROWS & COLS----------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-//   erases 'count' random rows of player progress.
-//   Clears both player-filled and item-revealed correct cells in those rows,
-//   resetting them to empty. Wrong marks are left untouched.
+// Erases `count` random filled rows (player progress lost).
+// Wrong marks are left untouched.
+// Returns the number of rows actually erased.
 function unsolveRows(count) {
-    const sol = cur.grid, rows = sol.length, cols = sol[0].length;
+    const sol = cur.grid;
+    const rows = sol.length;
+    const cols = sol[0].length;
+
     // Only target rows that have at least one filled correct cell to erase
     const candidates = [];
     for (let r = 0; r < rows; r++) {
         const hasFilled = sol[r].some((v, c) => v === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c]));
         if (hasFilled) candidates.push(r);
     }
+
     shuffle(candidates);
     const targets = candidates.slice(0, count);
-    targets.forEach(r => {
-        for (let c = 0; c < cols; c++) {
-            if (sol[r][c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])) {
-                userGrid[r][c] = 0;
-                revealedGrid[r][c] = false;
-                renderCell(r, c);
-                updClues(r, c);
-            }
-        }
-    });
+
+    targets.forEach(r => _eraseFilledCellsInRow(r, sol, cols));
+
     if (targets.length > 0) questStat_rowsErased(targets.length);
     return targets.length;
 }
 
-
+// Erases `count` random filled columns (player progress lost).
+// Wrong marks are left untouched.
+// Returns the number of columns actually erased.
 function unsolveCols(count) {
-    const sol = cur.grid, rows = sol.length, cols = sol[0].length;
+    const sol = cur.grid;
+    const rows = sol.length;
+    const cols = sol[0].length;
+
     const candidates = [];
     for (let c = 0; c < cols; c++) {
         const hasFilled = sol.some((row, r) => row[c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c]));
         if (hasFilled) candidates.push(c);
     }
+
     shuffle(candidates);
     const targets = candidates.slice(0, count);
-    targets.forEach(c => {
-        for (let r = 0; r < rows; r++) {
-            if (sol[r][c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])) {
-                userGrid[r][c] = 0;
-                revealedGrid[r][c] = false;
-                renderCell(r, c);
-                updClues(r, c);
-            }
-        }
-    });
+
+    targets.forEach(c => _eraseFilledCellsInCol(c, sol, rows));
+
     if (targets.length > 0) questStat_rowsErased(targets.length);
     return targets.length;
 }
 
-
-
-
-//------------------------------------------------------------------------
-//-------------UNSOLVE ROWS & COLS (EXCLUDING VARIANT)--------------------
-//----cursed items only target rows & cols the player filled--------------
-//------------------------------------------------------------------------
-
-
-
-//   like unsolveRows but only
-//   considers rows whose index is in allowedSet (pre-filled before use).
-//   If allowedSet is empty (board was blank), picks any filled row instead.
+// Cursed variant of unsolveRows: only erases rows whose index is present
+// in `allowedSet` (the snapshot taken before the cursed benefit fired).
+// Falls back to erasing any filled row if no pre-existing filled rows
+// are in the set (i.e. the board was essentially blank before use).
+// Returns the number of rows erased.
 function unsolveRowsExcluding(count, allowedSet) {
-    const sol = cur.grid, rows = sol.length, cols = sol[0].length;
+    const sol = cur.grid;
+    const rows = sol.length;
+    const cols = sol[0].length;
+
+    // Prefer rows that were already filled before this item was used
     let candidates = [];
     for (let r = 0; r < rows; r++) {
         if (!allowedSet.has(r)) continue;
         const hasFilled = sol[r].some((v, c) => v === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c]));
         if (hasFilled) candidates.push(r);
     }
-    // Fallback: if no pre-existing filled rows, erase any filled row
+
+    // Fallback: board was blank before use — erase any filled row
     if (!candidates.length) {
         for (let r = 0; r < rows; r++) {
             const hasFilled = sol[r].some((v, c) => v === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c]));
             if (hasFilled) candidates.push(r);
         }
     }
+
     shuffle(candidates);
     const targets = candidates.slice(0, count);
     const erasedCells = [];
+
     targets.forEach(r => {
-        for (let c = 0; c < cols; c++) {
-            if (sol[r][c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])) {
-                userGrid[r][c] = 0;
-                revealedGrid[r][c] = false;
-                renderCell(r, c);
-                updClues(r, c);
-                erasedCells.push(`g-${r}-${c}`);
-            }
-        }
+        const cellIds = _eraseFilledCellsInRow(r, sol, cols);
+        erasedCells.push(...cellIds);
     });
-    // Lingering red shimmer so the player clearly sees what was erased
+
+    // Red shimmer so the player clearly sees what was erased
     _applyCellEffect(erasedCells, 'erase');
     if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
     if (targets.length > 0) questStat_rowsErased(targets.length);
     return targets.length;
 }
 
-
+// Cursed variant of unsolveCols: only erases columns whose index is
+// present in `allowedSet`.  Same fallback behaviour as unsolveRowsExcluding.
+// Returns the number of columns erased.
 function unsolveColsExcluding(count, allowedSet) {
-    const sol = cur.grid, rows = sol.length, cols = sol[0].length;
+    const sol = cur.grid;
+    const rows = sol.length;
+    const cols = sol[0].length;
+
     let candidates = [];
     for (let c = 0; c < cols; c++) {
         if (!allowedSet.has(c)) continue;
         const hasFilled = sol.some((row, r) => row[c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c]));
         if (hasFilled) candidates.push(c);
     }
+
+    // Fallback: board was blank before use — erase any filled column
     if (!candidates.length) {
         for (let c = 0; c < cols; c++) {
             const hasFilled = sol.some((row, r) => row[c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c]));
             if (hasFilled) candidates.push(c);
         }
     }
+
     shuffle(candidates);
     const targets = candidates.slice(0, count);
     const erasedCells = [];
+
     targets.forEach(c => {
-        for (let r = 0; r < rows; r++) {
-            if (sol[r][c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])) {
-                userGrid[r][c] = 0;
-                revealedGrid[r][c] = false;
-                renderCell(r, c);
-                updClues(r, c);
-                erasedCells.push(`g-${r}-${c}`);
-            }
-        }
+        const cellIds = _eraseFilledCellsInCol(c, sol, rows);
+        erasedCells.push(...cellIds);
     });
-    // Lingering red shimmer so the player clearly sees what was erased
+
+    // Red shimmer so the player clearly sees what was erased
     _applyCellEffect(erasedCells, 'erase');
     if (ptHasSkill('adjacency_matrix')) _adjacencyMatrixRefreshAll();
     if (targets.length > 0) questStat_rowsErased(targets.length);
@@ -447,23 +674,36 @@ function unsolveColsExcluding(count, allowedSet) {
 
 
 //------------------------------------------------------------------------
+//-------------------CURSED DOWNSIDE MODIFIER HELPERS--------------------
 //------------------------------------------------------------------------
-//------------------------------------------------------------------------
+// These helpers centralise all passive / keystone interactions that
+// modify or suppress cursed downsides.  Every cursed item handler calls
+// them rather than duplicating the immunity / reduction logic.
+//
+// Precedence (checked in order):
+//   1. window._cursedImmune     — full block (Witch / Cursed Ward)
+//   2. keystone_curse_embrace   — full block (Curse Embrace keystone)
+//   3. keystone_veil_of_purity  — block on first use, double on subsequent
+//   4. dampened_curse_1/2/3     — percentage reduction of duration / count
 //------------------------------------------------------------------------
 
-// Returns the effective duration for a cursed downside, factoring in
-// Dampened Curse, Curse Embrace immunity, and Veil of Purity.
+// Returns the effective blackout duration (ms) for a cursed downside,
+// after applying all passive reductions and immunity checks.
+// Returns 0 when the downside should be fully suppressed.
 function _cursedDownsideDuration(baseMs) {
+    // Full immunity from The Witch or Cursed Ward
     if (window._cursedImmune) {
         questStat_curseBlocked();
         return 0;
     }
+
+    // Curse Embrace keystone: cursed downsides are always suppressed
     if (ptHasSkill('keystone_curse_embrace')) {
         questStat_curseBlocked();
         return 0;
     }
 
-    // FIRST USE: Immune to curse
+    // Veil of Purity keystone: first use is immune; subsequent uses amplify
     if (ptHasSkill('keystone_veil_of_purity')) {
         if (!window._veiled_cursedUsed) {
             window._veiled_cursedUsed = true;
@@ -471,11 +711,12 @@ function _cursedDownsideDuration(baseMs) {
             questStat_curseBlocked();
             return 0;
         }
-
-        // SUBSEQUENT USES: Curse is amplified
+        // Veil is now broken — curse is doubled as punishment
         showToast('Veil of Purity broken! Curse amplified!');
         return Math.round(baseMs * 2);
     }
+
+    // Dampened Curse passive nodes reduce duration by 10% / 10% / 15%
     let mult = 1.0;
     if (ptHasSkill('dampened_curse_1')) mult -= 0.10;
     if (ptHasSkill('dampened_curse_2')) mult -= 0.10;
@@ -483,35 +724,43 @@ function _cursedDownsideDuration(baseMs) {
     return Math.round(baseMs * Math.max(0, mult));
 }
 
-// Returns adjusted count for cursed erase effects (rows/cols erased).
+// Returns the effective erase count for a cursed downside (rows / cols
+// erased), applying the same immunity and reduction checks as duration.
 function _cursedDownsideCount(baseCount) {
+    // Full immunity from The Witch or Cursed Ward
     if (window._cursedImmune) {
         questStat_curseBlocked();
         return 0;
     }
+
+    // Curse Embrace keystone: cursed downsides are always suppressed
     if (ptHasSkill('keystone_curse_embrace')) {
         questStat_curseBlocked();
         return 0;
-
     }
-    // FIRST USE: Immune to curse (duration check sets flag, but we check/toast here too)
+
+    // Veil of Purity keystone: same first-use / subsequent logic as duration.
+    // Note: the flag is set inside _cursedDownsideDuration, so we only need
+    // to read it here without toggling it a second time.
     if (ptHasSkill('keystone_veil_of_purity')) {
         if (!window._veiled_cursedUsed) {
-            showToast('Veil of Purity: Downside prevented!');
+            // First use immunity — toast / flag handled by the duration call
             questStat_curseBlocked();
-            return 0; // first use: immunity (flag set in duration)
+            return 0;
         }
-        // Subsequent uses: double the downside
-
+        // Veil broken — double the erase count
         showToast('Veil of Purity broken! Curse amplified!');
         return Math.round(baseCount * 2);
     }
+
+    // Derive the count multiplier from the duration multiplier so the two
+    // always stay in sync when Dampened Curse nodes are active.
     const durationMult = _cursedDownsideDuration(1000) / 1000;
     return Math.max(0, Math.floor(baseCount * durationMult));
 }
 
-
-// Returns true if the blackout_ward nodes block a blackout effect this trigger.
+// Returns true if the Blackout Ward passive nodes block a blackout effect
+// this trigger.  Chance accumulates across all three invested nodes.
 function _blackoutWardBlocks() {
     let chance = 0;
     if (ptHasSkill('blackout_ward_1')) chance += 0.30;
@@ -520,8 +769,8 @@ function _blackoutWardBlocks() {
     return chance > 0 && Math.random() < chance;
 }
 
-// Returns true if the removal_ward nodes block a row/col erasure effect this trigger.
-
+// Returns true if the Removal Ward passive nodes block a row / col
+// erasure effect this trigger.  Chance accumulates across all three nodes.
 function _removalWardBlocks() {
     let chance = 0;
     if (ptHasSkill('removal_ward_1')) chance += 0.30;
@@ -530,97 +779,198 @@ function _removalWardBlocks() {
     return chance > 0 && Math.random() < chance;
 }
 
+// Shared helper: applies a blackout downside (row and/or col) and shows a
+// ward-protection toast when the blackout is blocked.  Pass booleans to
+// select which axes to black out.
+function _applyBlackoutDownside(dur, blackoutRows, blackoutCols) {
+    if (dur <= 0) return;
+
+    if (_blackoutWardBlocks()) {
+        showToast(`🌑 ${LANG === 'de' ? 'Verdunklungs-Schutz! Hinweise geschützt.' : 'Blackout Ward! Clues protected.'}`);
+        return;
+    }
+
+    if (blackoutRows) applyCursedRowBlackout(dur);
+    if (blackoutCols) applyCursedColBlackout(dur);
+}
+
+// Shared helper: applies a row-erasure downside and shows a ward-
+// protection toast when erasure is blocked.
+// `preFilledSet` is the snapshot of filled rows taken before the item
+// benefit fired so only pre-existing rows are targeted.
+// Returns the number of rows actually erased.
+function _applyRowErasureDownside(eraseCount, preFilledSet) {
+    if (eraseCount <= 0) return 0;
+
+    if (_removalWardBlocks()) {
+        showToast(`🔒 ${LANG === 'de' ? 'Entfernungsschutz! Zeilen behalten.' : 'Removal Ward! Rows kept.'}`);
+        return 0;
+    }
+
+    return unsolveRowsExcluding(eraseCount, preFilledSet);
+}
+
+// Shared helper: applies a column-erasure downside, with ward check.
+// Returns the number of columns actually erased.
+function _applyColErasureDownside(eraseCount, preFilledSet) {
+    if (eraseCount <= 0) return 0;
+
+    if (_removalWardBlocks()) {
+        showToast(`🔒 ${LANG === 'de' ? 'Entfernungsschutz! Spalten behalten.' : 'Removal Ward! Columns kept.'}`);
+        return 0;
+    }
+
+    return unsolveColsExcluding(eraseCount, preFilledSet);
+}
 
 
 
 
 //------------------------------------------------------------------------
+//-------------------ITEM EFFECT COUNT / MULTIPLIER HELPERS--------------
 //------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-//------------------------------------------------------------------------
-//-------------------REVEAL ITEMS-----------------------------------------
-//------------------------------------------------------------------------
+// Centralised helpers that compute the final count or multiplier for
+// an item's positive effect, factoring in all relevant keystones and
+// passive nodes.  Each handler calls the appropriate helper instead of
+// repeating the keystone chain.
 //------------------------------------------------------------------------
 
+// Returns the final reveal count for a reveal item, including all passive
+// and keystone bonuses / penalties.
+function _calcRevealCount(baseCount) {
+    let count = baseCount;
 
-function _useReveal(id, def) {
-
-    questStat_revealItemUsed();
-    let count = parseInt(id.replace('reveal', '')) || 1;
-
-    // Passive: Stronger Light
+    // Passive: Stronger Light — +1 per node
     count += (ptHasSkill('stronger_light_1') ? 1 : 0)
         + (ptHasSkill('stronger_light_2') ? 1 : 0)
         + (ptHasSkill('stronger_light_3') ? 1 : 0);
 
-    // Keystone: Blinding Truth — 50% more reveals (rounded up), mark-wrong blocked elsewhere
+    // Keystone: Blinding Truth — 50% more reveals (rounds up)
     if (ptHasSkill('keystone_blinding_truth')) count = Math.ceil(count * 1.5);
 
-    // Keystone: Countdown Crisis — 5× if timer < 3 min
+    // Keystone: Countdown Crisis — ×5 when timer is under 3 minutes
     if (ptHasSkill('keystone_countdown_crisis') && timerSecs < 180) count *= 5;
 
-    // Keystone: Curse Embrace — non-cursed items 50% weaker
+    // Keystone: Curse Embrace — non-cursed items are 50% weaker
     if (ptHasSkill('keystone_curse_embrace')) count = Math.max(1, Math.floor(count * 0.5));
 
-    // Keystone: Iron Doctrine — all non-cursed items at 300% for reveals (same modifier)
+    // Keystone: Iron Doctrine — non-cursed items at 300% effectiveness
     if (ptHasSkill('keystone_iron_doctrine')) count = Math.ceil(count * 3);
 
-    revealTiles(count);
-    playItemEffect(id);
-    return `${def.icon} ${count > 1 ? t('item_revealed_pl').replace('{n}', count) : t('item_revealed').replace('{n}', count)}`;
+    return count;
+}
+
+// Returns the final mark-wrong count for a markWrong item.
+function _calcMarkWrongCount(baseCount) {
+    let count = baseCount;
+
+    // Passive: Stronger Marks — +1 per node
+    count += (ptHasSkill('stronger_marks_1') ? 1 : 0)
+        + (ptHasSkill('stronger_marks_2') ? 1 : 0)
+        + (ptHasSkill('stronger_marks_3') ? 1 : 0);
+
+    // Keystone: Curse Embrace — 50% weaker
+    if (ptHasSkill('keystone_curse_embrace')) count = Math.max(1, Math.floor(count * 0.5));
+
+    // Keystone: Iron Doctrine — 300% effectiveness
+    if (ptHasSkill('keystone_iron_doctrine')) count = Math.ceil(count * 3);
+
+    return count;
+}
+
+// Returns the final time addition (seconds) for an addTime item.
+// Also handles the Countdown Crisis inversion (caller checks and acts on
+// the negative case).
+function _calcAddTimeSecs(baseSecs) {
+    let multiplier = 1.0;
+
+    // Passive: Extended Hour — each node adds 10% / 15% / 10%
+    if (ptHasSkill('extended_hour_1')) multiplier += 0.10;
+    if (ptHasSkill('extended_hour_2')) multiplier += 0.15;
+    if (ptHasSkill('extended_hour_3')) multiplier += 0.10;
+
+    // Keystone: Golden Clock — timer items are 100% more effective while active
+    if (window._goldenClockActive) multiplier += 1.0;
+
+    // Keystone: Iron Doctrine — 300% effectiveness
+    if (ptHasSkill('keystone_iron_doctrine')) multiplier += 3.0;
+
+    // Keystone: Curse Embrace — 50% weaker
+    if (ptHasSkill('keystone_curse_embrace')) multiplier *= 0.5;
+
+    return Math.round(baseSecs * multiplier);
+}
+
+// Returns the final mistake-reduction count for a mistakeEraser item.
+// Pass isEraseAll=true for mistakeEraserAll (bypasses most modifiers since
+// it always clears the full current count).
+function _calcMistakeEraserCount(baseCount, isEraseAll) {
+    if (isEraseAll) return baseCount; // eraseAll ignores all modifiers
+
+    let count = baseCount;
+
+    // Passive: Scholarly Aid — +1 per node
+    count += (ptHasSkill('scholarly_aid_1') ? 1 : 0)
+        + (ptHasSkill('scholarly_aid_2') ? 1 : 0)
+        + (ptHasSkill('scholarly_aid_3') ? 1 : 0);
+
+    // Keystone: Iron Doctrine — 300% effectiveness
+    if (ptHasSkill('keystone_iron_doctrine')) count = Math.ceil(count * 3);
+
+    // Keystone: Curse Embrace — 50% weaker
+    if (ptHasSkill('keystone_curse_embrace')) count = Math.max(1, Math.floor(count * 0.5));
+
+    return count;
 }
 
 
 
+
 //------------------------------------------------------------------------
-//-------------------------ROW SOLVE--------------------------------------
+//-------------------ITEM HANDLERS — STANDARD ITEMS----------------------
 //------------------------------------------------------------------------
+// One handler per item (or item family).  Each function:
+//   1. Applies passive / keystone modifier scaling
+//   2. Executes the item effect
+//   3. Plays the item sound
+//   4. Returns a localised result string for the toast
 //------------------------------------------------------------------------
 
+// reveal1 / reveal2 / reveal3 / reveal4 — reveals N random solution cells.
+function _useReveal(id, def) {
+    questStat_revealItemUsed();
 
+    const baseCount = parseInt(id.replace('reveal', '')) || 1;
+    const finalCount = _calcRevealCount(baseCount);
+
+    revealTiles(finalCount);
+    playItemEffect(id);
+
+    const msgKey = finalCount > 1 ? 'item_revealed_pl' : 'item_revealed';
+    return `${def.icon} ${t(msgKey).replace('{n}', finalCount)}`;
+}
+
+// rowSolve — fully reveals one random unsolved row.
 function _useRowSolve(id, def) {
     const n = solveRows(1);
     playItemEffect(id);
     if (n > 0) checkWin();
-    return n > 0 ? `${def.icon} ${t('item_row_solved')}` : `${def.icon} ${t('item_row_solved_none')}`;
+    return n > 0
+        ? `${def.icon} ${t('item_row_solved')}`
+        : `${def.icon} ${t('item_row_solved_none')}`;
 }
 
-
-
-//------------------------------------------------------------------------
-//----------------------------COL SOLVE-----------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-
+// colSolve — fully reveals one random unsolved column.
 function _useColSolve(id, def) {
     const n = solveCols(1);
     playItemEffect(id);
     if (n > 0) checkWin();
-    return n > 0 ? `${def.icon} ${t('item_col_solved')}` : `${def.icon} ${t('item_col_solved_none')}`;
+    return n > 0
+        ? `${def.icon} ${t('item_col_solved')}`
+        : `${def.icon} ${t('item_col_solved_none')}`;
 }
 
-
-
-//------------------------------------------------------------------------
-//-----------------------SCOUTS PRIMER------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-
+// scoutPrimer — marks the next puzzle start so a reveal fires immediately.
 function _useScoutPrimer(id, def) {
     STATE.primerPending = true;
     save();
@@ -628,95 +978,54 @@ function _useScoutPrimer(id, def) {
     return `📜 ${t('item_primer_activated')}`;
 }
 
-
-
-//------------------------------------------------------------------------
-//---------------------CODEX OF COMPLETION--------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-
+// artifactComplete (Codex of Completion) — reveals every remaining cell.
 function _useArtifactComplete(id, def) {
-    const sol = cur.grid, rows = sol.length, cols = sol[0].length;
-    for (let r = 0; r < rows; r++)
-        for (let c = 0; c < cols; c++)
+    const sol = cur.grid;
+    const rows = sol.length;
+    const cols = sol[0].length;
+
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
             if (sol[r][c] === 1 && userGrid[r][c] !== 1) {
                 revealedGrid[r][c] = true;
                 userGrid[r][c] = 1;
                 renderCell(r, c);
                 updClues(r, c);
             }
+        }
+    }
+
     playItemEffect(id);
     checkWin();
     return `🌟 ${t('item_artifact_complete')}`;
 }
 
-
-
-
-//------------------------------------------------------------------------
-//------------------MARK WRONG ITEMS--------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
+// markWrong2 / markWrong4 / etc. — marks N random empty non-solution cells.
 function _useMarkWrong(id, def) {
-    // Keystone: Blinding Truth blocks mark-wrong items entirely
+    // Blinding Truth keystone blocks all mark-wrong items entirely
     if (ptHasSkill('keystone_blinding_truth')) {
         return `${def.icon} ${LANG === 'de' ? 'Blockiert durch Blendende Wahrheit!' : 'Blocked by Blinding Truth!'}`;
     }
 
-    let count = parseInt(id.replace('markWrong', '')) || 2;
+    const baseCount = parseInt(id.replace('markWrong', '')) || 2;
+    const finalCount = _calcMarkWrongCount(baseCount);
 
-    // Passive: Stronger Marks
-    count += (ptHasSkill('stronger_marks_1') ? 1 : 0)
-        + (ptHasSkill('stronger_marks_2') ? 1 : 0)
-        + (ptHasSkill('stronger_marks_3') ? 1 : 0);
-
-    // Keystone: Curse Embrace — non-cursed items 50% weaker
-    if (ptHasSkill('keystone_curse_embrace')) count = Math.max(1, Math.floor(count * 0.5));
-
-    // Keystone: Iron Doctrine — 300% effectiveness
-    if (ptHasSkill('keystone_iron_doctrine')) count = Math.ceil(count * 3);
-
-    markWrongTiles(count);
+    markWrongTiles(finalCount);
     playItemEffect(id);
-    return `${def.icon} ${t('item_marked').replace('{n}', count)}`;
+    return `${def.icon} ${t('item_marked').replace('{n}', finalCount)}`;
 }
 
-
-
-
-//------------------------------------------------------------------------
-//---------------ADDITIONAL TIME ITEMS------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
+// addTime30 / addTime60 / addTime180 — adds seconds to the timer.
 function _useAddTime(id, def) {
-    // Keystone: Gambler's Ruin — bonus time from all other sources is disabled
+    // Gambler's Ruin keystone disables all bonus time from non-cursed sources
     if (ptHasSkill('keystone_gamblers_ruin')) {
-        return `${def.icon} ${LANG === 'de' ? 'Blockiert durch Ruin des Spielers!' : 'Blocked by Gambler\'s Ruin!'}`;
+        return `${def.icon} ${LANG === 'de' ? 'Blockiert durch Ruin des Spielers!' : "Blocked by Gambler's Ruin!"}`;
     }
 
-    let secs = parseInt(id.replace('addTime', '')) || 30;
+    const baseSecs = parseInt(id.replace('addTime', '')) || 30;
+    const secs = _calcAddTimeSecs(baseSecs);
 
-    // Passive: Extended Hour (10%, 10%, 15%)
-    let multiplier = 1.0;
-    if (ptHasSkill('extended_hour_1')) multiplier += 0.10;
-    if (ptHasSkill('extended_hour_2')) multiplier += 0.15;
-    if (ptHasSkill('extended_hour_3')) multiplier += 0.10;
-
-    // Keystone: Golden Clock — timer items 100% more effective while active
-    if (window._goldenClockActive) multiplier += 1.0;
-
-    // Keystone: Iron Doctrine — 300% effectiveness
-    if (ptHasSkill('keystone_iron_doctrine')) multiplier += 3.0;
-
-    // Keystone: Curse Embrace — non-cursed 50% weaker
-    if (ptHasSkill('keystone_curse_embrace')) multiplier *= 0.5;
-
-    secs = Math.round(secs * multiplier);
-
-    // Keystone: Countdown Crisis — subtracts time instead of adding
+    // Countdown Crisis keystone inverts the effect — time is subtracted
     if (ptHasSkill('keystone_countdown_crisis')) {
         questStat_timerItemUsed();
         timerSecs = Math.max(0, timerSecs - secs);
@@ -732,17 +1041,10 @@ function _useAddTime(id, def) {
     return `${def.icon} ${t('item_time_added').replace('{n}', secs)}`;
 }
 
-
-
-
-
-//------------------------------------------------------------------------
-//-------------------SHIELD ITEMS-----------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-
+// shield — activates the damage shield, optionally adding extra charges
+// and a cursed-immunity window from passive nodes.
 function _useShield(id, def) {
+    // Several keystones block shield items entirely
     if (ptHasSkill('keystone_iron_doctrine')) {
         return `${def.icon} ${LANG === 'de' ? 'Blockiert durch Eiserne Doktrin!' : 'Blocked by Iron Doctrine!'}`;
     }
@@ -752,64 +1054,48 @@ function _useShield(id, def) {
     if (ptHasSkill('keystone_asymptotic_mastery')) {
         return `${def.icon} ${LANG === 'de' ? 'Blockiert durch Asymptotische Meisterschaft!' : 'Blocked by Asymptotic Mastery!'}`;
     }
+
     shieldActive = true;
 
     // Passive: Reinforced Ward — each node adds 1 extra absorbed mistake
     const extraCharges = (ptHasSkill('reinforced_ward_1') ? 1 : 0)
         + (ptHasSkill('reinforced_ward_2') ? 1 : 0)
         + (ptHasSkill('reinforced_ward_3') ? 1 : 0);
-    // Store extra charges for the mistake handler to consume
+    // Stored on the window so the mistake handler can consume them
     window._shieldExtraCharges = (window._shieldExtraCharges || 0) + extraCharges;
 
-    // Passive: Cursed Ward — each node adds 5 s of cursed immunity (max 15 s)
-    const cursedWardSecs = (ptHasSkill('cursed_ward_1') ? 5 : 0)
+    // Passive: Cursed Ward — each node grants 5 s of cursed immunity (max 15 s)
+    const cursedImmunitySecs = (ptHasSkill('cursed_ward_1') ? 5 : 0)
         + (ptHasSkill('cursed_ward_2') ? 5 : 0)
         + (ptHasSkill('cursed_ward_3') ? 5 : 0);
-    if (cursedWardSecs > 0) {
+    if (cursedImmunitySecs > 0) {
         window._cursedImmune = true;
-        setTimeout(() => { window._cursedImmune = false; }, cursedWardSecs * 1000);
-
-        showToast('Warded against curses!')
+        setTimeout(() => { window._cursedImmune = false; }, cursedImmunitySecs * 1000);
+        showToast('Warded against curses!');
     }
 
     playItemEffect(id);
     return `${def.icon} ${t('item_shield_msg')}`;
 }
 
-
-
-
-
-
-
-
-//------------------------------------------------------------------------
-//-------------------TUTOR ITEMS------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
+// mistakeEraser / mistakeEraser4 / mistakeEraser6 / mistakeEraserAll —
+// reduces the current mistake count, optionally granting bonus time via
+// the Time Well Spent passive.
 function _useMistakeEraser(id, def) {
-    let reduceBy = id === 'mistakeEraserAll'
-        ? mistakeCount
-        : (parseInt(id.replace('mistakeEraser', '')) || 2);
-
-    // Passive: Scholarly Aid
-    if (id !== 'mistakeEraserAll') {
-        reduceBy += (ptHasSkill('scholarly_aid_1') ? 1 : 0)
-            + (ptHasSkill('scholarly_aid_2') ? 1 : 0)
-            + (ptHasSkill('scholarly_aid_3') ? 1 : 0);
+    if (mistakeCount === 0) {
+        showToast(LANG === 'de' ? 'Keine Fehler zum Entfernen!' : 'No mistakes to erase!');
+        return null; // Return null to signal no effect/no consumption
     }
 
-    // Keystone: Iron Doctrine — 300% effectiveness
-    if (ptHasSkill('keystone_iron_doctrine') && id !== 'mistakeEraserAll') reduceBy = Math.ceil(reduceBy * 3);
-
-    // Keystone: Curse Embrace — non-cursed 50% weaker
-    if (ptHasSkill('keystone_curse_embrace') && id !== 'mistakeEraserAll') reduceBy = Math.max(1, Math.floor(reduceBy * 0.5));
+    const isEraseAll = id === 'mistakeEraserAll';
+    const baseCount = isEraseAll ? mistakeCount : (parseInt(id.replace('mistakeEraser', '')) || 2);
+    const reduceBy = _calcMistakeEraserCount(baseCount, isEraseAll);
 
     const before = mistakeCount;
     mistakeCount = Math.max(0, mistakeCount - reduceBy);
     playItemEffect(id);
     const removed = before - mistakeCount;
+
     if (removed > 0) questStat_mistakesRemoved(removed);
 
     // Passive: Time Well Spent — bonus time per mistake removed
@@ -826,33 +1112,27 @@ function _useMistakeEraser(id, def) {
 
     const mcEl = document.getElementById('mistake-counter');
     if (mcEl) mcEl.textContent = `✗ ${mistakeCount}`;
+
     return removed > 0
         ? `${def.icon} ${t('item_mistake_erased').replace('{n}', removed)}`
         : `${def.icon} ${t('item_mistake_erased_none')}`;
 }
 
-
-
-
-
-
-
-
-//------------------------------------------------------------------------
-//---------------------FREEZE ITEMS---------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-
+// freeze — freezes the timer for 2 s and activates a temporary shield.
 function _useFreeze(id, def) {
-    const FREEZE_DURATION = 2000;
+    const FREEZE_DURATION_MS = 2000;
+
     timerFrozen = true;
-    if (!ptHasSkill('keystone_null_hypothesis')) shieldActive = true;
     window._freezeActive = true;
+    // Null Hypothesis keystone skips the shield grant
+    if (!ptHasSkill('keystone_null_hypothesis')) shieldActive = true;
     updTimer();
     playItemEffect(id);
+
+    // Track clutch freezes (used with ≤ 10 s remaining)
     if (timerSecs <= 10) trackAchStat('freezeClutches');
 
+    // Countdown ticker shown in the timer element
     let remaining = 2;
     const freezeTick = setInterval(() => {
         remaining--;
@@ -860,6 +1140,7 @@ function _useFreeze(id, def) {
         if (el) el.textContent = `❄️ ${remaining}s`;
         if (remaining <= 0) clearInterval(freezeTick);
     }, 1000);
+
     setTimeout(() => {
         timerFrozen = false;
         window._freezeActive = false;
@@ -867,7 +1148,7 @@ function _useFreeze(id, def) {
         clearInterval(freezeTick);
         updTimer();
         showToast(t('item_freeze_ended'));
-    }, FREEZE_DURATION);
+    }, FREEZE_DURATION_MS);
 
     return `${def.icon} ${t('item_freeze_msg')}`;
 }
@@ -875,109 +1156,113 @@ function _useFreeze(id, def) {
 
 
 
+//------------------------------------------------------------------------
+//-------------------ITEM HANDLERS — CURSED ITEMS------------------------
+//------------------------------------------------------------------------
+// Cursed items have both a strong upside and a downside.  Every handler
+// here calls _trackWitchImmuneCursedUse() first, then applies the upside,
+// and finally resolves the downside through the shared helpers so all
+// ward / immunity / dampening logic stays in one place.
+//------------------------------------------------------------------------
 
-//------------------------------------------------------------------------
-//-------------------CURSED ITEMS-----------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
+// cursedTime — adds 20 min to the timer; downside blacks out all clues.
 function _useCursedTime(id, def) {
     _trackWitchImmuneCursedUse();
+
     timerSecs += 1200;
     updTimer();
     playItemEffect(id);
+
     const dur = _cursedDownsideDuration(30000);
-    if (dur > 0 && !_blackoutWardBlocks()) {
-        applyCursedRowBlackout(dur);
-        applyCursedColBlackout(dur);
-    } else if (dur > 0) {
-        showToast(`🌑 ${LANG === 'de' ? 'Verdunklungs-Schutz! Hinweise geschützt.' : 'Blackout Ward! Clues protected.'}`);
-    }
+    _applyBlackoutDownside(dur, true, true); // black out both rows and cols
+
     return `💀 ${t('item_cursed_time_both')}`;
 }
 
+// cursedShield — activates shield and reveals 2 cells; downside blacks out row clues.
 function _useCursedShield(id, def) {
     _trackWitchImmuneCursedUse();
+
     shieldActive = true;
     revealTiles(2);
-    const dur = _cursedDownsideDuration(30000);
-    if (dur > 0 && !_blackoutWardBlocks()) {
-        applyCursedRowBlackout(dur);
-    } else if (dur > 0) {
-        showToast(`🌑 ${LANG === 'de' ? 'Verdunklungs-Schutz! Hinweise geschützt.' : 'Blackout Ward! Clues protected.'}`);
-    }
     playItemEffect(id);
+
+    const dur = _cursedDownsideDuration(30000);
+    _applyBlackoutDownside(dur, true, false); // black out rows only
+
     return `👁️ ${t('item_cursed_shield_both')}`;
 }
 
+// cursedRowSolve — solves 3 rows; downside erases 1 pre-existing row.
 function _useCursedRowSolve(id, def) {
     _trackWitchImmuneCursedUse();
+
     const preFilledRows = _getPreFilledRows();
     const revealed = solveRows(3);
     const eraseCount = _cursedDownsideCount(1);
-    let erased = 0;
-    if (eraseCount > 0) {
-        if (_removalWardBlocks()) {
-            showToast(`🔒 ${LANG === 'de' ? 'Entfernungsschutz! Zeilen behalten.' : 'Removal Ward! Rows kept.'}`);
-        } else {
-            erased = unsolveRowsExcluding(eraseCount, preFilledRows);
-        }
-    }
+    const erased = _applyRowErasureDownside(eraseCount, preFilledRows);
+
     playItemEffect(id);
     if (revealed > 0) checkWin();
     return `🌊 ${t('item_cursed_row_both').replace('{r}', revealed).replace('{e}', erased)}`;
 }
 
+// cursedColSolve — solves 3 columns; downside erases 1 pre-existing column.
 function _useCursedColSolve(id, def) {
     _trackWitchImmuneCursedUse();
+
     const preFilledCols = _getPreFilledCols();
     const revealed = solveCols(3);
     const eraseCount = _cursedDownsideCount(1);
-    let erased = 0;
-    if (eraseCount > 0) {
-        if (_removalWardBlocks()) {
-            showToast(`🔒 ${LANG === 'de' ? 'Entfernungsschutz! Spalten behalten.' : 'Removal Ward! Columns kept.'}`);
-        } else {
-            erased = unsolveColsExcluding(eraseCount, preFilledCols);
-        }
-    }
+    const erased = _applyColErasureDownside(eraseCount, preFilledCols);
+
     playItemEffect(id);
     if (revealed > 0) checkWin();
     return `🌪️ ${t('item_cursed_col_both').replace('{r}', revealed).replace('{e}', erased)}`;
 }
 
+// cursedRowCol — solves 4 rows and 4 cols; downside blacks out column clues.
 function _useCursedRowCol(id, def) {
     _trackWitchImmuneCursedUse();
-    const r = solveRows(4);
-    const c = solveCols(4);
+
+    const rowsRevealed = solveRows(4);
+    const colsRevealed = solveCols(4);
+
     const dur = _cursedDownsideDuration(45000);
-    if (dur > 0 && !_blackoutWardBlocks()) {
-        applyCursedColBlackout(dur);
-    } else if (dur > 0) {
-        showToast(`🌑 ${LANG === 'de' ? 'Verdunklungs-Schutz! Hinweise geschützt.' : 'Blackout Ward! Clues protected.'}`);
-    }
+    _applyBlackoutDownside(dur, false, true); // black out cols only
+
     playItemEffect(id);
     checkWin();
-    return `💥 ${t('item_cursed_rowcol_both').replace('{r}', r).replace('{c}', c)}`;
+    return `💥 ${t('item_cursed_rowcol_both').replace('{r}', rowsRevealed).replace('{c}', colsRevealed)}`;
 }
 
+// cursedReveal — reveals 6 cells; downside clears all wrong marks.
 function _useCursedReveal(id, def) {
     _trackWitchImmuneCursedUse();
+
     revealTiles(6);
+
+    // When immune the marks are protected — early-out with a safe message
     if (window._cursedImmune || ptHasSkill('keystone_curse_embrace')) {
         playItemEffect(id);
         return `☠️ ${LANG === 'de' ? 'Enthüllt 6 Zellen (Markierungen geschützt)!' : '6 cells revealed (marks protected)!'}`;
     }
-    const rows = cur.grid.length, cols = cur.grid[0].length;
+
+    // Downside: clear every wrong mark the player has placed
+    const rows = cur.grid.length;
+    const cols = cur.grid[0].length;
     const unmarked = [];
-    for (let r = 0; r < rows; r++)
-        for (let c = 0; c < cols; c++)
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
             if (userGrid[r][c] === 2) {
                 userGrid[r][c] = 0;
                 renderCell(r, c);
                 unmarked.push(`g-${r}-${c}`);
             }
+        }
+    }
     _applyCellEffect(unmarked, 'unmark');
+
     playItemEffect(id);
     return `☠️ ${t('item_cursed_reveal_both')}`;
 }
@@ -986,99 +1271,114 @@ function _useCursedReveal(id, def) {
 
 
 //------------------------------------------------------------------------
-//------------------PEARL ITEMS-------------------------------------------
+//-------------------ITEM HANDLERS — PEARL ITEMS-------------------------
+//------------------------------------------------------------------------
+// Pearl items reset class skill cooldowns so they are ready to use again
+// almost immediately.
 //------------------------------------------------------------------------
 
+// Helper: resets a single cooldown slot to 1 s remaining.
+function _resetCooldownSlot(slot) {
+    const cd = cooldownState[slot];
+    if (cd.interval) {
+        clearInterval(cd.interval);
+        cd.interval = null;
+    }
+    cd.remaining = 1;
+    startSlotCooldown(slot, 1);
+}
+
+// pearlOfHaste — resets the cooldown of active skill slot 1.
 function _usePearlOfHaste(id, def) {
     if (!STATE.playerClass) return `${def.icon} No class equipped!`;
-    const cd = cooldownState['active1'];
-    if (cd.interval) { clearInterval(cd.interval); cd.interval = null; }
-    cd.remaining = 1;
-    startSlotCooldown('active1', 1);
+    _resetCooldownSlot('active1');
     playItemEffect(id);
     return `${def.icon} ${LANG === 'de' ? 'Abklingzeit 1 auf 1s reduziert!' : 'Skill 1 cooldown set to 1s!'}`;
 }
 
+// pearlOfSwiftness — resets the cooldown of active skill slot 2.
 function _usePearlOfSwiftness(id, def) {
     if (!STATE.playerClass) return `${def.icon} No class equipped!`;
-    const cd = cooldownState['active2'];
-    if (cd.interval) { clearInterval(cd.interval); cd.interval = null; }
-    cd.remaining = 1;
-    startSlotCooldown('active2', 1);
+    _resetCooldownSlot('active2');
     playItemEffect(id);
     return `${def.icon} ${LANG === 'de' ? 'Abklingzeit 2 auf 1s reduziert!' : 'Skill 2 cooldown set to 1s!'}`;
 }
 
+// grandPearl — resets the cooldowns of both active skill slots.
 function _useGrandPearl(id, def) {
     if (!STATE.playerClass) return `${def.icon} No class equipped!`;
-    ['active1', 'active2'].forEach(slot => {
-        const cd = cooldownState[slot];
-        if (cd.interval) { clearInterval(cd.interval); cd.interval = null; }
-        cd.remaining = 1;
-        startSlotCooldown(slot, 1);
-    });
+    _resetCooldownSlot('active1');
+    _resetCooldownSlot('active2');
     playItemEffect(id);
     return `${def.icon} ${LANG === 'de' ? 'Beide Abklingzeiten auf 1s reduziert!' : 'Both skill cooldowns set to 1s!'}`;
 }
 
+
+
+
 //------------------------------------------------------------------------
-//------------------THE WITCH---------------------------------------------
+//-------------------ITEM HANDLERS — SPECIAL ITEMS-----------------------
 //------------------------------------------------------------------------
 
+// theWitch — pays −10 min upfront in exchange for 60 s of full cursed
+// immunity (makes subsequent cursed items downside-free for that window).
 function _useTheWitch(id, def) {
-    // -10 min penalty first
     timerSecs = Math.max(0, timerSecs - 600);
     updTimer();
-    // Cursed immunity for 60 s
+
     window._cursedImmune = true;
     playItemEffect(id);
     showToast(`🧙 ${LANG === 'de' ? 'Verfluchter Schutz für 60s! −10 Min.' : 'Cursed immunity 60s! −10 min.'}`);
+
     setTimeout(() => {
         window._cursedImmune = false;
         showToast(`🧙 ${LANG === 'de' ? 'Hexenschutz endet.' : 'Witch immunity faded.'}`);
     }, 60000);
-    return '';  // toast already shown above
+
+    return ''; // toast was already shown above
 }
 
-//------------------------------------------------------------------------
-//------------------GOLDEN CLOCK------------------------------------------
-//------------------------------------------------------------------------
-
+// goldenClock — halts the timer until 3 more mistakes are made.
 function _useGoldenClock(id, def) {
     window._goldenClockActive = true;
     window._goldenClockMistakesLeft = 3;
     playItemEffect(id);
-    // Update mistake display immediately so player sees the new limit
+
+    // Update the mistake display so the player immediately sees the limit
     const mcEl = document.getElementById('mistake-counter');
     if (mcEl) mcEl.textContent = `✗ ${mistakeCount} 🕰️`;
+
     return `${def.icon} ${LANG === 'de' ? 'Timer angehalten! Noch 3 Fehler erlaubt.' : 'Timer halted! 3 mistakes remaining.'}`;
 }
 
-//------------------------------------------------------------------------
-//------------------SHADOW SEAL-------------------------------------------
-//------------------------------------------------------------------------
-
+// shadowSeal — sets the timer to exactly 5 min, permanently hides all
+// clues for the rest of the level, and mass-marks 75 % of empty cells.
 function _useShadowSeal(id, def) {
     questStat_shadowSealUsed();
-
     if (!cur) return '';
 
-    // 1. Set timer to exactly 5 min
+    // 1. Hard-set the timer to exactly 5 minutes
     timerSecs = 300;
     updTimer();
 
-    // 2. Permanently hide all clues for the rest of the level
+    // 2. Permanently hide all row and column clues for this level
     window._shadowSealActive = true;
     document.querySelectorAll('.row-clue, .col-clue, [class*="rct-"], [class*="cch-"]')
         .forEach(el => el.classList.add('clue-blackout'));
 
-    // 3. Mark 75% of all wrong empty tiles
-    const sol = cur.grid, rows = sol.length, cols = sol[0].length;
+    // 3. Mark 75% of all empty non-solution cells as wrong
+    const sol = cur.grid;
+    const rows = sol.length;
+    const cols = sol[0].length;
+
     const cands = [];
-    for (let r = 0; r < rows; r++)
-        for (let c = 0; c < cols; c++)
-            if (sol[r][c] === 0 && (userGrid[r][c] === 0 || userGrid[r][c] === 3) && !wrongGrid?.[r]?.[c])
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            if (sol[r][c] === 0 && (userGrid[r][c] === 0 || userGrid[r][c] === 3) && !wrongGrid?.[r]?.[c]) {
                 cands.push([r, c]);
+            }
+        }
+    }
 
     const markCount = Math.floor(cands.length * 0.75);
     shuffle(cands);
@@ -1091,26 +1391,36 @@ function _useShadowSeal(id, def) {
     _applyCellEffect(affected, 'mark');
 
     playItemEffect(id);
-    return `${def.icon} ${LANG === 'de' ? `Schattensiegel! Hinweise versteckt, ${markCount} Felder markiert.` : `Shadow Seal! Clues hidden, ${markCount} tiles marked.`}`;
+    return `${def.icon} ${LANG === 'de'
+        ? `Schattensiegel! Hinweise versteckt, ${markCount} Felder markiert.`
+        : `Shadow Seal! Clues hidden, ${markCount} tiles marked.`}`;
 }
 
 
 
 
-
 //------------------------------------------------------------------------
-//------------------ITEM EFFECT DISPATCH TABLE----------------------------
+//-------------------ITEM EFFECT DISPATCH TABLE---------------------------
 //------------------------------------------------------------------------
+// Maps item id strings to their handler functions.
+//
+// ITEM_PREFIX_HANDLERS is checked first — it covers item families whose
+// ids are generated dynamically (reveal1–4, markWrong2–8, addTime30–180).
+// ITEM_EFFECT_HANDLERS covers every exact item id.
 //------------------------------------------------------------------------
 
-//  Maps item id -> handler function.
-//  Prefix entries (reveal*, markWrong*, addTime*)
-//  are matched first before falling through to the
-//  exact-id lookup.
+// Prefix-matched handler entries.  Each entry has:
+//   prefix  — id must start with this string
+//   handler — the function to call
+//   exclude — exact ids that share the prefix but must NOT use this handler
+const ITEM_PREFIX_HANDLERS = [
+    { prefix: 'reveal', handler: _useReveal, exclude: ['cursedReveal'] },
+    { prefix: 'markWrong', handler: _useMarkWrong, exclude: [] },
+    { prefix: 'addTime', handler: _useAddTime, exclude: [] },
+];
 
-
+// Exact-id handler table.
 const ITEM_EFFECT_HANDLERS = {
-    // exact-id items
     freeze: _useFreeze,
     shield: _useShield,
     rowSolve: _useRowSolve,
@@ -1135,43 +1445,51 @@ const ITEM_EFFECT_HANDLERS = {
     shadowSeal: _useShadowSeal,
 };
 
-// Prefix-matched items (reveal1–4, markWrong2–8, addTime30–180).
-// Checked before the exact table since their ids are dynamic.
-const ITEM_PREFIX_HANDLERS = [
-    { prefix: 'reveal', handler: _useReveal, exclude: ['cursedReveal'] },
-    { prefix: 'markWrong', handler: _useMarkWrong, exclude: [] },
-    { prefix: 'addTime', handler: _useAddTime, exclude: [] },
-];
-
+// Routes an item id to the correct handler, trying prefix matches first.
+// Returns the localised result string (used as the toast message).
 function _dispatchItemEffect(id, def) {
     for (const { prefix, handler, exclude } of ITEM_PREFIX_HANDLERS) {
         if (id.startsWith(prefix) && !exclude.includes(id)) {
             return handler(id, def);
         }
     }
+
     const handler = ITEM_EFFECT_HANDLERS[id];
     if (handler) return handler(id, def);
 
-    return ''; // unknown item
+    return ''; // unknown item id — no effect
 }
 
 
 
 
 //------------------------------------------------------------------------
-//----------------ACHIEVEMENTS FOR ITEM USEAGE----------------------------
+//-------------------ACHIEVEMENT TRACKING---------------------------------
 //------------------------------------------------------------------------
+// Fires all achievement and quest-stat updates that should trigger
+// whenever a specific item is used.  Called once per item use, after the
+// effect has already been dispatched.
 //------------------------------------------------------------------------
 
+// Checks whether `id` is any variant of the mistakeEraser item.
+function _isMistakeEraserItem(id) {
+    return id === 'mistakeEraser'
+        || id === 'mistakeEraser4'
+        || id === 'mistakeEraser6'
+        || id === 'mistakeEraserAll';
+}
 
-// Fires all achievement tracking for the item that was just used
+// Fires all relevant achievement and quest-stat calls for the used item.
 function _trackItemAchievements(id, def) {
+    // Universal — every item use
     trackAchStat('itemsUsed');
     if (def.rarity === 'cursed') trackAchStat('cursedItemsUsed');
+
+    // Per-item-type achievements
     if (id === 'shield') trackAchStat('shieldsUsed');
     if (id === 'artifactComplete') trackAchStat('artifactUsed');
     if (id === 'freeze') trackAchStat('freezeUsed');
-    if (id === 'mistakeEraser' || id === 'mistakeEraser4' || id === 'mistakeEraser6' || id === 'mistakeEraserAll') trackAchStat('eraserUsed');
+    if (_isMistakeEraserItem(id)) trackAchStat('eraserUsed');
     if (id === 'cursedReveal') trackAchStat('cursedLensUsed');
     if (id === 'cursedTime') trackAchStat('cursedClockUsed');
     if (id === 'cursedShield') trackAchStat('demonEyeUsed');
@@ -1179,50 +1497,64 @@ function _trackItemAchievements(id, def) {
     if (id === 'cursedColSolve') trackAchStat('vortexUsed');
     if (id === 'cursedRowCol') trackAchStat('chaosGridUsed');
     if (id === 'scoutPrimer') trackAchStat('scoutPrimerUsed');
-
     if (id === 'rowSolve' || id === 'colSolve') trackAchStat('rowColSolved');
+    if (id === 'pearlOfHaste' || id === 'pearlOfSwiftness' || id === 'grandPearl') trackAchStat('pearlsUsed');
+    if (id === 'theWitch') trackAchStat('witchUsed');
+    if (id === 'goldenClock') trackAchStat('goldenClockUsed');
+    if (id === 'shadowSeal') trackAchStat('shadowSealUsed');
 
+    // Time-added tracking (addTime items and cursedTime both add time)
     if (id.startsWith('addTime')) {
         const secs = parseInt(id.replace('addTime', '')) || 0;
         if (secs > 0) trackAchStat('timeAdded', secs);
     }
     if (id === 'cursedTime') trackAchStat('timeAdded', 1200);
 
+    // Multi-item-use achievement
     if (itemsUsedThisLevel >= 3) trackAchStat('threeItemsOneLevelCount');
 
+    // Cursed items used on a first-attempt level
     if (def.rarity === 'cursed' && !STATE.done.includes(cur.gIdx)) {
         trackAchStat('cursedFirstAttempts');
     }
-
-    if (id === 'pearlOfHaste' || id === 'pearlOfSwiftness' || id === 'grandPearl') trackAchStat('pearlsUsed');
-    if (id === 'theWitch') trackAchStat('witchUsed');
-    if (id === 'goldenClock') trackAchStat('goldenClockUsed');
-    if (id === 'shadowSeal') trackAchStat('shadowSealUsed');
-
-
 }
 
 
 
 
-
 //------------------------------------------------------------------------
-//----------------------------CONSUME ITEM--------------------------------
+//-------------------FRUGAL USE HELPER------------------------------------
 //------------------------------------------------------------------------
+// Computes the total Frugal Use chance from passive nodes.  When it
+// triggers the item is used but not removed from the inventory.
 //------------------------------------------------------------------------
 
-
-
-// Removes the item from inventory, increments the used counter,
-// tracks achievements, saves, shows the toast, and rebuilds the panel
-
-function _consumeItem(idx, def, msg) {
-    // Frugal Use: chance to not consume the item
-    const frugalChance = (ptHasSkill('frugal_use_1') ? 0.05 : 0)
+// Returns the cumulative Frugal Use proc chance (0.0 – 0.17).
+function _getFrugalUseChance() {
+    return (ptHasSkill('frugal_use_1') ? 0.05 : 0)
         + (ptHasSkill('frugal_use_2') ? 0.05 : 0)
         + (ptHasSkill('frugal_use_3') ? 0.07 : 0);
+}
+
+
+
+
+//------------------------------------------------------------------------
+//-------------------CONSUME ITEM-----------------------------------------
+//------------------------------------------------------------------------
+// Handles all post-effect bookkeeping: removes the item from inventory
+// (unless Frugal Use procs), increments the use counter, fires tracking,
+// saves state, shows the result toast, and rebuilds the inventory panel.
+//------------------------------------------------------------------------
+
+function _consumeItem(idx, def, msg) {
+    // If msg is null, the item had no effect and shouldn't be consumed
+    if (!msg) return;
+
+    const frugalChance = _getFrugalUseChance();
+
     if (frugalChance > 0 && Math.random() < frugalChance) {
-        // Item is not consumed — skip the splice, just track and show toast
+        // Frugal Use proc — the item is NOT removed from inventory
         itemsUsedThisLevel++;
         _trackItemAchievements(def.id, def);
         updateQuestStats('itemUsed', { defId: def.id, rarity: def.rarity });
@@ -1232,6 +1564,7 @@ function _consumeItem(idx, def, msg) {
         return;
     }
 
+    // Normal path — remove item, track, save, toast
     STATE.inventory.splice(idx, 1);
     itemsUsedThisLevel++;
     _trackItemAchievements(def.id, def);
@@ -1244,14 +1577,16 @@ function _consumeItem(idx, def, msg) {
 
 
 
-
 //------------------------------------------------------------------------
-//----------------------------USE ITEM------------------------------------
+//-------------------USE ITEM — PUBLIC ENTRY POINT-----------------------
 //------------------------------------------------------------------------
+// Called by the UI when the player taps/clicks an inventory item.
+// Validates the game state, looks up the item and its definition,
+// dispatches the effect, then consumes (or conditionally retains) the item.
 //------------------------------------------------------------------------
-
 
 function useItem(uid) {
+    // Items are disabled in dead state and Ironman mode
     if (dead || curMods.ironman) return;
 
     const idx = STATE.inventory.findIndex(i => i.uid === uid);
@@ -1262,5 +1597,6 @@ function useItem(uid) {
     if (!def) return;
 
     const msg = _dispatchItemEffect(def.id, def);
+
     _consumeItem(idx, def, msg);
 }

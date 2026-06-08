@@ -1,9 +1,3 @@
-// Ideas for new items: mistake eraser (tutor), advanced tutors for more mistakes erased
-// passive tree refund points on use
-// class cooldown reducer and resetter
-
-
-
 
 //------------------------------------------------------------------------
 //-------------------------ITEM DATA--------------------------------------

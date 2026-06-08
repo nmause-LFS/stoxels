@@ -1,16 +1,10 @@
-﻿
-
-
-
-
-//------------------------------------------------------------------------
-//------------------------SCREEN SWITCH FUNCTION--------------------------
+﻿//------------------------------------------------------------------------
+//------------------------SCREEN SWITCH UTILITY---------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-//sets previous screen to inactive and new screen to active based on id
-
-function ss(id) {
+// Deactivates all screens, then activates the one with the given id.
+function switchScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
 }
@@ -18,60 +12,140 @@ function ss(id) {
 
 
 //------------------------------------------------------------------------
-//------------------------SCREEN NAVIGATION FUNCTIONS---------------------
+//------------------------OVERLAY UTILITIES-------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
+// Hides both the win and lose result overlays.
+function hideResultOverlays() {
+    document.getElementById('ov-win').classList.remove('show');
+    document.getElementById('ov-lose').classList.remove('show');
+}
 
+
+
+//------------------------------------------------------------------------
+//------------------------CONVERGENCE MODAL-------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// Shows the convergence modal and plays its sound effect.
+function showConvergenceModal() {
+    const modal = document.getElementById('convergence-modal');
+    if (modal) modal.classList.add('show');
+    Audio_Manager.playSFX('convergence');
+}
+
+// Hides the convergence modal.
+function hideConvergenceModal() {
+    const modal = document.getElementById('convergence-modal');
+    if (modal) modal.classList.remove('show');
+}
+
+// Builds a button handler that closes the convergence modal,
+// then optionally runs an extra action. If no extra action is given,
+// it falls through to the intended navigation callback (proceed).
+function _buildConvergenceButtonHandler(proceed, extraAction) {
+    return () => {
+        hideConvergenceModal();
+        if (extraAction) extraAction();
+        else proceed();
+    };
+}
+
+// Wires up all three buttons inside the convergence modal to close it
+// and route correctly: tree opens the passive tree, the other two
+// continue with the intended navigation.
+function _wireConvergenceModalButtons(modal, proceed) {
+    const treeBtn = modal.querySelector('.convergence-btn-tree');
+    const nextBtn = modal.querySelector('.convergence-btn-next');
+    const levelsBtn = modal.querySelector('.convergence-btn-levels');
+
+    // Tree button opens the passive tree; navigation continues from there.
+    treeBtn.onclick = _buildConvergenceButtonHandler(proceed, () => { hideResultOverlays(); showPassiveTree(); });
+    nextBtn.onclick = _buildConvergenceButtonHandler(proceed);
+    levelsBtn.onclick = _buildConvergenceButtonHandler(proceed);
+}
+
+// If a convergence point is pending, interrupts navigation to show the
+// convergence modal first. Once the player dismisses it, the intended
+// navigation callback (proceed) is executed.
+// If no convergence point is pending, proceed is called immediately.
+function _maybeShowConvergenceModal(proceed) {
+    if (!window._pendingConvergenceModal) {
+        proceed();
+        return;
+    }
+
+    window._pendingConvergenceModal = false;
+
+    const modal = document.getElementById('convergence-modal');
+    _wireConvergenceModalButtons(modal, proceed);
+    showConvergenceModal();
+}
+
+// Builds a callback that first checks for a pending class event,
+// then runs the intended navigation. Used as the post-convergence
+// step in level transitions (next level, replay).
+function _buildPostConvergenceCallback(proceed) {
+    return () => {
+        if (triggerClassEventIfPending(proceed)) return;
+        proceed();
+    };
+}
+
+
+
+//------------------------------------------------------------------------
+//------------------------SCREEN NAVIGATION-------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// Navigates to the title screen and resets screen history and BGM.
 function showTitle() {
     Audio_Manager.playBGM('title');
     stopTimer();
     screenHistory = [];
-    ss('screen-title');
+    switchScreen('screen-title');
 }
 
+// Navigates to the setup screen and refreshes difficulty/mod descriptions.
 function showSetup() {
     stopTimer();
-    screenHistory.push('screen-title'); 
+    screenHistory.push('screen-title');
     updDiffDesc();
     updModDesc();
-    ss('screen-setup');
+    switchScreen('screen-setup');
 }
 
-
-function startSetup() {
-    buildLS();
-    screenHistory.push('screen-setup'); 
-    ss('screen-levels');
+// Confirms setup and navigates to the level select screen.
+function confirmSetup() {
+    renderLevelSelect();
+    screenHistory.push('screen-setup');
+    switchScreen('screen-levels');
 }
 
-
-
-//------------------------------------------------------------------------
-//-----FUNCTION TO RETURN TO LEVEL SELECT FROM GAMEPLAY SCREEN------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-function goLevels() {
-    hideOv();
+// Closes any overlays and active quiz, then navigates to the level select screen.
+// Respects convergence modal and pending class events before transitioning.
+function goToLevelSelect() {
+    hideResultOverlays();
     closeQuiz();
+
     const proceed = () => {
         if (typeof triggerClassEventIfPending === 'function') {
-            if (triggerClassEventIfPending(() => { buildLS(); ss('screen-levels'); })) return;
+            if (triggerClassEventIfPending(() => { renderLevelSelect(); switchScreen('screen-levels'); })) return;
         }
-        buildLS();
-        ss('screen-levels');
+        renderLevelSelect();
+        switchScreen('screen-levels');
     };
+
     _maybeShowConvergenceModal(proceed);
 }
 
-
-//------------------------------------------------------------------------
-//---------------GO BACK TO PREVIOUS SCREEN-------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-function goBack() {
+// Navigates back to the previous screen in history.
+// If an open modal is detected, closes it instead of navigating.
+// If history is empty, falls back to the title screen.
+function goToPreviousScreen() {
     const openModal = document.querySelector('.modal-bg.show');
     if (openModal) {
         openModal.classList.remove('show');
@@ -80,134 +154,62 @@ function goBack() {
 
     if (screenHistory.length) {
         const prev = screenHistory.pop();
+
+        // The game screen is not directly re-enterable; go to level select instead.
         if (prev === 'screen-game') {
-            goLevels();
+            goToLevelSelect();
             return;
         }
+
         stopTimer();
+
+        // Rebuild the level select so completion state is up to date.
         if (prev === 'screen-levels') {
-            buildLS(); // ← rebuild so completion state is fresh
+            renderLevelSelect();
         }
-        ss(prev);
+
+        switchScreen(prev);
     } else {
         showTitle();
     }
 }
 
+// Advances to the next level. If there is no next level, goes to level select.
+// Respects convergence modal and pending class events before transitioning.
+function goToNextLevel() {
+    hideResultOverlays();
 
-
-//------------------------------------------------------------------------
-//---------------------HIDE OVERLAY---------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-
-//hides both the win and lose overlays by removing 'show' class from each.
-
-function hideOv() {
-    document.getElementById('ov-win').classList.remove('show');
-    document.getElementById('ov-lose').classList.remove('show');
-}
-
-
-//------------------------------------------------------------------------
-//-----------------SWITCH TO NEXT LEVEL-----------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-function nextLvl() {
-    hideOv();
-    const n = cur.gIdx + 1;
+    const nextIndex = cur.gIdx + 1;
     const proceed = () => {
-        if (n < ALL.length) startLevel(n);
-        else goLevels();
-    };
-    const afterConvergence = () => {
-        if (triggerClassEventIfPending(proceed)) return;
-        proceed();
-    };
-    _maybeShowConvergenceModal(afterConvergence);
-}
-
-
-
-
-
-
-
-
-
-
-
-//------------------------------------------------------------------------
-//---------------------REPLAY LEVEL---------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-
-function replayLvl() {
-    hideOv();
-    const gi = cur.gIdx;
-    const proceed = () => startLevel(gi);
-    const afterConvergence = () => {
-        if (triggerClassEventIfPending(proceed)) return;
-        proceed();
-    };
-    _maybeShowConvergenceModal(afterConvergence);
-}
-
-
-
-
-
-
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-
-
-
-
-function showConvergenceModal() {
-    const modal = document.getElementById('convergence-modal');
-    if (modal) modal.classList.add('show');
-
-    Audio_Manager.playSFX('convergence');
-}
-
-function hideConvergenceModal() {
-    const modal = document.getElementById('convergence-modal');
-    if (modal) modal.classList.remove('show');
-}
-
-
-
-// Helper: if a convergence point is pending, show the modal first,
-// then run the callback when the player dismisses it.
-function _maybeShowConvergenceModal(proceed) {
-    if (!window._pendingConvergenceModal) { proceed(); return; }
-    window._pendingConvergenceModal = false;
-
-    // Wire up each button in the convergence modal to close it and then run
-    // the intended navigation (overrides the inline onclick attributes).
-    const modal = document.getElementById('convergence-modal');
-    const treeBtn = modal.querySelector('.convergence-btn-tree');
-    const nextBtn = modal.querySelector('.convergence-btn-next');
-    const levelsBtn = modal.querySelector('.convergence-btn-levels');
-
-    const finish = (extraAction) => () => {
-        hideConvergenceModal();
-        if (extraAction) extraAction();
-        else proceed();
+        if (nextIndex < ALL.length) startLevel(nextIndex);
+        else goToLevelSelect();
     };
 
-    // Tree button keeps its original behaviour (open tree), then the player
-    // navigates from there — so we just show the tree.
-    treeBtn.onclick = finish(() => { hideOv(); showPassiveTree(); });
-    nextBtn.onclick = finish(proceed);
-    levelsBtn.onclick = finish(proceed);
+    _maybeShowConvergenceModal(_buildPostConvergenceCallback(proceed));
+}
 
-    showConvergenceModal();
+// Replays the current level from the beginning.
+// Respects convergence modal and pending class events before transitioning.
+function replayLevel() {
+    hideResultOverlays();
+
+    const currentIndex = cur.gIdx;
+    const proceed = () => startLevel(currentIndex);
+
+    _maybeShowConvergenceModal(_buildPostConvergenceCallback(proceed));
+}
+
+//------------------------------------------------------------------------
+//-------------------MODAL HELPER FUNCTIONS-------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// Shows a modal overlay by its element ID
+function showModal(id) {
+    document.getElementById(id).classList.add('show');
+}
+
+// Hides a modal overlay by its element ID
+function hideModal(id) {
+    document.getElementById(id).classList.remove('show');
 }

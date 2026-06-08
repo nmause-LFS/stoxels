@@ -1,117 +1,159 @@
-﻿// Track current points during the active level
-
-
-let currentRunScore = 0;        // currentRunScore tracks the points earned during the current run, including the base score for completing the level and any bonuses from objectives met; 
-                                // it is calculated in checkWin() when a level is completed and displayed on the win overlay,
-                                // and is used to determine how many points to award to the player based on their previous best score for that level
-
+﻿// =============================================================================
+// scoring.js
+// Handles all end-of-level scoring logic: puzzle validation, score calculation,
+// bonus evaluation, lucky drops, achievement hooks, special rewards, win overlay
+// rendering, and the main checkWin() entry point.
+// =============================================================================
 
 
 //------------------------------------------------------------------------
-//-------------CHECK IF PUZZLE IS SOLVED----------------------------------
+//-------------------MODULE-LEVEL STATE-----------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-// Returns true if the player's current grid state matches the solution exactly.
+// Tracks points earned during the current active run.
+// Set inside calculateScore() when a level is completed and referenced by
+// the win overlay to show how many points were awarded vs. the previous best.
+let currentRunScore = 0;
+
+
+//------------------------------------------------------------------------
+//-------------------PUZZLE VALIDATION------------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// Returns true if every cell in the player's grid matches the solution.
+// A cell counts as "filled" if the player marked it (userGrid === 1)
+// or if it was revealed by a helper item (revealedGrid === true).
 function isPuzzleSolved() {
     const sol = cur.grid;
-    const rows = sol.length, cols = sol[0].length;
-    for (let r = 0; r < rows; r++)
+    const rows = sol.length;
+    const cols = sol[0].length;
+
+    for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
-            const effective = userGrid[r][c] === 1 || revealedGrid[r][c];
-            if (effective !== (sol[r][c] === 1)) return false;
+            const playerFilled = userGrid[r][c] === 1 || revealedGrid[r][c];
+            const solutionFilled = sol[r][c] === 1;
+            if (playerFilled !== solutionFilled) return false;
         }
+    }
     return true;
 }
 
 
-
-
 //------------------------------------------------------------------------
-//----------------------SCORE CALCULATION---------------------------------
+//-------------------SCORE CALCULATION------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-function calculateScore(rows, cols, elapsed) {
-    const gi = cur.gIdx;
+// Returns the raw score before the multiplier is applied.
+// Base score grows with grid size; remaining time adds a bonus;
+// each mistake deducts points. Score is floored at 10.
+function computeRawScore(rows, cols) {
     const baseScore = 100 + (rows + cols) * 2;
-    const cappedTime = Math.min(timerSecs, 3600);
+    const cappedTime = Math.min(timerSecs, 3600);   // cap at 1 hour to prevent abuse
     const timeBonus = Math.floor(cappedTime / 10);
     const mistakePenalty = mistakeCount * 20;
-    const rawScore = Math.max(10, baseScore + timeBonus - mistakePenalty);
+    return Math.max(10, baseScore + timeBonus - mistakePenalty);
+}
+
+// Determines how many net-new points are awarded to the player.
+// If the current run score beats the level high score, the difference is awarded.
+// Otherwise nothing is awarded (the player already has a better record).
+function computePointsAwarded(pts, gi) {
+    const hs = STATE.levelHS[gi];
+    const prevBest = hs ? hs.score : 0;
+    return { ptsAwarded: Math.max(0, pts - prevBest), prevBest };
+}
+
+// Saves a new high-score entry for this level if the current run beats the record.
+function maybeUpdateHighScore(gi, pts) {
+    const hs = STATE.levelHS[gi];
+    if (!hs || pts > hs.score) {
+        STATE.levelHS[gi] = {
+            score: pts,
+            diff: curDiff,
+            time: timerSecs,
+            mods: { ...curMods },
+        };
+    }
+}
+
+// Master score calculation function.
+// Computes the final score, awards net-new points to the player's total,
+// updates the level high score if beaten, and returns all relevant values
+// for display and quest-stat tracking.
+function calculateScore(rows, cols) {
+    const gi = cur.gIdx;
+    const rawScore = computeRawScore(rows, cols);
     const mult = scoreMultiplier();
     const pts = Math.round(rawScore * mult);
 
-    const hs = STATE.levelHS[gi];
-    const prevBest = hs ? hs.score : 0;
-    const ptsAwarded = Math.max(0, pts - prevBest);
+    const { ptsAwarded, prevBest } = computePointsAwarded(pts, gi);
 
     STATE.totalScore += ptsAwarded;
-
-    if (!hs || pts > hs.score) {
-        STATE.levelHS[gi] = { score: pts, diff: curDiff, time: timerSecs, mods: { ...curMods } };
-    }
+    maybeUpdateHighScore(gi, pts);
 
     return { pts, ptsAwarded, prevBest, mult };
 }
 
 
-
-
-
 //------------------------------------------------------------------------
-//--------------------BONUS REQUIREMENT EVALUATION------------------------
+//-------------------BONUS OBJECTIVE EVALUATION---------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-// Evaluates whether the current level's bonus objective was met.
+// Returns true if the current level's bonus condition has been satisfied.
+// Each bonusType has its own pass/fail rule; unknown types default to false.
 function evaluateBonusObjective(elapsed) {
     const bt = cur.bonusType || 'nomiss';
     const bp = cur.bonusParam !== undefined ? cur.bonusParam : 0;
 
-    if (bt === 'fast') return elapsed <= bp;
-    if (bt === 'nomiss') return mistakeCount === 0;
-    if (bt === 'lowmiss') return mistakeCount <= bp;
-    if (bt === 'noitem') return itemsUsedThisLevel === 0;
-    if (bt === 'quiz') return true;
-    if (bt === 'combo') return elapsed <= bp && mistakeCount === 0;
-    if (bt === 'noitem_nomiss') return itemsUsedThisLevel === 0 && mistakeCount === 0;
-    if (bt === 'noitem_fast') return itemsUsedThisLevel === 0 && elapsed <= bp;
-    return false;
+    switch (bt) {
+        case 'fast': return elapsed <= bp;
+        case 'nomiss': return mistakeCount === 0;
+        case 'lowmiss': return mistakeCount <= bp;
+        case 'noitem': return itemsUsedThisLevel === 0;
+        case 'quiz': return true;   // quiz bonus is evaluated separately via showQuiz()
+        case 'combo': return elapsed <= bp && mistakeCount === 0;
+        case 'noitem_nomiss': return itemsUsedThisLevel === 0 && mistakeCount === 0;
+        case 'noitem_fast': return itemsUsedThisLevel === 0 && elapsed <= bp;
+        default: return false;
+    }
 }
 
 
-
-
-
-
 //------------------------------------------------------------------------
-//---------------------ACHIEVEMENT HOOKS----------------------------------
+//-------------------ACHIEVEMENT HOOKS------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
+// Counts how many solution cells are filled (value === 1) in the grid.
+function countFilledCells(sol, rows, cols) {
+    let count = 0;
+    for (let r = 0; r < rows; r++)
+        for (let c = 0; c < cols; c++)
+            if (sol[r][c] === 1) count++;
+    return count;
+}
 
-// Fires achievement hooks and resets per-level flags.
+// Counts how many cells the player has cross-marked (userGrid value === 2).
+function countMarkedCells(rows, cols) {
+    if (!userGrid) return 0;
+    let count = 0;
+    for (let r = 0; r < rows; r++)
+        for (let c = 0; c < cols; c++)
+            if (userGrid[r][c] === 2) count++;
+    return count;
+}
+
+// Fires the achievement system's level-complete hook with all relevant stats,
+// then clears the per-run window flags used by penalty-clutch and bounceback logic.
 function fireAchievements({ gi, rows, cols, elapsed, pts, ptsAwarded, prevBest, mult, isFirstClear }) {
     const sol = cur.grid;
     const totalCells = rows * cols;
-    let cellsFilled = 0;
-    for (let r = 0; r < rows; r++)
-        for (let c = 0; c < cols; c++)
-            if (sol[r][c] === 1) cellsFilled++;
-
-    // Scan the player grid for cross-marks
-    let tilesMarked = 0;
-    if (userGrid) {
-        for (let r = 0; r < rows; r++) {
-            for (let c = 0; c < cols; c++) {
-                if (userGrid[r][c] === 2) {
-                    tilesMarked++;
-                }
-            }
-        }
-    }
-
+    const cellsFilled = countFilledCells(sol, rows, cols);
+    const tilesMarked = countMarkedCells(rows, cols);
 
     onLevelCompleteAch({
         mistakes: mistakeCount,
@@ -140,241 +182,359 @@ function fireAchievements({ gi, rows, cols, elapsed, pts, ptsAwarded, prevBest, 
         isBouncebackWin: window._lastFailedGi === gi,
     });
 
+    // Reset transient run flags consumed by the achievement system
     window._hadPenaltyClutch = false;
     window._lastFailedGi = null;
+
     checkWorldCompleteAch();
 }
 
 
-
-
-
 //------------------------------------------------------------------------
-//----------CONVERGENCE AND ASCENSION REWARDS-----------------------------
+//-------------------CONVERGENCE REWARD-----------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
+// Returns true if the current level sits at the 33% or 66% milestone
+// within its world — these are "convergence" levels that grant a passive tree point.
+function isConvergenceLevel(worldData, isAscensionLevel) {
+    if (worldData.data.length <= 2) return false;
+    const c1 = Math.floor((worldData.data.length - 1) / 3);
+    const c2 = Math.floor((worldData.data.length - 1) * 2 / 3);
+    const idx = cur.li - 1;
+    return (idx === c1 || idx === c2) && !isAscensionLevel;
+}
 
-// Handles convergence and ascension one-time rewards.
+// Grants one passive tree point on the first clear of a convergence level
+// and queues the convergence modal for display after the win overlay closes.
+function applyConvergenceReward(gi) {
+    if (!STATE.convergenceDone) STATE.convergenceDone = [];
+    STATE.convergenceDone.push(gi);
+    STATE.passiveTreePoints = (STATE.passiveTreePoints || 0) + 1;
+    // Players receive 26 passive tree points from convergence and 40 from quests (66 total).
+    save();
+    window._pendingConvergenceModal = true;
+}
+
+
+//------------------------------------------------------------------------
+//-------------------ASCENSION REWARD-------------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// Grants the Codex of Completion artifact on the first clear of the final
+// level in a world (the ascension level), and writes its reward HTML into irz.
+// Does nothing in ironman mode — that mode disables item rewards.
+function applyAscensionReward(irz) {
+    const defId = 'artifactComplete';
+    const codexDef = ITEM_DEFS[defId];
+
+    STATE.inventory.push({
+        defId,
+        uid: `item_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+    });
+    save();
+
+    const rc = rarityColors(codexDef.rarity);
+    irz.innerHTML = `
+        <div class="item-reward" data-reward-defid="${defId}"
+             style="border-color:${rc.border};color:${rc.color};cursor:default;">
+            🌟 ${LANG === 'de' ? 'Aufstiegsbonus' : 'Ascension Reward'}:
+            ${codexDef.icon} <strong>${itemName(codexDef)}</strong>
+        </div>`;
+}
+
+// Dispatcher for convergence and ascension one-time rewards.
+// Called during win-overlay rendering; writes into the item-reward zone (irz)
+// when an ascension reward applies.
 function handleSpecialRewards({ gi, isFirstClear, isAscensionLevel, irz }) {
     const worldData = WORLDS[cur.world - 1];
 
-    // Convergence: passive tree point at 33% and 66% milestones
-    const c1 = Math.floor((worldData.data.length - 1) / 3);
-    const c2 = Math.floor((worldData.data.length - 1) * 2 / 3);
-    const currentIdx = cur.li - 1;
-    const isConvergenceLevel = worldData.data.length > 2 &&
-        (currentIdx === c1 || currentIdx === c2) &&
-        !isAscensionLevel;
-
-    if (isConvergenceLevel && isFirstClear) {
-        if (!STATE.convergenceDone) STATE.convergenceDone = [];
-        STATE.convergenceDone.push(gi);
-        STATE.passiveTreePoints = (STATE.passiveTreePoints || 0) + 1;        // Grant Passive tree Points, in total players should get 26 from convergence and 26 from quests
-        save();
-        window._pendingConvergenceModal = true;
+    if (isConvergenceLevel(worldData, isAscensionLevel) && isFirstClear) {
+        applyConvergenceReward(gi);
     }
 
-    // Ascension: Codex of Completion on first clear of the last world level
     if (isAscensionLevel && isFirstClear && !curMods.ironman) {
-        const defId = 'artifactComplete';
-        const codexDef = ITEM_DEFS['artifactComplete'];
-
-        /*
-        
-        // Testing purpose code:
-        for (let i = 0; i < 100; i++) {
-            STATE.inventory.push({
-                defId: 'artifactComplete',
-                uid: `item_${Date.now()}_${i}_${Math.random().toString(36).slice(2)}`
-            });
-        }
-
-        */
-
-        // Non - testing code code:
-
-        STATE.inventory.push({ defId: 'artifactComplete', uid: `item_${Date.now()}_${Math.random().toString(36).slice(2)}` });
-
-
-
-
-        save();
-        const rc = rarityColors(codexDef.rarity);
-        irz.innerHTML = `<div class="item-reward" data-reward-defid="${defId}" style="border-color:${rc.border};color:${rc.color};cursor:default;">
-            🌟 ${LANG === 'de' ? 'Aufstiegsbonus' : 'Ascension Reward'}: ${codexDef.icon} <strong>${itemName(codexDef)}</strong>
-        </div>`;
+        applyAscensionReward(irz);
     }
 }
 
 
-
-
-
-
-
 //------------------------------------------------------------------------
-//----------------------LUCKY DROP ITEMS----------------------------------
+//-------------------LUCKY DROPS------------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-function rollLuckyDrops() {
-    // Lucky Drops node must be allocated — no drops without it
-    if (!ptHasSkill('lucky_drops')) return '';
-
-    // Base 25% chance, +10% per bonus_replay node
+// Returns the total drop chance for lucky drops based on allocated passive nodes.
+// Base chance is 25%; each bonus_replay node adds an additional percentage.
+function getLuckyDropChance() {
     let chance = 0.25;
     if (ptHasSkill('bonus_replay_1')) chance += 0.10;
     if (ptHasSkill('bonus_replay_2')) chance += 0.15;
     if (ptHasSkill('bonus_replay_3')) chance += 0.20;
-    if (Math.random() >= chance) return '';
+    return chance;
+}
 
-    // How many items: base 1, lucky_replay nodes add 10%, 15%, 20% chance for a second
-    let luckyCount = 1;
-    const extraChance = (ptHasSkill('lucky_replay_1') ? 0.10 : 0)
+// Returns the chance of receiving a second lucky drop item.
+// Each lucky_replay node contributes an additive percentage.
+function getExtraItemChance() {
+    return (ptHasSkill('lucky_replay_1') ? 0.10 : 0)
         + (ptHasSkill('lucky_replay_2') ? 0.15 : 0)
         + (ptHasSkill('lucky_replay_3') ? 0.20 : 0);
-    if (Math.random() < extraChance) luckyCount = 2;
+}
+
+// Decides how many lucky drop items to grant this trigger (1 or 2).
+function rollLuckyDropCount() {
+    return Math.random() < getExtraItemChance() ? 2 : 1;
+}
+
+// Builds the HTML for a single lucky-drop item reward and adds it to the inventory.
+function grantLuckyDropItem() {
+    const defId = pickRandomItem();
+    if (!defId) return '';
+
+    const def = ITEM_DEFS[defId];
+    if (!def) return '';
+
+    STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
+
+    const rc = rarityColors(def.rarity);
+    return `
+        <div class="item-reward" data-reward-defid="${defId}"
+             style="border-color:${rc.border};color:${rc.color};cursor:default;">
+            ${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong>
+        </div>`;
+}
+
+// Attempts to trigger lucky drops for this level completion.
+// Requires the lucky_drops passive node to be allocated.
+// Returns an HTML string of all item-reward divs granted, or '' if none triggered.
+function rollLuckyDrops() {
+    if (!ptHasSkill('lucky_drops')) return '';
+    if (Math.random() >= getLuckyDropChance()) return '';
 
     STATE.questStats = STATE.questStats || {};
     STATE.questStats.luckyDropsClaimed = (STATE.questStats.luckyDropsClaimed || 0) + 1;
 
+    const count = rollLuckyDropCount();
     let html = '';
-    for (let i = 0; i < luckyCount; i++) {
-        const defId = pickRandomItem();
-        if (!defId) continue;
-        const def = ITEM_DEFS[defId];
-        if (!def) continue;
-        STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
-        const rc = rarityColors(def.rarity);
-        html += `<div class="item-reward" data-reward-defid="${defId}" style="border-color:${rc.border};color:${rc.color};cursor:default;">
-            ${t('ov_lucky_drop')} ${def.icon} <strong>${itemName(def)}</strong>
-        </div>`;
+    for (let i = 0; i < count; i++) {
+        html += grantLuckyDropItem();
     }
-    if (html) {
-        save();
-    }
+
+    if (html) save();
     return html;
 }
 
 
-
-
-
-
 //------------------------------------------------------------------------
-//--------------------WIN OVERLAY RENDERER--------------------------------
+//-------------------WIN OVERLAY HELPERS----------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-// Writes all DOM content for the win overlay (stats, bonus badge, item rewards).
-function renderWinOverlay({ gi, pts, ptsAwarded, prevBest, mult, elapsed, bonusMet, isAscensionLevel, isFirstClear }) {
-    const mins = Math.floor(timerSecs / 60);
-    const secs = timerSecs % 60;
-    const elapsedMins = Math.floor(elapsed / 60);
-    const elapsedSecs = elapsed % 60;
+// Formats a time in seconds as "M:SS".
+function formatTime(totalSeconds) {
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = totalSeconds % 60;
+    return `${mins}:${String(secs).padStart(2, '0')}`;
+}
 
-    const gainNote = ptsAwarded < pts
-        ? ` (+${ptsAwarded} ${t('ov_win_new')} — ${t('ov_win_best_was')} ${prevBest})`
-        : ` (+${ptsAwarded})`;
-
-    // Mistake line — accounts for absorbed mistakes
-    const totalWrongClicks = mistakeCount + absorbedMistakes;
-    let mistakeLine;
-    if (totalWrongClicks === 0) {
-        mistakeLine = `<div class="ov-sub-line ov-sub-miss-ok">✗ 0 ${t('ov_win_mistakes')}</div>`;
-    } else if (absorbedMistakes > 0 && mistakeCount === 0) {
-        mistakeLine = `<div class="ov-sub-line ov-sub-miss-ok">✗ 0 ${t('ov_win_mistakes')} <span style="opacity:0.55;font-size:0.85em">(${absorbedMistakes} ${t('ov_win_absorbed')})</span></div>`;
-    } else if (absorbedMistakes > 0) {
-        mistakeLine = `<div class="ov-sub-line ov-sub-miss">✗ ${mistakeCount} ${mistakeCount !== 1 ? t('ov_win_mistakes') : t('ov_win_mistake')} <span style="opacity:0.55;font-size:0.85em">(${absorbedMistakes} ${t('ov_win_absorbed')})</span></div>`;
-    } else {
-        mistakeLine = `<div class="ov-sub-line ${mistakeCount === 0 ? 'ov-sub-miss-ok' : 'ov-sub-miss'}">✗ ${mistakeCount} ${mistakeCount !== 1 ? t('ov_win_mistakes') : t('ov_win_mistake')}</div>`;
+// Builds the gain-note string shown next to the score.
+// If a new record was set, shows the net-new points and the previous best.
+// Otherwise shows just the total points awarded.
+function buildGainNote(pts, ptsAwarded, prevBest) {
+    if (ptsAwarded < pts) {
+        return ` (+${ptsAwarded} ${t('ov_win_new')} — ${t('ov_win_best_was')} ${prevBest})`;
     }
+    return ` (+${ptsAwarded})`;
+}
+
+// Returns the appropriate HTML line for the mistake count.
+// Handles the three distinct display states: no mistakes, all absorbed, partial absorbed.
+function buildMistakeLine() {
+    const totalWrongClicks = mistakeCount + absorbedMistakes;
+
+    if (totalWrongClicks === 0) {
+        return `<div class="ov-sub-line ov-sub-miss-ok">✗ 0 ${t('ov_win_mistakes')}</div>`;
+    }
+
+    const absorbedNote = `<span style="opacity:0.55;font-size:0.85em">(${absorbedMistakes} ${t('ov_win_absorbed')})</span>`;
+
+    if (absorbedMistakes > 0 && mistakeCount === 0) {
+        // All wrong clicks were absorbed — still shows as a clean run
+        return `<div class="ov-sub-line ov-sub-miss-ok">✗ 0 ${t('ov_win_mistakes')} ${absorbedNote}</div>`;
+    }
+
+    const mistakeWord = mistakeCount !== 1 ? t('ov_win_mistakes') : t('ov_win_mistake');
+    const cssClass = mistakeCount === 0 ? 'ov-sub-miss-ok' : 'ov-sub-miss';
+
+    if (absorbedMistakes > 0) {
+        return `<div class="ov-sub-line ${cssClass}">✗ ${mistakeCount} ${mistakeWord} ${absorbedNote}</div>`;
+    }
+
+    return `<div class="ov-sub-line ${cssClass}">✗ ${mistakeCount} ${mistakeWord}</div>`;
+}
+
+// Writes the stats block (reveal quote, score, time, mistakes) into #ov-sub.
+function renderStatsBlock(pts, ptsAwarded, prevBest, mult, elapsed) {
+    const gainNote = buildGainNote(pts, ptsAwarded, prevBest);
+    const mistakeLine = buildMistakeLine();
 
     document.getElementById('ov-sub').innerHTML =
         `<div class="ov-sub-line ov-sub-reveal">"${lvText(cur, 'reveal')}"</div>` +
-    `<div class="ov-sub-line ov-sub-pts">${pts} ${t('ov_win_pts')} <br> ${t('ov_win_multiplier')} ×${mult.toFixed(2)}<br>${gainNote}</div>` +
-        `<div class="ov-sub-line ov-sub-time">⏱ ${mins}:${String(secs).padStart(2, '00')} ${t('ov_win_left')} · ${t('ov_win_solved_in')} ${elapsedMins}:${String(elapsedSecs).padStart(2, '00')}</div>` +
+        `<div class="ov-sub-line ov-sub-pts">
+            ${pts} ${t('ov_win_pts')} <br>
+            ${t('ov_win_multiplier')} ×${mult.toFixed(2)}<br>
+            ${gainNote}
+        </div>` +
+        `<div class="ov-sub-line ov-sub-time">
+            ⏱ ${formatTime(timerSecs)} ${t('ov_win_left')} · ${t('ov_win_solved_in')} ${formatTime(elapsed)}
+        </div>` +
         mistakeLine;
-    
+}
 
-    document.getElementById('bonus-list').innerHTML =
-        `<span class="bonus-badge ${bonusMet ? 'earned' : 'missed'}">
+// Writes the bonus badge into #bonus-list.
+// Shows a success badge if the bonus was met, or the bonus hint if it was missed.
+function renderBonusBadge(bonusMet) {
+    document.getElementById('bonus-list').innerHTML = `
+        <span class="bonus-badge ${bonusMet ? 'earned' : 'missed'}">
             ${bonusMet ? t('ov_bonus_met') : '🎯 ' + lvText(cur, 'bonusHint')}
         </span>`;
+}
 
-    // Item reward zone
+// Builds the HTML for a guaranteed first-time bonus item reward,
+// adds it to the inventory, and saves.
+function grantBonusItem() {
+    const defId = pickRandomItem();
+    if (!defId) return '';
+
+    const def = ITEM_DEFS[defId];
+    if (!def) return '';
+
+    STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
+    save();
+
+    const rc = rarityColors(def.rarity);
+    return `
+        <div class="item-reward" data-reward-defid="${defId}"
+             style="border-color:${rc.border};color:${rc.color};cursor:default;">
+            ${t('ov_item_earned')}: ${def.icon} <strong>${itemName(def)}</strong>
+        </div>`;
+}
+
+// Returns the HTML for the "bonus already claimed" notice shown on repeat clears.
+function buildBonusClaimedNote() {
+    return `<div class="item-reward" style="border-color:var(--border2);color:#666;">
+        ${t('ov_bonus_claimed_note')}
+    </div>`;
+}
+
+// Writes item rewards into the item-reward zone (irz) based on bonus state.
+// Priority order:
+//   1. First-time bonus clear → guaranteed item
+//   2. Repeat bonus clear     → "already claimed" note + lucky drop chance
+//   3. Bonus missed           → lucky drop chance only
+// Ironman mode and quiz bonuses suppress all item rewards.
+function renderItemRewardZone(gi, bonusMet, isFirstClear, isAscensionLevel) {
     const irz = document.getElementById('item-reward-zone');
     irz.innerHTML = '';
-
-    handleSpecialRewards({ gi, isFirstClear, isAscensionLevel, irz });
-
     const bonusAlreadyDone = STATE.bonusDone.includes(gi);
     const isQuizBonus = cur.bonusType === 'quiz';
 
+    // Special one-time rewards (convergence points, ascension codex) go first
+    handleSpecialRewards({ gi, isFirstClear, isAscensionLevel, irz });
+
+    // Mark the bonus as done on first clear (before item logic so save() is called once)
     if (bonusMet && !bonusAlreadyDone && !isQuizBonus) {
         STATE.bonusDone.push(gi);
         save();
     }
 
-    if (!curMods.ironman && !isQuizBonus) {
-        if (bonusMet && !bonusAlreadyDone) {
-            // First-time bonus clear: guaranteed item reward
-            const defId = pickRandomItem();
-            if (defId) {
-                const def = ITEM_DEFS[defId];
-                if (def) {
-                    STATE.inventory.push({ defId, uid: Date.now() + Math.random().toString(36).slice(2) });
-                    save();
-                    const rc = rarityColors(def.rarity);
-                    irz.innerHTML += `<div class="item-reward" data-reward-defid="${defId}" style="border-color:${rc.border};color:${rc.color};cursor:default;">
-                        ${t('ov_item_earned')}: ${def.icon} <strong>${itemName(def)}</strong>
-                    </div>`;
-                }
-            }
-        } else if (bonusMet && bonusAlreadyDone) {
-            // Bonus already claimed: show note + chance at lucky drops
-            irz.innerHTML += `<div class="item-reward" style="border-color:var(--border2);color:#666;">
-                ${t('ov_bonus_claimed_note')}
-            </div>`;
-            irz.innerHTML += rollLuckyDrops();
-        } else if (!bonusMet) {
-            // Bonus missed: chance at lucky drops
-            irz.innerHTML += rollLuckyDrops();
-        }
+    // Item drops are suppressed in ironman mode and for quiz bonus levels
+    if (curMods.ironman || isQuizBonus) return;
+
+    if (bonusMet && !bonusAlreadyDone) {
+        irz.innerHTML += grantBonusItem();
+    } else if (bonusMet && bonusAlreadyDone) {
+        irz.innerHTML += buildBonusClaimedNote();
+        irz.innerHTML += rollLuckyDrops();
+    } else {
+        irz.innerHTML += rollLuckyDrops();
     }
 
-    // Attach hover tooltips to all item-reward elements in the win overlay
+    // Attach hover tooltips to every item-reward card
     setTimeout(() => {
         irz.querySelectorAll('[data-reward-defid]').forEach(el => {
             attachItemTooltip(el, el.dataset.rewardDefid);
         });
     }, 0);
+}
 
+// Orchestrates the full win overlay render: stats, bonus badge, and item rewards.
+function renderWinOverlay({ gi, pts, ptsAwarded, prevBest, mult, elapsed, bonusMet, isAscensionLevel, isFirstClear }) {
+    renderStatsBlock(pts, ptsAwarded, prevBest, mult, elapsed);
+    renderBonusBadge(bonusMet);
+    renderItemRewardZone(gi, bonusMet, isFirstClear, isAscensionLevel);
 }
 
 
-
-
 //------------------------------------------------------------------------
-//--------------------CHECK WIN FUNCTION----------------------------------
+//-------------------QUEST STAT HELPERS-----------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-//called after every valid cell change to check if the puzzle is solved
+// Returns true if the current level sits at a convergence milestone
+// (33% or 66% through the world) and has not been flagged as an ascension level.
+// Used for quest stat tracking inside checkWin().
+function checkIsConvergenceLevel(worldData, isAscensionLevel) {
+    return isConvergenceLevel(worldData, isAscensionLevel);
+}
 
+// Returns true if this level completion is the one that finishes the entire world
+// for the first time, and the world hasn't already been counted in quest stats.
+// Prevents replays and already-counted worlds from triggering duplicate stat updates.
+function checkWorldJustCompleted(worldData, isFirstClear) {
+    if (!isFirstClear) return false;
+
+    const wi = cur.world - 1;
+    const start = WORLD_START_GI[wi];
+    const allDone = worldData.data.every((_, li) => STATE.done.includes(start + li));
+    if (!allDone) return false;
+
+    STATE.questStats = STATE.questStats || {};
+    const counted = STATE.questStats._worldsCountedList || [];
+    return !counted.includes(wi);
+}
+
+// Returns true if this is a "large" level (200+ cells) and the player
+// has the adjacency_matrix passive skill allocated.
+function checkIsLargeAdjMatrix() {
+    const rows = cur.grid.length;
+    const cols = cur.grid[0].length;
+    return (rows * cols >= 200) && ptHasSkill('adjacency_matrix');
+}
+
+
+//------------------------------------------------------------------------
+//-------------------CHECK WIN (MAIN ENTRY POINT)-------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// Called after every valid cell change to check whether the puzzle is complete.
+// If solved, halts the game, calculates the final score, fires all end-of-level
+// hooks (achievements, rewards, quest stats), and shows the win overlay.
 function checkWin() {
     if (!isPuzzleSolved()) return;
 
-    if (typeof clearActiveRandomWalkers === "function") {
-        clearActiveRandomWalkers();
-    }
-
+    // Stop any active visual effects and freeze the game state
+    if (typeof clearActiveRandomWalkers === "function") clearActiveRandomWalkers();
     dead = true;
     stopTimer();
 
+    // Gather level context
     const sol = cur.grid;
-    const rows = sol.length, cols = sol[0].length;
+    const rows = sol.length;
+    const cols = sol[0].length;
     const gi = cur.gIdx;
     const worldData = WORLDS[cur.world - 1];
     const isAscensionLevel = cur.li === worldData.data.length;
@@ -382,69 +542,48 @@ function checkWin() {
 
     if (isFirstClear) STATE.done.push(gi);
 
-    // Record mistakes for this level (used by flawless world achievement)
-    // Always keep the best (lowest) value across replays
+    // Track per-level mistake record for the "flawless world" achievement.
+    // Always keep the best (lowest) mistake count across replays.
     if (!STATE.levelMistakes) STATE.levelMistakes = {};
-    const prev = STATE.levelMistakes[gi];
-    if (prev === undefined || mistakeCount < prev) {
+    const prevMistakeRecord = STATE.levelMistakes[gi];
+    if (prevMistakeRecord === undefined || mistakeCount < prevMistakeRecord) {
         STATE.levelMistakes[gi] = mistakeCount;
     }
 
     const elapsed = Math.round((Date.now() - levelStartTime) / 1000);
 
-    const { pts, ptsAwarded, prevBest, mult } = calculateScore(rows, cols, elapsed);
+    // Score
+    const { pts, ptsAwarded, prevBest, mult } = calculateScore(rows, cols);
     save();
     document.getElementById('sc-disp').textContent = STATE.totalScore;
 
+    // Achievements
     fireAchievements({ gi, rows, cols, elapsed, pts, ptsAwarded, prevBest, mult, isFirstClear });
 
-    // Quest stat tracking
-    const _worldData = WORLDS[cur.world - 1];
-    const _isConvergenceLevel = (() => {
-        const c1 = Math.floor((_worldData.data.length - 1) / 3);
-        const c2 = Math.floor((_worldData.data.length - 1) * 2 / 3);
-        const idx = cur.li - 1;
-        return _worldData.data.length > 2 && (idx === c1 || idx === c2) && !isAscensionLevel;
-    })();
-    const _worldJustCompleted = (() => {
-        // Only count as a new world completion if:
-        // 1. This level itself is a first clear (prevents replays from triggering it)
-        // 2. Every level in the world is now done
-        // 3. This world hasn't already been counted in quest stats before
-        if (!isFirstClear) return false;
-        const wi = cur.world - 1;
-        const start = WORLD_START_GI[wi];
-        const allDone = _worldData.data.every((_, li) => STATE.done.includes(start + li));
-        if (!allDone) return false;
-        if (!STATE.questStats) STATE.questStats = {};
-        const counted = STATE.questStats._worldsCountedList || [];
-        if (counted.includes(wi)) return false;
-        return true;
-    })();
+    // Passive tree node rewards (gear_of_the_statistician & improved_gear)
+    _ptApplyLevelCompleteRewards();
 
-
-
-    _ptApplyLevelCompleteRewards();   // gear_of_the_statistician & improved_gear nodes
-
+    // Bonus objective
     const bonusMet = evaluateBonusObjective(elapsed);
 
+    // Build the grid reveal animation, then render the win overlay
     buildReveal();
-
     renderWinOverlay({ gi, pts, ptsAwarded, prevBest, mult, elapsed, bonusMet, isAscensionLevel, isFirstClear });
 
-    // Delay world-code popup so it feels distinct from the win overlay
+    // World completion hooks (codes popup delayed so it feels distinct)
     setTimeout(() => checkWorldCodes(), 2000);
     checkWorldCompletion();
 
+    // Show the win overlay (or quiz flow if the bonus type is 'quiz')
     if (bonusMet && cur.bonusType === 'quiz') {
         setTimeout(() => showQuiz(cur.world), 1500);
     } else {
-        setTimeout(() => {
-            document.getElementById('ov-win').classList.add('show');
-        }, 1000);
+        setTimeout(() => document.getElementById('ov-win').classList.add('show'), 1000);
     }
+
     Audio_Manager.playSFX('win');
 
+    // Quest stats update
     updateQuestStats('levelComplete', {
         gi,
         world: cur.world,
@@ -455,22 +594,13 @@ function checkWin() {
         playerClass: STATE.playerClass,
         elapsed,
         bonusMet,
-        isConvergence: _isConvergenceLevel && isFirstClear,
-        worldJustCompleted: _worldJustCompleted,
-        worldIndex: cur.world - 1, 
+        isConvergence: checkIsConvergenceLevel(worldData, isAscensionLevel) && isFirstClear,
+        worldJustCompleted: checkWorldJustCompleted(worldData, isFirstClear),
+        worldIndex: cur.world - 1,
         luckyDropTriggered: false,
         timerSecsAtWin: timerSecs,
-        isLargeAdjMatrix: (() => {                          
-            const rows = cur.grid.length;
-            const cols = cur.grid[0].length;
-            return (rows * cols >= 200) && ptHasSkill('adjacency_matrix');
-        })(),
+        isLargeAdjMatrix: checkIsLargeAdjMatrix(),
     });
 
     if (typeof _endBlackSwan === "function") _endBlackSwan(false);
-
-
 }
-
-
-

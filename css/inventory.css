@@ -1,64 +1,104 @@
-/* ═══════════════════════════════════════════════════════════════
-   NEW INVENTORY PANEL  — fixed bottom slot grid
-   ═══════════════════════════════════════════════════════════════ */
+/* -----------------------------------------------------------------------
+   INVENTORY PANEL  —  fixed bottom bar, slot grid, tooltips, modals
+   -----------------------------------------------------------------------
+   Sections in this file:
+     1.  PANEL SHELL          — outer bar stuck to the bottom of the screen
+     2.  PANEL SCROLLBAR      — custom scrollbar styling for the bar
+     3.  PANEL HEADER BLOCK   — left-side label + reshuffle counter
+     4.  SLOT GROUPS          — category label + horizontal slot row
+     5.  SLOT BASE            — individual slot box, states, icon, badge
+     6.  ITEM TOOLTIP         — floating tooltip shown on slot hover
+     7.  RESHUFFLE MODAL      — full-screen overlay with item cards
+     8.  TOAST NOTIFICATION   — brief feedback pop-up after item use
+     9.  QUEST REWARD TOOLTIP — separate tooltip used in the quest UI
+  ----------------------------------------------------------------------- */
 
-/* ── Outer panel ── */
+
+
+
+/* -----------------------------------------------------------------------
+   1. PANEL SHELL
+   -----------------------------------------------------------------------
+   The inventory bar is fixed to the bottom edge of the viewport.
+   It spans the full width and uses a flex row to lay out groups
+   of slots side by side, scrolling horizontally if they overflow.
+   ----------------------------------------------------------------------- */
 
 #inv-panel {
     position: fixed;
-    bottom: 0; /* Glue it to the very bottom edge */
+    bottom: 0;
     left: 0;
-    right: 0; /* Span all the way across the screen */
+    right: 0;
     z-index: 500;
-    background: var(--panel);
-    border-top: 1px solid var(--border); /* Only need a top border now */
+    height: 75px; /* Compact fixed height — fits label + one row of slots */
     padding: 10px 16px;
-    height: 75px; /* Compact fixed height to fit text + slots */
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.55); /* Shadow casts upward */
 
     display: flex;
-    flex-direction: row; /* Layout child blocks horizontally */
-    align-items: center; /* Center items vertically */
-    gap: 20px; /* Add healthy spacing between groups */
-    box-shadow: 0 -4px 18px rgba(0,0,0,0.55); /* Shadow casting upwards */
-
-    overflow-x: auto; /* Enables horizontal scrolling when items overflow */
-    overflow-y: hidden; /* Prevents any weird vertical scrollbar twitching */
-    scrollbar-width: thin; /* For Firefox styling */
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    overflow-x: auto; /* Horizontal scroll when slot groups overflow */
+    overflow-y: hidden; /* Prevents accidental vertical scrollbar */
+    scrollbar-width: thin; /* Firefox thin scrollbar */
 }
 
-    /* Optional: Custom sleek scrollbar for Chrome/Safari/Edge */
-    #inv-panel::-webkit-scrollbar {
-        height: 6px;
+/* Push game content up so the fixed bar does not overlap it.
+   75px bar height + 25px breathing room = 100px total offset. */
+.game-main {
+    padding-bottom: 100px !important;
+}
+
+
+
+
+/* -----------------------------------------------------------------------
+   2. PANEL SCROLLBAR
+   -----------------------------------------------------------------------
+   Custom scrollbar for Chromium-based browsers and Safari.
+   Firefox is handled above via scrollbar-width: thin.
+   ----------------------------------------------------------------------- */
+
+#inv-panel::-webkit-scrollbar {
+    height: 6px;
+}
+
+#inv-panel::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+#inv-panel::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+}
+
+    #inv-panel::-webkit-scrollbar-thumb:hover {
+        background: var(--yellow);
     }
 
-    #inv-panel::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0.2);
-    }
-
-    #inv-panel::-webkit-scrollbar-thumb {
-        background: var(--border);
-        border-radius: 3px;
-    }
-
-        #inv-panel::-webkit-scrollbar-thumb:hover {
-            background: var(--yellow);
-        }
 
 
-/* ── Top row: turned into a left-side vertical label block ── */
+
+/* -----------------------------------------------------------------------
+   3. PANEL HEADER BLOCK
+   -----------------------------------------------------------------------
+   A small vertical block on the left side of the bar that shows
+   the "INVENTORY" label and the current reshuffle charge counter.
+   ----------------------------------------------------------------------- */
+
+/* Wrapper that stacks the label above the counter */
 .inv-panel-toprow {
     display: flex;
-    flex-direction: column; /* Stack label over counter */
+    flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    min-width: 90px; /* Give the label region some structure */
+    min-width: 90px;
     gap: 4px;
-    margin-bottom: 0; /* Reset old margin */
 }
 
-
-
-
+/* "INVENTORY" heading text */
 .inv-panel-label {
     font-family: var(--PX);
     font-size: 11px;
@@ -66,6 +106,7 @@
     letter-spacing: 1px;
 }
 
+/* "Reshuffles: N" counter below the label */
 #reshuffle-counter {
     font-family: var(--PX);
     font-size: 10px;
@@ -74,17 +115,26 @@
     white-space: nowrap;
 }
 
-/* ── Group block ── */
 
+
+
+/* -----------------------------------------------------------------------
+   4. SLOT GROUPS
+   -----------------------------------------------------------------------
+   Slots are organised into named groups (e.g. "Consumables", "Key Items").
+   Each group stacks its label above a horizontal row of slots.
+   ----------------------------------------------------------------------- */
+
+/* Outer container for one named group of slots */
 .inv-group {
     display: flex;
     flex-direction: column;
     gap: 4px;
     height: 100%;
-    flex-shrink: 0; /* Prevents layout from squeezing slots together */
+    flex-shrink: 0; /* Never let the group compress — it would squash slots */
 }
 
-
+/* Category label above the slot row (e.g. "CONSUMABLE") */
 .inv-group-label {
     font-family: var(--PX);
     font-size: 9px;
@@ -92,27 +142,34 @@
     letter-spacing: 0.8px;
     text-transform: uppercase;
     padding-bottom: 1px;
-    /* Remove the old bottom border line if it looks crowded horizontally */
 }
 
-
+/* The horizontal row of individual slots inside a group */
 .inv-group-slots {
     display: flex;
-    flex-direction: row; /* Slots stay next to each other */
-    flex-wrap: nowrap; /* Keep them in a single strict horizontal row */
+    flex-direction: row;
+    flex-wrap: nowrap; /* Hard single row — no wrapping allowed */
     gap: 6px;
 }
 
 
-/* ── Prevent fixed inventory from overlapping game elements ── */
-.game-main {
-    /* 75px (inventory height) + 25px breathing room = 100px */
-    padding-bottom: 100px !important;
-}
 
 
+/* -----------------------------------------------------------------------
+   5. SLOT BASE
+   -----------------------------------------------------------------------
+   Individual item slot box.
+   Sub-sections:
+     5a. Base slot
+     5b. Hover state
+     5c. Empty state
+     5d. Ironman-locked state
+     5e. Cursed-locked state
+     5f. Icon inside the slot
+     5g. Stack count badge
+   ----------------------------------------------------------------------- */
 
-/* ── Individual slot ── */
+/* 5a — Base slot box */
 .inv-slot {
     position: relative;
     width: 40px;
@@ -123,29 +180,31 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: border-color .1s, transform .1s, opacity .1s;
     flex-shrink: 0;
+    transition: border-color .1s, transform .1s, opacity .1s;
 }
 
+    /* 5b — Hover: only on interactive (non-empty, non-locked) slots */
     .inv-slot:hover:not(.inv-slot-empty):not(.ironman-lock) {
         transform: scale(1.12);
         border-color: var(--accent) !important;
     }
 
-    /* Empty slot: dimmed, no pointer cursor */
+    /* 5c — Empty slot: dimmed and non-interactive */
     .inv-slot.inv-slot-empty {
         opacity: 0.25;
         cursor: default;
         border-color: var(--border) !important;
     }
 
+    /* 5d — Ironman-locked: item cannot be used in ironman mode */
     .inv-slot.ironman-lock {
         opacity: 0.35;
         cursor: not-allowed;
         pointer-events: none;
     }
 
-    /* Cursed-locked state (reuse existing class from game logic if needed) */
+    /* 5e — Cursed-locked: item is currently bound/cursed, red border hint */
     .inv-slot.cursed-locked {
         opacity: 0.45;
         cursor: not-allowed;
@@ -153,15 +212,15 @@
         border-color: #f44 !important;
     }
 
-/* Icon inside slot */
+/* 5f — Emoji / icon displayed inside the slot */
 .inv-slot-icon {
     font-size: 22px;
     line-height: 1;
-    pointer-events: none;
+    pointer-events: none; /* Clicks pass through to the slot box */
     user-select: none;
 }
 
-/* Stack count badge */
+/* 5g — Small stack-count badge in the bottom-right corner of the slot */
 .inv-slot-count {
     position: absolute;
     bottom: 1px;
@@ -171,37 +230,46 @@
     color: #fff;
     line-height: 1;
     pointer-events: none;
-    text-shadow: 0 0 3px #000, 0 0 3px #000;
+    text-shadow: 0 0 3px #000, 0 0 3px #000; /* Double shadow for legibility */
 }
 
 
-/* ═══════════════════════════════════════════════════════════════
-   TOOLTIP
-   ═══════════════════════════════════════════════════════════════ */
 
+
+/* -----------------------------------------------------------------------
+   6. ITEM TOOLTIP
+   -----------------------------------------------------------------------
+   A fixed-position tooltip that appears when hovering an occupied slot.
+   It shows item name, rarity, description, stack count, and a usage hint.
+   Visibility is toggled by adding/removing the .visible class via JS.
+   ----------------------------------------------------------------------- */
+
+/* Tooltip container — hidden by default, shown with .visible */
 #inv-slot-tooltip {
     position: fixed;
     z-index: 9000;
+    width: 220px;
+    padding: 10px 12px;
     background: var(--panel);
     border: 1px solid var(--border);
-    padding: 10px 12px;
-    width: 220px;
-    pointer-events: none;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+    pointer-events: none; /* Must never block clicks on the slot below */
     opacity: 0;
     transition: opacity .1s;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.6);
 }
 
     #inv-slot-tooltip.visible {
         opacity: 1;
     }
 
+/* Item name (top line) */
 .inv-tip-name {
     font-family: var(--PX);
     font-size: 12px;
     margin-bottom: 2px;
 }
 
+/* Rarity label (e.g. "RARE", "COMMON") */
 .inv-tip-rarity {
     font-family: var(--PX);
     font-size: 9px;
@@ -210,6 +278,7 @@
     opacity: 0.7;
 }
 
+/* Item flavour / effect description */
 .inv-tip-desc {
     font-size: 13px;
     color: #e0e0e0;
@@ -217,12 +286,14 @@
     margin-bottom: 7px;
 }
 
+/* "Stack: N / Max" line */
 .inv-tip-stack {
     font-size: 11px;
     color: #aaa;
     margin-bottom: 5px;
 }
 
+/* Small usage hint at the bottom (e.g. "Click to use") */
 .inv-tip-hint {
     font-size: 10px;
     color: #666;
@@ -232,20 +303,34 @@
 }
 
 
-/* ═══════════════════════════════════════════════════════════════
-   RESHUFFLE MODAL  (unchanged visually)
-   ═══════════════════════════════════════════════════════════════ */
 
+
+/* -----------------------------------------------------------------------
+   7. RESHUFFLE MODAL
+   -----------------------------------------------------------------------
+   Full-screen overlay that presents the player with a choice of items
+   to reshuffle into. The modal contains a centred card grid.
+   Sub-sections:
+     7a. Backdrop overlay
+     7b. Modal box
+     7c. Modal title and subtitle
+     7d. Card grid
+     7e. Individual card
+     7f. Card inner elements (icon, name, description)
+   ----------------------------------------------------------------------- */
+
+/* 7a — Dark semi-transparent backdrop covering the whole screen */
 #rshuffle-modal {
     position: fixed;
     inset: 0;
+    z-index: 9999;
     background: rgba(0, 0, 0, 0.75);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 9999;
 }
 
+/* 7b — Centred white-bordered box */
 #rshuffle-box {
     background: var(--panel);
     border: 1px solid var(--border);
@@ -255,20 +340,23 @@
     text-align: center;
 }
 
+/* 7c — Modal heading */
 #rshuffle-title {
     font-family: var(--PX);
     font-size: 18px;
     color: var(--yellow);
-    margin-bottom: 6px;
     letter-spacing: 1px;
+    margin-bottom: 6px;
 }
 
+/* Modal sub-heading / instruction text */
 #rshuffle-subtitle {
     font-size: 15px;
     color: #aaa;
     margin-bottom: 22px;
 }
 
+/* 7d — Wrapping flex row of cards */
 #rshuffle-cards {
     display: flex;
     gap: 14px;
@@ -276,6 +364,7 @@
     flex-wrap: wrap;
 }
 
+/* 7e — Individual selectable card */
 .rshuffle-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -295,16 +384,21 @@
         transform: translateY(-3px);
     }
 
+/* 7f — Card inner elements */
+
+/* Large emoji / item icon */
 .rshuffle-card-icon {
     font-size: 42px;
 }
 
+/* Short item name below the icon */
 .rshuffle-card-name {
     font-family: var(--PX);
     font-size: 12px;
     text-align: center;
 }
 
+/* Flavour description below the name */
 .rshuffle-card-desc {
     font-size: 15px;
     color: #ccc;
@@ -313,35 +407,41 @@
 }
 
 
-/* ═══════════════════════════════════════════════════════════════
-   TOAST 
-   ═══════════════════════════════════════════════════════════════ */
 
 
+/* -----------------------------------------------------------------------
+   8. TOAST NOTIFICATION
+   -----------------------------------------------------------------------
+   A brief feedback message that slides up from the bottom after an item
+   is used. Shown by adding the .show class; hidden by removing it.
+   The old toast-in keyframe is kept commented out for reference.
+   ----------------------------------------------------------------------- */
+
+/* Toast box — invisible by default */
 .item-use-toast {
     position: fixed;
     left: 50%;
     bottom: 25px;
     transform: translate(-50%);
+    z-index: 900;
     font-family: var(--PX);
     font-size: 25px;
     color: var(--bg);
     background: var(--purple);
     padding: 9px 18px;
-    z-index: 900;
     display: none;
-    /*animation: toast-in 1s ease;*/
-    animation: toast-in-bottom 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Snappy pop-in animation */
+    animation: toast-pop-up 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+    /* Adding .show makes the toast visible */
     .item-use-toast.show {
         display: block;
     }
 
-@keyframes toast-in {
+/* Snappy pop-in from slightly below */
+@keyframes toast-pop-up {
     from {
         opacity: 0;
-        /*transform: translate(-50%, -60%);*/
         transform: translate(-50%, 15px);
     }
 
@@ -354,19 +454,25 @@
 
 
 
+/* -----------------------------------------------------------------------
+   9. QUEST REWARD TOOLTIP
+   -----------------------------------------------------------------------
+   A separate tooltip used in the quest reward UI to describe reward items.
+   Uses its own variables with fallbacks in case they are not defined
+   in the active theme.
+   ----------------------------------------------------------------------- */
 
-
-
+/* Tooltip container — shown with .visible class from JS */
 #quest-reward-tooltip {
     position: fixed;
     z-index: 9999;
-    background: var(--bg2, #1a1a2e);
+    max-width: 240px;
+    padding: 8px 12px;
+    background: var(--bg2, #1a1a2e); /* Falls back to dark navy */
     border: 1px solid var(--border2, #444);
     border-radius: 8px;
-    padding: 8px 12px;
-    pointer-events: none;
-    max-width: 240px;
     font-size: 0.82rem;
+    pointer-events: none;
     opacity: 0;
     transition: opacity 0.15s;
 }
@@ -375,6 +481,7 @@
         opacity: 1;
     }
 
+/* Hoverable item reference inside a quest reward list */
 .quest-reward-item-tip {
     cursor: default;
 }

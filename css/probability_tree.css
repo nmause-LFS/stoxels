@@ -1,13 +1,69 @@
-﻿
+﻿/* ========================================================================
+   probability_tree.css
+   Styles for the Probability Tree screen (#screen-passive-tree).
 
-/* ═══════════════════════════════════════════
-   PROBABILITY TREE SCREEN
-   ═══════════════════════════════════════════ */
+   SECTION ORDER:
+     1. Local CSS Variables (colour tokens, sizes)
+     2. Screen Root & Layout
+     3. Topbar
+     4. Canvas
+     5. Level Cards  (base → convergence variant → convergence badge)
+     6. Animations
+     7. Zoom Controls (container → label → track → thumb → thumb:hover)
+   ======================================================================== */
+
+
+/* ------------------------------------------------------------------------
+   --- 1. LOCAL CSS VARIABLES ----------------------------------------------
+   ------------------------------------------------------------------------
+   Keep all colour tokens and magic numbers here so they are easy to find
+   and change in one place. Think of this as the "constants" block.
+   Values that are used in more than one rule below MUST live here.
+   ------------------------------------------------------------------------ */
+
+/*#screen-passive-tree {*/
+:root {
+    /* -- Convergence accent (green glow family) -- */
+    --pt-convergence-color: #2ecc71; /* base green             */
+    --pt-convergence-color-light: #58d68d; /* lighter hover green    */
+    --pt-convergence-bg: rgba(46, 204, 113, 0.08);
+    --pt-convergence-border: rgba(46, 204, 113, 0.45);
+    --pt-convergence-glow-sm: rgba(46, 204, 113, 0.20);
+    --pt-convergence-glow-md: rgba(46, 204, 113, 0.35);
+    --pt-convergence-glow-lg: rgba(46, 204, 113, 0.38);
+    /* -- Zoom bar (gold family) -- */
+    --pt-zoom-color: #d4b870; /* gold text / thumb      */
+    --pt-zoom-color-hover: #ffe680; /* brighter gold on hover */
+    --pt-zoom-track-bg: rgba(184, 154, 80, 0.25);
+    --pt-zoom-border: rgba(184, 154, 80, 0.45);
+    --pt-zoom-thumb-border: rgba(10, 10, 20, 0.80);
+    --pt-zoom-thumb-glow: rgba(212, 184, 112, 0.50);
+    --pt-zoom-thumb-glow-hover: rgba(255, 230, 128, 0.70);
+    --pt-zoom-wrap-bg: rgba(10, 10, 20, 0.88);
+    --pt-zoom-wrap-shadow: rgba(0, 0, 0, 0.50);
+}
+
+
+/* ------------------------------------------------------------------------
+   --- 2. SCREEN ROOT & LAYOUT ---------------------------------------------
+   ------------------------------------------------------------------------
+   The outermost container for the entire probability tree screen.
+   Overflow is hidden here; child .pt-canvas handles its own scrolling.
+   ------------------------------------------------------------------------ */
 
 #screen-passive-tree {
     overflow: hidden;
 }
 
+
+/* ------------------------------------------------------------------------
+   --- 3. TOPBAR -----------------------------------------------------------
+   ------------------------------------------------------------------------
+   Horizontal bar pinned to the top of the screen.
+   Contains: back button, title (left), search (centred), points (right).
+   ------------------------------------------------------------------------ */
+
+/* -- Topbar container -- */
 .pt-topbar {
     background: var(--panel);
     border-bottom: 1px solid var(--border);
@@ -16,9 +72,10 @@
     align-items: center;
     gap: 14px;
     flex-shrink: 0;
-    position: relative;
+    position: relative; /* anchor for the absolutely-centred search */
 }
 
+/* -- Screen title label -- */
 .pt-title {
     font-family: var(--PX);
     font-size: 15px;
@@ -26,12 +83,14 @@
     letter-spacing: 2px;
 }
 
+/* -- Search input wrapper (centred via absolute positioning) -- */
 #pt-search-wrap {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
 }
 
+/* -- Points counter (pushed to the far right by margin-left: auto) -- */
 .pt-points {
     margin-left: auto;
     font-family: var(--PX);
@@ -39,37 +98,69 @@
     color: var(--yellow);
 }
 
+
+/* ------------------------------------------------------------------------
+   --- 4. CANVAS -----------------------------------------------------------
+   ------------------------------------------------------------------------
+   The main scrollable area that holds the tree nodes.
+   flex:1 lets it fill the remaining vertical space below the topbar.
+   ------------------------------------------------------------------------ */
+
 .pt-canvas {
     flex: 1;
     overflow: auto;
     position: relative;
 }
 
-/* ── Convergence level card ── */
+
+/* ------------------------------------------------------------------------
+   --- 5. LEVEL CARDS ------------------------------------------------------
+   ------------------------------------------------------------------------
+   Level cards are the individual node cards drawn on the canvas.
+   The base .level-card styles live in the shared stylesheet; only the
+   convergence variant is owned by this file.
+
+   ORDER:  convergence base  →  convergence hover  →  convergence badge
+   ------------------------------------------------------------------------ */
+
+/* -- Convergence variant: card border and background tint -- */
 .level-card.convergence {
-    border-color: var(--green);
-    background: linear-gradient(160deg, var(--surface) 60%, rgba(46, 204, 113, 0.10) 100%);
-    box-shadow: 0 0 8px rgba(46, 204, 113, 0.20);
+    border-color: var(--pt-convergence-color);
+    background: linear-gradient( 160deg, var(--surface) 60%, var(--pt-convergence-bg) 100% );
+    box-shadow: 0 0 8px var(--pt-convergence-glow-sm);
 }
 
+    /* -- Convergence variant: hover state (brighter border + stronger glow) -- */
     .level-card.convergence:hover {
-        border-color: #58d68d;
-        box-shadow: 0 0 16px rgba(46, 204, 113, 0.38);
+        border-color: var(--pt-convergence-color-light);
+        box-shadow: 0 0 16px var(--pt-convergence-glow-lg);
     }
 
+/* -- Convergence badge: small label rendered inside the convergence card -- */
 .lc-convergence-badge {
     font-family: var(--PX);
     font-size: 9px;
-    color: var(--green);
+    color: var(--pt-convergence-color);
     letter-spacing: 2px;
     text-align: center;
     padding: 3px 6px;
-    border: 1px solid rgba(46, 204, 113, 0.45);
-    background: rgba(46, 204, 113, 0.08);
+    border: 1px solid var(--pt-convergence-border);
+    background: var(--pt-convergence-bg);
     margin-bottom: 6px;
+    /* Slow breathing pulse defined in section 6 */
     animation: convergence-pulse 2.8s ease-in-out infinite;
 }
 
+
+/* ------------------------------------------------------------------------
+   --- 6. ANIMATIONS -------------------------------------------------------
+   ------------------------------------------------------------------------
+   All @keyframes blocks live here so they are easy to find.
+   Each animation is documented with which element uses it.
+   ------------------------------------------------------------------------ */
+
+/* Used by: .lc-convergence-badge
+   Slow opacity + glow breath to draw attention to convergence nodes. */
 @keyframes convergence-pulse {
     0%, 100% {
         opacity: 0.75;
@@ -77,67 +168,86 @@
 
     50% {
         opacity: 1;
-        box-shadow: 0 0 7px rgba(46, 204, 113, 0.35);
+        box-shadow: 0 0 7px var(--pt-convergence-glow-md);
     }
 }
 
 
+/* ------------------------------------------------------------------------
+   --- 7. ZOOM CONTROLS ----------------------------------------------------
+   ------------------------------------------------------------------------
+   A small floating control bar that lets the user zoom the canvas.
+   Contains a text label showing the current zoom % and a range slider.
 
+   ORDER (helper → main, top to bottom):
+     zoom label       (helper display element)
+     zoom track base  (the slider element itself)
+     zoom thumb base  (pseudo-element: shared webkit + moz base styles)
+     zoom thumb hover (pseudo-element: hover state)
+     zoom wrap        (outermost container, last because it positions the rest)
+   ------------------------------------------------------------------------ */
 
-/* ── Zoom bar ── */
-#pt-zoom-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(10,10,20,0.88);
-    border: 1px solid rgba(184,154,80,0.45);
-    border-radius: 6px;
-    padding: 5px 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-}
-
+/* -- Zoom percentage label (sits to the right of the slider) -- */
 #pt-zoom-label {
     font-family: var(--PX, monospace);
     font-size: 11px;
-    color: #d4b870;
+    color: var(--pt-zoom-color);
     min-width: 38px;
     text-align: right;
 }
 
+/* -- Zoom slider track -- */
 #pt-zoom-bar {
     -webkit-appearance: none;
     appearance: none;
     width: 120px;
     height: 4px;
     border-radius: 2px;
-    background: rgba(184,154,80,0.25);
+    background: var(--pt-zoom-track-bg);
     outline: none;
     cursor: pointer;
 }
 
+    /* -- Zoom slider thumb: base styles (webkit) -- */
     #pt-zoom-bar::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
         width: 14px;
         height: 14px;
         border-radius: 50%;
-        background: #d4b870;
-        border: 2px solid rgba(10,10,20,0.8);
-        box-shadow: 0 0 6px rgba(212,184,112,0.5);
+        background: var(--pt-zoom-color);
+        border: 2px solid var(--pt-zoom-thumb-border);
+        box-shadow: 0 0 6px var(--pt-zoom-thumb-glow);
         cursor: pointer;
         transition: background 0.15s, box-shadow 0.15s;
     }
 
+        /* -- Zoom slider thumb: hover state (webkit) -- */
         #pt-zoom-bar::-webkit-slider-thumb:hover {
-            background: #ffe680;
-            box-shadow: 0 0 10px rgba(255,230,128,0.7);
+            background: var(--pt-zoom-color-hover);
+            box-shadow: 0 0 10px var(--pt-zoom-thumb-glow-hover);
         }
 
+    /* -- Zoom slider thumb: base styles (firefox) --
+   Firefox does not support the :hover pseudo on range thumbs,
+   so only the base style is needed here. */
     #pt-zoom-bar::-moz-range-thumb {
         width: 14px;
         height: 14px;
         border-radius: 50%;
-        background: #d4b870;
-        border: 2px solid rgba(10,10,20,0.8);
+        background: var(--pt-zoom-color);
+        border: 2px solid var(--pt-zoom-thumb-border);
         cursor: pointer;
     }
+
+/* -- Zoom control container (outermost, positions label + slider together) -- */
+#pt-zoom-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--pt-zoom-wrap-bg);
+    border: 1px solid var(--pt-zoom-border);
+    border-radius: 6px;
+    padding: 5px 10px;
+    box-shadow: 0 2px 10px var(--pt-zoom-wrap-shadow);
+}

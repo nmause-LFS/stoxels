@@ -1,32 +1,62 @@
 ﻿// ============================================================
 //  audio.js  —  Sound effects and background music manager
 // ============================================================
+//  Structure:
+//    1. Volume & State Variables
+//    2. BGM Track Registry
+//    3. Level → Track Mapping
+//    4. SFX Registry
+//    5. SFX Preload Cache
+//    6. BGM Helper Functions
+//    7. BGM Playback Functions
+//    8. SFX Playback Functions
+//    9. Volume & Toggle Controls
+//   10. Public API
+// ============================================================
 
 const Audio_Manager = (() => {
 
-    // ── Config ───────────────────────────────────────────────
+    //------------------------------------------------------------------------
+    //-------------------VOLUME & STATE VARIABLES-----------------------------
+    //------------------------------------------------------------------------
+    //------------------------------------------------------------------------
 
-    let BGM_VOLUME = 0.4;  
-    let SFX_VOLUME = 0.7;   
+    // Default volume levels (0.0 – 1.0)
+    let BGM_VOLUME = 0.4;
+    let SFX_VOLUME = 0.7;
 
+    // Master on/off switches — kept in sync with SETTINGS when available
     let bgmEnabled = true;
     let sfxEnabled = true;
-    let currentBGM = null;   // currently playing HTMLAudioElement
-    let currentBGMSrc = '';  // path of the currently playing track
 
-    let _lastBGMKey = '';
+    // Currently playing BGM track
+    let currentBGM = null;   // active HTMLAudioElement
+    let currentBGMSrc = '';     // file path of the active track (used for same-track guard)
+    let _lastBGMKey = '';     // track key of the last requested BGM (used for resume after re-enable)
 
+    // Holds the cleanup function that removes the autoplay-resume listeners,
+    // so we can cancel them if a new track is requested before the user interacts.
     let _pendingResumeCleanup = null;
 
+    // Stores the most recently played instance of each SFX key,
+    // so individual sounds can be stopped via stopSFX(key).
     const _sfxInstances = {};
 
-    // ── BGM Registry ─────────────────────────────────────────
-    // Map track names to file paths.
-    // Put your mp3 files in an /audio/ folder next to index.html.
+
+    //------------------------------------------------------------------------
+    //-------------------BGM TRACK REGISTRY----------------------------------
+    //------------------------------------------------------------------------
+    //------------------------------------------------------------------------
+    // Maps internal track keys to their audio file paths.
+    // All BGM files must live in the /audio/ folder next to index.html.
+    // Add new tracks here and then reference them in LEVEL_BGM below.
 
     const BGM_TRACKS = {
+        // Special / UI tracks
         title: 'audio/bgm_title.mp3',
         convergence: 'audio/bgm_convergence.mp3',
+
+        // World 1
         level_1_1: 'audio/bgm_1.mp3',
         level_1_2: 'audio/bgm_1.mp3',
         level_1_3: 'audio/bgm_1.mp3',
@@ -40,8 +70,10 @@ const Audio_Manager = (() => {
         level_1_11: 'audio/bgm_4.mp3',
         level_1_12: 'audio/bgm_5.mp3',
         level_1_13: 'audio/bgm_title.mp3',
+
+        // World 2
         level_2_1: 'audio/bgm_6.mp3',
-        level_2_2: 'audio/bgm_6.mp3', 
+        level_2_2: 'audio/bgm_6.mp3',
         level_2_3: 'audio/bgm_6.mp3',
         level_2_4: 'audio/bgm_convergence.mp3',
         level_2_5: 'audio/bgm_7.mp3',
@@ -51,7 +83,9 @@ const Audio_Manager = (() => {
         level_2_9: 'audio/bgm_8.mp3',
         level_2_10: 'audio/bgm_9.mp3',
         level_2_11: 'audio/bgm_title.mp3',
-        level_3_1: 'audio/bgm_10.mp3', 
+
+        // World 3
+        level_3_1: 'audio/bgm_10.mp3',
         level_3_2: 'audio/bgm_10.mp3',
         level_3_3: 'audio/bgm_10.mp3',
         level_3_4: 'audio/bgm_convergence.mp3',
@@ -62,7 +96,9 @@ const Audio_Manager = (() => {
         level_3_9: 'audio/bgm_12.mp3',
         level_3_10: 'audio/bgm_13.mp3',
         level_3_11: 'audio/bgm_title.mp3',
-        level_4_1: 'audio/bgm_14.mp3', 
+
+        // World 4
+        level_4_1: 'audio/bgm_14.mp3',
         level_4_2: 'audio/bgm_14.mp3',
         level_4_3: 'audio/bgm_14.mp3',
         level_4_4: 'audio/bgm_15.mp3',
@@ -81,7 +117,9 @@ const Audio_Manager = (() => {
         level_4_17: 'audio/bgm_17.mp3',
         level_4_18: 'audio/bgm_16.mp3',
         level_4_19: 'audio/bgm_title.mp3',
-        level_5_1: 'audio/bgm_18.mp3', 
+
+        // World 5
+        level_5_1: 'audio/bgm_18.mp3',
         level_5_2: 'audio/bgm_18.mp3',
         level_5_3: 'audio/bgm_18.mp3',
         level_5_4: 'audio/bgm_19.mp3',
@@ -94,6 +132,8 @@ const Audio_Manager = (() => {
         level_5_11: 'audio/bgm_21.mp3',
         level_5_12: 'audio/bgm_21.mp3',
         level_5_13: 'audio/bgm_title.mp3',
+
+        // World 6
         level_6_1: 'audio/bgm_23.mp3',
         level_6_2: 'audio/bgm_23.mp3',
         level_6_3: 'audio/bgm_23.mp3',
@@ -106,6 +146,8 @@ const Audio_Manager = (() => {
         level_6_10: 'audio/bgm_25.mp3',
         level_6_11: 'audio/bgm_26.mp3',
         level_6_12: 'audio/bgm_title.mp3',
+
+        // World 7
         level_7_1: 'audio/bgm_26.mp3',
         level_7_2: 'audio/bgm_26.mp3',
         level_7_3: 'audio/bgm_27.mp3',
@@ -118,131 +160,68 @@ const Audio_Manager = (() => {
         level_7_10: 'audio/bgm_29.mp3',
         level_7_11: 'audio/bgm_29.mp3',
         level_7_12: 'audio/bgm_title.mp3',
-
-
-
-
     };
 
 
+    //------------------------------------------------------------------------
+    //-------------------LEVEL → TRACK MAPPING--------------------------------
+    //------------------------------------------------------------------------
+    //------------------------------------------------------------------------
 
-    // ── Per-level BGM overrides ───────────────────────────────
-    // Format: 'world-level' : 'trackKey'
-    // If a level is not listed here, falls back to the world default below.
-    // Track keys must exist in BGM_TRACKS.
-
+    // Maps 'world-level' strings to a BGM_TRACKS key.
+    // If a level has no entry here, trackForLevel() falls back to WORLD_BGM,
+    // then finally to 'world1' as a last resort.
     const LEVEL_BGM = {
         // World 1
-        '1-1': 'level_1_1',
-        '1-2': 'level_1_2',
-        '1-3': 'level_1_3',
-        '1-4': 'level_1_4',
-        '1-5': 'level_1_5',
-        '1-6': 'level_1_6',
-        '1-7': 'level_1_7',
-        '1-8': 'level_1_8',
-        '1-9': 'level_1_9',
-        '1-10': 'level_1_10',
-        '1-11': 'level_1_11',
-        '1-12': 'level_1_12',
+        '1-1': 'level_1_1', '1-2': 'level_1_2', '1-3': 'level_1_3',
+        '1-4': 'level_1_4', '1-5': 'level_1_5', '1-6': 'level_1_6',
+        '1-7': 'level_1_7', '1-8': 'level_1_8', '1-9': 'level_1_9',
+        '1-10': 'level_1_10', '1-11': 'level_1_11', '1-12': 'level_1_12',
         '1-13': 'level_1_13',
 
         // World 2
-        '2-1': 'level_2_1',
-        '2-2': 'level_2_2',
-        '2-3': 'level_2_3',
-        '2-4': 'level_2_4',
-        '2-5': 'level_2_5',
-        '2-6': 'level_2_6', 
-        '2-7': 'level_2_7',
-        '2-8': 'level_2_8',
-        '2-9': 'level_2_9',
-        '2-10': 'level_2_10',
-        '2-11': 'level_2_11',
+        '2-1': 'level_2_1', '2-2': 'level_2_2', '2-3': 'level_2_3',
+        '2-4': 'level_2_4', '2-5': 'level_2_5', '2-6': 'level_2_6',
+        '2-7': 'level_2_7', '2-8': 'level_2_8', '2-9': 'level_2_9',
+        '2-10': 'level_2_10', '2-11': 'level_2_11',
 
         // World 3
-        '3-1': 'level_3_1', 
-        '3-2': 'level_3_2',
-        '3-3': 'level_3_3',
-        '3-4': 'level_3_4', 
-        '3-5': 'level_3_5',
-        '3-6': 'level_3_6',
-        '3-7': 'level_3_7',
-        '3-8': 'level_3_8',
-        '3-9': 'level_3_9',
-        '3-10': 'level_3_10',
-        '3-11': 'level_3_11',
-
+        '3-1': 'level_3_1', '3-2': 'level_3_2', '3-3': 'level_3_3',
+        '3-4': 'level_3_4', '3-5': 'level_3_5', '3-6': 'level_3_6',
+        '3-7': 'level_3_7', '3-8': 'level_3_8', '3-9': 'level_3_9',
+        '3-10': 'level_3_10', '3-11': 'level_3_11',
 
         // World 4
-        '4-1': 'level_4_1', 
-        '4-2': 'level_4_2',
-        '4-3': 'level_4_3',
-        '4-4': 'level_4_4',
-        '4-5': 'level_4_5',
-        '4-6': 'level_4_6',
-        '4-7': 'level_4_7',
-        '4-8': 'level_4_8',
-        '4-9': 'level_4_9',
-        '4-10': 'level_4_10',
-        '4-11': 'level_4_11',
-        '4-12': 'level_4_12',
-        '4-13': 'level_4_13',
-        '4-14': 'level_4_14',
-        '4-15': 'level_4_15',
-        '4-16': 'level_4_16',
-        '4-17': 'level_4_17',
-        '4-18': 'level_4_18',
+        '4-1': 'level_4_1', '4-2': 'level_4_2', '4-3': 'level_4_3',
+        '4-4': 'level_4_4', '4-5': 'level_4_5', '4-6': 'level_4_6',
+        '4-7': 'level_4_7', '4-8': 'level_4_8', '4-9': 'level_4_9',
+        '4-10': 'level_4_10', '4-11': 'level_4_11', '4-12': 'level_4_12',
+        '4-13': 'level_4_13', '4-14': 'level_4_14', '4-15': 'level_4_15',
+        '4-16': 'level_4_16', '4-17': 'level_4_17', '4-18': 'level_4_18',
         '4-19': 'level_4_19',
 
-
         // World 5
-        '5-1': 'level_5_1', 
-        '5-2': 'level_5_2',
-        '5-3': 'level_5_3',
-        '5-4': 'level_5_4',
-        '5-5': 'level_5_5',
-        '5-6': 'level_5_6',
-        '5-7': 'level_5_7',
-        '5-8': 'level_5_8',
-        '5-9': 'level_5_9',
-        '5-10': 'level_5_10',
-        '5-11': 'level_5_11',
-        '5-12': 'level_5_12',
+        '5-1': 'level_5_1', '5-2': 'level_5_2', '5-3': 'level_5_3',
+        '5-4': 'level_5_4', '5-5': 'level_5_5', '5-6': 'level_5_6',
+        '5-7': 'level_5_7', '5-8': 'level_5_8', '5-9': 'level_5_9',
+        '5-10': 'level_5_10', '5-11': 'level_5_11', '5-12': 'level_5_12',
         '5-13': 'level_5_13',
 
         // World 6
-        '6-1': 'level_6_1', 
-        '6-2': 'level_6_2',
-        '6-3': 'level_6_3',
-        '6-4': 'level_6_4',
-        '6-5': 'level_6_5',
-        '6-6': 'level_6_6',
-        '6-7': 'level_6_7',
-        '6-8': 'level_6_8',
-        '6-9': 'level_6_9',
-        '6-10': 'level_6_10',
-        '6-11': 'level_6_11',
-        '6-12': 'level_6_12',
+        '6-1': 'level_6_1', '6-2': 'level_6_2', '6-3': 'level_6_3',
+        '6-4': 'level_6_4', '6-5': 'level_6_5', '6-6': 'level_6_6',
+        '6-7': 'level_6_7', '6-8': 'level_6_8', '6-9': 'level_6_9',
+        '6-10': 'level_6_10', '6-11': 'level_6_11', '6-12': 'level_6_12',
 
         // World 7
-        '7-1': 'level_7_1',
-        '7-2': 'level_7_2',
-        '7-3': 'level_7_3',
-        '7-4': 'level_7_4',
-        '7-5': 'level_7_5',
-        '7-6': 'level_7_6',
-        '7-7': 'level_7_7',
-        '7-8': 'level_7_8',
-        '7-9': 'level_7_9',
-        '7-10': 'level_7_10',
-        '7-11': 'level_7_11',
-        '7-12': 'level_7_12',
+        '7-1': 'level_7_1', '7-2': 'level_7_2', '7-3': 'level_7_3',
+        '7-4': 'level_7_4', '7-5': 'level_7_5', '7-6': 'level_7_6',
+        '7-7': 'level_7_7', '7-8': 'level_7_8', '7-9': 'level_7_9',
+        '7-10': 'level_7_10', '7-11': 'level_7_11', '7-12': 'level_7_12',
     };
 
-    // ── World fallback BGM ────────────────────────────────────
-    // If a level has no entry in LEVEL_BGM, this is used instead.
-
+    // Fallback BGM per world number, used when a level has no LEVEL_BGM entry.
+    // Uncomment and set a BGM_TRACKS key for each world as needed.
     const WORLD_BGM = {
         1: 'world1',
         //2: 'world2',
@@ -253,32 +232,37 @@ const Audio_Manager = (() => {
     };
 
 
-    // ── SFX Registry ─────────────────────────────────────────
+    //------------------------------------------------------------------------
+    //-------------------SFX REGISTRY-----------------------------------------
+    //------------------------------------------------------------------------
+    //------------------------------------------------------------------------
+    // Maps SFX keys to their audio file paths.
+    // Keys are used with playSFX(key) and stopSFX(key) throughout the game.
 
     const SFX = {
-        // UI
+        // ── UI ───────────────────────────────────────────────
         click: 'audio/sfx_click.mp3',
         back: 'audio/sfx_back.mp3',
         button: 'audio/sfx_button.mp3',
         showtoast: 'audio/sfx_showtoast.mp3',
 
-        // Puzzle
+        // ── Puzzle Feedback ──────────────────────────────────
         cellFill: 'audio/sfx_cell_fill.mp3',
         cellMark: 'audio/sfx_cell_mark.mp3',
         cellWrong: 'audio/sfx_wrong.mp3',
         win: 'audio/sfx_win.mp3',
         lose: 'audio/sfx_lose.mp3',
 
-        // Quiz & Mathgate
+        // ── Quiz & Mathgate ──────────────────────────────────
         quizCorrect: 'audio/sfx_quiz_correct.mp3',
         quizWrong: 'audio/sfx_quiz_wrong.mp3',
         tutorSuccess: 'audio/sfx_tutor_success.mp3',
         tutorFail: 'audio/sfx_tutor_fail.mp3',
 
-        // Quest
+        // ── Quest ────────────────────────────────────────────
         questRewardClaimed: 'audio/sfx_quest_reward_claimed.mp3',
 
-        // Items
+        // ── Items ────────────────────────────────────────────
         candle: 'audio/sfx_candle.mp3',
         magnifier: 'audio/sfx_magnifier.mp3',
         spyglass: 'audio/sfx_spyglass.mp3',
@@ -313,30 +297,26 @@ const Audio_Manager = (() => {
         the_witch: 'audio/sfx_the_witch.mp3',
         golden_clock: 'audio/sfx_golden_clock.mp3',
         shadow_seal: 'audio/sfx_shadow_seal.mp3',
+        shield_break: 'audio/sfx_shield_break.mp3',
 
-        // Class Selection / Upgrade
+        // ── Class Selection / Upgrade ────────────────────────
         classSelection: 'audio/sfx_class_selection.mp3',
         classSelected: 'audio/sfx_class_selected.mp3',
         classUpgraded: 'audio/sfx_class_upgraded.mp3',
 
-        // Class abilities
+        // ── Base Class Abilities ─────────────────────────────
         momentum: 'audio/sfx_momentum.mp3',
         dataStrike: 'audio/sfx_data_strike.mp3',
         diagonalStrike: 'audio/sfx_diagonal_strike.mp3',
         diagonalStrikeRepeat: 'audio/sfx_diagonal_strike_repeat_proc.mp3',
-
-
         varianceShield: 'audio/sfx_variance_shield.mp3',
         arcaneReveal: 'audio/sfx_arcane_reveal.mp3',
         absoluteZero: 'audio/sfx_absolute_zero.mp3',
-
         bayesianInsight: 'audio/sfx_bayesian_insight.mp3',
         fieldScan: 'audio/sfx_field_scan.mp3',
         precisionMark: 'audio/sfx_precision_mark.mp3',
 
-        // Ascendancy Class Abilities
-
-        // Random Walker
+        // ── Ascendancy: Random Walker ────────────────────────
         browneySummon: 'audio/sfx_browney_summon.mp3',
         browneyReveal: 'audio/sfx_browney_reveal.mp3',
         drifterSummon: 'audio/sfx_drifter_summon.mp3',
@@ -346,54 +326,65 @@ const Audio_Manager = (() => {
         drifterExplosion: 'audio/sfx_drifter_explosion.mp3',
         drifterLevelUp: 'audio/sfx_drifter_level_up.mp3',
 
-        // Recursionist
+        // ── Ascendancy: Recursionist ─────────────────────────
         residualSummon: 'audio/sfx_residual_summon.mp3',
         residualDespawn: 'audio/sfx_residual_despawn.mp3',
         residualReveal: 'audio/sfx_residual_reveal.mp3',
         dofBurn: 'audio/sfx_dof_burn.mp3',
 
-
-        // Bayesian
+        // ── Ascendancy: Bayesian ─────────────────────────────
         bayesTrapSelect: 'audio/sfx_bayes_traps_select.mp3',
         bayesTrapExplosion: 'audio/sfx_bayes_traps_explosion.mp3',
         type1errorShieldBreak: 'audio/sfx_type1error_shield_break.mp3',
         type1errorShieldHide: 'audio/sfx_type1error_shield_hide.mp3',
 
-
-        // Markovian
+        // ── Ascendancy: Markovian ────────────────────────────
         stateReversal: 'audio/sfx_state_reversal.mp3',
         transitionMatrix: 'audio/sfx_transition_matrix.mp3',
         transitionCascade: 'audio/sfx_transition_cascade.mp3',
 
-        // Outlaw
+        // ── Ascendancy: Outlaw ───────────────────────────────
         tailRiskResolve: 'audio/sfx_tail_risk_resolve.mp3',
         tailRiskStart: 'audio/sfx_tail_risk_start.mp3',
         speedforceEnter: 'audio/sfx_speedforce_enter.mp3',
 
-        // Actuary
+        // ── Ascendancy: Actuary ──────────────────────────────
         holyHealing: 'audio/sfx_holy_healing.mp3',
         holySpell: 'audio/sfx_holy_spell.mp3',
+        actuary_mistake_reversed: 'audio/sfx_actuary_mistake_reversed.mp3',
+        actuary_shield_pop: 'audio/sfx_actuary_shield_pop.mp3',
 
-
-        // Achievements / milestones / quest milestones
+        // ── Achievements / Milestones ────────────────────────
         achievement: 'audio/sfx_achievement.mp3',
         convergence: 'audio/sfx_convergence.mp3',
-        milesstone: 'audio/sfx_milestone.mp3',
-
+        milestone: 'audio/sfx_milestone.mp3',   
         abilityReady: 'audio/sfx_ability_ready.mp3',
 
-        // Passive Tree Effects
-
+        // ── Passive Tree Effects ─────────────────────────────
         luckyTileActivate: 'audio/sfx_lucky_tile_activate.mp3',
-
-
+        binomial_burst: 'audio/sfx_binomial_burst.mp3',
+        poisson_process: 'audio/sfx_poisson_process.mp3',
+        residual_analysis: 'audio/sfx_residual_analysis.mp3',
+        standard_deviation: 'audio/sfx_standard_deviation.mp3',
+        overfitting_alert: 'audio/sfx_overfitting_alert.mp3',
+        sample_efficiency: 'audio/sfx_sample_efficiency.mp3',
+        sample_efficiency_pop: 'audio/sfx_sample_efficiency_pop.mp3',
+        stochastic_resonance: 'audio/sfx_stochastic_resonance.mp3',
+        stochastic_resonance_pop: 'audio/sfx_stochastic_resonance_pop.mp3',
     };
 
-    // ── Pre-load SFX into cache ───────────────────────────────
-    // Creates Audio objects early so first playback has no delay.
+
+    //------------------------------------------------------------------------
+    //-------------------SFX PRELOAD CACHE------------------------------------
+    //------------------------------------------------------------------------
+    //------------------------------------------------------------------------
+    // Audio objects are created once at startup so the first playback of
+    // any sound has no loading delay. playSFX() clones these cached objects.
 
     const _sfxCache = {};
 
+    // Creates one Audio object per SFX entry and stores it in _sfxCache.
+    // Call this once during game init (e.g. on the title screen).
     function preload() {
         Object.entries(SFX).forEach(([key, src]) => {
             const a = new Audio(src);
@@ -403,59 +394,142 @@ const Audio_Manager = (() => {
     }
 
 
-    // ── BGM ───────────────────────────────────────────────────
+    //------------------------------------------------------------------------
+    //-------------------BGM HELPER FUNCTIONS---------------------------------
+    //------------------------------------------------------------------------
+    //------------------------------------------------------------------------
 
-    function playBGM(trackKey) {
-        // Re-read bgmEnabled from SETTINGS in case it was changed without toggleBGM being called
-        if (typeof SETTINGS !== 'undefined') bgmEnabled = SETTINGS.bgmEnabled;
-        if (!bgmEnabled) return;
-        const src = BGM_TRACKS[trackKey];
-        if (!src) return;
-        _lastBGMKey = trackKey;
-        if (currentBGMSrc === src && currentBGM && !currentBGM.paused) return;
-
-        // Cancel any pending autoplay-resume listener from a previous track
-        if (_pendingResumeCleanup) {
-            _pendingResumeCleanup();
-            _pendingResumeCleanup = null;
+    // Reads bgmEnabled from the global SETTINGS object if it exists.
+    // This keeps the internal flag in sync even if SETTINGS was changed
+    // without going through toggleBGM().
+    function _syncBGMEnabledFromSettings() {
+        if (typeof SETTINGS !== 'undefined') {
+            bgmEnabled = SETTINGS.bgmEnabled;
         }
+    }
 
-        stopBGM();
+    // Returns true if the given src is already playing as the active BGM track.
+    function _isBGMAlreadyPlaying(src) {
+        return currentBGMSrc === src && currentBGM && !currentBGM.paused;
+    }
 
+    // Creates a new looping Audio element for the given src,
+    // sets its volume, and stores it as the active BGM track.
+    function _createBGMAudioElement(src) {
         const audio = new Audio(src);
         audio.loop = true;
         audio.volume = BGM_VOLUME;
         currentBGM = audio;
         currentBGMSrc = src;
+        return audio;
+    }
 
+    // Cancels the pending autoplay-resume event listeners if they exist.
+    // Must be called before switching tracks so stale listeners don't fire.
+    function _cancelPendingResumeListeners() {
+        if (_pendingResumeCleanup) {
+            _pendingResumeCleanup();
+            _pendingResumeCleanup = null;
+        }
+    }
+
+    // Registers click / keydown listeners that will retry audio.play() once
+    // the user interacts with the page (required by browser autoplay policy).
+    // Stores a cleanup function in _pendingResumeCleanup so it can be cancelled
+    // if a new track is requested before the user interacts.
+    function _registerAutoplayResumeListeners(audio) {
+        const resume = () => {
+            // Only resume if this audio element is still the active BGM track
+            if (currentBGM === audio) {
+                audio.play().catch(() => { });
+            }
+            document.removeEventListener('click', resume);
+            document.removeEventListener('keydown', resume);
+            _pendingResumeCleanup = null;
+        };
+
+        _pendingResumeCleanup = () => {
+            document.removeEventListener('click', resume);
+            document.removeEventListener('keydown', resume);
+        };
+
+        document.addEventListener('click', resume, { once: true });
+        document.addEventListener('keydown', resume, { once: true });
+    }
+
+    // Returns the track key for a given world and level number.
+    // Priority: LEVEL_BGM entry → WORLD_BGM fallback → 'world1' last resort.
+    function trackForLevel(worldNum, levelNum) {
+        const levelKey = `${worldNum}-${levelNum}`;
+        if (LEVEL_BGM[levelKey]) return LEVEL_BGM[levelKey];
+        return WORLD_BGM[worldNum] || 'world1';
+    }
+
+    // Returns an array of all keys in BGM_TRACKS, optionally excluding
+    // special tracks (title, convergence) that are not regular gameplay music.
+    function _getAllBGMKeys(excludeSpecial = true) {
+        const specialKeys = new Set(['title', 'convergence']);
+        return Object.keys(BGM_TRACKS).filter(k => !excludeSpecial || !specialKeys.has(k));
+    }
+
+
+    //------------------------------------------------------------------------
+    //-------------------BGM PLAYBACK FUNCTIONS-------------------------------
+    //------------------------------------------------------------------------
+    //------------------------------------------------------------------------
+
+    // Starts playing the BGM track identified by trackKey.
+    // If the same track file is already playing, this is a no-op.
+    // If BGM is disabled in SETTINGS or internally, the call is ignored.
+    function playBGM(trackKey) {
+        _syncBGMEnabledFromSettings();
+        if (!bgmEnabled) return;
+
+        const src = BGM_TRACKS[trackKey];
+        if (!src) return;
+
+        _lastBGMKey = trackKey;
+
+        if (_isBGMAlreadyPlaying(src)) return;
+
+        // Clean up any stale resume listeners before switching tracks
+        _cancelPendingResumeListeners();
+        stopBGM();
+
+        const audio = _createBGMAudioElement(src);
+
+        // Browser autoplay policy may block play() — register a fallback
+        // that retries on the next user interaction if needed.
         audio.play().catch(() => {
-            const resume = () => {
-                // Only resume if this audio object is still the active one
-                if (currentBGM === audio) {
-                    audio.play().catch(() => { });
-                }
-                document.removeEventListener('click', resume);
-                document.removeEventListener('keydown', resume);
-                _pendingResumeCleanup = null;
-            };
-            _pendingResumeCleanup = () => {
-                document.removeEventListener('click', resume);
-                document.removeEventListener('keydown', resume);
-            };
-            document.addEventListener('click', resume, { once: true });
-            document.addEventListener('keydown', resume, { once: true });
+            _registerAutoplayResumeListeners(audio);
         });
     }
 
+    // Plays a random BGM track from BGM_TRACKS.
+    // Pass excludeSpecial = false to also include title / convergence tracks.
+    // Useful for menus, random events, or any context without a fixed track.
+    function playRandomBGM(excludeSpecial = true) {
+        const keys = _getAllBGMKeys(excludeSpecial);
+        if (keys.length === 0) return;
+        const randomKey = keys[Math.floor(Math.random() * keys.length)];
+        playBGM(randomKey);
+    }
+
+    // Stops the current BGM with an optional fade-out.
+    // fadeMs: duration of the linear fade in milliseconds (0 = instant stop).
     function stopBGM(fadeMs = 500) {
         if (!currentBGM) return;
+
         const dying = currentBGM;
         currentBGM = null;
         currentBGMSrc = '';
 
-        if (fadeMs <= 0) { dying.pause(); return; }
+        if (fadeMs <= 0) {
+            dying.pause();
+            return;
+        }
 
-        // Simple linear fade-out
+        // Tick every 50 ms and lower volume linearly until silence, then pause.
         const step = dying.volume / (fadeMs / 50);
         const fade = setInterval(() => {
             if (dying.volume > step) {
@@ -468,73 +542,102 @@ const Audio_Manager = (() => {
     }
 
 
+    //------------------------------------------------------------------------
+    //-------------------SFX PLAYBACK FUNCTIONS-------------------------------
+    //------------------------------------------------------------------------
+    //------------------------------------------------------------------------
+
+    // Plays the sound effect identified by key.
+    // Clones the preloaded Audio object so the same sound can overlap itself.
+    // The played instance is stored in _sfxInstances so it can be stopped early.
+    function playSFX(key) {
+        if (!sfxEnabled) return;
+
+        const src = SFX[key];
+        if (!src) return;
+
+        // Use the preloaded cache entry if available, otherwise create a fresh element
+        const base = _sfxCache[key];
+        const a = base ? base.cloneNode() : new Audio(src);
+        a.volume = SFX_VOLUME;
+        a.play().catch(() => { });
+
+        // Keep track of the latest instance for this key so it can be cancelled
+        _sfxInstances[key] = a;
+    }
+
+    // Immediately stops and resets the most recently played instance of the
+    // given SFX key. Has no effect if the sound is not currently playing.
     function stopSFX(key) {
         const a = _sfxInstances[key];
         if (!a) return;
+
         a.pause();
         a.currentTime = 0;
         delete _sfxInstances[key];
     }
 
 
-    // ── SFX ───────────────────────────────────────────────────
-    function playSFX(key) {
-        if (!sfxEnabled) return;
-        const src = SFX[key];
-        if (!src) return;
+    //------------------------------------------------------------------------
+    //-------------------VOLUME & TOGGLE CONTROLS-----------------------------
+    //------------------------------------------------------------------------
+    //------------------------------------------------------------------------
 
-        const base = _sfxCache[key];
-        const a = base ? base.cloneNode() : new Audio(src);
-        a.volume = SFX_VOLUME;
-        a.play().catch(() => { });
-
-        // Store last instance so it can be cancelled
-        _sfxInstances[key] = a;
-    }
-
-
-    // Returns the BGM track key for a specific world + level number.
-    // Checks LEVEL_BGM first, then falls back to WORLD_BGM, then 'world1'.
-    function trackForLevel(worldNum, levelNum) {
-        const levelKey = `${worldNum}-${levelNum}`;
-        if (LEVEL_BGM[levelKey]) return LEVEL_BGM[levelKey];
-        return WORLD_BGM[worldNum] || 'world1';
-    }
-
-
-    // ── Volume / toggle helpers ───────────────────────────────
-
+    // Sets the BGM volume and applies it to the currently playing track.
+    // Value is clamped to [0, 1].
     function setBGMVolume(v) {
         BGM_VOLUME = Math.max(0, Math.min(1, v));
         if (currentBGM) currentBGM.volume = BGM_VOLUME;
     }
 
+    // Sets the SFX volume applied to all future playSFX() calls.
+    // Value is clamped to [0, 1].
+    function setSFXVolume(v) {
+        SFX_VOLUME = Math.max(0, Math.min(1, v));
+    }
+
+    // Enables or disables BGM playback.
+    // When re-enabling, resumes the last track that was requested via playBGM().
     function toggleBGM(enabled) {
         bgmEnabled = enabled;
+
         if (!bgmEnabled) {
-            if (_pendingResumeCleanup) {
-                _pendingResumeCleanup();
-                _pendingResumeCleanup = null;
-            }
+            _cancelPendingResumeListeners();
             stopBGM(0);
         } else {
             if (_lastBGMKey) playBGM(_lastBGMKey);
         }
     }
 
+    // Enables or disables SFX playback.
+    // Does not affect sounds already in progress.
     function toggleSFX(enabled) {
         sfxEnabled = enabled;
     }
 
-    function setSFXVolume(v) {
-        SFX_VOLUME = Math.max(0, Math.min(1, v));
-    }
 
+    //------------------------------------------------------------------------
+    //-------------------PUBLIC API-------------------------------------------
+    //------------------------------------------------------------------------
+    //------------------------------------------------------------------------
 
-    // ── Public API ────────────────────────────────────────────
     return {
-        playBGM, stopBGM, playSFX, stopSFX, preload, trackForLevel,
-        toggleBGM, toggleSFX, setBGMVolume, setSFXVolume
+        // BGM
+        playBGM,
+        playRandomBGM,
+        stopBGM,
+        trackForLevel,
+
+        // SFX
+        playSFX,
+        stopSFX,
+        preload,
+
+        // Volume & toggles
+        toggleBGM,
+        toggleSFX,
+        setBGMVolume,
+        setSFXVolume,
     };
 
 })();

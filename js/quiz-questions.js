@@ -736,8 +736,8 @@ const BONUS_QUIZ_POOLS = {
         {
             q: 'X ~ Bin(n, p) counts the number of successes in:',
             qDE: 'X ~ Bin(n, p) zählt die Anzahl der Erfolge in:',
-            opts: ['n independent Bernoulli(p) trials', 'n dependent trials', 'n draws without replacement', 'a single Bernoulli trial repeated n²  times'],
-            optsDE: ['n unabhängigen Bernoulli(p)-Versuchen', 'n abhängigen Versuchen', 'n Zügen ohne Zurücklegen', 'einem einzelnen Bernoulli-Versuch n²-mal wiederholt'],
+            opts: ['n independent Ber(p) trials', 'n dependent trials', 'n draws without replacement', 'a single Bernoulli trial repeated n²  times'],
+            optsDE: ['n unabhängigen Ber(p)-Versuchen', 'n abhängigen Versuchen', 'n Zügen ohne Zurücklegen', 'einem einzelnen Bernoulli-Versuch n²-mal wiederholt'],
             correct: 0
         },
         {
@@ -1348,8 +1348,8 @@ const BONUS_QUIZ_POOLS = {
         {
             q: "Independence implies uncorrelatedness, but not vice versa. A counterexample is:",
             qDE: "Unabhängigkeit impliziert Unkorreliertheit, aber nicht umgekehrt. Ein Gegenbeispiel ist:",
-            opts: ["X ~ Uniform(−1,1) and Y = X²", "X and Y both standard normal and independent", "X and Y with the same distribution", "X and Y both Bernoulli(0.5)"],
-            optsDE: ["X ~ Gleichverteilung(−1,1) und Y = X²", "X und Y beide standardnormalverteilt und unabhängig", "X und Y mit gleicher Verteilung", "X und Y beide Bernoulli(0.5)"],
+            opts: ["X ~ Uniform(−1,1) and Y = X²", "X and Y both standard normal and independent", "X and Y with the same distribution", "X and Y both Ber(0.5)"],
+            optsDE: ["X ~ Gleichverteilung(−1,1) und Y = X²", "X und Y beide standardnormalverteilt und unabhängig", "X und Y mit gleicher Verteilung", "X und Y beide Ber(0.5)"],
             correct: 0,
         },
         {
@@ -1437,27 +1437,26 @@ const BONUS_QUIZ_POOLS = {
     // Topics: arithmetisches Mittel, schwaches GGZ, Tschebyscheff-Ungleichung,
     //         stochastische Konvergenz, starkes GGZ, Hauptsatz der Statistik,
     //         fast sichere Konvergenz, Zentraler Grenzwertsatz
-
     7: [
 
         // --- Arithmetisches Mittel ---
         {
-            q: "The sample mean (1/n)∑Xᵢ of n observations x₁, …, xₙ is defined as:",
-            qDE: "Das arithmetische Mittel (1/n)∑Xᵢ von n Beobachtungen x₁, …, xₙ ist definiert als:",
+            q: "The sample mean of n observations x₁, …, xₙ is defined as:",
+            qDE: "Das arithmetische Mittel von n Beobachtungen x₁, …, xₙ ist definiert als:",
             opts: ["(x₁ + … + xₙ) / n", "(x₁ + … + xₙ) · n", "√(x₁ · … · xₙ)", "max(x₁, …, xₙ) / n"],
             optsDE: ["(x₁ + … + xₙ) / n", "(x₁ + … + xₙ) · n", "√(x₁ · … · xₙ)", "max(x₁, …, xₙ) / n"],
             correct: 0
         },
         {
-            q: "For i.i.d. random variables X₁, …, Xₙ with E[Xᵢ] = μ, what is E[(1/n)∑Xᵢ]?",
-            qDE: "Für i.i.d. Zufallsvariablen X₁, …, Xₙ mit E[Xᵢ] = μ gilt E[(1/n)∑Xᵢ] =",
+            q: "For i.i.d. random variables X₁, …, Xₙ with E[Xᵢ] = μ, what is E[X̄ₙ]?",
+            qDE: "Für i.i.d. Zufallsvariablen X₁, …, Xₙ mit E[Xᵢ] = μ, was ist E[X̄ₙ]?",
             opts: ["μ", "μ / n", "n · μ", "0"],
             optsDE: ["μ", "μ / n", "n · μ", "0"],
             correct: 0
         },
         {
-            q: "For i.i.d. random variables with variance σ², what is Var((1/n)∑Xᵢ)?",
-            qDE: "Für i.i.d. Zufallsvariablen mit Varianz σ² gilt Var((1/n)∑Xᵢ) =",
+            q: "For i.i.d. random variables with variance σ², what is Var(X̄ₙ)?",
+            qDE: "Für i.i.d. Zufallsvariablen mit Varianz σ², was ist Var(X̄ₙ)?",
             opts: ["σ² / n", "σ²", "σ² · n", "σ / n"],
             optsDE: ["σ² / n", "σ²", "σ² · n", "σ / n"],
             correct: 0
@@ -1472,24 +1471,17 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: "Chebyshev's inequality requires knowledge of which quantity to give a bound on P(|X − μ| ≥ ε)?",
+            q: "Chebyshev's inequality requires knowledge of which quantity to bound P(|X − μ| ≥ ε)?",
             qDE: "Die Tschebyscheff-Ungleichung benötigt welche Größe, um P(|X − μ| ≥ ε) zu beschränken?",
             opts: ["The variance Var(X)", "The full distribution of X", "The median of X", "The moment generating function"],
             optsDE: ["Die Varianz Var(X)", "Die vollständige Verteilung von X", "Den Median von X", "Die momenterzeugende Funktion"],
             correct: 0
         },
-        {
-            q: "Applied to the sample mean (1/n)∑Xᵢ, Chebyshev's inequality gives P(|(1/n)∑Xᵢ − μ| ≥ ε) ≤",
-            qDE: "Angewandt auf den Stichprobenmittelwert (1/n)∑Xᵢ ergibt die Tschebyscheff-Ungleichung P(|(1/n)∑Xᵢ − μ| ≥ ε) ≤",
-            opts: ["σ² / (n · ε²)", "σ² / ε²", "σ / (n · ε)", "n · σ² / ε²"],
-            optsDE: ["σ² / (n · ε²)", "σ² / ε²", "σ / (n · ε)", "n · σ² / ε²"],
-            correct: 0
-        },
 
         // --- Stochastische Konvergenz ---
         {
-            q: "A sequence of random variables Xₙ converges in probability to X if:",
-            qDE: "Eine Folge von Zufallsvariablen Xₙ konvergiert stochastisch gegen X, wenn:",
+            q: "A sequence Xₙ converges in probability to X if:",
+            qDE: "Eine Folge Xₙ konvergiert stochastisch gegen X, wenn:",
             opts: ["P(|Xₙ − X| ≥ ε) → 0 as n → ∞ for all ε > 0", "P(Xₙ = X) = 1 for all n", "E[Xₙ] → 0 for all n", "Var(Xₙ) → ∞"],
             optsDE: ["P(|Xₙ − X| ≥ ε) → 0 für n → ∞ für alle ε > 0", "P(Xₙ = X) = 1 für alle n", "E[Xₙ] → 0 für alle n", "Var(Xₙ) → ∞"],
             correct: 0
@@ -1513,8 +1505,8 @@ const BONUS_QUIZ_POOLS = {
         {
             q: "The Weak Law of Large Numbers states that for i.i.d. variables with mean μ:",
             qDE: "Das schwache Gesetz der großen Zahlen besagt für i.i.d. Variablen mit Erwartungswert μ:",
-            opts: ["(1/n)∑Xᵢₙ →ᵖ μ as n → ∞", "(1/n)∑Xᵢₙ → 0 as n → ∞", "(1/n)∑Xᵢₙ = μ for all n", "(1/n)∑Xᵢₙ →ᵃ·ˢ· μ"],
-            optsDE: ["(1/n)∑Xᵢₙ →ᵖ μ für n → ∞", "(1/n)∑Xᵢₙ → 0 für n → ∞", "(1/n)∑Xᵢₙ = μ für alle n", "(1/n)∑Xᵢₙ →ᵃ·ˢ· μ"],
+            opts: ["X̄ₙ →ᵖ μ as n → ∞", "X̄ₙ → 0 as n → ∞", "X̄ₙ = μ for all n", "X̄ₙ →ᵃ·ˢ· μ"],
+            optsDE: ["X̄ₙ →ᵖ μ für n → ∞", "X̄ₙ → 0 für n → ∞", "X̄ₙ = μ für alle n", "X̄ₙ →ᵃ·ˢ· μ"],
             correct: 0
         },
         {
@@ -1525,8 +1517,8 @@ const BONUS_QUIZ_POOLS = {
             correct: 0
         },
         {
-            q: "Which condition is sufficient to prove the Weak Law of Large Numbers via Chebyshev's inequality?",
-            qDE: "Welche Bedingung reicht aus, um das schwache Gesetz der großen Zahlen mittels Tschebyscheff zu beweisen?",
+            q: "Which condition is sufficient to prove the Weak Law via Chebyshev's inequality?",
+            qDE: "Welche Bedingung reicht aus, um das schwache Gesetz mittels Tschebyscheff zu beweisen?",
             opts: ["Finite variance σ² < ∞", "The distribution must be normal", "The variables must be bounded", "The mean must be zero"],
             optsDE: ["Endliche Varianz σ² < ∞", "Die Verteilung muss normal sein", "Die Variablen müssen beschränkt sein", "Der Erwartungswert muss null sein"],
             correct: 0
@@ -1534,15 +1526,15 @@ const BONUS_QUIZ_POOLS = {
 
         // --- Starkes Gesetz der großen Zahlen ---
         {
-            q: "The Strong Law of Large Numbers states that (1/n)∑Xᵢₙ converges to μ:",
-            qDE: "Das starke Gesetz der großen Zahlen besagt, dass (1/n)∑Xᵢₙ gegen μ konvergiert:",
+            q: "The Strong Law of Large Numbers states that X̄ₙ converges to μ:",
+            qDE: "Das starke Gesetz der großen Zahlen besagt, dass X̄ₙ gegen μ konvergiert:",
             opts: ["Almost surely (with probability 1)", "In probability only", "In distribution only", "For finitely many n"],
             optsDE: ["Fast sicher (mit Wahrscheinlichkeit 1)", "Nur in Wahrscheinlichkeit", "Nur in Verteilung", "Für endlich viele n"],
             correct: 0
         },
         {
-            q: "The Strong Law of Large Numbers is a stronger statement than the Weak Law because:",
-            qDE: "Das starke Gesetz der großen Zahlen ist eine stärkere Aussage als das schwache, weil:",
+            q: "The Strong Law is a stronger statement than the Weak Law because:",
+            qDE: "Das starke Gesetz ist eine stärkere Aussage als das schwache, weil:",
             opts: ["Almost sure convergence implies convergence in probability, but not vice versa", "It requires fewer assumptions", "It applies to dependent variables", "It only works for symmetric distributions"],
             optsDE: ["Fast sichere Konvergenz impliziert stochastische Konvergenz, aber nicht umgekehrt", "Es weniger Voraussetzungen braucht", "Es für abhängige Variablen gilt", "Es nur für symmetrische Verteilungen gilt"],
             correct: 0
@@ -1580,22 +1572,22 @@ const BONUS_QUIZ_POOLS = {
 
         // --- Hauptsatz der Statistik (Glivenko-Cantelli) ---
         {
-            q: "The Fundamental Theorem of Statistics (Glivenko–Cantelli) states that the empirical CDF F̂ₙ(x):",
-            qDE: "Der Hauptsatz der Statistik (Glivenko–Cantelli) besagt, dass die empirische Verteilungsfunktion F̂ₙ(x):",
-            opts: ["Converges almost surely to the true CDF F(x) uniformly in x", "Converges to 0 for all x", "Equals F(x) for all n", "Only converges at the median"],
+            q: "The Fundamental Theorem of Statistics states that the empirical distribution function F̂ₙ(x):",
+            qDE: "Der Hauptsatz der Statistik besagt, dass die empirische Verteilungsfunktion F̂ₙ(x):",
+            opts: ["Converges almost surely to the true distribution function F(x) uniformly in x", "Converges to 0 for all x", "Equals F(x) for all n", "Only converges at the median"],
             optsDE: ["Fast sicher gleichmäßig in x gegen die wahre Verteilungsfunktion F(x) konvergiert", "Für alle x gegen 0 konvergiert", "Für alle n gleich F(x) ist", "Nur am Median konvergiert"],
             correct: 0
         },
         {
-            q: "The empirical CDF F̂ₙ(x) based on n i.i.d. observations is defined as:",
+            q: "The empirical distribution function F̂ₙ(x) based on n i.i.d. observations is defined as:",
             qDE: "Die empirische Verteilungsfunktion F̂ₙ(x) basierend auf n i.i.d. Beobachtungen ist definiert als:",
             opts: ["(number of observations ≤ x) / n", "P(X ≤ x)", "The density evaluated at x", "(number of observations = x) / n"],
             optsDE: ["(Anzahl der Beobachtungen ≤ x) / n", "P(X ≤ x)", "Die Dichte ausgewertet an der Stelle x", "(Anzahl der Beobachtungen = x) / n"],
             correct: 0
         },
         {
-            q: "The Glivenko–Cantelli theorem implies that the supremum sup_x |F̂ₙ(x) − F(x)| converges:",
-            qDE: "Der Satz von Glivenko–Cantelli impliziert, dass sup_x |F̂ₙ(x) − F(x)| konvergiert:",
+            q: "The Fundamental Theorem of Statistics implies that sup_x |F̂ₙ(x) − F(x)| converges:",
+            qDE: "Der Hauptsatz der Statistik impliziert, dass sup_x |F̂ₙ(x) − F(x)| konvergiert:",
             opts: ["To 0 almost surely as n → ∞", "To 1 as n → ∞", "To σ² as n → ∞", "To a normal distribution"],
             optsDE: ["Fast sicher gegen 0 für n → ∞", "Gegen 1 für n → ∞", "Gegen σ² für n → ∞", "Gegen eine Normalverteilung"],
             correct: 0
@@ -1603,28 +1595,29 @@ const BONUS_QUIZ_POOLS = {
 
         // --- Zentraler Grenzwertsatz ---
         {
-            q: "The Central Limit Theorem states that for i.i.d. Xᵢ with mean μ and variance σ², the standardised sum ((1/n)∑Xᵢₙ − μ) / (σ/√n) converges in distribution to:",
-            qDE: "Der Zentrale Grenzwertsatz besagt, dass für i.i.d. Xᵢ mit Erwartungswert μ und Varianz σ² die standardisierte Summe ((1/n)∑Xᵢₙ − μ) / (σ/√n) in Verteilung konvergiert gegen:",
+            q: "The Central Limit Theorem states that (X̄ₙ − μ) / (σ/√n) converges in distribution to:",
+            qDE: "Der Zentrale Grenzwertsatz besagt, dass (X̄ₙ − μ) / (σ/√n) in Verteilung konvergiert gegen:",
             opts: ["N(0, 1)", "N(μ, σ²)", "Exp(1)", "U(0, 1)"],
             optsDE: ["N(0, 1)", "N(μ, σ²)", "Exp(1)", "U(0, 1)"],
             correct: 0
         },
         {
-            q: "The Central Limit Theorem applies regardless of the underlying distribution of Xᵢ, provided that:",
+            q: "The Central Limit Theorem applies regardless of the underlying distribution, provided that:",
             qDE: "Der Zentrale Grenzwertsatz gilt unabhängig von der Verteilung der Xᵢ, sofern:",
             opts: ["The variables are i.i.d. with finite variance", "The variables follow a normal distribution", "The sample size n is exactly 30", "The variables are discrete"],
             optsDE: ["Die Variablen i.i.d. mit endlicher Varianz sind", "Die Variablen normalverteilt sind", "Der Stichprobenumfang n genau 30 beträgt", "Die Variablen diskret sind"],
             correct: 0
         },
         {
-            q: "The CLT is used in practice to approximate probabilities about (1/n)∑Xᵢₙ. Which distribution is used for the approximation?",
-            qDE: "Der ZGS wird in der Praxis genutzt, um Wahrscheinlichkeiten über (1/n)∑Xᵢₙ zu approximieren. Welche Verteilung wird verwendet?",
+            q: "The Central Limit Theorem is used to approximate probabilities about X̄ₙ. Which distribution is used?",
+            qDE: "Der Zentrale Grenzwertsatz wird zur Approximation von Wahrscheinlichkeiten über X̄ₙ genutzt. Welche Verteilung wird verwendet?",
             opts: ["Normal distribution N(μ, σ²/n)", "Poisson distribution with λ = μ", "Exponential distribution Exp(μ)", "Uniform distribution U(0, μ)"],
             optsDE: ["Normalverteilung N(μ, σ²/n)", "Poisson-Verteilung mit λ = μ", "Exponentialverteilung Exp(μ)", "Gleichverteilung U(0, μ)"],
             correct: 0
         },
 
     ],
+
 
 
 

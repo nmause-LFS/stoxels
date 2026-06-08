@@ -1788,9 +1788,9 @@
         category: 'class',
         icon: '⚔️',
         nameEn: 'Momentum Machine',
-        nameDE: 'Schwung-Maschine',
+        nameDE: 'Momentum-Maschine',
         descEn: 'As Statistician, trigger Momentum 10 or more times in a single level.',
-        descDE: 'Als Statistiker: Löse Schwung 10 oder mehr Mal in einem Level aus.',
+        descDE: 'Als Statistiker: Löse Momentum 10 oder mehr Mal in einem Level aus.',
         stat: 'statistician3MomentumOneLevel',
         tiers: [
             { threshold: 1, labelEn: 'On a Roll', labelDE: 'Im Schwung' },
@@ -3173,10 +3173,5 @@
             { threshold: 5, labelEn: 'n = 500', labelDE: 'n = 500' },
         ]
     },
-
-
-
-
-
 
 ];

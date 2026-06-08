@@ -1,114 +1,175 @@
-﻿// Handles mouse interactions with the grid
-
-
-let painting = false;       // true while the player is dragging across cells with the mouse button held down
-
-let hoverRow = -1;          // row currently hovered by the mouse, -1 if none
-
-let hoverCol = -1;          // column currently hovered by the mouse, -1 if none
-
-
-
+﻿// mouse-over.js
+// Handles all mouse interaction with the nonogram grid:
+//   - crosshair highlight when hovering over a cell
+//   - drag-painting strokes across multiple cells
+//   - drag-counter overlays shown during a stroke
 
 
 //------------------------------------------------------------------------
-//---------------MOUSEOVER ROW/COLUMN HIGHLIGHT---------------------------
+//-------------------STATE VARIABLES--------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-function applyHover(row, col) {
-    if (!cur) return;
-    const rows = cur.grid.length, cols = cur.grid[0].length;
+// True while the player holds the mouse button and drags across cells.
+let painting = false;
 
-    // Highlight the row clue cell
+// The row/column index of the cell currently under the cursor.
+// Both are -1 when the cursor is outside the grid.
+let hoverRow = -1;
+let hoverCol = -1;
+
+
+//------------------------------------------------------------------------
+//-------------------CROSSHAIR HIGHLIGHT - HELPERS------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// Adds the highlight class to all row-clue cells that belong to this row.
+function _highlightRowClue(row) {
     document.querySelectorAll(`.rct-${row}`)
         .forEach(el => el.classList.add('hov-row'));
+}
 
-    // Highlight all column header cells in this column
+// Adds the highlight class to all column-header cells that belong to this column.
+// (A column can have multiple stacked header cells for multi-number clues.)
+function _highlightColClue(col) {
     document.querySelectorAll(`.cch-${col}`)
         .forEach(el => el.classList.add('hov-col'));
+}
 
-    // Tint every cell in the row
+// Adds the row-tint class to every grid cell in the given row.
+function _highlightRowCells(row) {
+    const cols = cur.grid[0].length;
     for (let c = 0; c < cols; c++) {
-        const g = document.getElementById(`g-${row}-${c}`);
-        if (g) g.classList.add('hov-r');
+        const cell = document.getElementById(`g-${row}-${c}`);
+        if (cell) cell.classList.add('hov-r');
     }
+}
 
-    // Tint every cell in the column
+// Adds the column-tint class to every grid cell in the given column.
+function _highlightColCells(col) {
+    const rows = cur.grid.length;
     for (let r = 0; r < rows; r++) {
-        const g = document.getElementById(`g-${r}-${col}`);
-        if (g) g.classList.add('hov-c');
+        const cell = document.getElementById(`g-${r}-${col}`);
+        if (cell) cell.classList.add('hov-c');
+    }
+}
+
+// Removes the highlight class from all row-clue cells that belong to this row.
+function _clearRowClue(row) {
+    document.querySelectorAll(`.rct-${row}`)
+        .forEach(el => el.classList.remove('hov-row'));
+}
+
+// Removes the highlight class from all column-header cells that belong to this column.
+function _clearColClue(col) {
+    document.querySelectorAll(`.cch-${col}`)
+        .forEach(el => el.classList.remove('hov-col'));
+}
+
+// Removes the row-tint class from every grid cell in the given row.
+function _clearRowCells(row) {
+    const cols = cur.grid[0].length;
+    for (let c = 0; c < cols; c++) {
+        const cell = document.getElementById(`g-${row}-${c}`);
+        if (cell) cell.classList.remove('hov-r');
+    }
+}
+
+// Removes the column-tint class from every grid cell in the given column.
+function _clearColCells(col) {
+    const rows = cur.grid.length;
+    for (let r = 0; r < rows; r++) {
+        const cell = document.getElementById(`g-${r}-${col}`);
+        if (cell) cell.classList.remove('hov-c');
     }
 }
 
 
+//------------------------------------------------------------------------
+//-------------------CROSSHAIR HIGHLIGHT - MAIN---------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
 
-// clearHover — removes all crosshair CSS classes from the current row/column.
+// applyHover — draws the crosshair highlight on the row and column
+//   that pass through (row, col): tints the clue cells and all grid cells
+//   along both axes.
+function applyHover(row, col) {
+    if (!cur) return;
+    _highlightRowClue(row);
+    _highlightColClue(col);
+    _highlightRowCells(row);
+    _highlightColCells(col);
+}
 
+// clearHover — removes the crosshair highlight from the row and column
+//   that were previously highlighted.
+//   Early-exits if nothing is currently hovered or there is no active puzzle.
 function clearHover() {
     if (hoverRow < 0 || !cur) return;
-    const rows = cur.grid.length, cols = cur.grid[0].length;
-
-    // Remove highlight from the row clue cell
-    document.querySelectorAll(`.rct-${hoverRow}`)
-        .forEach(el => el.classList.remove('hov-row'));
-
-    // Remove highlight from all column header cells in this column
-    // (there can be multiple stacked header rows for multi-number clues)
-    document.querySelectorAll(`.cch-${hoverCol}`)
-        .forEach(el => el.classList.remove('hov-col'));
-
-    // Remove row tint from every cell in the hovered row
-    for (let c = 0; c < cols; c++) {
-        const g = document.getElementById(`g-${hoverRow}-${c}`);
-        if (g) g.classList.remove('hov-r');
-    }
-
-    // Remove column tint from every cell in the hovered column
-    for (let r = 0; r < rows; r++) {
-        const g = document.getElementById(`g-${r}-${hoverCol}`);
-        if (g) g.classList.remove('hov-c');
-    }
+    _clearRowClue(hoverRow);
+    _clearColClue(hoverCol);
+    _clearRowCells(hoverRow);
+    _clearColCells(hoverCol);
 }
 
 
-// onHover fired by onmouseenter on every grid cell.
-// If the cursor moved to a different cell, clears the old crosshair
-//      and draws a new one at (row, col).
-// If the player is mid-drag (painting), also applies the stroke to
-//      this cell so painting works smoothly across multiple cells.
+//------------------------------------------------------------------------
+//-------------------DRAG PAINTING - HELPERS------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// Returns true if the given cell is reachable under the current axis-lock rules.
+// When axisLockEnabled is off, every cell is always reachable.
+// When it is on, only cells on the locked axis (row or column) are reachable.
+function _isDragCellAllowed(row, col) {
+    if (!axisLockEnabled) return true;
+
+    // Determine the axis on the first movement away from the drag-start cell.
+    if (dragAxis === null && (row !== dragStartRow || col !== dragStartCol)) {
+        if (row === dragStartRow) dragAxis = 'row';
+        else if (col === dragStartCol) dragAxis = 'col';
+        else dragAxis = 'row';   // diagonal: default to row
+    }
+
+    // No axis locked yet (cursor hasn't moved) — allow the cell.
+    if (dragAxis === null) return true;
+    if (dragAxis === 'row' && row === dragStartRow) return true;
+    if (dragAxis === 'col' && col === dragStartCol) return true;
+    return false;
+}
+
+
+//------------------------------------------------------------------------
+//-------------------DRAG PAINTING - MAIN---------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// onHover — fired by onmouseenter on every grid cell.
+//   Moves the crosshair to the newly entered cell and, when the player is
+//   mid-drag, applies the current paint stroke to the cell (respecting
+//   axis-lock if it is enabled).
 function onHover(e, row, col) {
-    if (row !== hoverRow || col !== hoverCol) {
+    const movedToNewCell = (row !== hoverRow || col !== hoverCol);
+    if (movedToNewCell) {
         clearHover();
         hoverRow = row;
         hoverCol = col;
         applyHover(row, col);
     }
 
-    if (painting && !dead) {
-        if (axisLockEnabled) {
-            if (dragAxis === null && (row !== dragStartRow || col !== dragStartCol)) {
-                if (row === dragStartRow) dragAxis = 'row';
-                else if (col === dragStartCol) dragAxis = 'col';
-                else dragAxis = 'row';
-            }
-            const allowed = dragAxis === null
-                || (dragAxis === 'row' && row === dragStartRow)
-                || (dragAxis === 'col' && col === dragStartCol);
-            if (allowed) ac(row, col);
-        } else {
-            ac(row, col);
-        }
+    if (painting && !dead && _isDragCellAllowed(row, col)) {
+        applyCell(row, col);
     }
 }
 
-
-// onHoverOut fired by onmouseleave on every grid cell.
-//   Only clears the crosshair if the cell being left is the one that is
-//   currently highlighted. This prevents a stale clear when the browser
-//   fires leave/enter events in a different order than expected.
+// onHoverOut — fired by onmouseleave on every grid cell.
+//   Clears the crosshair only when the cell being left is the one that is
+//   currently highlighted. This guards against stale clears caused by the
+//   browser firing leave/enter events in an unexpected order.
 function onHoverOut(row, col) {
-    if (row === hoverRow && col === hoverCol) {
+    const leavingHighlightedCell = (row === hoverRow && col === hoverCol);
+    if (leavingHighlightedCell) {
         clearHover();
         hoverRow = -1;
         hoverCol = -1;
@@ -116,62 +177,34 @@ function onHoverOut(row, col) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
 //------------------------------------------------------------------------
-//------------------------------------------------------------------------
+//-------------------DRAG COUNTER OVERLAY---------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-
-// _dragCounterApply — adds a stroke-count overlay number to a cell during a drag.
-function _dragCounterApply(row, col, count) {
-    const el = document.getElementById(`g-${row}-${col}`);
-    if (!el) return;
-    let overlay = el.querySelector('.drag-count-overlay');
+// _getOrCreateCounterOverlay — returns the overlay <span> inside a cell,
+//   creating and appending it first if it does not already exist.
+function _getOrCreateCounterOverlay(cellEl) {
+    let overlay = cellEl.querySelector('.drag-count-overlay');
     if (!overlay) {
         overlay = document.createElement('span');
         overlay.className = 'drag-count-overlay';
-        el.appendChild(overlay);
+        cellEl.appendChild(overlay);
     }
+    return overlay;
+}
+
+// dragCounterApply — sets the stroke-count number shown on a cell
+//   during a drag so the player can see how many cells they have painted.
+function dragCounterApply(row, col, count) {
+    const cellEl = document.getElementById(`g-${row}-${col}`);
+    if (!cellEl) return;
+    const overlay = _getOrCreateCounterOverlay(cellEl);
     overlay.textContent = count;
 }
 
-// _dragCounterClear — removes all stroke-count overlays from the board.
-function _dragCounterClear() {
+// dragCounterClear — removes all stroke-count overlays from the entire board,
+//   called when a drag stroke ends.
+function dragCounterClear() {
     document.querySelectorAll('.drag-count-overlay').forEach(el => el.remove());
 }
-
-
-
-
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-
-
-
-

@@ -115,7 +115,7 @@ const CLASS_DEFS = {
 
         passive: {
             nameEn: 'Momentum',
-            nameDE: 'Schwung',
+            nameDE: 'Momentum',
             levels: [
                 {
                     level: 1,
@@ -328,20 +328,20 @@ const ASCENDENCY_DEFS = {
             levels: [
                 {
                     level: 1,
-                    descEn: 'Make a deal with the Infinite Hunger. Sacrifice 90 seconds of your time each in exchange for up to 10 revealed cells. Cooldown: 4 minutes.',
-                    descDE: 'Mache einen Handel mit dem Unendlichen Hunger. Opfere jeweils 90 Sekunden deiner Zeit im Tausch für bis zu 10 enthüllte Zellen. Abklingzeit: 4 Minuten.',
+                    descEn: 'Make a deal with the Infinite Hunger. Sacrifice 90 seconds of your time per cell in exchange for up to 10 revealed cells. Cooldown: 4 minutes.',
+                    descDE: 'Mache einen Handel mit dem Unendlichen Hunger. Opfere 90 Sekunden deiner Zeit pro Zelle im Tausch für bis zu 10 enthüllte Zellen. Abklingzeit: 4 Minuten.',
                     effect: { secondsPerCell: 90, maxCells: 10 }
                 },
                 {
                     level: 2,
-                    descEn: 'Make a deal with the Infinite Hunger. Sacrifice 75 seconds of your time each in exchange for up to 15 revealed cells. Cooldown: 4 minutes.',
-                    descDE: 'Mache einen Handel mit dem Unendlichen Hunger. Opfere jeweils 75 Sekunden deiner Zeit im Tausch für bis zu 15 enthüllte Zellen. Abklingzeit: 4 Minuten.',
+                    descEn: 'Make a deal with the Infinite Hunger. Sacrifice 75 seconds of your time per cell in exchange for up to 15 revealed cells. Cooldown: 4 minutes.',
+                    descDE: 'Mache einen Handel mit dem Unendlichen Hunger. Opfere 75 Sekunden deiner Zeit pro Zelle im Tausch für bis zu 15 enthüllte Zellen. Abklingzeit: 4 Minuten.',
                     effect: { secondsPerCell: 75, maxCells: 15 }
                 },
                 {
                     level: 3,
-                    descEn: 'Make a deal with the Infinite Hunger. Sacrifice 60 seconds of your time each in exchange for up to 20 revealed cells. Cooldown: 4 minutes.',
-                    descDE: 'Mache einen Handel mit dem Unendlichen Hunger. Opfere jeweils 60 Sekunden deiner Zeit im Tausch für bis zu 20 enthüllte Zellen. Abklingzeit: 4 Minuten.',
+                    descEn: 'Make a deal with the Infinite Hunger. Sacrifice 60 seconds of your time per cell in exchange for up to 20 revealed cells. Cooldown: 4 minutes.',
+                    descDE: 'Mache einen Handel mit dem Unendlichen Hunger. Opfere 60 Sekunden deiner Zeit pro Zelle im Tausch für bis zu 20 enthüllte Zellen. Abklingzeit: 4 Minuten.',
                     effect: { secondsPerCell: 60, maxCells: 20 }
                 },
             ]
@@ -351,25 +351,25 @@ const ASCENDENCY_DEFS = {
             nameEn: 'SPEEDFORCE',
             nameDE: 'SPEEDFORCE',
             descCursorEn: 'Enter the SPEEDFORCE: Every correct fill triggers a Momentum bonus. Time passes ten times as quickly.',
-            descCursorDE: 'Betrete die SPEEDFORCE: Jede korrekte Füllung löst einen Schwung-Bonus aus. Die Zeit vergeht zehn mal so schnell.',
+            descCursorDE: 'Betrete die SPEEDFORCE: Jede korrekte Füllung löst einen Momentum-Bonus aus. Die Zeit vergeht zehn mal so schnell.',
             cooldownSeconds: 120,
             levels: [
                 {
                     level: 1,
                     descEn: 'Enter the SPEEDFORCE. Every correct fill triggers a Momentum bonus. Any mistake is five times as severe and ends the effect. Time passes ten times as fast while in the SPEEDFORCE. Lasts for 5 seconds Cooldown: 2 minutes.',
-                    descDE: 'Betrete die SPEEDFORCE: Jede korrekte Füllung löst einen Schwung-Bonus aus. Fehler verfünffachen die Strafe und beenden den Effekt. Die Zeit vergeht zehn mal so schnell solange du in der SPEEDFORCE bist. Aktiv für 5 Sekunden. Abklingzeit: 2 Minuten.',
+                    descDE: 'Betrete die SPEEDFORCE: Jede korrekte Füllung löst einen Momentum-Bonus aus. Fehler verfünffachen die Strafe und beenden den Effekt. Die Zeit vergeht zehn mal so schnell solange du in der SPEEDFORCE bist. Aktiv für 5 Sekunden. Abklingzeit: 2 Minuten.',
                     effect: { duration: 5000, streakThreshold: 1 }
                 },
                 {
                     level: 2,
                     descEn: 'Enter the SPEEDFORCE: Every correct fill triggers a Momentum bonus. Any mistake is five times as severe and ends the effect.Time passes ten times as fast while in the SPEEDFORCE. Lasts for 10 seconds. Cooldown: 2 minutes.',
-                    descDE: 'Betrete die SPEEDFORCE: Jede korrekte Füllung löst einen Schwung-Bonus aus. Fehler verfünffachen die Strafe und beenden den Effekt. Die Zeit vergeht zehn mal so schnell solange du in der SPEEDFORCE bist. Aktiv für 10 Sekunden. Abklingzeit: 2 Minuten.',
+                    descDE: 'Betrete die SPEEDFORCE: Jede korrekte Füllung löst einen Momentum-Bonus aus. Fehler verfünffachen die Strafe und beenden den Effekt. Die Zeit vergeht zehn mal so schnell solange du in der SPEEDFORCE bist. Aktiv für 10 Sekunden. Abklingzeit: 2 Minuten.',
                     effect: { duration: 10000, streakThreshold: 1 }
                 },
                 {
                     level: 3,
                     descEn: 'Enter the SPEEDFORCE: Every correct fill triggers a Momentum bonus. Any mistake is five times as severe and ends the effect. Time passes ten times as fast while in the SPEEDFORCE.Lasts for 15 seconds. Cooldown: 2 minutes.',
-                    descDE: 'Betrete die SPEEDFORCE: Jede korrekte Füllung löst einen Schwung-Bonus aus. Fehler verfünffachen die Strafe und beenden den Effekt. Die Zeit vergeht zehn mal so schnell solange du in der SPEEDFORCE bist. Aktiv für 15 Sekunden. Abklingzeit: 2 Minuten.',
+                    descDE: 'Betrete die SPEEDFORCE: Jede korrekte Füllung löst einen Momentum-Bonus aus. Fehler verfünffachen die Strafe und beenden den Effekt. Die Zeit vergeht zehn mal so schnell solange du in der SPEEDFORCE bist. Aktiv für 15 Sekunden. Abklingzeit: 2 Minuten.',
                     effect: { duration: 15000, streakThreshold: 1 }
                 },
             ]
@@ -468,21 +468,21 @@ const ASCENDENCY_DEFS = {
             levels: [
                 {
                     level: 1,
-                    descEn: 'Plant a Residual Totem on a mistake cell. It fires a Revealing Beam every 20s to unfilled correct cells around it with radius 1. 3 Beam Charges. Max. 1 Totem. Cooldown: 2 minutes.',
-                    descDE: 'Setze ein Residual-Totem auf eine Fehlerzelle. Es feuert einen Enthüllungs-Strahl alle 20s auf ungefüllte Zellen um sich herum mit Radius 1 ab. 3 Ladungen. Max. 1 Totem. Abklingzeit: 2 Minuten.',
-                    effect: { beamRadius: 1, charges: 3, fires: 20, maxTotems: 1 }
+                    descEn: 'Plant a Residual Totem on a mistake cell. It fires a Revealing Beam every 20s to unfilled correct cells around it with radius 2. 3 Beam Charges. Max. 1 Totem. Cooldown: 2 minutes.',
+                    descDE: 'Setze ein Residual-Totem auf eine Fehlerzelle. Es feuert einen Enthüllungs-Strahl alle 20s auf ungefüllte Zellen um sich herum mit Radius 2 ab. 3 Ladungen. Max. 1 Totem. Abklingzeit: 2 Minuten.',
+                    effect: { beamRadius: 2, charges: 3, fires: 20, maxTotems: 1 }
                 },
                 {
                     level: 2,
-                    descEn: 'Plant a Residual Totem on a mistake cell. It fires a Revealing Beam every 15s to unfilled correct cells around it with radius 2. 4 Beam Charges. Max. 2 Totems. Cooldown: 2 minutes.',
-                    descDE: 'Setze ein Residual-Totem auf eine Fehlerzelle. Es feuert einen Enthüllungs-Strahl alle 15s auf ungefüllte Zellen um sich herum mit Radius 2 ab. 4 Ladungen. Max. 2 Totems. Abklingzeit: 2 Minuten.',
-                    effect: { beamRadius: 2, charges: 3, fires: 15, maxTotems: 2 }
+                    descEn: 'Plant a Residual Totem on a mistake cell. It fires a Revealing Beam every 15s to unfilled correct cells around it with radius 3. 4 Beam Charges. Max. 2 Totems. Cooldown: 2 minutes.',
+                    descDE: 'Setze ein Residual-Totem auf eine Fehlerzelle. Es feuert einen Enthüllungs-Strahl alle 15s auf ungefüllte Zellen um sich herum mit Radius 3 ab. 4 Ladungen. Max. 2 Totems. Abklingzeit: 2 Minuten.',
+                    effect: { beamRadius: 3, charges: 3, fires: 15, maxTotems: 2 }
                 },
                 {
                     level: 3,
-                    descEn: 'Plant a Residual Totem on a mistake cell. It fires a Revealing Beam every 10s to unfilled correct cells around it with radius 3. 6 Beam Charges. Max. 3 Totems. Cooldown: 2 minutes.',
-                    descDE: 'Setze ein Residual-Totem auf eine Fehlerzelle. Es feuert einen Enthüllungs-Strahl alle 10s auf ungefüllte Zellen um sich herum mit Radius 3 ab. 6 Ladungen. Max. 3 Totems. Abklingzeit: 2 Minuten.',
-                    effect: { beamRadius: 3, charges: 5, fires: 10, maxTotems: 3 }
+                    descEn: 'Plant a Residual Totem on a mistake cell. It fires a Revealing Beam every 10s to unfilled correct cells around it with radius 4. 6 Beam Charges. Max. 3 Totems. Cooldown: 2 minutes.',
+                    descDE: 'Setze ein Residual-Totem auf eine Fehlerzelle. Es feuert einen Enthüllungs-Strahl alle 10s auf ungefüllte Zellen um sich herum mit Radius 4 ab. 6 Ladungen. Max. 3 Totems. Abklingzeit: 2 Minuten.',
+                    effect: { beamRadius: 4, charges: 5, fires: 10, maxTotems: 3 }
                 },
             ]
         },
@@ -711,7 +711,7 @@ const ASCENDENCY_DEFS = {
             nameDE: 'Drifter',
             descCursorEn: 'Calls Drifter, your loyal companion. Drifter will walk through the grid and can be fed to increase his speed and duration.',
             descCursorDE: 'Ruft Drifter, deinen treuen Begleiter, um sich durch das Puzzle zu bewegen. Drifter kann gefüttert werden, um seine Geschwindigkeit und Dauer zu erhöhen.',
-            cooldownSeconds: 600,
+            cooldownSeconds: 300,
             levels: [
                 {
                     level: 1,
@@ -736,32 +736,7 @@ const ASCENDENCY_DEFS = {
     },
 };
 
-// Maps each base class to its two ascendency options (IDs)
-const ASCENDENCY_LIST = {
-    statistician: ['outlier', 'actuary'],
-    mathmagician: ['recursionist', 'markovian'],
-    probabilist: ['bayesian', 'random_walker'],
-};
 
-// Returns true if all 3 base class skills are at max level (Rank 3)
-function isBaseClassMaxed() {
-    if (!STATE.playerClass) return false;
-    return (STATE.classPassiveLevel || 1) >= 3 &&
-        (STATE.classActive1Level || 1) >= 3 &&
-        (STATE.classActive2Level || 1) >= 3;
-}
-
-// Returns true if the player has chosen an ascendency
-function hasAscendency() {
-    return !!STATE.playerAscendency;
-}
-
-// Returns true if both ascendency skills are at max level (Rank 3)
-function isAscendencyMaxed() {
-    if (!STATE.playerAscendency) return false;
-    return (STATE.ascendencySkill1Level || 1) >= 3 &&
-        (STATE.ascendencySkill2Level || 1) >= 3;
-}
 
 
 //------------------------------------------------------------------------

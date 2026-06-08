@@ -1,61 +1,73 @@
-﻿let timerSecs = 0; // current seconds remaining, initialized in startLevel() when we know which mode we're in (normal vs time trial)
+﻿//------------------------------------------------------------------------
+//-------------------TIMER VARIABLES--------------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
 
-let timerInterval = null; // the ID returned by setInterval so we can cancel it with clearInterval via stopTimer()
+// Seconds remaining on the clock. Set in startLevel() once the mode
+// (normal vs time trial) is known.
+let timerSecs = 0;
+
+// ID returned by setInterval — kept so we can cancel the loop via
+// clearInterval() in stopTimer() / pauseTimer().
+let timerInterval = null;
+
 
 
 
 //------------------------------------------------------------------------
-// Function to cancel the timer interval
+//-------------------TIMER DISPLAY HELPERS--------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-//   Called when: a level ends (win or lose), the player navigates away, or
-//   startTimer() calls it to prevent duplicate intervals.
-function stopTimer() {
-    if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-    }
+// Returns the MM:SS string for a given number of seconds (never goes
+// below "00:00").
+function _formatTimerDisplay(totalSecs) {
+    const safeSecs = Math.max(0, totalSecs);
+    const m = Math.floor(safeSecs / 60);
+    const s = safeSecs % 60;
+    return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
 }
 
 
+// Returns the CSS class name that matches the current urgency level, or
+// an empty string when the timer is in its normal state.
+//   'danger'  — ≤ 60 s  — red fast-blink
+//   'warn'    — ≤ 180 s — orange slow-blink
+//   ''        — > 180 s — default accent colour
+function _getTimerUrgencyClass(secs) {
+    if (secs <= 60) return 'danger';
+    if (secs <= 180) return 'warn';
+    return '';
+}
 
 
-//------------------------------------------------------------------------
-// Function to update the timer 
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-// updTimer — refreshes the timer display element (#timer-val) to match
-//   the current value of timerSecs, and applies colour/animation classes:
-//     normal  — default accent colour, no animation
-//     warn    — orange + slow blink when ≤ 3 minutes remain
-//     danger  — red + fast blink when ≤ 1 minute remains
-//     frozen  — solid light-blue tint while the Freeze item is active
-//   Also called by applyPenalty() (input.js) after subtracting penalty
-//   seconds, so the display updates immediately on a mistake.
-function updTimer() {
-    const m = Math.floor(Math.max(0, timerSecs) / 60); // whole minutes
-    const s = Math.max(0, timerSecs) % 60;              // remaining seconds
-    const el = document.getElementById('timer-val');
-
-    // Format as MM:SS (e.g. "04:07")
-    el.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-
-    // Reset class list before re-applying the correct state class
+// Applies the correct colour / animation class to the #timer-val element.
+// When the timer is frozen by the Freeze item or a class skill the element
+// gets an icy-blue inline colour that overrides the CSS classes.
+function _applyTimerDisplayState(el) {
+    // Always reset to the base class first so stale classes don't linger.
     el.className = 'timer-val';
+    el.style.color = '';
 
     if (timerFrozen) {
-        el.style.color = '#6cf'; // icy blue — overrides CSS colour
-    } else if (timerSecs <= 60) {
-        el.classList.add('danger'); // red fast-blink (CSS animation)
-        el.style.color = '';        // let CSS handle the colour
-    } else if (timerSecs <= 180) {
-        el.classList.add('warn');   // orange slow-blink
-        el.style.color = '';
-    } else {
-        el.style.color = '';        // default accent colour from CSS
+        el.style.color = '#6cf'; // icy blue — overrides CSS
+        return;
     }
+
+    const urgencyClass = _getTimerUrgencyClass(timerSecs);
+    if (urgencyClass) el.classList.add(urgencyClass);
+}
+
+
+// updTimer — refreshes the #timer-val element to match timerSecs and
+// re-applies urgency styling. Also called by applyPenalty() (input.js)
+// so the display updates immediately when a mistake is made.
+function updTimer() {
+    const el = document.getElementById('timer-val');
+    el.textContent = _formatTimerDisplay(timerSecs);
+    _applyTimerDisplayState(el);
+
+    // Notify the passive skill tracker every tick (no-op when unavailable).
     if (typeof PassiveTracker !== 'undefined') PassiveTracker.onTimerTick();
 }
 
@@ -63,22 +75,19 @@ function updTimer() {
 
 
 //------------------------------------------------------------------------
-// Function to handle the timer reaching zero
+//-------------------TIMER LOSS HANDLER-----------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-// timesUp — shows the loss overlay when the timer hits zero.
-//   Sets the title and sub-text, then adds the 'show' class which makes
-//   the overlay visible (display:flex via CSS).
-//   Note: dead = true and stopTimer() are called by the tick loop BEFORE
-//   this function, so no need to repeat them here.
+// Shows the loss overlay with the translated title, mistake count, and
+// retry prompt. dead = true and stopTimer() are already called by the
+// tick loop before this function runs.
 function timesUp() {
-
-    // bounceback achievement: record which level was just failed so scoring.js can
-    // detect an immediate retry win on the same level.
+    // Record the failed level for the bounceback achievement so scoring.js
+    // can detect an immediate retry win on the same level.
     if (cur) window._lastFailedGi = cur.gIdx;
 
-    document.getElementById('lose-title').textContent = t('ov_lose'); // translated string
+    document.getElementById('lose-title').textContent = t('ov_lose');
     document.getElementById('lose-sub').textContent =
         `${mistakeCount} ${mistakeCount !== 1 ? t('ov_win_mistakes') : t('ov_win_mistake')}. ${t('btn_retry2')}!`;
     document.getElementById('ov-lose').classList.add('show');
@@ -89,177 +98,292 @@ function timesUp() {
 
 
 
-
-
 //------------------------------------------------------------------------
-// Function to start the timer
+//-------------------SKILL INITIALISATION HELPERS-------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-// startTimer — begins the 1-second countdown loop.
-//   Always calls stopTimer() first to guarantee there is never more than
-//   one interval running at a time (important when replaying a level).
-//   Each tick:
-//     1. Skips if the game is already over (dead) or the timer is frozen by
-//        the Freeze item or class skills(timerFrozen).
-//     2. Decrements timerSecs and refreshes the displayed clock (updTimer).
-//     3. Triggers the loss screen if time has run out.
-function startTimer() {
-    stopTimer();
+// Returns the Poisson-process interval in seconds for the highest owned
+// tier of the skill, or null when the player has none of the nodes.
+//   node poisson_process_3 → 60 s
+//   node poisson_process_2 → 90 s
+//   node poisson_process_1 → 120 s (base)
+function _getPoissonInterval() {
+    if (!ptHasSkill('poisson_process_1') &&
+        !ptHasSkill('poisson_process_2') &&
+        !ptHasSkill('poisson_process_3')) return null;
 
+    if (ptHasSkill('poisson_process_3')) return 60;
+    if (ptHasSkill('poisson_process_2')) return 90;
+    return 120;
+}
+
+
+// Schedules all timestamp-based skill triggers and initialises the
+// procedural field systems. Called once at the start of each level.
+function _initSkillTimers() {
     window._emergencyScanFired = false;
     window._timedStasisNext = null;
     window._lawOfLargeNext = null;
     window._poissonNext = null;
 
+    // timed_stasis (195-197): first auto-freeze after 10 minutes.
     if (ptHasSkill('timed_stasis_1')) {
         window._timedStasisNext = Date.now() + 10 * 60 * 1000;
     }
 
-    // keystone_law_of_large_numbers (219): first trigger after 5 min
+    // keystone_law_of_large_numbers (219): first trigger after 5 minutes.
     if (ptHasSkill('keystone_law_of_large_numbers')) {
         window._lawOfLargeNext = Date.now() + 5 * 60 * 1000;
     }
 
-    // poisson_process (270-272): schedule first auto-mark
-    // Base: 120s, node 271: 90s, node 272: 60s
-    if (ptHasSkill('poisson_process_1') || ptHasSkill('poisson_process_2') || ptHasSkill('poisson_process_3')) {
-        let interval = 120; // Default
-        if (ptHasSkill('poisson_process_3')) {
-            interval = 60;
-        } else if (ptHasSkill('poisson_process_2')) {
-            interval = 90;
-        }
-        window._poissonNext = Date.now() + interval * 1000;
+    // poisson_process (270-272): schedule first auto-mark.
+    const poissonInterval = _getPoissonInterval();
+    if (poissonInterval !== null) {
+        window._poissonNext = Date.now() + poissonInterval * 1000;
     }
+}
 
 
+// Initialises the procedural field and Markov systems that run every tick.
+function _initProceduralSystems() {
     _ergodicFieldInit();
     _randomWalkInit();
     if (typeof resetMarkovianState === 'function') resetMarkovianState();
-
-    timerInterval = setInterval(() => {
-        if (dead || timerFrozen) return;
-
-        _poissonProcessTick();
-        _ergodicFieldTick();
-        _entropyDrainTick();
-        _randomWalkTick();
-        _degreesOfFreedomTick();
-        if (typeof _markovSnapshotTick === 'function') _markovSnapshotTick();
-
-        // timed_stasis (195-197): auto-freeze for 1s (+0.5s per tier 2/3) every 10 min
-        if ( ptHasSkill('timed_stasis_1') && window._timedStasisNext && Date.now() >= window._timedStasisNext) {
-            window._timedStasisNext = Date.now() + 10 * 60 * 1000; // schedule next
-            let freezeDur = 1000;
-            if (ptHasSkill('timed_stasis_2')) freezeDur += 500;
-            if (ptHasSkill('timed_stasis_3')) freezeDur += 500;
-            timerFrozen = true;
-            updTimer();
-            showToast(`⏸️ ${LANG === 'de' ? 'Zeitstase!' : 'Timed Stasis!'}`);
-            setTimeout(() => {
-                timerFrozen = false;
-                updTimer();
-            }, freezeDur);
-        }
-
-        // keystone_law_of_large_numbers (219): every 5 min, reveal 1 sparse row + 1 sparse col.
-        // Does not fire in the last 15 minutes (timerSecs <= 900).
-        if (window._lawOfLargeNext && Date.now() >= window._lawOfLargeNext && timerSecs > 900) {
-            window._lawOfLargeNext = Date.now() + 5 * 60 * 1000;
-            if (cur) {
-                const sol = cur.grid;
-                const rows = sol.length, cols = sol[0].length;
-
-                // Find row with fewer than 2 correct filled cells
-                let sparseRow = -1;
-                for (let r = 0; r < rows; r++) {
-                    const filled = sol[r].filter((v, c) => v === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])).length;
-                    const total = sol[r].filter(v => v === 1).length;
-                    if (filled < 2 && filled < total) { sparseRow = r; break; }
-                }
-
-                // Find col with fewer than 2 correct filled cells
-                let sparseCol = -1;
-                for (let c = 0; c < cols; c++) {
-                    const filled = sol.filter((row, r) => row[c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])).length;
-                    const total = sol.filter(row => row[c] === 1).length;
-                    if (filled < 2 && filled < total) { sparseCol = c; break; }
-                }
-
-                if (sparseRow >= 0) {
-                    for (let c = 0; c < cols; c++) {
-                        if (sol[sparseRow][c] === 1 && userGrid[sparseRow][c] !== 1 && !revealedGrid[sparseRow][c]) {
-                            revealedGrid[sparseRow][c] = true;
-                            userGrid[sparseRow][c] = 1;
-                            renderCell(sparseRow, c);
-                            updClues(sparseRow, c);
-                        }
-                    }
-                }
-                if (sparseCol >= 0) {
-                    for (let r = 0; r < rows; r++) {
-                        if (sol[r][sparseCol] === 1 && userGrid[r][sparseCol] !== 1 && !revealedGrid[r][sparseCol]) {
-                            revealedGrid[r][sparseCol] = true;
-                            userGrid[r][sparseCol] = 1;
-                            renderCell(r, sparseCol);
-                            updClues(r, sparseCol);
-                        }
-                    }
-                }
-
-                if (sparseRow >= 0 || sparseCol >= 0) {
-
-                    // After the existing sparseRow/sparseCol reveal block, before checkWin():
-                    if (_getBayesianBonus() > 0 && Math.random() < _getBayesianBonus()) {
-                        _resetBayesianBonus();
-                        revealTiles(1);
-                        showToast(`🔃 ${LANG === 'de' ? 'Bayessche Verstärkung!' : 'Bayesian Boost!'}`);
-                    }
-                    showToast(`📉 ${LANG === 'de' ? 'Gesetz der Großen Zahlen!' : 'Law of Large Numbers!'}`);
-                    checkWin();
-
-
-                }
-            }
-        }
-
-
-
-        if (!window._goldenClockActive) {
-            timerSecs--;
-            // Black Swan speedforce: timer drains 10 times as fast
-            if (window._blackSwanActive) timerSecs-=9;
-        }
-        updTimer();
-
-        const elapsed = Math.floor((Date.now() - levelStartTime) / 1000);
-        const thresh = curMods.timetrial ? 60 : 180;
-        if (elapsed >= thresh && elapsed - 1 < thresh) buildInventoryPanel();
-
-        // emergency_scan (201-203): one-shot field scan when timer first drops to ≤5 min
-        if (ptHasSkill('emergency_scan_1') && !window._emergencyScanFired && timerSecs <= 300 && timerSecs > 0) {
-            window._emergencyScanFired = true;
-            let scanDur = 2000;
-            if (ptHasSkill('emergency_scan_2')) scanDur += 1000;
-            if (ptHasSkill('emergency_scan_3')) scanDur += 2000;
-            // Use a scan size of the full grid (rows and cols) so it covers everything.
-            // _executeFieldScan expects (scanSize, durationMs); we pass the larger grid
-            // dimension so the region always covers the whole puzzle.
-            const fullSize = Math.max(cur.grid.length, cur.grid[0].length);
-            _executeFieldScan(fullSize, scanDur);
-        }
-
-        if (timerSecs <= 0) {
-            dead = true;
-            stopTimer();
-            timesUp();
-        }
-    }, 1000);
 }
 
 
 
+
+//------------------------------------------------------------------------
+//-------------------TICK HELPER FUNCTIONS--------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// Advances all passive skill systems that need a per-second nudge.
+function _tickPassiveSkills() {
+    _poissonProcessTick();
+    _ergodicFieldTick();
+    _entropyDrainTick();
+    _randomWalkTick();
+    _degreesOfFreedomTick();
+    if (typeof _markovSnapshotTick === 'function') _markovSnapshotTick();
+}
+
+
+// Returns the total freeze duration in ms for the timed_stasis skill,
+// based on how many tiers the player has unlocked.
+//   tier 1 only → 1000 ms
+//   tier 2      → +500 ms
+//   tier 3      → +500 ms further
+function _calcTimedStasisDuration() {
+    let dur = 1000;
+    if (ptHasSkill('timed_stasis_2')) dur += 500;
+    if (ptHasSkill('timed_stasis_3')) dur += 500;
+    return dur;
+}
+
+
+// Handles timed_stasis (195-197): every 10 minutes the timer freezes
+// briefly. The freeze duration scales with the tier unlocked.
+function _tickTimedStasis() {
+    if (!ptHasSkill('timed_stasis_1')) return;
+    if (!window._timedStasisNext) return;
+    if (Date.now() < window._timedStasisNext) return;
+
+    // Schedule the next trigger 10 minutes from now.
+    window._timedStasisNext = Date.now() + 10 * 60 * 1000;
+
+    const freezeDur = _calcTimedStasisDuration();
+    timerFrozen = true;
+    updTimer();
+    showToast(`⏸️ ${LANG === 'de' ? 'Zeitstase!' : 'Timed Stasis!'}`);
+
+    setTimeout(() => {
+        timerFrozen = false;
+        updTimer();
+    }, freezeDur);
+}
+
+
+// Searches for the first row in the solution grid that has fewer than
+// 2 correctly filled cells. Returns the row index, or -1 if none found.
+function _findSparseRow(sol, rows, cols) {
+    for (let r = 0; r < rows; r++) {
+        const filled = sol[r].filter((v, c) => v === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])).length;
+        const total = sol[r].filter(v => v === 1).length;
+        if (filled < 2 && filled < total) return r;
+    }
+    return -1;
+}
+
+
+// Searches for the first column in the solution grid that has fewer than
+// 2 correctly filled cells. Returns the col index, or -1 if none found.
+function _findSparseCol(sol, rows, cols) {
+    for (let c = 0; c < cols; c++) {
+        const filled = sol.filter((row, r) => row[c] === 1 && (userGrid[r][c] === 1 || revealedGrid[r][c])).length;
+        const total = sol.filter(row => row[c] === 1).length;
+        if (filled < 2 && filled < total) return c;
+    }
+    return -1;
+}
+
+
+// Reveals all unfilled solution cells in the given row and refreshes
+// their display and clue highlights.
+function _revealSparseRow(sol, sparseRow, cols) {
+    for (let c = 0; c < cols; c++) {
+        if (sol[sparseRow][c] === 1 && userGrid[sparseRow][c] !== 1 && !revealedGrid[sparseRow][c]) {
+            revealedGrid[sparseRow][c] = true;
+            userGrid[sparseRow][c] = 1;
+            renderCell(sparseRow, c);
+            updClues(sparseRow, c);
+        }
+    }
+}
+
+
+// Reveals all unfilled solution cells in the given column and refreshes
+// their display and clue highlights.
+function _revealSparseCol(sol, sparseCol, rows) {
+    for (let r = 0; r < rows; r++) {
+        if (sol[r][sparseCol] === 1 && userGrid[r][sparseCol] !== 1 && !revealedGrid[r][sparseCol]) {
+            revealedGrid[r][sparseCol] = true;
+            userGrid[r][sparseCol] = 1;
+            renderCell(r, sparseCol);
+            updClues(r, sparseCol);
+        }
+    }
+}
+
+
+// Handles the full Law of Large Numbers reveal pass: finds a sparse row
+// and column, reveals them, applies the optional Bayesian Boost bonus,
+// shows a toast, and checks for a win.
+function _triggerLawOfLargeNumbers() {
+    if (!cur) return;
+
+    const sol = cur.grid;
+    const rows = sol.length;
+    const cols = sol[0].length;
+
+    const sparseRow = _findSparseRow(sol, rows, cols);
+    const sparseCol = _findSparseCol(sol, rows, cols);
+
+    if (sparseRow >= 0) _revealSparseRow(sol, sparseRow, cols);
+    if (sparseCol >= 0) _revealSparseCol(sol, sparseCol, rows);
+
+    if (sparseRow < 0 && sparseCol < 0) return; // nothing was revealed
+
+    // Bayesian Boost: chance for a bonus free tile after a LLN reveal.
+    if (_getBayesianBonus() > 0 && Math.random() < _getBayesianBonus()) {
+        _resetBayesianBonus();
+        revealTiles(1);
+        showToast(`🔃 ${LANG === 'de' ? 'Bayessche Verstärkung!' : 'Bayesian Boost!'}`);
+    }
+
+    showToast(`📉 ${LANG === 'de' ? 'Gesetz der Großen Zahlen!' : 'Law of Large Numbers!'}`);
+    checkWin();
+}
+
+
+// Handles keystone_law_of_large_numbers (219): every 5 minutes, reveal
+// one sparse row and one sparse column. Does not fire in the last 15
+// minutes of a level (timerSecs ≤ 900).
+function _tickLawOfLargeNumbers() {
+    if (!window._lawOfLargeNext) return;
+    if (Date.now() < window._lawOfLargeNext) return;
+    if (timerSecs <= 900) return; // last 15 min — no reveal
+
+    // Schedule the next trigger 5 minutes from now.
+    window._lawOfLargeNext = Date.now() + 5 * 60 * 1000;
+
+    _triggerLawOfLargeNumbers();
+}
+
+
+// Decrements timerSecs by the correct amount for the current frame.
+// Golden Clock halts all countdown. Black Swan drains 10× as fast.
+function _tickCountdown() {
+    if (window._goldenClockActive) return; // clock is paused
+
+    timerSecs--;
+
+    // Black Swan speedforce: timer drains at 10× normal speed.
+    if (window._blackSwanActive) timerSecs -= 9;
+}
+
+
+// Unlocks the inventory panel after the elapsed-time threshold has passed
+// (60 s in time-trial mode, 180 s in normal mode). Fires exactly once per
+// level because of the one-second window check.
+function _tickInventoryUnlock() {
+    const elapsed = Math.floor((Date.now() - levelStartTime) / 1000);
+    const thresh = curMods.timetrial ? 60 : 180;
+    if (elapsed >= thresh && elapsed - 1 < thresh) buildInventoryPanel();
+}
+
+
+// Returns the total field-scan duration in ms for the emergency_scan
+// skill, scaled by tier.
+//   tier 1 only → 2000 ms
+//   tier 2      → +1000 ms
+//   tier 3      → +2000 ms further
+function _calcEmergencyScanDuration() {
+    let dur = 2000;
+    if (ptHasSkill('emergency_scan_2')) dur += 1000;
+    if (ptHasSkill('emergency_scan_3')) dur += 2000;
+    return dur;
+}
+
+
+// Handles emergency_scan (201-203): a one-shot full-grid field scan that
+// fires once when timerSecs first drops to ≤ 5 minutes.
+function _tickEmergencyScan() {
+    if (!ptHasSkill('emergency_scan_1')) return;
+    if (window._emergencyScanFired) return;
+    if (timerSecs > 300 || timerSecs <= 0) return;
+
+    window._emergencyScanFired = true;
+
+    // Cover the entire puzzle: pass the larger grid dimension as scan size.
+    const fullSize = Math.max(cur.grid.length, cur.grid[0].length);
+    _executeFieldScan(fullSize, _calcEmergencyScanDuration());
+}
+
+
+// Checks whether the timer has expired and triggers the loss state when
+// it has. Always the last check in the tick loop.
+function _checkTimerExpired() {
+    if (timerSecs > 0) return;
+
+    dead = true;
+    stopTimer();
+    timesUp();
+}
+
+
+
+
+//------------------------------------------------------------------------
+//-------------------TIMER CONTROL FUNCTIONS------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// Cancels the active countdown interval. Safe to call even when no
+// interval is running. Called on level end, navigation away, and at the
+// start of startTimer() to prevent duplicate intervals.
+function stopTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+}
+
+
+// Pauses the countdown without resetting timerSecs. The timer can be
+// resumed with resumeTimer().
 function pauseTimer() {
     if (timerInterval) {
         clearInterval(timerInterval);
@@ -267,6 +391,36 @@ function pauseTimer() {
     }
 }
 
+
+// Resumes a paused countdown. Does nothing if the game is already over
+// or a timer interval is already running.
 function resumeTimer() {
     if (!dead && !timerInterval) startTimer();
+}
+
+
+// Starts the 1-second countdown loop. Always stops any existing interval
+// first to prevent duplicates (important when replaying a level).
+// Initialises all skill timers and procedural systems before launching
+// the interval.
+function startTimer() {
+    stopTimer();
+    _initSkillTimers();
+    _initProceduralSystems();
+
+    timerInterval = setInterval(() => {
+        // Skip the entire tick if the game is over or the timer is frozen.
+        if (dead || timerFrozen) return;
+
+        _tickPassiveSkills();
+        _tickTimedStasis();
+        _tickLawOfLargeNumbers();
+        _tickCountdown();
+
+        updTimer();
+
+        _tickInventoryUnlock();
+        _tickEmergencyScan();
+        _checkTimerExpired();
+    }, 1000);
 }

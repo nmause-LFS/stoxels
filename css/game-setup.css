@@ -1,4 +1,9 @@
-﻿/* Game Setup Screen   */
+﻿/* -----------------------------------------------------------------------
+   ----------------------- GAME SETUP SCREEN ------------------------------
+   -----------------------------------------------------------------------
+   Main container and card layout for the pre-game setup screen.
+   The setup-box is a scrollable panel that holds all setup groups.
+   ----------------------------------------------------------------------- */
 
 #screen-setup {
     align-items: center;
@@ -14,9 +19,18 @@
     width: 100%;
     padding: 30px;
     max-height: calc(100vh - 40px);
-    overflow-y: auto;
+    overflow-y: auto; /* Scroll if content exceeds screen height  */
 }
 
+
+/* -----------------------------------------------------------------------
+   ------------------- SETUP LAYOUT & TYPOGRAPHY -------------------------
+   -----------------------------------------------------------------------
+   Title, group containers, group labels, and the description text
+   shown below the selected option.
+   ----------------------------------------------------------------------- */
+
+/* Main title at the top of the setup box */
 .setup-title {
     font-family: var(--PX);
     font-size: 20px;
@@ -25,20 +39,21 @@
     margin-bottom: 26px;
 }
 
+/* Wrapper for each setup section (e.g. Difficulty, Modifiers) */
 .setup-group {
     margin-bottom: 22px;
 }
 
+/* Label above each group of options */
 .setup-group-label {
     font-family: var(--PX);
     font-size: 15px;
     color: var(--yellow);
-    margin-bottom: 12px;
     letter-spacing: 1px;
+    margin-bottom: 12px;
 }
 
-
-/* Game Setup Text  */
+/* Description text shown below the active selection */
 .setup-desc {
     font-size: 20px;
     color: var(--setup-opt-inactive);
@@ -46,17 +61,24 @@
     line-height: 1.6;
 }
 
-/* Game Setup Buttons  */
+
+/* -----------------------------------------------------------------------
+   ----------------------- SETUP BUTTONS ---------------------------------
+   -----------------------------------------------------------------------
+   The action buttons at the bottom of the setup box (e.g. Start, Back),
+   the back button on the level selection screen, and the option button
+   row used for Difficulty and Game Modifier selections.
+   ----------------------------------------------------------------------- */
+
+/* Container for the main action buttons at the bottom (e.g. Start Game) */
 .setup-btns {
     display: flex;
     gap: 10px;
-    margin-top: 26px; 
-    flex-wrap: wrap;        /* If the screen is too narrow, buttons will wrap to the next line */
+    margin-top: 26px;
+    flex-wrap: wrap; /* Wrap to next line on narrow screens  */
 }
 
-
-/* Button on level selection for returning back to the Setup */
-
+/* Back button shown on the level selection screen */
 .back-btn {
     font-family: var(--PX);
     font-size: 12px;
@@ -65,25 +87,23 @@
     color: var(--accent2);
     padding: 7px 12px;
     cursor: pointer;
-    transition: all .12s;   /* Makes the color change smooth, not instant      */
-    white-space: nowrap;    /* Prevents the text from breaking into two lines  */
+    white-space: nowrap; /* Prevent label from breaking into two lines  */
+    transition: all .12s;
 }
 
     .back-btn:hover {
-        border-color: var(--accent);    /* Border lights up in --accent color on mouseover  */
+        border-color: var(--accent);
         color: var(--accent);
     }
 
-/* Game Setup - Difficulty & Game Modifiers Buttons  */
-
+/* Row of selectable option buttons (Difficulty, Game Modifiers) */
 .setup-options {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
 }
 
-/* Game Setup - Text for Difficulties and Game Modifiers  */
-
+/* Base style for each individual option button */
 .setup-opt {
     font-family: var(--PX);
     font-size: 12px;
@@ -92,29 +112,47 @@
     color: var(--setup-opt-inactive);
     padding: 10px 16px;
     cursor: pointer;
+    position: relative; /* Needed for the absolute-positioned .tag badge  */
     transition: all .12s;
-    position: relative;
 }
 
-    .setup-opt:hover {                  /* mouseover effect for Game Setup Buttons */
+    .setup-opt:hover {
         border-color: var(--accent2);
         color: var(--accent2);
     }
 
-    
+
+    /* -----------------------------------------------------------------------
+   ------------------- SETUP OPTION SELECTED STATES ----------------------
+   -----------------------------------------------------------------------
+   Visual feedback for the currently selected option.
+   Cyan (.sel) is used for Difficulty, yellow (.sel-yellow) for Modifiers.
+   ----------------------------------------------------------------------- */
+
+    /* Selected difficulty option - cyan highlight */
     .setup-opt.sel {
-        border-color: var(--accent);        /* Game Setup Difficulty Selection, cyan background on selection   */
+        border-color: var(--accent);
         color: var(--accent);
-        background: rgba(102,252,241,.07);
+        background: rgba(102, 252, 241, .07);
     }
 
-    .setup-opt.sel-yellow {            /* Selected Game Modifiers have a yellow border and background  */
+    /* Selected game modifier option - yellow highlight */
+    .setup-opt.sel-yellow {
         border-color: var(--yellow);
         color: var(--yellow);
-        background: rgba(245,197,24,.07);
+        background: rgba(245, 197, 24, .07);
     }
 
-    /* Game Setup - Additional +SCORE blocks on the top right of each Game Modifier  */
+
+    /* -----------------------------------------------------------------------
+   ----------------------- OPTION SCORE TAGS -----------------------------
+   -----------------------------------------------------------------------
+   Small badge pinned to the top-right corner of option buttons.
+   Used to show bonus score values (e.g. +SCORE) on game modifiers.
+   Color variants reflect the magnitude or type of the bonus.
+   ----------------------------------------------------------------------- */
+
+    /* Base tag - positioned over the top-right corner of its parent .setup-opt */
     .setup-opt .tag {
         position: absolute;
         top: -8px;
@@ -124,7 +162,6 @@
         color: #fff;
         padding: 1px 4px;
     }
-
 
 .tag.tag-orange {
     background: var(--orange);
@@ -141,7 +178,6 @@
     color: #fff;
 }
 
-
 .tag.tag-cyan {
     background: var(--accent);
     color: var(--bg);
@@ -153,19 +189,25 @@
 }
 
 
+/* -----------------------------------------------------------------------
+   ----------------------- SETTINGS MODAL --------------------------------
+   -----------------------------------------------------------------------
+   Styles for the in-game settings modal panel. Contains sections with
+   rows of labeled controls (toggles and sliders).
+   ----------------------------------------------------------------------- */
 
-
-/* ── Settings Modal ──────────────────────────────────────── */
-
+/* Narrower panel width for the settings modal vs the setup box */
 .settings-box {
     max-width: 480px;
     width: 100%;
 }
 
+/* One logical group within the settings modal (e.g. Audio, Display) */
 .settings-section {
     margin-bottom: 24px;
 }
 
+/* Section heading with a bottom divider line */
 .settings-section-title {
     font-family: var(--PX);
     font-size: 11px;
@@ -177,6 +219,7 @@
     border-bottom: 1px solid var(--border);
 }
 
+/* A single setting row: label on the left, control on the right */
 .settings-row {
     display: flex;
     align-items: center;
@@ -185,6 +228,7 @@
     padding: 8px 0;
 }
 
+/* Left side of a row: setting name + optional hint text stacked vertically */
 .settings-label {
     font-family: var(--PX);
     font-size: 12px;
@@ -194,6 +238,7 @@
     gap: 3px;
 }
 
+/* Small descriptive text shown below the setting name */
 .settings-hint {
     font-family: var(--PX);
     font-size: 9px;
@@ -201,13 +246,20 @@
     font-style: normal;
 }
 
+/* Right side of a row: holds the toggle button or slider + value label */
 .settings-controls {
     display: flex;
     align-items: center;
     gap: 10px;
-    flex-shrink: 0;
+    flex-shrink: 0; /* Prevent controls from shrinking on narrow screens */
 }
 
+
+/* -----------------------------------------------------------------------
+   ------------------- SETTINGS TOGGLE BUTTON ----------------------------
+   ----------------------------------------------------------------------- */
+
+/* ON state - cyan border and text */
 .settings-toggle {
     font-family: var(--PX);
     font-size: 11px;
@@ -221,10 +273,16 @@
     transition: all .12s;
 }
 
+/* OFF state - muted border and text */
 .settings-toggle-off {
     border-color: var(--border2);
     color: var(--setup-opt-inactive);
 }
+
+
+/* -----------------------------------------------------------------------
+   ------------------- SETTINGS SLIDER ----------------------------------
+   ----------------------------------------------------------------------- */
 
 .settings-slider {
     -webkit-appearance: none;
@@ -236,6 +294,7 @@
     cursor: pointer;
 }
 
+    /* Slider thumb - WebKit (Chrome, Safari) */
     .settings-slider::-webkit-slider-thumb {
         -webkit-appearance: none;
         width: 14px;
@@ -244,6 +303,7 @@
         cursor: pointer;
     }
 
+    /* Slider thumb - Firefox */
     .settings-slider::-moz-range-thumb {
         width: 14px;
         height: 14px;
@@ -252,6 +312,7 @@
         cursor: pointer;
     }
 
+/* Numeric value label displayed next to the slider */
 .settings-val {
     font-family: var(--PX);
     font-size: 11px;

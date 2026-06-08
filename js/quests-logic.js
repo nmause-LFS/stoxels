@@ -1,44 +1,98 @@
-﻿// ═══════════════════════════════════════════════════════════════════════════════
+﻿// ════════════════════════════════════════════════════════════════════════════
 //
-//  quests-logic.js  —  Milestone evaluation, claiming, badge
+//  quests-logic.js  —  Milestone evaluation, claiming, banner, badge,
+//                      and achievement tracking for the quest ledger.
 //
 //  Depends on: quests-data.js   (LEDGER_CATEGORIES, _MILESTONE_MAP)
-//  Depends on: (global) STATE, LANG, ITEM_DEFS, save(), pickRandomItem()
+//  Depends on: achievements.js  (trackAchStat, setAchStat)
+//  Depends on: (global)         STATE, LANG, ITEM_DEFS, save(), pickRandomItem()
 //
 //  Public API:
-//    claimQuest(milestoneId)
-//    buildQuestLogButton()
-//    _refreshQuestBadge()
+//    claimQuest(milestoneId)      — claim a completed milestone by id
+//    buildQuestLogButton()        — initialise badge visibility on game start
+//    _refreshQuestBadge()         — update red badge on the quest-log button
 //
 //  Used internally by quests-ui.js:
-//    _milestone_isComplete(ms)
-//    _milestone_isClaimed(ms)
-//    _milestone_getProgress(ms)   → { current, target, pct }
-//    _ledger_hasAnyClaimable()
+//    _milestone_isComplete(ms)                    — has the player hit the target?
+//    _milestone_isClaimed(ms)                     — has the reward been collected?
+//    _milestone_getProgress(ms)  → { current, target, pct }
+//    _ledger_hasAnyClaimable()                    — any ready-to-claim milestone?
 //
-// ═══════════════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════════════════
 
 
-// ─────────────────────────────────────────────────────────────
-//  CONSTANTS
-// ─────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────  CONSTANTS  ──────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────
 
-/** How long the claim banner stays visible before auto-dismissing (ms). */
+/** How long (ms) the claim banner stays visible before starting to fade out. */
 const BANNER_DISMISS_MS = 4000;
 
-/** CSS fade-out duration for the claim banner (ms). Must match .qcb fade CSS. */
+/** Duration (ms) of the claim banner CSS fade-out. Must match .qcb fade CSS. */
 const BANNER_FADEOUT_MS = 400;
 
-
-// ─────────────────────────────────────────────────────────────
-//  MILESTONE EVALUATION
-//  These three functions are the core read-only query layer.
-//  All UI and claiming code calls these — never reads STATE directly.
-// ─────────────────────────────────────────────────────────────
+/**
+ * Category ids that qualify as "keystone" quests for achievement tracking.
+ * Defined here at the top level so the Set is only created once, not on
+ * every claim event.
+ */
+const KEYSTONE_CATEGORY_IDS = new Set([
+    'signal_noise_master',
+    'oracle_vision',
+    'degrees_of_freedom_master',
+    'random_walk_master',
+    'entropy_drain_master',
+    'overfitting_gambler',
+    'countdown_crisis_master',
+    'sparse_prior_master',
+    'dead_reckoning_master',
+    'frequentists_burden_master',
+    'adjacency_matrix_master',
+    'minesweeper_mind',
+    'ergodic_field_master',
+    'gamblers_ruin_master',
+    'asymptotic_master',
+    'stochastic_resonance_master',
+    'random_walk_survivor',
+]);
 
 /**
- * Returns true if the player has met the milestone's target.
+ * Maps each ledger category id to the achievement stat that should be
+ * incremented when one of its milestones is claimed.
+ * Allows _ach_trackCategoryMilestone() to be a simple lookup rather than
+ * a long chain of if-statements.
+ */
+const CATEGORY_ACHIEVEMENT_MAP = {
+    expected_value: 'inferenceScoreMilestones',
+    sample_size: 'inferenceSampleMilestones',
+    parameter_space: 'inferenceWorldMilestones',
+    probability_gate: 'inferenceGateMilestones',
+    convergence: 'inferenceConvergenceMilestones',
+    probability_tree: 'inferencePTMilestones',
+    max_likelihood: 'inferenceClassUpgradeMilestones',
+    choose_ascendency: 'inferenceAscendencyMilestones',
+    ascendency_mastery: 'inferenceAscendencyMilestones',
+    descriptive_stats: 'inferenceAchievementMilestones',
+    confidence_interval: 'inferenceAnswerMilestones',
+    lucky_drop_event: 'inferenceLuckyMilestones',
+    zero_variance: 'inferenceFlawlessMilestones',
+};
+
+
+// ────────────────────────────────────────────────────────────────────────────
+// ──────────────────────  MILESTONE EVALUATION  ──────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────
+//
+//  Read-only query layer. All UI and claiming code goes through these
+//  functions — nothing should read STATE.questStats or STATE.questsClaimed
+//  directly outside of this section.
+//
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Returns true if the player has met the milestone's required target.
  * @param {Object} ms - A milestone object from quests-data.js
+ * @returns {boolean}
  */
 function _milestone_isComplete(ms) {
     const { current, target } = ms.check(STATE.questStats || {});
@@ -48,14 +102,15 @@ function _milestone_isComplete(ms) {
 /**
  * Returns true if the player has already claimed this milestone's reward.
  * @param {Object} ms - A milestone object from quests-data.js
+ * @returns {boolean}
  */
 function _milestone_isClaimed(ms) {
     return (STATE.questsClaimed || []).includes(ms.id);
 }
 
 /**
- * Returns progress info for a milestone.
- * `current` is clamped to `target` so progress bars never overflow.
+ * Returns current progress for a milestone.
+ * `current` is clamped to `target` so progress bars never overflow 100%.
  * @param {Object} ms - A milestone object from quests-data.js
  * @returns {{ current: number, target: number, pct: number }}
  */
@@ -68,7 +123,8 @@ function _milestone_getProgress(ms) {
 
 /**
  * Returns true if ANY milestone across all categories is complete but unclaimed.
- * Used to decide whether to show the red badge on the quest-log button.
+ * Used to decide whether the red badge on the quest-log button should be shown.
+ * @returns {boolean}
  */
 function _ledger_hasAnyClaimable() {
     return LEDGER_CATEGORIES.some(cat =>
@@ -77,107 +133,104 @@ function _ledger_hasAnyClaimable() {
 }
 
 
-// ─────────────────────────────────────────────────────────────
-//  CLAIMING  —  public entry point + private helpers
-// ─────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────
+// ──────────────────────────  REWARD GRANTING  ───────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────
+//
+//  Helpers that write reward data into STATE.
+//  All reward mutations are funnelled through _claim_grantRewards() so
+//  it's easy to find every place STATE is modified during a claim.
+//
+// ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Public entry point. Claims a milestone by id if it is complete and unclaimed.
- * Grants rewards, saves, refreshes the badge, and shows the claim banner.
- * Called from inline onclick handlers in quests-ui.js.
- * @param {string} milestoneId
+ * Generates a collision-resistant uid for a newly granted inventory item.
+ * Format: "ledger_<timestamp>_<random6chars>"
+ * Placed first because _claim_grantOneItem() depends on it.
+ * @returns {string}
  */
-function claimQuest(milestoneId) {
-    const entry = _MILESTONE_MAP[milestoneId];
-    if (!entry) return;
-
-    const { milestone: ms, category: cat } = entry;
-
-    // Guard: already claimed or not yet complete
-    if (_milestone_isClaimed(ms) || !_milestone_isComplete(ms)) return;
-
-    _claim_recordClaim(ms);
-    _claim_grantRewards(ms);
-
-    save();
-    _trackInferenceAchievements(ms, cat);
-    _showClaimBanner(ms, cat);
-    _refreshQuestBadge();
-    renderQuestLog();
+function _reward_generateItemUid() {
+    return `ledger_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 }
 
 /**
- * Pushes the milestone id into STATE.questsClaimed so it can't be claimed again.
- * @param {Object} ms
+ * Resolves a single item defId (handling the special '__random__' token),
+ * then pushes the resulting item into the player's inventory.
+ * Silently no-ops if the resolved id is missing or not found in ITEM_DEFS.
+ * @param {string} defId - Raw defId from the reward definition; may be '__random__'
  */
-function _claim_recordClaim(ms) {
-    if (!STATE.questsClaimed) STATE.questsClaimed = [];
-    STATE.questsClaimed.push(ms.id);
-}
-
-/**
- * Grants all rewards defined on the milestone: passive-tree points and/or items.
- * @param {Object} ms
- */
-function _claim_grantRewards(ms) {
-    Audio_Manager.playSFX('questRewardClaimed');
-    if (ms.reward.ptPoints) {
-        _claim_grantPassivePoints(ms.reward.ptPoints);
-    }
-    if (ms.reward.items) {
-        ms.reward.items.forEach(defId => _claim_grantOneItem(defId));
-    }
-}
-
-/**
- * Adds passive-tree points to STATE.
- * @param {number} amount
- */
-function _claim_grantPassivePoints(amount) {
-    STATE.passiveTreePoints = (STATE.passiveTreePoints || 0) + amount;
-}
-
-/**
- * Resolves a single item defId (handling '__random__') and pushes it to inventory.
- * Silently no-ops if the resolved id is missing or not in ITEM_DEFS.
- * @param {string} defId  - Raw defId from the reward definition, may be '__random__'
- */
-function _claim_grantOneItem(defId) {
+function _reward_grantOneItem(defId) {
+    // '__random__' is resolved at grant-time via pickRandomItem().
+    // pickRandomItem() may return null if the Apex Collector passive consumed the pool.
     const resolvedId = defId === '__random__' ? pickRandomItem() : defId;
-
-    // pickRandomItem() may return null if the Apex Collector node consumed the pool
     if (!resolvedId) return;
 
     const def = ITEM_DEFS[resolvedId];
     if (!def) return;
 
     STATE.inventory.push({
-        uid: _claim_generateItemUid(),
+        uid: _reward_generateItemUid(),
         defId: resolvedId,
     });
 }
 
 /**
- * Generates a collision-resistant uid for a newly granted inventory item.
- * Format: "ledger_<timestamp>_<random>"
- * @returns {string}
+ * Adds passive-tree skill points to STATE.
+ * @param {number} amount - Number of points to add
  */
-function _claim_generateItemUid() {
-    return `ledger_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+function _reward_grantPassivePoints(amount) {
+    STATE.passiveTreePoints = (STATE.passiveTreePoints || 0) + amount;
+}
+
+/**
+ * Grants all rewards defined on a milestone: passive-tree points and/or items.
+ * Also triggers the reward SFX.
+ * @param {Object} ms - The milestone whose rewards should be granted
+ */
+function _reward_grantAll(ms) {
+    Audio_Manager.playSFX('questRewardClaimed');
+
+    if (ms.reward.ptPoints) {
+        _reward_grantPassivePoints(ms.reward.ptPoints);
+    }
+    if (ms.reward.items) {
+        ms.reward.items.forEach(defId => _reward_grantOneItem(defId));
+    }
 }
 
 
-// ─────────────────────────────────────────────────────────────
-//  CLAIM BANNER  —  the on-screen confirmation shown after claiming
-// ─────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────  CLAIM BANNER  ───────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────
+//
+//  The on-screen confirmation popup shown immediately after a successful claim.
+//  Banner flow: _showClaimBanner() → build parts → build element → auto-dismiss.
+//
+// ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Builds the localised reward-parts array used inside the claim banner.
- * Each part is a short human-readable string like "🌳 +1 Convergence Point".
- * @param {Object} ms
+ * Resolves a single reward item defId to a human-readable label string
+ * like "🗡️ Iron Sword", falling back to "🎁 Item" if resolution fails.
+ * Placed first because _banner_buildRewardParts() depends on it.
+ * @param {string} defId - Raw defId from the reward definition; may be '__random__'
+ * @param {boolean} de   - True when the current language is German
+ * @returns {string}
+ */
+function _banner_resolveItemLabel(defId, de) {
+    const resolvedId = defId === '__random__' ? pickRandomItem() : defId;
+    const def = resolvedId ? ITEM_DEFS[resolvedId] : null;
+    return def
+        ? `${def.icon} ${de ? def.nameDE : def.nameEn}`
+        : '🎁 Item';
+}
+
+/**
+ * Builds the localised reward-parts array shown inside the claim banner.
+ * Each entry is a short human-readable string, e.g. "🌳 +1 Convergence Point".
+ * @param {Object} ms - The milestone that was just claimed
  * @returns {string[]}
  */
-function _claim_buildRewardParts(ms) {
+function _banner_buildRewardParts(ms) {
     const de = LANG === 'de';
     const parts = [];
 
@@ -188,13 +241,7 @@ function _claim_buildRewardParts(ms) {
 
     if (ms.reward.items) {
         ms.reward.items.forEach(defId => {
-            // Resolve __random__ to get the actual item name if possible
-            const resolvedId = defId === '__random__' ? pickRandomItem() : defId;
-            const def = resolvedId ? ITEM_DEFS[resolvedId] : null;
-            parts.push(def
-                ? `${def.icon} ${de ? def.nameDE : def.nameEn}`
-                : '🎁 Item'
-            );
+            parts.push(_banner_resolveItemLabel(defId, de));
         });
     }
 
@@ -202,17 +249,18 @@ function _claim_buildRewardParts(ms) {
 }
 
 /**
- * Builds and returns the banner DOM element (not yet attached to the document).
- * @param {Object} ms
- * @param {Object} cat
- * @param {string[]} rewardParts  - Output of _claim_buildRewardParts(ms)
+ * Builds and returns the banner <div> element (not yet attached to the DOM).
+ * @param {Object}   ms          - The milestone that was just claimed
+ * @param {Object}   cat         - The parent category of that milestone
+ * @param {string[]} rewardParts - Output of _banner_buildRewardParts()
  * @returns {HTMLElement}
  */
-function _claim_buildBannerElement(ms, cat, rewardParts) {
+function _banner_buildElement(ms, cat, rewardParts) {
     const de = LANG === 'de';
 
     const banner = document.createElement('div');
     banner.id = 'quest-claim-banner';
+
     banner.innerHTML = `
         <div class="qcb-inner">
             <span class="qcb-icon">${cat.icon}</span>
@@ -231,10 +279,10 @@ function _claim_buildBannerElement(ms, cat, rewardParts) {
 }
 
 /**
- * Starts the auto-dismiss timer for the claim banner.
- * Fades the element out, then removes it from the DOM.
+ * Starts the auto-dismiss sequence for the claim banner:
+ * waits BANNER_DISMISS_MS, then fades it out over BANNER_FADEOUT_MS, then removes it.
  */
-function _claim_autoDismissBanner() {
+function _banner_startAutoDismiss() {
     setTimeout(() => {
         const el = document.getElementById('quest-claim-banner');
         if (!el) return;
@@ -244,30 +292,35 @@ function _claim_autoDismissBanner() {
 }
 
 /**
- * Orchestrates showing the claim banner: removes any existing one,
- * builds the new element, appends it, and starts the auto-dismiss timer.
- * @param {Object} ms
- * @param {Object} cat
+ * Shows the claim banner for a just-claimed milestone.
+ * Any banner still visible from a rapid previous claim is removed first.
+ * @param {Object} ms  - The milestone that was just claimed
+ * @param {Object} cat - The parent category of that milestone
  */
 function _showClaimBanner(ms, cat) {
-    // Clear any banner that's still visible from a rapid previous claim
+    // Remove any previous banner that hasn't finished fading yet
     document.getElementById('quest-claim-banner')?.remove();
 
-    const rewardParts = _claim_buildRewardParts(ms);
-    const banner = _claim_buildBannerElement(ms, cat, rewardParts);
+    const rewardParts = _banner_buildRewardParts(ms);
+    const banner = _banner_buildElement(ms, cat, rewardParts);
 
     document.body.appendChild(banner);
-    _claim_autoDismissBanner();
+    _banner_startAutoDismiss();
 }
 
 
-// ─────────────────────────────────────────────────────────────
-//  BADGE
-// ─────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────
+// ───────────────────────────────  BADGE  ────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────
+//
+//  The small red dot on the quest-log toolbar button that signals there is
+//  at least one reward ready to collect.
+//
+// ────────────────────────────────────────────────────────────────────────────
 
 /**
  * Shows or hides the red claimable-badge on the quest-log toolbar button.
- * Call this any time claimed/completed state may have changed.
+ * Should be called any time milestone claimed/completed state may have changed.
  */
 function _refreshQuestBadge() {
     const badge = document.getElementById('quest-log-badge');
@@ -276,128 +329,155 @@ function _refreshQuestBadge() {
 }
 
 /**
- * Public initialiser — called from game init once the toolbar button is in the DOM.
- * Sets the initial badge visibility.
+ * Public initialiser — call this from game init once the toolbar button
+ * is in the DOM. Sets the correct initial badge visibility on load.
  */
 function buildQuestLogButton() {
     _refreshQuestBadge();
 }
 
-// ─────────────────────────────────────────────────────────────
-//  INFERENCE ACHIEVEMENT TRACKING
-//  Called every time a milestone is successfully claimed.
-//  Maps milestone IDs and category IDs onto achievement stats.
-// ─────────────────────────────────────────────────────────────
+
+// ────────────────────────────────────────────────────────────────────────────
+// ──────────────────  ACHIEVEMENT TRACKING (INFERENCE)  ──────────────────────
+// ────────────────────────────────────────────────────────────────────────────
+//
+//  Maps claimed milestones onto achievement stats via trackAchStat / setAchStat
+//  from achievements.js. Called once per successful claim from claimQuest().
+//
+//  Structure:
+//    _ach_trackGlobalClaim()             — fired for every single claim
+//    _ach_trackPassivePointsEarned()     — only when pt points are in the reward
+//    _ach_trackKeystoneQuest()           — only for keystone category ids
+//    _ach_trackCategoryMilestone()       — increments the per-category stat
+//    _ach_trackFullCategoryCompletion()  — checks if a whole category is now done
+//    _trackInferenceAchievements()       — orchestrator, called by claimQuest()
+//
+// ────────────────────────────────────────────────────────────────────────────
 
 /**
- * Fires all relevant achievement stat calls for the milestone that was
- * just claimed. Uses trackAchStat / setAchStat from achievements.js.
- * @param {Object} ms  - The milestone object
- * @param {Object} cat - The parent category object
+ * Increments the global "total quests claimed" achievement counter.
+ * Fired on every successful claim regardless of category or reward type.
+ */
+function _ach_trackGlobalClaim() {
+    trackAchStat('inferenceQuestsClaimed');
+}
+
+/**
+ * Tracks passive-tree points earned through quest rewards.
+ * Only called when the milestone reward actually includes pt points.
+ * @param {Object} ms - The milestone that was just claimed
+ */
+function _ach_trackPassivePointsEarned(ms) {
+    if (ms.reward && ms.reward.ptPoints) {
+        trackAchStat('inferencePtPointsEarned', ms.reward.ptPoints);
+    }
+}
+
+/**
+ * Increments the keystone-quest counter if the claimed milestone's category
+ * is listed in KEYSTONE_CATEGORY_IDS.
+ * @param {Object} cat - The parent category of the claimed milestone
+ */
+function _ach_trackKeystoneQuest(cat) {
+    if (KEYSTONE_CATEGORY_IDS.has(cat.id)) {
+        trackAchStat('inferenceKeystoneQuestsDone');
+    }
+}
+
+/**
+ * Increments the per-category achievement stat for the claimed milestone.
+ * The mapping from category id → stat name lives in CATEGORY_ACHIEVEMENT_MAP.
+ * No-ops silently if the category has no mapped stat (e.g. future categories).
+ * @param {Object} cat - The parent category of the claimed milestone
+ */
+function _ach_trackCategoryMilestone(cat) {
+    const stat = CATEGORY_ACHIEVEMENT_MAP[cat.id];
+    if (stat) {
+        trackAchStat(stat);
+    }
+}
+
+/**
+ * Checks whether every milestone in the given category is now claimed.
+ * If so, counts all fully-completed categories and writes that total to
+ * the 'inferenceFullCategoriesClaimed' achievement stat via setAchStat.
+ * @param {Object} cat - The category to check for full completion
+ */
+function _ach_trackFullCategoryCompletion(cat) {
+    if (typeof setAchStat !== 'function') return;
+
+    const claimedIds = STATE.questsClaimed || [];
+
+    // Check if this specific category just became fully complete
+    const thisCategoryComplete = cat.milestones.every(m => claimedIds.includes(m.id));
+    if (!thisCategoryComplete) return;
+
+    // Count ALL fully-completed categories (not just this one)
+    const totalFullyComplete = LEDGER_CATEGORIES.filter(c =>
+        c.milestones.every(m => claimedIds.includes(m.id))
+    ).length;
+
+    setAchStat('inferenceFullCategoriesClaimed', totalFullyComplete);
+}
+
+/**
+ * Orchestrates all achievement stat tracking for a milestone that was just claimed.
+ * Guards against achievements.js not being loaded (trackAchStat check at the top).
+ * @param {Object} ms  - The milestone that was just claimed
+ * @param {Object} cat - The parent category of that milestone
  */
 function _trackInferenceAchievements(ms, cat) {
     if (typeof trackAchStat !== 'function') return;
 
-    // ── 1. Every claim increments the global claims counter ───────────────
-    trackAchStat('inferenceQuestsClaimed');
+    _ach_trackGlobalClaim();
+    _ach_trackPassivePointsEarned(ms);
+    _ach_trackKeystoneQuest(cat);
+    _ach_trackCategoryMilestone(cat);
+    _ach_trackFullCategoryCompletion(cat);
+}
 
-    // ── 2. Passive-tree points granted by this milestone ──────────────────
-    if (ms.reward && ms.reward.ptPoints) {
-        trackAchStat('inferencePtPointsEarned', ms.reward.ptPoints);
-    }
 
-    // ── 3. Keystone quest detection ───────────────────────────────────────
-    //  Any milestone whose category id contains a known keystone keyword
-    //  counts as a keystone quest.
-    const _KEYSTONE_CATEGORY_IDS = new Set([
-        'signal_noise_master', 'oracle_vision', 'degrees_of_freedom_master',
-        'random_walk_master', 'entropy_drain_master', 'overfitting_gambler',
-        'countdown_crisis_master', 'sparse_prior_master', 'dead_reckoning_master',
-        'frequentists_burden_master', 'adjacency_matrix_master', 'minesweeper_mind',
-        'ergodic_field_master', 'gamblers_ruin_master', 'asymptotic_master',
-        'stochastic_resonance_master', 'random_walk_survivor',
-    ]);
-    if (_KEYSTONE_CATEGORY_IDS.has(cat.id)) {
-        trackAchStat('inferenceKeystoneQuestsDone');
-    }
+// ────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────  CLAIMING  ───────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────
+//
+//  Public entry point for the claim flow. All downstream effects (rewards,
+//  banner, badge, achievements, save) are triggered from claimQuest().
+//
+// ────────────────────────────────────────────────────────────────────────────
 
-    // ── 4. Mirror specific ledger category milestones as tiered stats ─────
-    //  Each mapping: { categoryId, milestoneIds[] } → achievementStat, incrementing
-    //  the stat by 1 per milestone claimed (so tiers reflect how many ms are done).
+/**
+ * Marks a milestone as claimed by pushing its id into STATE.questsClaimed.
+ * Initialises the array if it doesn't exist yet.
+ * @param {Object} ms - The milestone to mark as claimed
+ */
+function _claim_recordClaim(ms) {
+    if (!STATE.questsClaimed) STATE.questsClaimed = [];
+    STATE.questsClaimed.push(ms.id);
+}
 
-    // Expected Value (score milestones)
-    if (cat.id === 'expected_value') {
-        trackAchStat('inferenceScoreMilestones');
-    }
+/**
+ * Claims a milestone by id if it is complete and not yet claimed.
+ * On success: records the claim, grants rewards, saves, shows the banner,
+ * refreshes the badge, tracks achievements, and re-renders the quest log.
+ * Called from inline onclick handlers in quests-ui.js.
+ * @param {string} milestoneId - The id of the milestone to claim
+ */
+function claimQuest(milestoneId) {
+    const entry = _MILESTONE_MAP[milestoneId];
+    if (!entry) return;
 
-    // Sample Size (levels completed milestones)
-    if (cat.id === 'sample_size') {
-        trackAchStat('inferenceSampleMilestones');
-    }
+    const { milestone: ms, category: cat } = entry;
 
-    // Parameter Space (worlds completed)
-    if (cat.id === 'parameter_space') {
-        trackAchStat('inferenceWorldMilestones');
-    }
+    // Guard: do nothing if not yet complete or already collected
+    if (_milestone_isClaimed(ms) || !_milestone_isComplete(ms)) return;
 
-    // Conditional Probability (gates passed)
-    if (cat.id === 'probability_gate') {
-        trackAchStat('inferenceGateMilestones');
-    }
+    _claim_recordClaim(ms);
+    _reward_grantAll(ms);
 
-    // Convergence (convergence levels)
-    if (cat.id === 'convergence') {
-        trackAchStat('inferenceConvergenceMilestones');
-    }
-
-    // Probability Tree (pt points spent)
-    if (cat.id === 'probability_tree') {
-        trackAchStat('inferencePTMilestones');
-    }
-
-    // Maximum Likelihood (class upgrades)
-    if (cat.id === 'max_likelihood') {
-        trackAchStat('inferenceClassUpgradeMilestones');
-    }
-
-    // Choose Your Ascendency + Ascendency Mastery
-    if (cat.id === 'choose_ascendency' || cat.id === 'ascendency_mastery') {
-        trackAchStat('inferenceAscendencyMilestones');
-    }
-
-    // Descriptive Statistics (achievements unlocked)
-    if (cat.id === 'descriptive_stats') {
-        trackAchStat('inferenceAchievementMilestones');
-    }
-
-    // Confidence Interval (correct answers)
-    if (cat.id === 'confidence_interval') {
-        trackAchStat('inferenceAnswerMilestones');
-    }
-
-    // Rare Event Probability (lucky drops)
-    if (cat.id === 'lucky_drop_event') {
-        trackAchStat('inferenceLuckyMilestones');
-    }
-
-    // Zero Variance (flawless levels)
-    if (cat.id === 'zero_variance') {
-        trackAchStat('inferenceFlawlessMilestones');
-    }
-
-    // ── 5. Full-category completion check ─────────────────────────────────
-    //  After claiming this milestone, check if every milestone in its
-    //  category is now claimed. If so, award inferenceFullCategoriesClaimed.
-    if (typeof setAchStat === 'function') {
-        const allClaimed = cat.milestones.every(m =>
-            (STATE.questsClaimed || []).includes(m.id)
-        );
-        if (allClaimed) {
-            // Count total fully-claimed categories
-            const fullCount = LEDGER_CATEGORIES.filter(c =>
-                c.milestones.every(m => (STATE.questsClaimed || []).includes(m.id))
-            ).length;
-            setAchStat('inferenceFullCategoriesClaimed', fullCount);
-        }
-    }
+    save();
+    _trackInferenceAchievements(ms, cat);
+    _showClaimBanner(ms, cat);
+    _refreshQuestBadge();
+    renderQuestLog();
 }

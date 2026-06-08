@@ -1,15 +1,15 @@
 /*
     ------------------------------------------------------------------------
-    ---------------------------END WIN/LOSE OVERLAY-------------------------
+    ---------------------------WIN / LOSE OVERLAY---------------------------
     ------------------------------------------------------------------------
     ------------------------------------------------------------------------
 */
 
 
-
-/* STOXEL SOLVED overlay (winning screen)  */
+/* --- Overlay base container ---
+   Hidden by default. JS adds .show to display it when a level ends. */
 .overlay {
-    display: none; /*Hidden by default, toggled active when player finishes a level*/
+    display: none;
     position: fixed;
     inset: 0;
     background: rgba(10, 10, 10, 0.97);
@@ -23,20 +23,20 @@
     overflow-y: auto;
 }
 
-/* Triggered in js file to show the overlay  */
+    /* JS toggles this class to make the overlay visible */
     .overlay.show {
         display: flex;
     }
 
 
-    /* STOXEL SOLVED - Overlay Title   */
-    .ov-title {
-        font-family: var(--PX);
-        font-size: clamp(14px,3vw,22px); 
-        letter-spacing: 3px; 
-    }
+/* --- Overlay title --- */
+.ov-title {
+    font-family: var(--PX);
+    font-size: clamp(14px, 3vw, 22px);
+    letter-spacing: 3px;
+}
 
-    /* Glow Effect for winning (neon) and losing (red) */
+    /* Neon glow on win, red glow on lose */
     .ov-title.win {
         color: var(--accent);
         text-shadow: 0 0 30px var(--accent);
@@ -48,55 +48,56 @@
     }
 
 
+/* --- Stats / detail text block below the title --- */
+.ov-sub {
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+}
 
-    /* Wrapper for Stats and Details on Win - Overlay Screen */
+/* Generic line — still needed? Check JS usage before removing */
+.ov-sub-line {
+    font-size: 20px;
+    line-height: 2;
+}
 
-    .ov-sub {
-        max-width: 1000px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 6px;
-        text-align: center;
-    }
+/* EN / DE level reveal / solve flavour text */
+.ov-sub-reveal {
+    color: var(--accent2);
+    font-style: italic;
+    font-size: 20px;
+}
 
-        /* Still needed? */
-        .ov-sub-line {
-            font-size: 20px;
-            line-height: 2;
-        }
+/* Points earned */
+.ov-sub-pts {
+    color: var(--yellow);
+    font-family: var(--PX);
+    font-size: 20px;
+}
 
-        /*English / German - Level reveal / solve text */
-        .ov-sub-reveal {
-            color: var(--accent2);
-            font-style: italic;
-            font-size: 20px;
-        }
+/* Time remaining / solve time */
+.ov-sub-time {
+    color: var(--green);
+    font-size: 20px;
+}
 
-        /* Points - Text */
-        .ov-sub-pts {
-            color: var(--yellow);
-            font-family: var(--PX);
-            font-size: 20px;
-        }
+/* Mistake counter — grey when mistakes were made */
+.ov-sub-miss {
+    color: #c0c0c0;
+    font-size: 20px;
+}
 
-        /* Time Left - solved in Text */
-        .ov-sub-time {
-            color: var(--green);
-            font-size: 20px;
-        }
+/* Mistake counter — green when zero mistakes */
+.ov-sub-miss-ok {
+    color: var(--green);
+    font-size: 20px;
+}
 
-        /* Mistake Count on Overlay */
-        .ov-sub-miss {
-            color: #c0c0c0;
-            font-size: 20px;
-        }
 
-            .ov-sub-miss-ok {
-                color: var(--green);
-                font-size: 20px;
-            }
-
+/* --- Faint puzzle grid watermark centered behind the overlay content --- */
 .ov-reveal {
     display: grid;
     gap: 3px;
@@ -104,13 +105,13 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    /* remove inset: 0 and padding */
     opacity: 0.15;
     pointer-events: none;
     z-index: 401;
     margin: 0;
 }
 
+/* Default (empty) cell */
 .ov-reveal-cell {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -119,80 +120,81 @@
     min-height: 0;
 }
 
+    /* Filled cell — accent colour */
     .ov-reveal-cell.f {
         background: var(--accent);
     }
 
 
-    /* Container for Bottom - Buttons (Next, Retry, Levels) in STOXELS SOLVED Overlay  */
+/* --- Bottom action buttons (Next Level, Retry, Level Select) --- */
+.ov-btns {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
 
-    .ov-btns {
-        display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
-        justify-content: center;
+/* Shared base style for all overlay buttons */
+.ob {
+    font-family: var(--PX);
+    font-size: 12px;
+    background: transparent;
+    padding: 10px 16px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all .12s;
+}
+
+    /* Primary action (e.g. Next Level) — accent colour */
+    .ob.p {
+        border: 1px solid var(--accent);
+        color: var(--accent);
     }
 
-    /* The bottom Buttons (Next, Retry, Levels)  */
-
-    .ob {
-        font-family: var(--PX);
-        font-size: 12px;
-        background: transparent;
-        padding: 10px 16px;
-        cursor: pointer;
-        letter-spacing: 1px;
-        transition: all .12s;
-    }
-
-        .ob.p {
-            border: 1px solid var(--accent);
-            color: var(--accent);
+        .ob.p:hover {
+            background: var(--accent);
+            color: var(--bg);
         }
 
-            .ob.p:hover {
-                background: var(--accent);
-                color: var(--bg);
-            }
-
-        .ob.s {
-            border: 1px solid var(--border2);
-            color: var(--ov-sub);
-        }
-
-            .ob.s:hover {
-                border-color: var(--setup-opt-inactive);
-                color: var(--accent2);
-            }
-
-        .ob.y {
-            border: 1px solid var(--yellow);
-            color: var(--yellow);
-        }
-
-            .ob.y:hover {
-                background: var(--yellow);
-                color: var(--bg);
-            }
-
-
-    /* Bonus  */
-
-    .bonus-list {
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin: 4px 0;
+    /* Secondary action (e.g. Level Select) — muted */
+    .ob.s {
+        border: 1px solid var(--border2);
+        color: var(--ov-sub);
     }
 
-    /* Bonus Met badge in Win Overlay  */
-    .bonus-badge {
-        font-family: var(--PX);
-        font-size: 12px;
-        padding: 5px 9px;
-        border: 1px solid;
+        .ob.s:hover {
+            border-color: var(--setup-opt-inactive);
+            color: var(--accent2);
+        }
+
+    /* Yellow action (e.g. Retry) */
+    .ob.y {
+        border: 1px solid var(--yellow);
+        color: var(--yellow);
     }
+
+        .ob.y:hover {
+            background: var(--yellow);
+            color: var(--bg);
+        }
+
+
+/* --- Bonus objective badges --- */
+.bonus-list {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 4px 0;
+}
+
+/* Individual badge — green if earned, muted if missed */
+.bonus-badge {
+    font-family: var(--PX);
+    font-size: 12px;
+    padding: 5px 9px;
+    border: 1px solid;
+}
 
     .bonus-badge.earned {
         border-color: var(--green);
@@ -205,33 +207,35 @@
     }
 
 
-    /* Bonus objective already claimed text */
+/* --- Item reward notice (shown when a bonus objective was already claimed) --- */
+.item-reward {
+    background: var(--item-reward-bg);
+    border: 1px solid var(--purple);
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--purple);
+    max-width: 360px;
+    line-height: 1.6;
+}
 
-
-    .item-reward {
-        background: var(--item-reward-bg);
-        border: 1px solid var(--purple);
-        padding: 10px 14px;
-        font-size: 12px;
-        color: var(--purple);
-        max-width: 360px;
-        line-height: 1.6;
-    }
 
 
 
 /*
     ------------------------------------------------------------------------
-    ---------------------------Math Quiz Overlay----------------------------
+    ---------------------------MATH QUIZ OVERLAY----------------------------
     ------------------------------------------------------------------------
     ------------------------------------------------------------------------
 */
 
+
+/* --- Quiz overlay base container ---
+   Sits above the win/lose overlay (z-index 450 vs 400). */
 .quiz-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.95);
+    background: rgba(0, 0, 0, .95);
     z-index: 450;
     align-items: center;
     justify-content: center;
@@ -244,120 +248,139 @@
         display: flex;
     }
 
-    /* BONUS QUESTION Title */
-    .quiz-title {
-        font-family: var(--PX);
-        font-size: 20px;
-        color: var(--yellow);
-        letter-spacing: 2px;
+
+/* --- Quiz header title ("BONUS QUESTION") --- */
+.quiz-title {
+    font-family: var(--PX);
+    font-size: 20px;
+    color: var(--yellow);
+    letter-spacing: 2px;
+}
+
+
+/* --- Quiz question body text ---
+   Uses a math-friendly font stack for formula rendering. */
+.quiz-q {
+    font-family: "STIX Two Math", "Cambria Math", "DejaVu Sans", var(--F), monospace;
+    font-size: 20px;
+    color: var(--accent2);
+    max-width: 750px;
+    text-align: center;
+    line-height: 1.8;
+}
+
+
+/* --- Multiple choice answer grid --- */
+.quiz-opts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    max-width: 600px;
+    width: 100%;
+}
+
+/* Single answer option button */
+.quiz-opt {
+    font-family: var(--F);
+    font-size: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    color: var(--accent2);
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all .12s;
+    text-align: left;
+}
+
+    .quiz-opt:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+    }
+
+    /* Correct answer selected */
+    .quiz-opt.correct {
+        border-color: var(--green);
+        color: var(--green);
+        background: rgba(61, 220, 132, .1);
+    }
+
+    /* Wrong answer selected */
+    .quiz-opt.wrong {
+        border-color: var(--red);
+        color: var(--red);
+        background: rgba(255, 69, 69, .1);
     }
 
 
-    /* Quiz Question Text */
-    .quiz-q {
-        font-size: 20px;
+/* --- Result feedback line below the answer grid --- */
+.quiz-result {
+    font-family: var(--PX);
+    font-size: 20px;
+    min-height: 20px;
+}
+
+    .quiz-result.ok {
+        color: var(--green);
+    }
+
+    .quiz-result.bad {
+        color: var(--red);
+    }
+
+
+/* --- Secondary quiz action buttons (Skip / Open Tutor) ---
+   Both share the same base shape; only border colour differs. */
+.quiz-skip {
+    font-family: var(--PX);
+    font-size: 12px;
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--setup-opt-inactive);
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: all .12s;
+}
+
+    .quiz-skip:hover {
+        border-color: var(--accent2);
         color: var(--accent2);
-        max-width: 750px;
-        text-align: center;
-        line-height: 1.8;
     }
 
-    /* Multiple Choice Options */
-    .quiz-opts {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        max-width: 600px;
-        width: 100%;
+.quiz-tutor-btn {
+    font-family: var(--PX);
+    font-size: 12px;
+    background: transparent;
+    border: 1px solid var(--yellow);
+    color: var(--yellow);
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: all .12s;
+}
+
+    .quiz-tutor-btn:hover {
+        background: var(--yellow);
+        color: var(--bg);
     }
-
-
-    /* Multiple Choice Question - Answer options Text */
-    .quiz-opt {
-        font-family: var(--F);
-        font-size: 20px;
-        background: var(--surface);
-        border: 1px solid var(--border2);
-        color: var(--accent2);
-        padding: 12px 16px;
-        cursor: pointer;
-        transition: all .12s;
-        text-align: left;
-    }
-
-        /* Mouseover Effect for Multiple Choice answers */
-        .quiz-opt:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        /* The selected Multiple Choice answer turns green (correct) or red (incorrect)  */
-        .quiz-opt.correct {
-            border-color: var(--green);
-            color: var(--green);
-            background: rgba(61,220,132,.1);
-        }
-
-        .quiz-opt.wrong {
-            border-color: var(--red);
-            color: var(--red);
-            background: rgba(255,69,69,.1);
-        }
-
-    /* Text underneath the Multiple Choice Questions that tells Correct (in green) or Wrong (in red) */
-    .quiz-result {
-        font-family: var(--PX);
-        font-size: 20px;
-        min-height: 20px;
-    }
-
-        .quiz-result.ok {
-            color: var(--green);
-        }
-
-        .quiz-result.bad {
-            color: var(--red);
-        }
-
-    /* Quiz Skip button */
-
-    .quiz-skip {
-        font-family: var(--PX);
-        font-size: 12px;
-        background: transparent;
-        border: 1px solid var(--border2);
-        color: var(--setup-opt-inactive);
-        padding: 7px 14px;
-        cursor: pointer;
-        transition: all .12s;
-    }
-
-        .quiz-skip:hover {
-            border-color: var(--accent2);
-            color: var(--accent2);
-        }
-
-
-
 
 
 
 
 /*
     ------------------------------------------------------------------------
-    ---------------------------Flash on Error-------------------------------
+    ---------------------------PENALTY FLASH--------------------------------
     ------------------------------------------------------------------------
     ------------------------------------------------------------------------
 */
 
 
-/* Penalty flash */
+/* --- Full-screen red flash shown when the player makes a mistake ---
+   Transparent by default; JS adds .show to trigger the tint. */
 .penalty-flash {
     position: fixed;
     inset: 0;
     pointer-events: none;
     z-index: 800;
-    background: rgba(255,69,69,0);
+    background: rgba(255, 69, 69, 0);
     transition: background .2s;
 }
 
@@ -381,35 +404,15 @@
     height: 6px;
 }
 
-    ::-webkit-scrollbar-track {
-        background: var(--bg);
-    }
+::-webkit-scrollbar-track {
+    background: var(--bg);
+}
 
-    ::-webkit-scrollbar-thumb {
-        background: var(--scrollbar-thumb);
-        border-radius: 3px;
-    }
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 3px;
+}
 
     ::-webkit-scrollbar-thumb:hover {
         background: var(--scrollbar-thumb-hover);
     }
-
-
-
-
-
-    .quiz-tutor-btn {
-    font-family: var(--PX);
-    font-size: 12px;
-    background: transparent;
-    border: 1px solid var(--yellow);
-    color: var(--yellow);
-    padding: 7px 14px;
-    cursor: pointer;
-    transition: all .12s;
-}
-
-.quiz-tutor-btn:hover {
-    background: var(--yellow);
-    color: var(--bg);
-}

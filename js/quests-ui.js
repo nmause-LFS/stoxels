@@ -560,6 +560,7 @@ function _buildQuestToastElement(milestone, category) {
     const catTitle = de ? category.titleDE : category.titleEn;
     const msLabel = de ? milestone.labelDE : milestone.labelEn;
     const headerText = de ? 'Meilenstein erreicht!' : 'Milestone Reached!';
+    const rewardText = de ? 'Hol dir deine Belohnung im Inferenz System ab!' : 'Collect your Reward from the Inference system!';
 
     const el = document.createElement('div');
     el.id = 'quest-toast';
@@ -569,6 +570,7 @@ function _buildQuestToastElement(milestone, category) {
             <div class="quest-toast-text">
                 <div class="quest-toast-title">⭐ ${headerText}</div>
                 <div class="quest-toast-name">${catTitle}: <em>${msLabel}</em></div>
+                <div class="quest-toast-sub">${rewardText}</div>
             </div>
         </div>`;
 

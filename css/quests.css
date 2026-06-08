@@ -1,137 +1,268 @@
-/* ── Claim reward banner (level select safe) ─────────────────── */
-#quest-claim-banner {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 9999;
-    opacity: 1;
-    transition: opacity 0.4s ease;
-    pointer-events: auto;
-    min-width: 320px;
-    max-width: min(560px, 92vw);
+/* ======================================================================== */
+/*  quests.css                                                                */
+/*  Styles for the quest system UI: claim banner, tab navigation, indicators */
+/* ======================================================================== */
+
+
+
+
+/*------------------------------------------------------------------------*/
+/*-------------------DESIGN TOKENS / CSS VARIABLES-----------------------*/
+/*------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------*/
+
+/*
+    All shared values live here so changing a color or spacing
+    value once propagates to the entire quest UI automatically.
+
+    Naming convention:
+        --quest-color-*     color values
+        --quest-size-*      font sizes, icon sizes, border widths
+        --quest-space-*     padding / gap / margin values
+        --quest-radius-*    border radii
+        --quest-anim-*      animation durations / easings
+        --quest-z-*         z-index layers
+*/
+
+:root {
+    /* --- Colors --- */
+    --quest-color-success: #2ecc71; /* green  — used for claim banner accent  */
+    --quest-color-reward: #f39c12; /* orange — used for reward text and dots */
+    --quest-color-info: #3498db; /* blue   — used for active tab state     */
+    --quest-color-text-primary: #ffffff;
+    --quest-color-text-secondary: #aaaaaa;
+    --quest-color-text-muted: #555555;
+    --quest-color-bg-banner: rgba(18, 18, 18, 0.97);
+    --quest-color-bg-tab-hover: rgba(255, 255, 255, 0.05);
+    --quest-color-bg-tab-active: rgba(52, 152, 219, 0.08);
+    --quest-color-shadow-banner: rgba(0, 0, 0, 0.6);
+    /* --- Typography --- */
+    --quest-font-mono: var(--PX, monospace);
+    --quest-size-text-xs: 10px;
+    --quest-size-text-sm: 11px;
+    --quest-size-text-md: 14px;
+    --quest-size-icon-banner: 26px;
+    /* --- Spacing --- */
+    --quest-space-banner-pad: 12px 14px;
+    --quest-space-banner-gap: 12px;
+    --quest-space-text-gap: 3px;
+    --quest-space-tab-pad: 6px 14px;
+    --quest-space-tab-gap: 8px;
+    --quest-space-tab-bottom: 8px;
+    --quest-space-tab-margin: 16px;
+    --quest-space-dot-size: 7px;
+    --quest-space-dot-margin: 6px;
+    /* --- Borders / Radius --- */
+    --quest-radius-banner: 3px;
+    --quest-border-banner-left: 4px solid var(--quest-color-success);
+    --quest-border-banner-ring: 1px solid var(--quest-color-success);
+    /* --- Animation --- */
+    --quest-anim-banner-fade: 0.4s ease;
+    --quest-anim-tab-transition: 0.2s;
+    --quest-anim-close-transition: 0.15s;
+    --quest-anim-dot-duration: 1.2s ease-in-out;
+    /* --- Z-index layers --- */
+    --quest-z-banner: 9999;
+    /* --- Dimensions --- */
+    --quest-banner-min-width: 320px;
+    --quest-banner-max-width: min(560px, 92vw);
+    --quest-banner-top: 20px;
 }
 
+
+
+
+/*------------------------------------------------------------------------*/
+/*-------------------CLAIM REWARD BANNER----------------------------------*/
+/*------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------*/
+
+/*
+    The claim banner is a fixed toast-style notification that appears
+    at the top-center of the screen when a quest reward becomes available.
+    It is safe to use on the level select screen.
+
+    Structure:
+        #quest-claim-banner         outer fixed wrapper (positions the banner)
+            .qcb-inner              visible card (flex row: icon | text | close)
+                .qcb-icon           emoji/icon on the left
+                .qcb-text           stacked text column
+                    .qcb-title      small uppercase label (e.g. "Quest Complete")
+                    .qcb-sub        main message; <em> used for de-emphasized parts
+                    .qcb-rewards    reward summary line (gold/orange)
+                .qcb-close          dismiss button on the right
+*/
+
+/* --- Banner: outer wrapper (positioning only) --- */
+#quest-claim-banner {
+    position: fixed;
+    top: var(--quest-banner-top);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: var(--quest-z-banner);
+    min-width: var(--quest-banner-min-width);
+    max-width: var(--quest-banner-max-width);
+    /* Visible by default; JS can toggle opacity to fade in/out */
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity var(--quest-anim-banner-fade);
+}
+
+/* --- Banner: visible card shell --- */
 .qcb-inner {
     display: flex;
     align-items: center;
-    gap: 12px;
-    background: rgba(18, 18, 18, 0.97);
-    border: 1px solid #2ecc71;
-    border-left: 4px solid #2ecc71;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.6);
-    padding: 12px 14px;
-    border-radius: 3px;
+    gap: var(--quest-space-banner-gap);
+    padding: var(--quest-space-banner-pad);
+    border-radius: var(--quest-radius-banner);
+    background: var(--quest-color-bg-banner);
+    border: var(--quest-border-banner-ring);
+    border-left: var(--quest-border-banner-left);
+    box-shadow: 0 4px 16px var(--quest-color-shadow-banner);
 }
 
+/* --- Banner: left icon --- */
 .qcb-icon {
-    font-size: 26px;
+    font-size: var(--quest-size-icon-banner);
     line-height: 1;
-    flex-shrink: 0;
+    flex-shrink: 0; /* never let the icon collapse */
 }
 
+/* --- Banner: text column (title + sub + rewards stacked) --- */
 .qcb-text {
     display: flex;
     flex-direction: column;
-    gap: 3px;
-    flex: 1;
+    gap: var(--quest-space-text-gap);
+    flex: 1; /* take all remaining width between icon and close */
 }
 
+/* --- Banner: small uppercase label above the main message --- */
 .qcb-title {
-    font-family: var(--PX, monospace);
-    font-size: 10px;
-    color: #2ecc71;
+    font-family: var(--quest-font-mono);
+    font-size: var(--quest-size-text-xs);
+    color: var(--quest-color-success);
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
+/* --- Banner: main descriptive message --- */
 .qcb-sub {
-    font-family: var(--PX, monospace);
-    font-size: 11px;
-    color: #fff;
+    font-family: var(--quest-font-mono);
+    font-size: var(--quest-size-text-sm);
+    color: var(--quest-color-text-primary);
 }
 
+    /* <em> inside .qcb-sub is used for secondary/de-emphasized info (not italic) */
     .qcb-sub em {
-        color: #aaa;
+        color: var(--quest-color-text-secondary);
         font-style: normal;
     }
 
+/* --- Banner: reward summary (gold text below message) --- */
 .qcb-rewards {
-    font-family: var(--PX, monospace);
-    font-size: 10px;
-    color: #f39c12;
+    font-family: var(--quest-font-mono);
+    font-size: var(--quest-size-text-xs);
+    color: var(--quest-color-reward);
     margin-top: 2px;
 }
 
+/* --- Banner: dismiss / close button --- */
 .qcb-close {
     background: transparent;
     border: none;
-    color: #555;
-    font-size: 14px;
+    color: var(--quest-color-text-muted);
+    font-size: var(--quest-size-text-md);
     cursor: pointer;
     padding: 2px 4px;
-    flex-shrink: 0;
+    flex-shrink: 0; /* never shrink the close button */
     line-height: 1;
-    transition: color 0.15s;
+    transition: color var(--quest-anim-close-transition);
 }
 
     .qcb-close:hover {
-        color: #fff;
+        color: var(--quest-color-text-primary);
     }
 
 
 
 
+/*------------------------------------------------------------------------*/
+/*-------------------TAB NAVIGATION--------------------------------------*/
+/*------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------*/
 
+/*
+    Tab bar used inside the quest ledger panel to switch between
+    quest categories (e.g. Daily / Weekly / Story).
 
+    Structure:
+        .ledger-tabs            flex row — the tab bar container
+            .ledger-tab-btn     individual tab button
+                .ledger-tab-dot optional pulsing dot (claimable indicator)
+*/
 
-
-/* ── Tab Navigation ───────────────────────────────────────────────────── */
+/* --- Tab bar: container row --- */
 .ledger-tabs {
     display: flex;
-    gap: 8px;
-    margin-bottom: 16px;
+    gap: var(--quest-space-tab-gap);
+    margin-bottom: var(--quest-space-tab-margin);
+    padding-bottom: var(--quest-space-tab-bottom);
     border-bottom: 1px solid var(--border2, #333);
-    padding-bottom: 8px;
 }
 
+/* --- Tab button: base state --- */
 .ledger-tab-btn {
-    font-family: var(--PX, monospace);
-    font-size: 10px;
+    position: relative; /* needed for any future absolutely-positioned children */
+    font-family: var(--quest-font-mono);
+    font-size: var(--quest-size-text-xs);
     letter-spacing: 1px;
+    padding: var(--quest-space-tab-pad);
+    cursor: pointer;
     background: transparent;
     border: 1px solid transparent;
-    color: var(--accent2, #aaa);
-    padding: 6px 14px;
-    cursor: pointer;
-    transition: color 0.2s, background 0.2s, border-color 0.2s;
+    color: var(--accent2, var(--quest-color-text-secondary));
+    transition: color var(--quest-anim-tab-transition), background var(--quest-anim-tab-transition), border-color var(--quest-anim-tab-transition);
 }
 
+    /* --- Tab button: hover state --- */
     .ledger-tab-btn:hover {
-        color: var(--accent, #fff);
-        background: rgba(255, 255, 255, 0.05);
+        color: var(--accent, var(--quest-color-text-primary));
+        background: var(--quest-color-bg-tab-hover);
     }
 
+    /* --- Tab button: active / selected state --- */
     .ledger-tab-btn.active {
-        color: #3498db; /* Using your progress bar blue */
-        border: 1px solid #3498db;
-        background: rgba(52, 152, 219, 0.08);
+        color: var(--quest-color-info);
+        border: 1px solid var(--quest-color-info);
+        background: var(--quest-color-bg-tab-active);
     }
 
 
 
-/* ── Claimable dot on tab headers ─────────────────────────────── */
-.ledger-tab-btn {
-    position: relative;
-}
 
+/*------------------------------------------------------------------------*/
+/*-------------------TAB CLAIMABLE INDICATOR DOT-------------------------*/
+/*------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------*/
+
+/*
+    A small pulsing dot rendered inside a tab button to signal
+    that at least one quest in that tab has a reward ready to claim.
+
+    Usage (HTML): <button class="ledger-tab-btn">Daily <span class="ledger-tab-dot"></span></button>
+
+    The dot uses the questPulse animation — define that keyframe in
+    your global/base stylesheet or append it here if quests.css is standalone.
+*/
+
+/* --- Pulsing claimable dot --- */
 .ledger-tab-dot {
     display: inline-block;
-    width: 7px;
-    height: 7px;
+    width: var(--quest-space-dot-size);
+    height: var(--quest-space-dot-size);
     border-radius: 50%;
-    background: #f39c12;
-    margin-left: 6px;
+    background: var(--quest-color-reward);
+    margin-left: var(--quest-space-dot-margin);
     vertical-align: middle;
-    animation: questPulse 1.2s ease-in-out infinite;
+    animation: questPulse var(--quest-anim-dot-duration) infinite;
 }

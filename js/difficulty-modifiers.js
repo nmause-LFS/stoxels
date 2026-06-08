@@ -6,8 +6,8 @@ let curDiff = 'normal';
 
 const DIFF_CFG = {
     easy: { scoreMult: 0.5, pens: [15, 30, 45, 60] },
-    normal: { scoreMult: 1, pens: [30, 60, 90, 120] },
-    hard: { scoreMult: 1.5, pens: [60, 120, 180, 240] },
+    normal: { scoreMult: 1, pens: [40, 80, 120, 150] },
+    hard: { scoreMult: 1.5, pens: [75, 150, 225, 300] },
 };
 
 function updDiffDesc() {
@@ -100,3 +100,8 @@ function isClassless() { return !!curMods.classless; }
 
 // Returns true when passive tree nodes should be treated as unallocated.
 function isTreeless() { return !!curMods.treeless; }
+
+
+
+
+

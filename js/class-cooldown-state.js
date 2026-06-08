@@ -1,8 +1,15 @@
-﻿let activeAbilityMode = false;
+﻿//------------------------------------------------------------------------
+//----------------------------STATE / CONFIG-------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
 
-// Per-skill independent cooldown state.
-// Each slot ('active1', 'active2') tracks its own remaining seconds + interval
-// active3 / active4 are the two ascendency skill slots
+// Whether an active ability is currently armed and waiting for player input
+let activeAbilityMode = false;
+
+// Per-slot independent cooldown state.
+// active1 / active2 = base class skill slots
+// active3 / active4 = ascendency skill slots
+// Each slot tracks its own remaining seconds and its own tick interval handle.
 let cooldownState = {
     active1: { remaining: 0, interval: null },
     active2: { remaining: 0, interval: null },
@@ -10,224 +17,353 @@ let cooldownState = {
     active4: { remaining: 0, interval: null },
 };
 
+// Lookup: slot key → display number shown in UI and toasts
+const SLOT_DISPLAY_INDEX = {
+    active1: '1',
+    active2: '2',
+    active3: '3',
+    active4: '4',
+};
+
+// All slot keys in one place so loops don't need to repeat the list
+const ALL_SLOTS = ['active1', 'active2', 'active3', 'active4'];
+
+
+// Maps each base class to its two ascendency options (IDs)
+const ASCENDENCY_LIST = {
+    statistician: ['outlier', 'actuary'],
+    mathmagician: ['recursionist', 'markovian'],
+    probabilist: ['bayesian', 'random_walker'],
+};
 
 
 //------------------------------------------------------------------------
-//--------------------HELPER FUNCTION-------------------------------------
+//----------------------STATE HELPERS ------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
 
-function formatCooldown(secs) {
+// Returns true if all 3 base class skills are at max level (Rank 3)
+function isBaseClassMaxed() {
+    if (!STATE.playerClass) return false;
+    return (STATE.classPassiveLevel || 1) >= 3 &&
+        (STATE.classActive1Level || 1) >= 3 &&
+        (STATE.classActive2Level || 1) >= 3;
+}
+
+// Returns true if the player has chosen an ascendency
+function hasAscendency() {
+    return !!STATE.playerAscendency;
+}
+
+// Returns true if both ascendency skills are at max level (Rank 3)
+function isAscendencyMaxed() {
+    if (!STATE.playerAscendency) return false;
+    return (STATE.ascendencySkill1Level || 1) >= 3 &&
+        (STATE.ascendencySkill2Level || 1) >= 3;
+}
+
+
+
+
+//------------------------------------------------------------------------
+//----------------------FORMATTING HELPERS--------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// Converts raw seconds into a human-readable cooldown string.
+// Below 60s: "12s"   |   60s and above: "1:05"
+function _formatCooldown(secs) {
     const m = Math.floor(secs / 60);
     const s = secs % 60;
     return m > 0 ? `${m}:${String(s).padStart(2, '0')}` : `${s}s`;
 }
 
+// Returns the localised "Ready" label used in the minimized bar and toasts.
+function _getReadyLabel() {
+    return LANG === 'de' ? 'Bereit' : 'Ready';
+}
 
 
-// getEffectiveCooldown — returns the cooldown for a slot after all passive tree reductions.
-// celerity:               −30s all active abilities
-// advanced_data_strike:   −30s Data Strike  (active1)
-// swift_strike:           −15s Data Strike  (active1)
-// accelerated_computation:−15s Data Strike  (active1)
-// quick_strike:           −30s Diagonal Strike (active2)
-// accelerated_striking:   −30s Diagonal Strike (active2)
-// signal_to_noise:        -15s all active abilities
-// keystone_the_oracle:    -30s all active abilities (only on large or massive grids)
-// degrees_of_freedom:     -30s all active abilities
-// frequentists_burden:    -15s all active abilities
-function getEffectiveCooldown(slot, baseSeconds) {
+
+
+//------------------------------------------------------------------------
+//-------------------ABILITY DATA LOOKUP HELPERS--------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// Returns the ability definition object for a base class slot (active1 / active2).
+// Returns null if the class definition can't be found.
+function _getBaseClassAbilityData(slot) {
+    const def = CLASS_DEFS[STATE.playerClass];
+    if (!def) return null;
+    return def[slot] ?? null;
+}
+
+// Returns the ability definition object for an ascendency slot (active3 / active4).
+// active3 maps to the ascendency's first active, active4 to the second.
+// Returns null if no ascendency is set or the definition is missing.
+function _getAscendencyAbilityData(slot) {
+    const asc = STATE.playerAscendency ? ASCENDENCY_DEFS[STATE.playerAscendency] : null;
+    if (!asc) return null;
+    return slot === 'active3' ? asc.active1 : asc.active2;
+}
+
+// Returns the ability definition for any slot, routing to the correct source.
+function _getAbilityData(slot) {
+    if (slot === 'active3' || slot === 'active4') {
+        return _getAscendencyAbilityData(slot);
+    }
+    return _getBaseClassAbilityData(slot);
+}
+
+// Returns the localised display name for an ability data object.
+function _getAbilityName(abilityData) {
+    return LANG === 'de'
+        ? (abilityData.nameDE || abilityData.nameEn)
+        : abilityData.nameEn;
+}
+
+
+
+
+//------------------------------------------------------------------------
+//------------------COOLDOWN REDUCTION HELPERS----------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// Returns the total flat cooldown reduction (in seconds) from global passives
+// that apply to every active ability regardless of class or slot.
+function _getGlobalCooldownReduction() {
     let reduction = 0;
-
     if (ptHasSkill('celerity')) reduction += 30;
     if (ptHasSkill('signal_to_noise')) reduction += 15;
     if (ptHasSkill('keystone_the_oracle') && window._oracleActive === true) reduction += 30;
     if (ptHasSkill('keystone_degrees_of_freedom')) reduction += 30;
     if (ptHasSkill('keystone_entropy_drain')) reduction += 30;
     if (ptHasSkill('keystone_frequentists_burden')) reduction += 15;
+    return reduction;
+}
 
-    if (STATE.playerClass === 'statistician') {
-        if (slot === 'active1') {
-            if (ptHasSkill('advanced_data_strike')) reduction += 30;
-            if (ptHasSkill('swift_strike')) reduction += 15;
-            if (ptHasSkill('accelerated_computation')) reduction += 15;
-        }
-        if (slot === 'active2') {
-            if (ptHasSkill('quick_strike')) reduction += 15;
-            if (ptHasSkill('accelerated_striking')) reduction += 15;
-        }
+// Returns the flat cooldown reduction from passives specific to the Statistician class.
+// Passive reductions per slot:
+//   active1 (Data Strike):     advanced_data_strike −30s, swift_strike −15s, accelerated_computation −15s
+//   active2 (Diagonal Strike): quick_strike −15s, accelerated_striking −15s
+function _getStatisticianCooldownReduction(slot) {
+    let reduction = 0;
+    if (slot === 'active1') {
+        if (ptHasSkill('advanced_data_strike')) reduction += 30;
+        if (ptHasSkill('swift_strike')) reduction += 15;
+        if (ptHasSkill('accelerated_computation')) reduction += 15;
     }
-
-
-    if (STATE.playerClass === 'mathmagician') {
-        if (slot === 'active1') {
-            // Arcane Reveal cooldown reductions
-            if (ptHasSkill('rapid_revelation')) reduction += 15;
-            if (ptHasSkill('accelerated_revelation')) reduction += 15;
-        }
-        if (slot === 'active2') {
-            // Absolute Zero cooldown reductions
-            if (ptHasSkill('hastened_zero')) reduction += 15;
-            if (ptHasSkill('accelerated_zero')) reduction += 15;
-        }
+    if (slot === 'active2') {
+        if (ptHasSkill('quick_strike')) reduction += 15;
+        if (ptHasSkill('accelerated_striking')) reduction += 15;
     }
+    return reduction;
+}
 
-    if (STATE.playerClass === 'probabilist') {
-        if (slot === 'active1') {
-            // Precision Mark cooldown reductions
-            if (ptHasSkill('swift_marking')) reduction += 15;
-            if (ptHasSkill('accelerated_marking')) reduction += 15;
-        }
-        if (slot === 'active2') {
-            // Field Scan cooldown reductions
-            if (ptHasSkill('swift_scan')) reduction += 15;
-            if (ptHasSkill('accelerated_scan')) reduction += 15;
-        }
+// Returns the flat cooldown reduction from passives specific to the Mathmagician class.
+// Passive reductions per slot:
+//   active1 (Arcane Reveal): rapid_revelation −15s, accelerated_revelation −15s
+//   active2 (Absolute Zero): hastened_zero −15s, accelerated_zero −15s
+function _getMathmagicianCooldownReduction(slot) {
+    let reduction = 0;
+    if (slot === 'active1') {
+        if (ptHasSkill('rapid_revelation')) reduction += 15;
+        if (ptHasSkill('accelerated_revelation')) reduction += 15;
     }
+    if (slot === 'active2') {
+        if (ptHasSkill('hastened_zero')) reduction += 15;
+        if (ptHasSkill('accelerated_zero')) reduction += 15;
+    }
+    return reduction;
+}
 
+// Returns the flat cooldown reduction from passives specific to the Probabilist class.
+// Passive reductions per slot:
+//   active1 (Precision Mark): swift_marking −15s, accelerated_marking −15s
+//   active2 (Field Scan):     swift_scan −15s, accelerated_scan −15s
+function _getProbabilistCooldownReduction(slot) {
+    let reduction = 0;
+    if (slot === 'active1') {
+        if (ptHasSkill('swift_marking')) reduction += 15;
+        if (ptHasSkill('accelerated_marking')) reduction += 15;
+    }
+    if (slot === 'active2') {
+        if (ptHasSkill('swift_scan')) reduction += 15;
+        if (ptHasSkill('accelerated_scan')) reduction += 15;
+    }
+    return reduction;
+}
 
-
-    return Math.max(0, baseSeconds - reduction);
+// Returns the flat cooldown reduction from class-specific passives for the current class and slot.
+// Routes to the correct per-class helper. Returns 0 for unknown classes.
+function _getClassCooldownReduction(slot) {
+    switch (STATE.playerClass) {
+        case 'statistician': return _getStatisticianCooldownReduction(slot);
+        case 'mathmagician': return _getMathmagicianCooldownReduction(slot);
+        case 'probabilist': return _getProbabilistCooldownReduction(slot);
+        default: return 0;
+    }
 }
 
 
 
 
 //------------------------------------------------------------------------
-//------------------------START SLOT COOLDOWN-----------------------------
+//--------------------EFFECTIVE COOLDOWN CALCULATION----------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-
-//   starts an independent countdown for one skill slot.
-//   Updates only that slot's button each tick by patching the DOM directly,
-//   avoiding a full HUD rebuild on every tick
-
-function startSlotCooldown(slot, seconds) {
-    const state = cooldownState[slot];
-
-    // Clear any pre-existing interval for this slot
-    if (state.interval) clearInterval(state.interval);
-    state.remaining = seconds;
-
-    // Initial render
-    _patchCooldownButton(slot);
-
-    state.interval = setInterval(() => {
-        state.remaining--;
-        if (state.remaining <= 0) {
-            state.remaining = 0;
-            clearInterval(state.interval);
-            state.interval = null;
-            _showCooldownReadyToast(slot);
-            buildClassHUD(); // full rebuild to restore ACTIVATE button
-        } else {
-            _patchCooldownButton(slot);
-        }
-    }, 1000);
+// Returns the final cooldown duration (in seconds) for a given slot after
+// applying all global and class-specific passive reductions.
+// The result is clamped to a minimum of 0 — cooldowns can't go negative.
+function getEffectiveCooldown(slot, baseSeconds) {
+    const globalReduction = _getGlobalCooldownReduction();
+    const classReduction = _getClassCooldownReduction(slot);
+    return Math.max(0, baseSeconds - globalReduction - classReduction);
 }
 
 
-// _showCooldownReadyToast — shows a toast when an ability comes off cooldown.
+
+
+//------------------------------------------------------------------------
+//----------------------DOM PATCH HELPERS---------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// Updates only the cooldown text element inside a single skill button.
+// This avoids rebuilding the entire HUD on every tick — we just swap the text.
+// Falls back silently if the button can't be found (e.g. panel was re-rendered).
+function _patchCooldownButton(slot) {
+    const btn = document.querySelector(
+        `#class-hud-panel .chud-skill-btn[data-slot="${slot}"]`
+    );
+    if (!btn) return;
+    const cdEl = btn.querySelector('.chud-btn-cd');
+    if (cdEl) {
+        cdEl.textContent = _formatCooldown(cooldownState[slot].remaining);
+    }
+}
+
+// Builds a single slot's HTML fragment for the minimized cooldown bar.
+// Shows "Ready ✓" when the cooldown has expired, otherwise shows the remaining time.
+function _buildMiniBarSlotHTML(slot, displayIndex) {
+    const cd = cooldownState[slot].remaining;
+    const isReady = cd <= 0;
+    const label = String(displayIndex);
+    return isReady
+        ? `<span class="chud-mini-ready">${label}: ${_getReadyLabel()} ✓</span>`
+        : `<span class="chud-mini-cd">${label}: ${_formatCooldown(cd)}</span>`;
+}
+
+// Rebuilds the minimized HUD cooldown bar in-place without a full HUD rebuild.
+// Only covers the two base class slots (active1 / active2).
+// Falls back silently if the bar element isn't present in the DOM.
+function patchMinimizedBar() {
+    const bar = document.getElementById('chud-mini-bar');
+    if (!bar) return;
+    if (!CLASS_DEFS[STATE.playerClass]) return;
+
+    const baseSlots = ['active1', 'active2'];
+    const parts = baseSlots.map((slot, i) => _buildMiniBarSlotHTML(slot, i + 1));
+    bar.innerHTML = parts.join('<span class="chud-mini-sep">|</span>');
+}
+
+
+
+
+//------------------------------------------------------------------------
+//----------------------TOAST NOTIFICATION HELPER-------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// Fires a toast message and plays a sound effect when an ability comes off cooldown.
+// Silently aborts if the player has already navigated away from the game screen.
 function _showCooldownReadyToast(slot) {
-    // Don't fire if the player has already left the game screen
     if (!document.getElementById('screen-game')?.classList.contains('active')) return;
 
-    let abilityData = null;
-    const slotIndex = { active1: '1', active2: '2', active3: '3', active4: '4' }[slot] || slot;
-
-    if (slot === 'active3' || slot === 'active4') {
-        const asc = STATE.playerAscendency ? ASCENDENCY_DEFS[STATE.playerAscendency] : null;
-        if (!asc) return;
-        abilityData = slot === 'active3' ? asc.active1 : asc.active2;
-    } else {
-        const def = CLASS_DEFS[STATE.playerClass];
-        if (!def) return;
-        abilityData = def[slot];
-    }
-
+    const abilityData = _getAbilityData(slot);
     if (!abilityData) return;
-    const name = LANG === 'de' ? (abilityData.nameDE || abilityData.nameEn) : abilityData.nameEn;
-    showToast(`✅ [${slotIndex}] ${name} — ${LANG === 'de' ? 'Bereit!' : 'Ready!'}`);
+
+    const name = _getAbilityName(abilityData);
+    const slotIndex = SLOT_DISPLAY_INDEX[slot] ?? slot;
+    const readyLabel = LANG === 'de' ? 'Bereit!' : 'Ready!';
+
+    showToast(`✅ [${slotIndex}] ${name} — ${readyLabel}`);
     Audio_Manager.playSFX('abilityReady');
 }
 
 
 
 
-
-
-
 //------------------------------------------------------------------------
-//----------PATCH / UPDATE COOLDOWN BUTTON TEXT ON ABILITY USE------------
+//------------------------SLOT COOLDOWN TIMER-----------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-// _patchCooldownButton — updates only the button text for one slot
-//   without rebuilding the entire HUD. Falls back to full rebuild if
-//   the button element can't be found (e.g. panel was just re-rendered).
-function _patchCooldownButton(slot) {
-    const btn = document.querySelector(
-        `#class-hud-panel .chud-skill-btn[data-slot="${slot}"]`
-    );
-    if (btn) {
-        const cdEl = btn.querySelector('.chud-btn-cd');
-        if (cdEl) {
-            cdEl.textContent = formatCooldown(cooldownState[slot].remaining);
-        }
+// Handles the expiry of a slot's cooldown: clears the interval, fires the ready
+// toast, and triggers a full HUD rebuild to restore the ACTIVATE button.
+function _onSlotCooldownExpired(slot) {
+    const state = cooldownState[slot];
+    state.remaining = 0;
+    clearInterval(state.interval);
+    state.interval = null;
+    _showCooldownReadyToast(slot);
+    buildClassHUD();
+}
+
+// Ticks a slot's countdown by one second.
+// If the cooldown has reached zero, delegates to _onSlotCooldownExpired.
+// Otherwise, patches only the affected button to avoid a full HUD rebuild.
+function _tickSlotCooldown(slot) {
+
+    // If the game is paused or the player is dead, skip the tick
+    if (typeof _gamePaused !== 'undefined' && _gamePaused) return;
+    if (typeof dead !== 'undefined' && dead) return;
+    cooldownState[slot].remaining--;
+    if (cooldownState[slot].remaining <= 0) {
+        _onSlotCooldownExpired(slot);
+    } else {
+        _patchCooldownButton(slot);
     }
 }
 
+// Starts an independent per-second countdown for a single skill slot.
+// If a countdown for this slot is already running it is cancelled first.
+// Immediately patches the button to show the initial countdown value,
+// then ticks once per second until the cooldown expires.
+function startSlotCooldown(slot, seconds) {
+    const state = cooldownState[slot];
 
-//------------------------------------------------------------------------
-//----------PATCH / UPDATE COOLDOWNS ON THE CLASS HUD---------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
+    if (state.interval) clearInterval(state.interval);
+    state.remaining = seconds;
 
-
-// Updates only the minimized cooldown bar text in-place each tick
-// Called from _patchCooldownButton when the HUD is minimized
-// Falls back silently if the bar element isn't in the DOM
-
-function patchMinimizedBar() {
-    const bar = document.getElementById('chud-mini-bar');
-    if (!bar) return;
-
-    const def = CLASS_DEFS[STATE.playerClass];
-    if (!def) return;
-
-    const slots = ['active1', 'active2'];
-
-    const parts = slots.map((key, i) => {
-        const cd = cooldownState[key].remaining;
-        const isReady = cd <= 0;
-        const label = LANG === 'de' ? `${i + 1}` : `${i + 1}`;
-
-        return isReady
-            ? `<span class="chud-mini-ready">${label}: ${LANG === 'de' ? 'Bereit' : 'Ready'} ✓</span>`
-            : `<span class="chud-mini-cd">${label}: ${formatCooldown(cd)}</span>`;
-    }).join('<span class="chud-mini-sep">|</span>');
-
-    bar.innerHTML = parts;
+    _patchCooldownButton(slot);
+    state.interval = setInterval(() => _tickSlotCooldown(slot), 1000);
 }
 
 
 
 
 //------------------------------------------------------------------------
-//-------------------------RESET COOLDOWNS--------------------------------
+//---------------------------RESET COOLDOWNS------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
+// Clears the interval and remaining time for a single slot.
+function _clearSlotCooldown(slot) {
+    if (cooldownState[slot].interval) clearInterval(cooldownState[slot].interval);
+    cooldownState[slot].interval = null;
+    cooldownState[slot].remaining = 0;
+}
 
+// Resets all cooldowns, disarms any armed ability, clears the fill streak,
+// and restores the default cursor on the puzzle area.
+// Called when a round ends or the player's state is wiped.
 function resetActiveCooldown() {
-    // Clear all slot timers (base + ascendency)
-    ['active1', 'active2', 'active3', 'active4'].forEach(slot => {
-        if (cooldownState[slot].interval) clearInterval(cooldownState[slot].interval);
-        cooldownState[slot].interval = null;
-        cooldownState[slot].remaining = 0;
-    });
+    ALL_SLOTS.forEach(_clearSlotCooldown);
     activeAbilityMode = false;
     correctFillStreak = 0;
     nextPenaltyHalved = false;
@@ -238,42 +374,52 @@ function resetActiveCooldown() {
 
 
 
-
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
 //------------------------------------------------------------------------
 //---------------------------KEYBOARD SHORTCUTS---------------------------
 //------------------------------------------------------------------------
+//------------------------------------------------------------------------
 
+// Returns true when a key press should be ignored because a modal is open.
+function _isModalOpen() {
+    return !!document.querySelector(
+        '.modal-bg.show, .cs-overlay.show, #class-selection-overlay.show'
+    );
+}
+
+// Returns true when the player is in a state where ability hotkeys should be inactive.
+function _abilityHotkeysBlocked() {
+    const tag = document.activeElement?.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return true;
+    if (_isModalOpen()) return true;
+    if (!STATE.playerClass || isClassless() || dead) return true;
+    return false;
+}
+
+// Handles a numeric key press (1–4) by toggling the corresponding ability slot.
+function _handleAbilityKeyPress(key, e) {
+    const slotMap = { '1': 'active1', '2': 'active2', '3': 'active3', '4': 'active4' };
+    const slot = slotMap[key];
+    if (slot) {
+        e.preventDefault();
+        toggleActiveAbility(slot);
+    }
+}
+
+// Sets up keyboard shortcuts for ability activation (1–4) and Escape to disarm.
+// Registered once at file load time.
 function _initClassAbilityHotkeys() {
     document.addEventListener('keydown', (e) => {
-        // Ignore if focus is in a text input / textarea
-        const tag = document.activeElement?.tagName;
-        if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+        if (_abilityHotkeysBlocked()) return;
 
-        // Ignore if any modal overlay is open
-        if (document.querySelector('.modal-bg.show, .cs-overlay.show, #class-selection-overlay.show')) return;
+        if (['1', '2', '3', '4'].includes(e.key)) {
+            _handleAbilityKeyPress(e.key, e);
+            return;
+        }
 
-        if (!STATE.playerClass || isClassless() || dead) return;
-
-        if (e.key === '1') { e.preventDefault(); toggleActiveAbility('active1'); }
-        if (e.key === '2') { e.preventDefault(); toggleActiveAbility('active2'); }
-        if (e.key === '3') { e.preventDefault(); toggleActiveAbility('active3'); }
-        if (e.key === '4') { e.preventDefault(); toggleActiveAbility('active4'); }
-
-        // Pressing Escape cancels an armed ability
-        if (e.key === 'Escape' && activeAbilityMode) { _setAbilityMode(false); buildClassHUD(); }
+        if (e.key === 'Escape' && activeAbilityMode) {
+            _setAbilityMode(false);
+            buildClassHUD();
+        }
     });
 }
 

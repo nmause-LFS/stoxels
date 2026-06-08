@@ -436,7 +436,7 @@
             "nameEn": "Chain Reaction",
             "nameDe": "Kettenreaktion",
             "descEn": "Gain +1 second whenever Momentum triggers. Stacks with other effects that increase Momentum time.",
-            "descDe": "Erhalte +1 Sekunde wenn Schwung ausgelöst wird. Wirkt zusammen mit anderen Effekten, die die Schwungzeit erhöhen.",
+            "descDe": "Erhalte +1 Sekunde wenn Momentum ausgelöst wird. Wirkt zusammen mit anderen Effekten, die die Momentumzeit erhöhen.",
             "icon": "⛓️",
             "statKey": "chain_reaction"
         },
@@ -447,7 +447,7 @@
             "nameEn": "Precise Momentum",
             "nameDe": "Präziser Schwung",
             "descEn": "Gain +2 seconds whenever Momentum triggers. Stacks with other effects that increase Momentum time.",
-            "descDe": "Erhalte +2 Sekunden wenn Schwung ausgelöst wird. Wirkt zusammen mit anderen Effekten, die die Schwungzeit erhöhen.",
+            "descDe": "Erhalte +2 Sekunden wenn Momentum ausgelöst wird. Wirkt zusammen mit anderen Effekten, die die Momentumzeit erhöhen.",
             "icon": "🏹",
             "statKey": "precise_momentum"
         },
@@ -458,7 +458,7 @@
             "nameEn": "Exponential Growth",
             "nameDe": "Exponentielles Wachstum",
             "descEn": "Each Momentum activation increases future Momentums by +1 seconds. Stacks with other effects that increase Momentum time.",
-            "descDe": "Jede Schwung - Aktivierung erhöht zukünftige Schwünge um 1 Sekunde. Wirkt zusammen mit anderen Effekten, die die Schwungzeit erhöhen.",
+            "descDe": "Jede Momentum - Aktivierung erhöht zukünftige Schwünge um 1 Sekunde. Wirkt zusammen mit anderen Effekten, die die Momentumzeit erhöhen.",
             "icon": "🚀",
             "statKey": "exponential_growth"
         },
@@ -469,7 +469,7 @@
             "nameEn": "Learning from Mistakes",
             "nameDe": "Lernen aus Fehlern",
             "descEn": "Mistakes reduce the Momentum Streak by 12 instead of fully resetting it. Combines with Mistakes no Matter for a reduced penalty of 10.",
-            "descDe": "Fehler verringern den Schwung-Zähler um 12 statt ihn vollständig zurückzusetzen. Kombiniert mit 'Fehler zählen nicht' für eine reduzierte Strafe von 10.",
+            "descDe": "Fehler verringern den Momentum-Zähler um 12 statt ihn vollständig zurückzusetzen. Kombiniert mit 'Fehler zählen nicht' für eine reduzierte Strafe von 10.",
             "icon": "🩹",
             "statKey": "learning_from_mistakes"
         },
@@ -480,7 +480,7 @@
             "nameEn": "Mistakes no Matter",
             "nameDe": "Fehler zählen nicht",
             "descEn": "Mistakes reduce the Momentum Streak by 12 instead of fully resetting it. Combines with Learning from Mistakes for a reduced penalty of 10.",
-            "descDe": "Fehler verringern den Schwung-Zähler um 12 statt ihn vollständig zurückzusetzen. Kombiniert mit 'Lernen aus Fehlern' für eine reduzierte Strafe von 10.",
+            "descDe": "Fehler verringern den Momentum-Zähler um 12 statt ihn vollständig zurückzusetzen. Kombiniert mit 'Lernen aus Fehlern' für eine reduzierte Strafe von 10.",
             "icon": "💪",
             "statKey": "mistakes_no_matter"
         },
@@ -601,7 +601,7 @@
             "nameEn": "God of Statistics",
             "nameDe": "Gott der Statistik",
             "descEn": "Data Strike has a 25% chance of revealing cells in an additional random row or column. This rolls twice and independently from Advanced Data Strike.\nDoubles the Momentum Bonus. Stacks with other effects that increase Momentum time.\nDiagonal Strike has a 50% chance to be repeated on another random cell.",
-            "descDe": "Datenhieb hat eine 25% Chance Zellen in einer weiteren zufälligen Zeile oder Spalte aufzudecken. Dies wird zweimal und unabhängig von Verbesserter Datenhieb gewürfelt.\nVerdoppelt den Schwung - Bonus. Wirkt zusammen mit anderen Effekten, die die Schwungzeit erhöhen.\nDiagonalschlag hat eine Chance von 50% zusätzlich auf eine andere zufällige Zelle angewendet zu werden.",
+            "descDe": "Datenhieb hat eine 25% Chance Zellen in einer weiteren zufälligen Zeile oder Spalte aufzudecken. Dies wird zweimal und unabhängig von Verbesserter Datenhieb gewürfelt.\nVerdoppelt den Momentum - Bonus. Wirkt zusammen mit anderen Effekten, die die Momentumzeit erhöhen.\nDiagonalschlag hat eine Chance von 50% zusätzlich auf eine andere zufällige Zelle angewendet zu werden.",
             "icon": "✨",
             "statKey": "god_of_statistics"
         },
@@ -2481,8 +2481,8 @@
             "y": 750,
             "nameEn": "Residual Analysis",
             "nameDe": "Residualanalyse",
-            "descEn": "Whenever you complete a row or column you have a 25% chance of automatically marking a random incorrect empty cell in an adjacent row or column.",
-            "descDe": "Immer wenn du eine Zeile oder Spalte abschließt hast du eine 25% Chance eine zufällige falsche leere Zelle in einer benachbarten Zeile oder Spalte automatisch zu markieren.",
+            "descEn": "Whenever you complete a row or column you have a 10% chance of automatically marking a random incorrect empty cell in an adjacent row or column.",
+            "descDe": "Immer wenn du eine Zeile oder Spalte abschließt hast du eine 10% Chance eine zufällige falsche leere Zelle in einer benachbarten Zeile oder Spalte automatisch zu markieren.",
             "icon": "🔄",
             "statKey": "residual_analysis_1"
         },
@@ -2646,8 +2646,8 @@
             "y": -700,
             "nameEn": "Keystone: Stochastic Resonance",
             "nameDe": "Schlüsselfertigkeit: Stochastische Resonanz",
-            "descEn": "Every mistake has a 20% chance to instead reveal 1 random correct filled cell rather than counting as a mistake. This effect cannot trigger twice in a row.",
-            "descDe": "Jeder Fehler hat eine 20% Chance, stattdessen 1 zufällige korrekte gefüllte Zelle aufzudecken, anstatt als Fehler gezählt zu werden. Dieser Effekt kann nicht zweimal in Folge ausgelöst werden.",
+            "descEn": "Every mistake has a 25% chance to instead reveal 1 random correct filled cell rather than counting as a mistake. This effect cannot trigger twice in a row.",
+            "descDe": "Jeder Fehler hat eine 25% Chance, stattdessen 1 zufällige korrekte gefüllte Zelle aufzudecken, anstatt als Fehler gezählt zu werden. Dieser Effekt kann nicht zweimal in Folge ausgelöst werden.",
             "icon": "〰️",
             "statKey": "keystone_stochastic_resonance"
         },
@@ -2866,8 +2866,8 @@
             "y": -400,
             "nameEn": "Keystone: Overfitting",
             "nameDe": "Schlüsselfertigkeit: Überanpassung",
-            "descEn": "The first 50% of cells you fill are filled for free — mistakes in this phase cost no time. After 50% completion, each mistake costs triple the normal time.",
-            "descDe": "Die ersten 50% der Zellen, die du ausfüllst, sind kostenlos — Fehler in dieser Phase kosten keine Zeit. Nach 50% Abschluss kostet jeder Fehler dreimal so viel Zeit wie normal.",
+            "descEn": "The first 15% of cells you fill are filled for free — mistakes in this phase cost no time. After 50% completion, each mistake costs triple the normal time.",
+            "descDe": "Die ersten 15% der Zellen, die du ausfüllst, sind kostenlos — Fehler in dieser Phase kosten keine Zeit. Nach 50% Abschluss kostet jeder Fehler dreimal so viel Zeit wie normal.",
             "icon": "📉",
             "statKey": "keystone_overfitting"
         },

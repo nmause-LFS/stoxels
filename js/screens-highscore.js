@@ -1,159 +1,187 @@
-﻿
+﻿//------------------------------------------------------------------------
+//-------------------SCREENS-HIGHSCORE.JS---------------------------------
+//------------------------------------------------------------------------
+// Handles everything related to the Highscore screen:
+//   - sorting and preparing HS entries
+//   - progress bars for world code unlocks
+//   - the score table (rows, colors, mod formatting)
+//   - assembling and displaying the full HS screen
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
 
 
 
 //------------------------------------------------------------------------
-//-------------------HIGHSCORE ENTRY SORTING------------------------------
+//-------------------CONSTANTS / LOOKUP MAPS------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-// Returns all high score entries sorted by score descending.
+// Maps internal mod keys to their short display abbreviations.
+const MOD_ABBR_MAP = {
+    timetrial: 'TT',
+    hardcore: 'HC',
+    ironman: 'IM',
+    classless: 'CL',
+    treeless: 'TL'
+};
+
+// Maps difficulty strings to their CSS color variables.
+const DIFF_COLOR_MAP = {
+    easy: 'var(--green)',
+    normal: 'var(--hs-row-text)',   // neutral grey — normal is intentionally understated
+    hard: 'var(--red)'
+};
+
+// Maps mod abbreviations to their CSS color variables.
+const MOD_COLOR_MAP = {
+    TT: 'var(--orange)',
+    HC: 'var(--red)',
+    IM: 'var(--purple)',
+    CL: 'var(--accent)',
+    TL: 'var(--green)'
+};
+
+
+
+
+//------------------------------------------------------------------------
+//-------------------ENTRY SORTING----------------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// Maps a raw [globalIndex, hs] entry pair into a structured object.
+// lv is the full level object from ALL[], which holds .world and .li for display.
+function hsEntryFromPair([gi, hs]) {
+    const index = parseInt(gi);
+    return {
+        gi: index,
+        lv: ALL[index],
+        hs
+    };
+}
+
+// Returns all highscore entries as structured objects, sorted by score descending.
 function getHSSortedEntries() {
     return Object.entries(STATE.levelHS)
-        .map(([gi, hs]) => ({
-            gi: parseInt(gi),
-            lv: ALL[parseInt(gi)], // full level object (has .world and .li for display)
-            hs
-        }))
+        .map(hsEntryFromPair)
         .sort((a, b) => b.hs.score - a.hs.score);
 }
 
 
-//------------------------------------------------------------------------
-//------------------MOD STRING IN HS SCREEN-------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
 
 
-function formatModsString(mods) {
-    if (!mods) return '—';
-    const modMap = { timetrial: 'TT', hardcore: 'HC', ironman: 'IM' };
-    const active = Object.keys(mods)
-        .filter(m => mods[m])
-        .map(m => modMap[m] || m.slice(0, 2).toUpperCase())
-        .join('+');
-    return active || '—';
-}
-
-
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
-function buildHSProgressBar(wc, total) {
-    const pct = Math.min(100, Math.round((total / wc.threshold) * 100));
-    const unlocked = STATE.unlockedCodes.includes(wc.code);
-    const tierName = LANG === 'de' ? wc.titleDE : wc.titleEn;
-    const barColor = unlocked ? 'var(--green)' : 'var(--purple)';
-
-    return `
-    <div style="margin-bottom:10px;font-size:15px;color:var(--accent2);">
-        ${tierName}: ${total.toLocaleString()}/${wc.threshold.toLocaleString()}
-        ${unlocked ? `<span style="color:var(--green)">✓ ${t('hs_code_unlocked')}</span>` : ''}
-        <div style="background:var(--surface);height:5px;margin-top:4px;border:1px solid var(--border);">
-            <div style="background:${barColor};height:100%;width:${pct}%;"></div>
-        </div>
-    </div>`;
-}
 
 
 
 
 
 //------------------------------------------------------------------------
-//-------------PROGRESS BAR SECTIONS FOR EACH CODE------------------------
+//-------------------TABLE ROW HELPERS------------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
-
-
-function buildHSProgressSection(total) {
-    return WORLD_CODES.map(wc => buildHSProgressBar(wc, total)).join('');
-}
-
-
-
-//------------------------------------------------------------------------
-//--------------------HIGHSCORE TABLE ROW---------------------------------
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-
 
 // Returns the CSS color variable for a given difficulty string.
+// Falls back to the neutral row text color if the difficulty is unknown.
 function getDiffColor(diff) {
-    const map = {
-        easy: 'var(--green)',
-        normal: 'var(--hs-row-text)',   // neutral grey for normal
-        hard: 'var(--red)'
-    };
-    return map[diff] || 'var(--hs-row-text)';
+    return DIFF_COLOR_MAP[diff] || 'var(--hs-row-text)';
 }
 
-// Returns the CSS color variable for a given mod key.
-function getModColor(mod) {
-    const map = {
-        TT: 'var(--orange)',
-        HC: 'var(--red)',
-        IM: 'var(--purple)',
-        CL: 'var(--accent)',
-        TL: 'var(--green)'
-    };
-    return map[mod] || 'var(--accent2)';
+// Returns the CSS color variable for a given mod abbreviation.
+// Falls back to accent2 if the mod abbreviation is not in the map.
+function getModColor(modAbbr) {
+    return MOD_COLOR_MAP[modAbbr] || 'var(--accent2)';
 }
 
-// Converts a mods object into colored <span> elements, or "—" if none active.
+// Converts a single mod key to its colored <span> element.
+function buildModSpan(modKey) {
+    const abbr = MOD_ABBR_MAP[modKey] || modKey.slice(0, 2).toUpperCase();
+    return `<span style="color:${getModColor(abbr)}">${abbr}</span>`;
+}
+
+// The separator placed between mod spans (e.g. TT+HC).
+function buildModSeparator() {
+    return `<span style="color:var(--hs-row-text)">+</span>`;
+}
+
+// Converts a mods object into a string of colored <span> elements joined by "+".
+// Returns "—" if no mods are active or if the mods object is missing.
 function formatModsString(mods) {
     if (!mods) return '—';
-    const modMap = { timetrial: 'TT', hardcore: 'HC', ironman: 'IM', classless: 'CL', treeless: 'TL' };
-    const spans = Object.keys(mods)
+
+    const activeSpans = Object.keys(mods)
         .filter(m => mods[m])
-        .map(m => {
-            const abbr = modMap[m] || m.slice(0, 2).toUpperCase();
-            return `<span style="color:${getModColor(abbr)}">${abbr}</span>`;
-        })
-        .join('<span style="color:var(--hs-row-text)">+</span>');
-    return spans || '—';
+        .map(buildModSpan);
+
+    return activeSpans.length
+        ? activeSpans.join(buildModSeparator())
+        : '—';
 }
 
-// Builds the HTML for a single row in the score table.
+// Resolves the display label for a difficulty value, or "—" if not set.
+function getDiffLabel(diff) {
+    return diff ? t('diff_' + diff) : '—';
+}
+
+
+
+
+//------------------------------------------------------------------------
+//-------------------TABLE ROW MAIN BUILD---------------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+// Builds the HTML for a single row in the highscore table.
+// lv — the level object (has .world and .li)
+// hs — the highscore object (has .score, .diff, .mods)
 function buildHSTableRow({ lv, hs }) {
-    const mods = formatModsString(hs.mods);
-    const diffLabel = hs.diff ? t('diff_' + hs.diff) : '—';
+    const diffLabel = getDiffLabel(hs.diff);
     const diffColor = hs.diff ? getDiffColor(hs.diff) : 'var(--hs-row-text)';
+    const modsHTML = formatModsString(hs.mods);
 
     return `<tr>
         <td style="color:var(--white)">${lv.world}-${lv.li}</td>
         <td style="color:var(--yellow)">${hs.score}</td>
         <td style="color:${diffColor}">${diffLabel}</td>
-        <td>${mods}</td>
+        <td>${modsHTML}</td>
     </tr>`;
 }
 
 
 
+
 //------------------------------------------------------------------------
-//---------------------HIGHSCORE TABLE------------------------------------
+//-------------------HIGHSCORE TABLE MAIN BUILD---------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
+// Builds the table header row using localized column labels.
+function buildHSTableHeader() {
+    return `<thead><tr>
+        <th>${t('hs_level')}</th>
+        <th>${t('hs_best')}</th>
+        <th>${t('hs_diff')}</th>
+        <th>${t('hs_mods')}</th>
+    </tr></thead>`;
+}
 
+// Builds the table body from all sorted entries.
+function buildHSTableBody(entries) {
+    return `<tbody>${entries.map(buildHSTableRow).join('')}</tbody>`;
+}
+
+// Builds the full score table, or an empty-state message if there are no entries.
 function buildHSTableSection(entries) {
     if (!entries.length) {
         return `<p style="font-size:12px;color:#555;">${t('no_hs')}</p>`;
     }
 
-    const rows = entries.map(buildHSTableRow).join('');
-
     return `<table class="hs-table">
-        <thead><tr>
-            <th>${t('hs_level')}</th>
-            <th>${t('hs_best')}</th>
-            <th>${t('hs_diff')}</th>
-            <th>${t('hs_mods')}</th>
-        </tr></thead>
-        <tbody>${rows}</tbody>
+        ${buildHSTableHeader()}
+        ${buildHSTableBody(entries)}
     </table>`;
 }
+
 
 
 
@@ -162,43 +190,35 @@ function buildHSTableSection(entries) {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
-
-function buildHS() {
-    const body = document.getElementById('hs-body');
-    const total = STATE.totalScore;
-    const entries = getHSSortedEntries();
-
-    const html = `
+// Assembles the complete inner HTML for the highscore screen body.
+// Total score and code progress bars live on the Codes screen instead.
+function buildHSBodyHTML(entries) {
+    return `
     <div style="padding:18px;">
-        <div class="hs-total">${t('hs_total')}: ${total}</div>
-        ${buildHSProgressSection(total)}
         ${buildHSTableSection(entries)}
     </div>`;
+}
 
-    body.innerHTML = html;
+// Gathers all data and renders the full highscore screen into #hs-body.
+function buildHS() {
+    const body = document.getElementById('hs-body');
+    const entries = getHSSortedEntries();
+
+    body.innerHTML = buildHSBodyHTML(entries);
 }
 
 
 
+
 //------------------------------------------------------------------------
-//-------------FUNCTION TO SHOW HIGHSCORE SCREEN--------------------------
+//-------------------SHOW HIGHSCORE SCREEN--------------------------------
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 
+// Builds and navigates to the highscore screen.
+// Pushes the title screen onto history so the back button works correctly.
 function showHS() {
     buildHS();
     screenHistory.push('screen-title');
-    ss('screen-hs');
+    switchScreen('screen-hs');
 }
-
-
-
-
-
-
-
-
-
-
-
-

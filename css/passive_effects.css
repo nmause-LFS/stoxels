@@ -1,0 +1,85 @@
+/* ============================================================
+   passive_effects.css
+   Visual-only passive/ambient effect classes.
+   No interaction logic lives here — pointer-events are
+   disabled on all effects to prevent accidental click blocks.
+   ============================================================ */
+
+
+/*------------------------------------------------------------------------*/
+/*-------------------BEAM EFFECT -----------------------------------------*/
+/*------------------------------------------------------------------------*/
+/* Laser-beam line drawn from a mistake origin (red) to a reveal point    */
+/* (cyan). Shoots across the screen and fades out with a vertical squash. */
+/* Expected CSS variable: --rotation (angle for the final transform)      */
+/*------------------------------------------------------------------------*/
+
+/* Helper: keyframe animation consumed by .sd-beam-effect below */
+@keyframes sd-beam-shoot {
+    0% {
+        opacity: 0;
+        clip-path: inset(0 100% 0 0); /* Start fully clipped (invisible) */
+    }
+
+    20% {
+        opacity: 1; /* Fade in as the beam begins to reveal */
+    }
+
+    40% {
+        clip-path: inset(0 0 0 0); /* Fully revealed */
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0; /* Fade out while squashing vertically */
+        transform: rotate(var(--rotation)) scaleY(0.2);
+    }
+}
+
+/* Main class: the beam line element itself */
+.sd-beam-effect {
+    position: absolute;
+    height: 4px;
+    /* Red origin (mistake) trailing into a neon-cyan reveal point */
+    background: linear-gradient( 90deg, rgba(239, 68, 68, 0.9) 0%, rgba(6, 182, 212, 1) 100% );
+    /* Cyan glow layers to sell the neon look */
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.8), 0 0 20px rgba(6, 182, 212, 0.4);
+    transform-origin: left center; /* Beam grows/rotates from its left anchor */
+    pointer-events: none; /* Prevent accidental click blocking */
+    z-index: 9999;
+    animation: sd-beam-shoot 2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+
+/*------------------------------------------------------------------------*/
+/*-------------------WAVE EFFECT -----------------------------------------*/
+/*------------------------------------------------------------------------*/
+/* A scrolling stripe-wave overlay, typically used on skill-reveal or     */
+/* scan-line style passive effects.                                        */
+/* Expected CSS variable: --wave-color (color of the stripe lines)        */
+/*------------------------------------------------------------------------*/
+
+/* Helper: keyframe animation consumed by .fx-sr-wave below */
+@keyframes fx-sr-wave-scroll {
+    0% {
+        transform: translateX(-100%);
+    }
+    /* Start off-screen to the left */
+    100% {
+        transform: translateX(0%);
+    }
+    /* Scroll into place            */
+}
+
+/* Main class: the wave overlay element itself */
+.fx-sr-wave {
+    position: absolute;
+    height: 100%;
+    width: 200%; /* Double-wide so the scroll has content to slide in from */
+    /* Repeating stripes; color driven by --wave-color so callers can theme it */
+    background: repeating-linear-gradient( 90deg, transparent 0px, transparent 20px, var(--wave-color) 20px, var(--wave-color) 40px );
+    opacity: 0.3;
+    pointer-events: none; /* Prevent accidental click blocking */
+
+    animation: fx-sr-wave-scroll 3s linear infinite;
+}
