@@ -1,25 +1,30 @@
 ﻿/* Endgame Monster Sandbox Styles */
-.eg-hidden {
-    display: none !important;
-}
+
 
 #eg-monster-wrapper {
-    position: fixed;
-    top: 50%;
-    right: 16px;
-    transform: translateY(-50%);
+    width: 100%;
     z-index: 200;
     display: flex;
-    flex-direction: column;
     justify-content: center;
+    padding: 6px 12px 0;
+    box-sizing: border-box;
     pointer-events: none;
+    min-height: 130px; /* tall enough for one full card */
+    height: 130px; /* fixed — prevents layout shift when cards appear/disappear */
+    overflow: visible; /* cards can visually overflow without pushing content below */
 }
+
+    #eg-monster-wrapper.eg-hidden {
+        display: none !important;
+    }
 
 #eg-monster-panel {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: flex-end;
+    flex-direction: row;
+    gap: 8px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: center;
     pointer-events: auto;
 }
 
@@ -582,3 +587,428 @@
         background-position: 80px 80px;
     }
 }
+
+
+
+.eg-pickup-broken-shard {
+    position: fixed;
+    font-size: 1.4rem;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 1;
+    transform: translate(-50%, -50%);
+}
+
+.eg-pickup-broken-left {
+    animation: eg-shard-left 0.7s ease-out forwards;
+}
+
+.eg-pickup-broken-right {
+    animation: eg-shard-right 0.7s ease-out forwards;
+}
+
+@keyframes eg-shard-left {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(calc(-50% - 22px), calc(-50% - 30px)) rotate(-45deg) scale(0.5);
+        opacity: 0;
+    }
+}
+
+@keyframes eg-shard-right {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(calc(-50% + 22px), calc(-50% - 30px)) rotate(45deg) scale(0.5);
+        opacity: 0;
+    }
+}
+
+
+/* ── Void Surge: full-screen overlay ────────────────────────────────────── */
+#eg-void-surge-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9000;
+    transition: background 0.4s ease;
+}
+
+    /* Warning phase — ominous red tint fading in */
+    #eg-void-surge-overlay.eg-void-surge-warning {
+        background: rgba(100, 0, 0, 0.35);
+        animation: eg-void-warning-pulse 0.5s ease-in-out infinite alternate;
+    }
+
+@keyframes eg-void-warning-pulse {
+    from {
+        background: rgba(100, 0, 0, 0.25);
+    }
+
+    to {
+        background: rgba(160, 0, 0, 0.45);
+    }
+}
+
+/* Active phase — full blackout except for safe zone (handled by circle cutout) */
+#eg-void-surge-overlay.eg-void-surge-active {
+    background: rgba(5, 0, 20, 0.82);
+    animation: none;
+}
+
+
+/* ── Void Surge: safe-zone circle ────────────────────────────────────────── */
+#eg-void-surge-circle {
+    position: fixed;
+    width: 160px; /* diameter = EG_VOID_SURGE_SAFE_RADIUS * 2 */
+    height: 160px;
+    margin-left: -80px; /* centre on the x/y coordinates */
+    margin-top: -80px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9001; /* above the overlay */
+    border: 3px solid rgba(255, 220, 60, 0.9);
+    background: rgba(255, 220, 60, 0.08);
+    box-shadow: 0 0 20px rgba(255, 220, 60, 0.5), inset 0 0 20px rgba(255, 220, 60, 0.15);
+    animation: eg-safe-zone-breathe 1s ease-in-out infinite alternate;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+@keyframes eg-safe-zone-breathe {
+    from {
+        box-shadow: 0 0 16px rgba(255,220,60,0.4), inset 0 0 16px rgba(255,220,60,0.1);
+        border-color: rgba(255,220,60,0.8);
+    }
+
+    to {
+        box-shadow: 0 0 32px rgba(255,220,60,0.75), inset 0 0 28px rgba(255,220,60,0.25);
+        border-color: rgba(255,255,120,1.0);
+    }
+}
+
+/* HUD is inside the safe zone — glow turns green */
+#eg-void-surge-circle.eg-void-surge-safe {
+    border-color: rgba(80, 255, 120, 1.0);
+    background: rgba(80, 255, 120, 0.12);
+    box-shadow: 0 0 30px rgba(80, 255, 120, 0.7), inset 0 0 20px rgba(80, 255, 120, 0.2);
+    animation: none;
+}
+
+/* Resolve flash — survived */
+#eg-void-surge-circle.eg-void-surge-survived {
+    border-color: #4ade80;
+    background: rgba(74, 222, 128, 0.25);
+    box-shadow: 0 0 50px rgba(74, 222, 128, 0.9);
+    animation: none;
+}
+
+/* Resolve flash — hit */
+#eg-void-surge-circle.eg-void-surge-hit {
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.25);
+    box-shadow: 0 0 50px rgba(239, 68, 68, 0.9);
+    animation: none;
+}
+
+
+/* ── Void Surge: countdown label inside the circle ───────────────────────── */
+#eg-void-surge-countdown {
+    position: fixed;
+    width: 160px;
+    height: 160px;
+    margin-left: -80px;
+    margin-top: -80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: 800;
+    color: rgba(255, 220, 60, 0.95);
+    text-shadow: 0 0 10px rgba(255, 220, 60, 0.8), 0 2px 4px rgba(0,0,0,0.9);
+    pointer-events: none;
+    z-index: 9002;
+    font-variant-numeric: tabular-nums;
+    /* position is set to match the circle, so JS sets left/top via the circle element */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* Compact Main Container */
+.eg-monster-card-compact {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    width: 54px; /* Perfectly bounds the emoji structure */
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    margin: 0 4px;
+}
+
+/* Bars container sitting over the icon wrapper */
+.eg-compact-bars {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 4px;
+}
+
+/* Charge Bar (Top-most bar, purple, minimized) */
+.eg-charge-track-compact {
+    width: 100%;
+    height: 4px;
+    background: #111;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+/* Life Bar (Directly below charge bar, purely red) */
+.eg-hp-track-compact {
+    width: 100%;
+    height: 5px;
+    background: #111;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.eg-hp-bar-compact {
+    height: 100%;
+    background: #e63946; /* Unified clean red profile */
+    transition: width 0.15s ease-out;
+}
+
+/* Emoji Wrap Space */
+.eg-emoji-wrapper {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    background: #222;
+    border: 2px solid #444;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.eg-monster-emoji-compact {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+/* Target Border State (Now an Electric Cyan/Blue wrapper around the emoji instead of pink/red) */
+.eg-compact-targeted {
+    border-color: #00f2fe;
+    box-shadow: 0 0 8px rgba(0, 242, 254, 0.6);
+}
+
+/* Level overlay positioned subtly toward the bottom-left */
+.eg-level-bottom-left {
+    position: absolute;
+    bottom: -2px;
+    left: -2px;
+    background: #2c7be5;
+    color: #fff;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 1px 4px;
+    border-radius: 4px;
+    border: 1px solid #111;
+    line-height: 1;
+}
+
+/* Clean Context Tooltip revealed on mouseover */
+.eg-monster-compact-tooltip {
+    display: none;
+    position: absolute;
+    bottom: 125%; /* Positions cleanly over the entire card assembly */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 15, 15, 0.95);
+    border: 1px solid #555;
+    padding: 6px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 999;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    pointer-events: none;
+}
+
+/* Displays context tooltip cleanly on element hover */
+.eg-emoji-wrapper:hover .eg-monster-compact-tooltip {
+    display: block;
+}
+
+.eg-tooltip-name {
+    font-weight: bold;
+    font-size: 12px;
+    color: #fff;
+    margin-bottom: 2px;
+}
+
+.eg-tooltip-hp {
+    font-size: 11px;
+    color: #bbb;
+}
+
+
+
+
+
+
+/* Base style for all floating spawn zones */
+.eg-floating-panel {
+    position: absolute;
+    z-index: 300; /* High enough to float over the puzzle grid */
+    pointer-events: none; /* Let clicks pass through the empty space */
+    display: flex;
+    gap: 8px;
+}
+
+    /* Re-enable clicks on the monster cards inside the floating panels */
+    .eg-floating-panel .eg-monster-card,
+    .eg-floating-panel .eg-monster-card-compact {
+        pointer-events: auto;
+    }
+
+/* Hard-coded specific locations */
+#eg-panel-left {
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+    flex-direction: column; /* Stack cards vertically on the sides */
+}
+
+#eg-panel-right {
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    flex-direction: column;
+}
+
+#eg-panel-bottom {
+    bottom: 100px;
+    left: 20%;
+    transform: translateX(-50%);
+    flex-direction: row; /* Stack cards horizontally on the bottom */
+}
+
+#eg-panel-top-corner {
+    top: 80px; /* Below the top meta bar */
+    right: 20px;
+    flex-direction: column;
+}
+
+/* ── Endgame Objectives Panel (fixed left, no layout impact) ─────────────── */
+#eg-objectives-strip {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 250;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: rgba(8, 8, 16, 0.88);
+    border: 1px solid #333;
+    border-left: none; /* flush against the screen edge */
+    border-radius: 0 8px 8px 0;
+    padding: 8px 10px 8px 6px;
+    min-width: 148px;
+    max-width: 180px;
+    pointer-events: auto;
+    backdrop-filter: blur(4px);
+}
+
+    #eg-objectives-strip.eg-hidden {
+        display: none !important;
+    }
+
+/* Section label at the top */
+.eg-obj-header {
+    font-size: 0.62em;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #666;
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+/* Individual objective row */
+.eg-obj-item {
+    font-size: 0.72em;
+    padding: 4px 6px;
+    border-radius: 4px;
+    color: #aaa;
+    white-space: nowrap;
+    line-height: 1.4;
+    transition: color 0.2s, background 0.2s;
+}
+
+.eg-obj-done {
+    color: #4ade80;
+    background: rgba(74, 222, 128, 0.06);
+}
+
+.eg-obj-pending {
+    color: #888;
+    background: transparent;
+}
+
+/* Leave Map button inside the panel */
+.eg-leave-btn {
+    margin-top: 8px;
+    font-size: 0.7em;
+    font-weight: 700;
+    padding: 5px 8px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.1s;
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.eg-leave-locked {
+    background: #1a1a1a;
+    color: #555;
+    cursor: not-allowed;
+    border-color: #333;
+}
+
+.eg-leave-ready {
+    background: #0d2b1a;
+    color: #4ade80;
+    border-color: #2d7a4f;
+}
+
+    .eg-leave-ready:hover {
+        background: #2d7a4f;
+        color: #fff;
+        transform: translateY(-1px);
+        border-color: #4ade80;
+    }
