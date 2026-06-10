@@ -30,6 +30,7 @@
     <link rel="stylesheet" href="css/classes/recursionist.css">
     <link rel="stylesheet" href="css/classes/statistician.css">
     <link rel="stylesheet" href="css/endgame/monsters.css">
+    <link rel="stylesheet" href="css/endgame/endgame-hub.css">
 </head>
 <body>
 
@@ -326,6 +327,14 @@
                     <button class="gtb-btn" id="btn-go-levels" data-t="btn_levels">◀ LEVELS</button>
                 </div>
             </div>
+            <div id="eg-monster-wrapper" class="eg-hidden">
+                <div id="eg-monster-panel" class="eg-spawn-zone"></div>
+            </div>
+
+            <div id="eg-panel-left" class="eg-floating-panel eg-spawn-zone"></div>
+            <div id="eg-panel-right" class="eg-floating-panel eg-spawn-zone"></div>
+            <div id="eg-panel-bottom" class="eg-floating-panel eg-spawn-zone"></div>
+            <div id="eg-panel-top-corner" class="eg-floating-panel eg-spawn-zone"></div>
 
             <!-- PUZZLE AREA: timer sits above the grid, inside puzzle-scaler -->
             <div class="puzzle-and-sidebar">
@@ -341,13 +350,12 @@
                         </div>
                     </div>
                 </div>
-                <div id="eg-monster-wrapper" class="eg-hidden">
-                    <div id="eg-monster-panel"></div>
-                </div>
             </div>
             <div class="item-use-toast" id="item-toast"></div>
             <div id="inv-panel"></div>
         </div>
+        <!-- ENDGAME OBJECTIVES — fixed left panel, zero layout impact -->
+        <div id="eg-objectives-strip" class="eg-hidden"></div>
     </div>
 
 
@@ -638,7 +646,28 @@
     <script src="js/passive-effects.js"></script>
     <script src="js/ui-events.js"></script>
     <script src="js/changelog.js"></script>
-    <script src="js/endgame-monsters.js"></script>
+
+    <script src="js/endgame/endgame-state.js"></script>
+    <script src="js/endgame/endgame-player-stats.js"></script>
+    <script src="js/endgame/endgame-monsters.js"></script>
+    <script src="js/endgame/endgame-bosses.js"></script>
+    <script src="js/endgame/endgame-boss-abilities.js"></script>
+    <script src="js/endgame/endgame-combat-calculations.js"></script>
+    <script src="js/endgame/endgame-class-projectiles.js"></script>
+    <script src="js/endgame/endgame-grid-pickups.js"></script>
+    <script src="js/endgame/endgame-encounter.js"></script>
+    <script src="js/endgame/endgame-encounter-chain.js"></script>
+    <script src="js/endgame/endgame-ui.js"></script>
+    <script src="js/endgame/endgame-screens.js"></script>
+    <script src="js/endgame/endgame-atlas.js"></script>
+    <script src="js/endgame/endgame-atlas-ui.js"></script>
+    <script src="js/endgame/endgame-equipment-defs.js"></script>
+    <script src="js/endgame/endgame-equipment-generator.js"></script>
+    <script src="js/endgame/endgame-equipment-tooltip.js"></script>
+    <script src="js/endgame/endgame-leveling.js"></script>
+    <script src="js/endgame/endgame-hub.js"></script>
+
+
     <script src="main.js"></script>
 </body>
 </html>

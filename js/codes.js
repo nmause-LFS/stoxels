@@ -9,10 +9,10 @@
 
 const WORLD_CODES = [
     { threshold: 10000, achPct: 0, code: 'TY_4_Playing_Stoxels', titleEn: 'Code 1', titleDE: 'Code 1' },
-    { threshold: 25000, achPct: 0.20, code: '0auf100in3Tagen', titleEn: 'Code 2', titleDE: 'Code 2' },
-    { threshold: 50000, achPct: 0.40, code: 'CLT_whats_that', titleEn: 'Code 3', titleDE: 'Code 3' },
-    { threshold: 75000, achPct: 0.65, code: 'Var(2X)=4Var(X)', titleEn: 'Code 4', titleDE: 'Code 4' },
-    { threshold: 100000, achPct: 0.90, code: 'CentralLimitTheorem', titleEn: 'Code 5', titleDE: 'Code 5' },
+    { threshold: 25000, achPct: 0.20, code: 'IsThereADog?', titleEn: 'Code 2', titleDE: 'Code 2' },
+    { threshold: 50000, achPct: 0.40, code: 'Stox0rTrix', titleEn: 'Code 3', titleDE: 'Code 3' },
+    { threshold: 75000, achPct: 0.65, code: 'MonstersInStoxels', titleEn: 'Code 4', titleDE: 'Code 4' },
+    { threshold: 100000, achPct: 0.90, code: 'Examn1.0afterStoxels', titleEn: 'Code 5', titleDE: 'Code 5' },
 ];
 
 

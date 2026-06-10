@@ -526,6 +526,17 @@ function checkIsLargeAdjMatrix() {
 function checkWin() {
     if (!isPuzzleSolved()) return;
 
+    // Monster levels hand off to the encounter chain instead of the normal win flow
+    if (typeof _egIsActive === 'function' && _egIsActive()) {
+        if (typeof _egOnPuzzleComplete === 'function') {
+            dead = true;
+            stopTimer();
+            _egOnPuzzleComplete();
+            return;           // skip all normal scoring / overlay logic
+        }
+    }
+
+
     // Stop any active visual effects and freeze the game state
     if (typeof clearActiveRandomWalkers === "function") clearActiveRandomWalkers();
     dead = true;

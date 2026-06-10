@@ -423,14 +423,14 @@ function _fxSweeper() {
 // Returns { magnetX, magnetY } so the cross particles know where to fly.
 function _fxMakeMagnetIcon(wrap, r) {
     const magnetX = r.left + r.width / 2;
-    const magnetY = r.top - 50;
+    const magnetY = r.top - 10;
 
     const magnet = document.createElement('div');
     magnet.className = 'fx-magnet-icon';
     magnet.textContent = '🧲';
     magnet.style.cssText = `
         position:absolute;
-        left:${magnetX}px; top:${r.top - 80}px;
+        left:${magnetX}px; top:${r.top - 40}px;
         font-size:52px; transform:translateX(-50%);
         pointer-events:none; z-index:${FX_Z.high};
         animation:fx-magnet-drop 0.45s cubic-bezier(.2,1.5,.5,1) forwards;

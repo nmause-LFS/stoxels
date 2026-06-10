@@ -911,7 +911,7 @@ function hideLsClassTooltip() {
 
 
 function _renderPlayerHealth() {
-    const hud = document.getElementById('class-hud-panel'); // Ensure your container has this ID
+    const hud = document.getElementById('class-hud-panel'); 
     let hpBar = document.getElementById('player-hp-bar');
 
     if (!hpBar) {
@@ -922,7 +922,9 @@ function _renderPlayerHealth() {
 
     const pct = (playerCurrentHP / playerMaxHP) * 100;
     hpBar.innerHTML = `
+        <span style="font-size: 16px; font-weight: bold; display: block; margin-bottom: 8px;">
+            HP: ${playerCurrentHP} / ${playerMaxHP}
+        </span>
         <div style="background:red; width:${pct}%; height:10px;"></div>
-        <span>HP: ${playerCurrentHP} / ${playerMaxHP}</span>
     `;
 }

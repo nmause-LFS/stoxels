@@ -466,6 +466,7 @@ function _resolveQuizAnswer(correct) {
     quizAnsweredCorrectly = correct;
 
     const resEl = document.getElementById('quiz-result');
+    const isInterstitial = typeof window._egInterstitialDone === 'function';
     const quizAlreadyClaimed = STATE.bonusDone.includes(cur.gIdx);
 
     if (correct) {
@@ -473,27 +474,27 @@ function _resolveQuizAnswer(correct) {
         trackAchStat('questionsCorrect');
         updateQuestStats('questionCorrect', { source: 'quiz' });
 
-        if (quizAlreadyClaimed) {
-            _quizHandleAlreadyClaimedReward(resEl);
+        // Count toward map objectives
+        if (isInterstitial) {
+            if (typeof _egOnQuestionAnswered === 'function') _egOnQuestionAnswered();
+            resEl.className = 'quiz-result ok';
+            resEl.textContent = LANG === 'de' ? '✓ RICHTIG!' : '✓ CORRECT!';
         } else {
-            _quizHandleFirstCorrectReward(resEl);
+            if (quizAlreadyClaimed) {
+                _quizHandleAlreadyClaimedReward(resEl);
+            } else {
+                _quizHandleFirstCorrectReward(resEl);
+            }
+            _quizRollMcBonusItemReward();
         }
-
-        // Always roll the passive-tree bonus on top of the base reward
-        _quizRollMcBonusItemReward();
-
     } else {
         resEl.className = 'quiz-result bad';
         resEl.textContent = t('quiz_wrong');
         Audio_Manager.playSFX('quizWrong');
     }
 
-    // Show the Continue button; hide Skip since the question is now answered
     document.getElementById('quiz-continue').style.display = 'block';
     document.getElementById('btn-skip-quiz').style.display = 'none';
-
-    // Auto-finish timer (currently disabled; uncomment to re-enable)
-    // _quizAutoFinishTimer = setTimeout(() => finishQuiz(), 5000);
 }
 
 
@@ -505,9 +506,16 @@ function _resolveQuizAnswer(correct) {
 // the win overlay. Called from the "CONTINUE" button and (if re-enabled)
 // the auto-finish timer.
 function finishQuiz() {
+    // Endgame interstitial mode — hand control back to the chain, no win overlay.
+    if (typeof window._egInterstitialDone === 'function') {
+        const cb = window._egInterstitialDone;
+        closeQuiz();
+        cb();
+        return;
+    }
     closeQuiz();
-    checkWorldCodes();      // check if the +50 pts just unlocked a world code
-    checkWorldCompletion(); // check if this quiz just completed the world
+    checkWorldCodes();
+    checkWorldCompletion();
     save();
     setTimeout(() => document.getElementById('ov-win').classList.add('show'), 300);
 }
@@ -515,6 +523,13 @@ function finishQuiz() {
 // Called when the player clicks "SKIP" or presses Escape.
 // No points or items are awarded; shows the win overlay immediately.
 function skipQuiz() {
+    // Endgame interstitial mode — hand control back to the chain, no win overlay.
+    if (typeof window._egInterstitialDone === 'function') {
+        const cb = window._egInterstitialDone;
+        closeQuiz();
+        cb();
+        return;
+    }
     closeQuiz();
     setTimeout(() => document.getElementById('ov-win').classList.add('show'), 300);
 }

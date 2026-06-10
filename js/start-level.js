@@ -93,10 +93,13 @@ function _cleanupPreviousLevel() {
         window._completionGlimpseTimer = null;
     }
 
-    // Restore player HP to the base value defined by endgame stats (or 100 as default)
-    const baseHP = (typeof EG_PLAYER_STATS !== 'undefined') ? EG_PLAYER_STATS.baseHP : 100;
-    playerMaxHP = baseHP;
-    playerCurrentHP = baseHP;
+    // Only reset HP if this is a fresh start, not a chained puzzle transition
+    const isChainTransition = !!window._egSuppressEncounterStop;
+    if (!isChainTransition) {
+        const baseHP = (typeof EG_PLAYER_STATS !== 'undefined') ? EG_PLAYER_STATS.baseHP : 100;
+        playerMaxHP = baseHP;
+        playerCurrentHP = baseHP;
+    }
 }
 
 
@@ -860,8 +863,10 @@ function _doStartLevel(gi) {
     _applyDegreesOfFreedom();
     _applyTheOracle();
 
-    // 8. Endgame encounter (sandbox and monster levels only)
-    if (cur && (cur.isEndgameSandbox || cur.isMonsterLevel) && typeof _egStartEncounter === 'function') {
+    // Step 8 — Endgame encounter (sandbox and monster levels only)
+    if (cur && cur.isMonsterLevel 
+        && typeof _egStartEncounter === 'function'
+        && !window._egSuppressEncounterStart) {   
         _egStartEncounter();
     }
 

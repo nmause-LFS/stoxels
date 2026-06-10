@@ -2046,10 +2046,200 @@ const MATH_GATE_POOLS = {
 
     ],
 
+    8: [
+
+        // ── 1. ALLGEMEINE IDEE DER SCHLIEßENDEN STATISTIK ────────────────────────
+
+        {
+            q: 'In inferential statistics, we observe a sample to draw conclusions about a larger group. This larger group is called the __. Enter 1 for population, 2 for sample, 3 for estimator.',
+            qDE: 'In der schließenden Statistik beobachten wir eine Stichprobe, um Rückschlüsse auf eine größere Gruppe zu ziehen. Diese größere Gruppe heißt __. Gib 1 für Grundgesamtheit, 2 für Stichprobe, 3 für Schätzer ein.',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: 'Think about what we are ultimately trying to learn about — it is not what we directly measure.',
+            hintDE: 'Überlege, worüber wir letztlich etwas herausfinden wollen — es ist nicht das, was wir direkt messen.'
+        },
+        {
+            q: 'The four core tasks of inferential statistics are: modelling, estimation, testing, and model validation. Which task asks "Does our assumed model fit the data at all?" Enter 1 for modelling, 2 for estimation, 3 for testing, 4 for model validation.',
+            qDE: 'Die vier Kernaufgaben der schließenden Statistik sind: Modellierung, Schätzen, Testen und Modellvalidierung. Welche Aufgabe fragt "Passt unser angenommenes Modell überhaupt zu den Daten?" Gib 1 für Modellierung, 2 für Schätzen, 3 für Testen, 4 für Modellvalidierung ein.',
+            answer: 4, tolerance: 0, unit: '',
+            hintEn: 'This task comes after we have already fit a model and checks whether the whole approach was reasonable.',
+            hintDE: 'Diese Aufgabe kommt, nachdem wir ein Modell angepasst haben, und prüft, ob der gesamte Ansatz sinnvoll war.'
+        },
+        {
+            q: 'We want to know whether a new drug lowers blood pressure. We measure 50 patients and compute a test result. Which core task are we performing? Enter 1 for modelling, 2 for estimation, 3 for testing, 4 for model validation.',
+            qDE: 'Wir wollen wissen, ob ein neues Medikament den Blutdruck senkt. Wir messen 50 Patienten und berechnen ein Testergebnis. Welche Kernaufgabe führen wir durch? Gib 1 für Modellierung, 2 für Schätzen, 3 für Testen, 4 für Modellvalidierung ein.',
+            answer: 3, tolerance: 0, unit: '',
+            hintEn: 'We are making a yes/no decision about a claim — that is different from just computing a numerical value for an unknown quantity.',
+            hintDE: 'Wir treffen eine Ja/Nein-Entscheidung über eine Behauptung — das ist etwas anderes, als nur einen numerischen Wert für eine unbekannte Größe zu berechnen.'
+        },
+        {
+            q: 'We observe data and want to find the most plausible value for an unknown quantity, such as the average height in a country. Which core task is this? Enter 1 for modelling, 2 for estimation, 3 for testing, 4 for model validation.',
+            qDE: 'Wir beobachten Daten und wollen den plausibelsten Wert für eine unbekannte Größe finden, z.B. die durchschnittliche Körpergröße in einem Land. Welche Kernaufgabe ist das? Gib 1 für Modellierung, 2 für Schätzen, 3 für Testen, 4 für Modellvalidierung ein.',
+            answer: 2, tolerance: 0, unit: '',
+            hintEn: 'We are producing a concrete numerical guess for something we cannot observe directly.',
+            hintDE: 'Wir erzeugen eine konkrete numerische Vermutung für etwas, das wir nicht direkt beobachten können.'
+        },
+
+        // ── 2. STICHPROBENUMFANG UND STICHPROBENRAUM ─────────────────────────────
+
+        {
+            q: 'We draw 30 people from a population and record their age. What is the sample size? Enter the number.',
+            qDE: 'Wir ziehen 30 Personen aus einer Grundgesamtheit und erfassen ihr Alter. Was ist der Stichprobenumfang? Gib die Zahl ein.',
+            answer: 30, tolerance: 0, unit: '',
+            hintEn: 'The sample size is simply the count of individual observations we collected.',
+            hintDE: 'Der Stichprobenumfang ist einfach die Anzahl der einzelnen Beobachtungen, die wir erhoben haben.'
+        },
+
+        {
+            q: 'The sample space of a statistical model is the set of all possible values a single observation can take. A person is asked how many siblings they have; this value can be 0, 1, 2, 3, … Is the sample space here discrete or continuous? Enter 1 for discrete, 2 for continuous.',
+            qDE: 'Der Stichprobenraum eines statistischen Modells ist die Menge aller möglichen Werte, die eine einzelne Beobachtung annehmen kann. Eine Person wird gefragt, wie viele Geschwister sie hat; dieser Wert kann 0, 1, 2, 3, … sein. Ist der Stichprobenraum hier diskret oder stetig? Gib 1 für diskret, 2 für stetig ein.',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: 'Ask yourself: can the observation only take whole-number values, or can it take any value in an interval?',
+            hintDE: 'Frage dich: Kann die Beobachtung nur ganze Zahlen annehmen, oder jeden Wert in einem Intervall?'
+        },
+        {
+            q: 'We measure the exact weight of a randomly chosen apple. Is the sample space here discrete or continuous? Enter 1 for discrete, 2 for continuous.',
+            qDE: 'Wir messen das genaue Gewicht eines zufällig gewählten Apfels. Ist der Stichprobenraum hier diskret oder stetig? Gib 1 für diskret, 2 für stetig ein.',
+            answer: 2, tolerance: 0, unit: '',
+            hintEn: 'Weight can take any value within a range, not just isolated whole numbers.',
+            hintDE: 'Gewicht kann jeden Wert in einem Bereich annehmen, nicht nur einzelne ganze Zahlen.'
+        },
+
+        // ── 3. PARAMETRISCHES VERTEILUNGSMODELL UND PARAMETERRAUM ────────────────
+
+        {
+            q: 'In a parametric model, we assume the data follows a specific family of distributions that is described by one or more unknown values. These unknown values are called __. Enter 1 for parameters, 2 for estimators, 3 for observations.',
+            qDE: 'In einem parametrischen Modell nehmen wir an, dass die Daten einer bestimmten Verteilungsfamilie folgen, die durch einen oder mehrere unbekannte Werte beschrieben wird. Diese unbekannten Werte heißen __. Gib 1 für Parameter, 2 für Schätzer, 3 für Beobachtungen ein.',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: 'These are the fixed but unknown quantities that completely determine which distribution from the family we are dealing with.',
+            hintDE: 'Das sind die festen, aber unbekannten Größen, die vollständig bestimmen, mit welcher Verteilung aus der Familie wir es zu tun haben.'
+        },
+        {
+            q: 'We model the number of defective items in a production line using a Binomial distribution. The Binomial family is described by n (known) and p (unknown). The parameter space for p is the interval [0, 1]. Is p = 1.3 a valid value in this parameter space? Enter 1 for yes, 0 for no.',
+            qDE: 'Wir modellieren die Anzahl defekter Teile an einer Produktionslinie mit einer Binomialverteilung. Die Binomialfamilie wird durch n (bekannt) und p (unbekannt) beschrieben. Der Parameterraum für p ist das Intervall [0, 1]. Ist p = 1,3 ein gültiger Wert in diesem Parameterraum? Gib 1 für ja, 0 für nein ein.',
+            answer: 0, tolerance: 0, unit: '',
+            hintEn: 'The parameter space defines all values the parameter is allowed to take — check whether 1.3 lies within [0, 1].',
+            hintDE: 'Der Parameterraum legt alle zulässigen Werte des Parameters fest — prüfe, ob 1,3 im Intervall [0, 1] liegt.'
+        },
+        {
+            q: 'We assume waiting times follow an Exponential distribution with unknown rate parameter λ. Since λ must be strictly positive, the parameter space is the set of all positive real numbers. Is λ = 0 a valid element of this parameter space? Enter 1 for yes, 0 for no.',
+            qDE: 'Wir nehmen an, dass Wartezeiten einer Exponentialverteilung mit unbekanntem Ratenparameter λ folgen. Da λ strikt positiv sein muss, ist der Parameterraum die Menge aller positiven reellen Zahlen. Ist λ = 0 ein gültiges Element dieses Parameterraums? Gib 1 für ja, 0 für nein ein.',
+            answer: 0, tolerance: 0, unit: '',
+            hintEn: 'The parameter space only contains values that make the model well-defined — check whether 0 is strictly positive.',
+            hintDE: 'Der Parameterraum enthält nur Werte, für die das Modell wohldefiniert ist — prüfe, ob 0 strikt positiv ist.'
+        },
+        {
+            q: 'A parametric model for coin flips assumes each flip follows a Bernoulli distribution with unknown probability of heads p. Two researchers use the same model family but estimate different values of p from their data. How many parameters does this model have?',
+            qDE: 'Ein parametrisches Modell für Münzwürfe nimmt an, dass jeder Wurf einer Bernoulli-Verteilung mit unbekannter Kopfwahrscheinlichkeit p folgt. Zwei Forscher verwenden dieselbe Modellfamilie, schätzen aber unterschiedliche Werte von p aus ihren Daten. Wie viele Parameter hat dieses Modell?',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: 'Count how many unknown quantities fully describe which distribution from the Bernoulli family we are using.',
+            hintDE: 'Zähle, wie viele unbekannte Größen vollständig beschreiben, welche Verteilung aus der Bernoulli-Familie wir verwenden.'
+        },
+
+        // ── 4. STATISTIK UND SCHÄTZER ─────────────────────────────────────────────
+
+        {
+            q: 'A statistic is a function that takes the observed data as input and produces a numerical output. It must NOT use any unknown parameters. We observe x₁=3, x₂=5, x₄=7. Is the sample mean (3+5+7)/3 a valid statistic? Enter 1 for yes, 0 for no.',
+            qDE: 'Eine Statistik ist eine Funktion, die die beobachteten Daten als Eingabe nimmt und eine numerische Ausgabe produziert. Sie darf KEINE unbekannten Parameter verwenden. Wir beobachten x₁=3, x₂=5, x₃=7. Ist der Stichprobenmittelwert (3+5+7)/3 eine gültige Statistik? Gib 1 für ja, 0 für nein ein.',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: 'Check whether the formula only uses the data values themselves, without any unknown quantities.',
+            hintDE: 'Prüfe, ob die Formel nur die Datenwerte selbst verwendet, ohne unbekannte Größen.'
+        },
+        {
+            q: 'We observe data and compute a statistic to guess the value of an unknown parameter. When a statistic is used for this purpose it is called an __. Enter 1 for estimator, 2 for test statistic, 3 for parameter.',
+            qDE: 'Wir beobachten Daten und berechnen eine Statistik, um den Wert eines unbekannten Parameters zu schätzen. Wenn eine Statistik für diesen Zweck verwendet wird, heißt sie __. Gib 1 für Schätzer, 2 für Teststatistik, 3 für Parameter ein.',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: 'The name reflects that we are using data to make an educated guess about the true unknown value.',
+            hintDE: 'Der Name spiegelt wider, dass wir Daten verwenden, um eine fundierte Vermutung über den wahren unbekannten Wert anzustellen.'
+        },
+        {
+            q: 'An estimator is itself a random variable because it depends on the random sample. Before collecting data, the estimator can take many possible values. After collecting data and computing a specific number, this specific number is called the __. Enter 1 for estimate, 2 for parameter, 3 for population mean.',
+            qDE: 'Ein Schätzer ist selbst eine Zufallsvariable, weil er von der zufälligen Stichprobe abhängt. Bevor Daten erhoben werden, kann der Schätzer viele mögliche Werte annehmen. Nachdem Daten erhoben und eine konkrete Zahl berechnet wurde, nennt man diese konkrete Zahl __. Gib 1 für Schätzwert, 2 für Parameter, 3 für Erwartungswert der Grundgesamtheit ein.',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: 'There is a distinction between the rule for computing (which is random) and the specific number you get after inserting your data.',
+            hintDE: 'Es gibt einen Unterschied zwischen der Berechnungsregel (die zufällig ist) und der konkreten Zahl, die man erhält, wenn man die Daten einsetzt.'
+        },
+        {
+            q: 'A desirable property of an estimator is that its expected value equals the true parameter value. Such an estimator is called unbiased. If the expected value of an estimator equals the true parameter, is the estimator unbiased? Enter 1 for yes, 0 for no.',
+            qDE: 'Eine wünschenswerte Eigenschaft eines Schätzers ist, dass sein Erwartungswert dem wahren Parameterwert entspricht. Ein solcher Schätzer heißt erwartungstreu. Wenn der Erwartungswert eines Schätzers dem wahren Parameter entspricht, ist der Schätzer erwartungstreu? Gib 1 für ja, 0 für nein ein.',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: 'The definition of unbiasedness is exactly that the estimator is correct on average.',
+            hintDE: 'Die Definition von Erwartungstreue ist genau, dass der Schätzer im Durchschnitt korrekt ist.'
+        },
+
+        // ── 5. EMPIRISCHE VERTEILUNGSFUNKTION ALS SCHÄTZER ───────────────────────
+
+        {
+            q: 'The empirical distribution function assigns to each value x the fraction of observations that are less than or equal to x. We observe: 2, 5, 5, 8. What is the value of the empirical distribution function at x = 5?',
+            qDE: 'Die empirische Verteilungsfunktion weist jedem Wert x den Anteil der Beobachtungen zu, die kleiner oder gleich x sind. Wir beobachten: 2, 5, 5, 8. Was ist der Wert der empirischen Verteilungsfunktion bei x = 5?',
+            answer: 0.75, tolerance: 0.001, unit: '',
+            hintEn: 'Count how many of the four observations are at most 5, then divide by the total number of observations.',
+            hintDE: 'Zähle, wie viele der vier Beobachtungen höchstens 5 sind, und teile durch die Gesamtanzahl der Beobachtungen.'
+        },
+        {
+            q: 'We observe: 1, 3, 7, 9, 10. What is the value of the empirical distribution function at x = 3?',
+            qDE: 'Wir beobachten: 1, 3, 7, 9, 10. Was ist der Wert der empirischen Verteilungsfunktion bei x = 3?',
+            answer: 0.4, tolerance: 0.001, unit: '',
+            hintEn: 'Count all observations that are less than or equal to 3 and divide by the total number.',
+            hintDE: 'Zähle alle Beobachtungen, die kleiner oder gleich 3 sind, und teile durch die Gesamtanzahl.'
+        },
+        {
+            q: 'We observe: 4, 6, 6, 8. What is the value of the empirical distribution function at x = 5?',
+            qDE: 'Wir beobachten: 4, 6, 6, 8. Was ist der Wert der empirischen Verteilungsfunktion bei x = 5?',
+            answer: 0.25, tolerance: 0.001, unit: '',
+            hintEn: 'Check which observations are less than or equal to 5.',
+            hintDE: 'Prüfe, welche Beobachtungen kleiner oder gleich 5 sind.'
+        },
+        {
+            q: 'The empirical distribution function is used as an estimator for the true (unknown) distribution function. As the sample size grows, the empirical distribution function gets closer and closer to the true one. This result is known as the Glivenko-Cantelli theorem. Does a larger sample size generally lead to a better estimate? Enter 1 for yes, 0 for no.',
+            qDE: 'Die empirische Verteilungsfunktion wird als Schätzer für die wahre (unbekannte) Verteilungsfunktion verwendet. Mit wachsendem Stichprobenumfang nähert sich die empirische Verteilungsfunktion immer mehr der wahren an. Führt ein größerer Stichprobenumfang im Allgemeinen zu einem besseren Schätzer? Gib 1 für ja, 0 für nein ein.',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: 'Think about what happens to the gap between the empirical and the true distribution function as we collect more and more data.',
+            hintDE: 'Überlege, was mit der Lücke zwischen der empirischen und der wahren Verteilungsfunktion passiert, wenn wir immer mehr Daten sammeln.'
+        },
+
+        // ── 6. LIKELIHOOD-PRINZIP UND MAXIMUM-LIKELIHOOD-SCHÄTZER ────────────────
+
+        {
+            q: 'The likelihood of a parameter value θ given observed data is defined as the probability (or probability density) of observing that data assuming θ is the true value. If a higher likelihood means the data is more probable under that parameter value, do we prefer parameter values with higher or lower likelihood? Enter 1 for higher, 2 for lower.',
+            qDE: 'Die Likelihood eines Parameterwertes θ gegeben beobachteten Daten ist definiert als die Wahrscheinlichkeit (oder Wahrscheinlichkeitsdichte), diese Daten zu beobachten, wenn θ der wahre Wert ist. Wenn eine höhere Likelihood bedeutet, dass die Daten unter diesem Parameterwert wahrscheinlicher sind, bevorzugen wir Parameterwerte mit höherer oder niedrigerer Likelihood? Gib 1 für höherer, 2 für niedrigerer ein.',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: 'We want the parameter value that makes our observed data as probable as possible.',
+            hintDE: 'Wir wollen den Parameterwert, der unsere beobachteten Daten so wahrscheinlich wie möglich macht.'
+        },
+        {
+            q: 'The maximum likelihood estimator chooses the parameter value that maximises the likelihood function. Is the maximum likelihood estimator always the same as the sample mean? Enter 1 for yes, 0 for no.',
+            qDE: 'Der Maximum-Likelihood-Schätzer wählt den Parameterwert, der die Likelihood-Funktion maximiert. Ist der Maximum-Likelihood-Schätzer immer gleich dem Stichprobenmittelwert? Gib 1 für ja, 0 für nein ein.',
+            answer: 0, tolerance: 0, unit: '',
+            hintEn: 'The maximum likelihood estimator depends on the assumed distribution family — for some families the answer changes.',
+            hintDE: 'Der Maximum-Likelihood-Schätzer hängt von der angenommenen Verteilungsfamilie ab — für manche Familien ändert sich die Antwort.'
+        },
+        {
+            q: 'We observe one coin flip and it comes up heads. We model this as Bernoulli with unknown probability p. The likelihood of observing heads is equal to p. Which value of p maximises this likelihood? Enter as a whole number.',
+            qDE: 'Wir beobachten einen Münzwurf und er zeigt Kopf. Wir modellieren dies als Bernoulli mit unbekannter Wahrscheinlichkeit p. Die Likelihood, Kopf zu beobachten, ist gleich p. Welcher Wert von p maximiert diese Likelihood? Gib als ganze Zahl ein.',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: 'Within the allowed parameter space [0,1], ask yourself: for which value of p is the expression p as large as possible?',
+            hintDE: 'Im erlaubten Parameterraum [0,1]: für welchen Wert von p ist der Ausdruck p so groß wie möglich?'
+        },
+        {
+            q: 'We observe n independent coin flips with k heads. The maximum likelihood estimator for the probability of heads p is k/n. We observe 3 heads in 10 flips. What is the maximum likelihood estimate? Enter as a decimal.',
+            qDE: 'Wir beobachten n unabhängige Münzwürfe mit k Kopf-Ergebnissen. Der Maximum-Likelihood-Schätzer für die Kopfwahrscheinlichkeit p ist k/n. Wir beobachten 3 Kopf in 10 Würfen. Was ist der Maximum-Likelihood-Schätzwert? Gib als Dezimalzahl ein.',
+            answer: 0.3, tolerance: 0.001, unit: '',
+            hintEn: 'Insert the observed values of k and n into the formula for the maximum likelihood estimator.',
+            hintDE: 'Setze die beobachteten Werte von k und n in die Formel für den Maximum-Likelihood-Schätzer ein.'
+        },
+        {
+            q: 'The likelihood principle says that all information about the parameter contained in the data is captured by the likelihood function. Two datasets that produce the same likelihood function for all parameter values should lead to the same conclusion about the parameter. Is this the core idea of the likelihood principle? Enter 1 for yes, 0 for no.',
+            qDE: 'Das Likelihood-Prinzip besagt, dass alle Information über den Parameter, die in den Daten steckt, durch die Likelihood-Funktion erfasst wird. Zwei Datensätze, die für alle Parameterwerte dieselbe Likelihood-Funktion erzeugen, sollten zur selben Schlussfolgerung über den Parameter führen. Ist das die Kernidee des Likelihood-Prinzips? Gib 1 für ja, 0 für nein ein.',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: 'The likelihood principle focuses on what the data tell us about the parameter, summarised entirely through the likelihood function.',
+            hintDE: 'Das Likelihood-Prinzip konzentriert sich darauf, was die Daten über den Parameter aussagen, zusammengefasst vollständig durch die Likelihood-Funktion.'
+        },
+    ],
 
 
 
-    8: [], 9: [], 10: [], 11: [], 12: [],
+
+    9: [], 10: [], 11: [], 12: [],
 
 
 

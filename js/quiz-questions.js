@@ -1618,6 +1618,469 @@ const BONUS_QUIZ_POOLS = {
 
     ],
 
+    8: [
+
+        // ── 1. ALLGEMEINE IDEE DER SCHLIEßENDEN STATISTIK ────────────────────────
+
+        {
+            q: "What is the core goal of inferential statistics?",
+            qDE: "Was ist das Kernziel der schließenden Statistik?",
+            opts: [
+                "Draw conclusions about a population based on a sample",
+                "Describe the data we have collected exactly",
+                "Compute the mean and variance of a dataset",
+                "Visualise data using charts and plots"
+            ],
+            optsDE: [
+                "Rückschlüsse auf eine Grundgesamtheit anhand einer Stichprobe ziehen",
+                "Die vorliegenden Daten exakt beschreiben",
+                "Mittelwert und Varianz eines Datensatzes berechnen",
+                "Daten mit Diagrammen und Grafiken visualisieren"
+            ],
+            correct: 0
+        },
+        {
+            q: "Which of the four tasks of inferential statistics involves choosing which family of distributions could have generated the data?",
+            qDE: "Welche der vier Aufgaben der schließenden Statistik beinhaltet die Wahl, welche Verteilungsfamilie die Daten erzeugt haben könnte?",
+            opts: [
+                "Modelling",
+                "Estimation",
+                "Testing",
+                "Model validation"
+            ],
+            optsDE: [
+                "Modellierung",
+                "Schätzen",
+                "Testen",
+                "Modellvalidierung"
+            ],
+            correct: 0
+        },
+        {
+            q: "A researcher computes a numerical value from data to approximate an unknown quantity. Which task is this?",
+            qDE: "Ein Forscher berechnet aus Daten einen numerischen Wert, um eine unbekannte Größe anzunähern. Um welche Aufgabe handelt es sich?",
+            opts: [
+                "Estimation",
+                "Modelling",
+                "Testing",
+                "Model validation"
+            ],
+            optsDE: [
+                "Schätzen",
+                "Modellierung",
+                "Testen",
+                "Modellvalidierung"
+            ],
+            correct: 0
+        },
+        {
+            q: "After fitting a model, a statistician asks: 'Does this model make sense for the data at all?' Which task is this?",
+            qDE: "Nach dem Anpassen eines Modells fragt ein Statistiker: 'Ist dieses Modell überhaupt sinnvoll für die Daten?' Welche Aufgabe ist das?",
+            opts: [
+                "Model validation",
+                "Estimation",
+                "Modelling",
+                "Testing"
+            ],
+            optsDE: [
+                "Modellvalidierung",
+                "Schätzen",
+                "Modellierung",
+                "Testen"
+            ],
+            correct: 0
+        },
+        {
+            q: "Which statement best describes the difference between descriptive and inferential statistics?",
+            qDE: "Welche Aussage beschreibt den Unterschied zwischen beschreibender und schließender Statistik am besten?",
+            opts: [
+                "Descriptive statistics summarises the observed data; inferential statistics draws conclusions beyond it",
+                "Descriptive statistics uses probability; inferential statistics does not",
+                "Inferential statistics only works with large datasets",
+                "Descriptive statistics requires a model; inferential statistics does not"
+            ],
+            optsDE: [
+                "Beschreibende Statistik fasst die beobachteten Daten zusammen; schließende Statistik zieht Rückschlüsse darüber hinaus",
+                "Beschreibende Statistik verwendet Wahrscheinlichkeit; schließende Statistik nicht",
+                "Schließende Statistik funktioniert nur mit großen Datensätzen",
+                "Beschreibende Statistik erfordert ein Modell; schließende Statistik nicht"
+            ],
+            correct: 0
+        },
+
+        // ── 2. STICHPROBENUMFANG UND STICHPROBENRAUM ─────────────────────────────
+
+        {
+            q: "What does the sample size n refer to?",
+            qDE: "Worauf bezieht sich der Stichprobenumfang n?",
+            opts: [
+                "The number of individual observations collected",
+                "The number of unknown parameters in the model",
+                "The total size of the population",
+                "The number of possible outcomes per observation"
+            ],
+            optsDE: [
+                "Die Anzahl der erhobenen Einzelbeobachtungen",
+                "Die Anzahl der unbekannten Parameter im Modell",
+                "Die Gesamtgröße der Grundgesamtheit",
+                "Die Anzahl möglicher Ergebnisse pro Beobachtung"
+            ],
+            correct: 0
+        },
+        {
+            q: "The sample space of a statistical model is:",
+            qDE: "Der Stichprobenraum eines statistischen Modells ist:",
+            opts: [
+                "The set of all possible values a single observation can take",
+                "The set of all possible parameter values",
+                "The collection of all samples we have drawn",
+                "The set of all estimators for the unknown parameter"
+            ],
+            optsDE: [
+                "Die Menge aller möglichen Werte, die eine einzelne Beobachtung annehmen kann",
+                "Die Menge aller möglichen Parameterwerte",
+                "Die Sammlung aller gezogenen Stichproben",
+                "Die Menge aller Schätzer für den unbekannten Parameter"
+            ],
+            correct: 0
+        },
+        {
+            q: "We record whether each of 50 patients recovers (yes/no). What is the sample space for a single observation?",
+            qDE: "Wir erfassen, ob jeder der 50 Patienten genest (ja/nein). Was ist der Stichprobenraum für eine einzelne Beobachtung?",
+            opts: [
+                "{yes, no}",
+                "{0, 1, 2, …, 50}",
+                "All real numbers",
+                "{yes, no, maybe}"
+            ],
+            optsDE: [
+                "{ja, nein}",
+                "{0, 1, 2, …, 50}",
+                "Alle reellen Zahlen",
+                "{ja, nein, vielleicht}"
+            ],
+            correct: 0
+        },
+        {
+            q: "We model a sample of size n as n random variables X₁, X₂, …, Xₙ. What assumption do we usually make about these variables?",
+            qDE: "Wir modellieren eine Stichprobe vom Umfang n als n Zufallsvariablen X₁, X₂, …, Xₙ. Welche Annahme treffen wir üblicherweise über diese Variablen?",
+            opts: [
+                "They are independent and all follow the same distribution",
+                "They are all equal to their expected value",
+                "They are dependent and differently distributed",
+                "They must all be discrete"
+            ],
+            optsDE: [
+                "Sie sind unabhängig und folgen alle derselben Verteilung",
+                "Sie sind alle gleich ihrem Erwartungswert",
+                "Sie sind abhängig und unterschiedlich verteilt",
+                "Sie müssen alle diskret sein"
+            ],
+            correct: 0
+        },
+
+        // ── 3. PARAMETRISCHES VERTEILUNGSMODELL UND PARAMETERRAUM ────────────────
+
+        {
+            q: "What is a parametric statistical model?",
+            qDE: "Was ist ein parametrisches statistisches Modell?",
+            opts: [
+                "A family of distributions indexed by one or more unknown parameters",
+                "A single fixed distribution with no unknowns",
+                "A model that does not use probability distributions",
+                "A model where all parameters are known in advance"
+            ],
+            optsDE: [
+                "Eine Verteilungsfamilie, die durch einen oder mehrere unbekannte Parameter beschrieben wird",
+                "Eine einzelne feste Verteilung ohne Unbekannte",
+                "Ein Modell, das keine Wahrscheinlichkeitsverteilungen verwendet",
+                "Ein Modell, bei dem alle Parameter im Voraus bekannt sind"
+            ],
+            correct: 0
+        },
+        {
+            q: "The parameter space is:",
+            qDE: "Der Parameterraum ist:",
+            opts: [
+                "The set of all values the unknown parameter is allowed to take",
+                "The set of all observed data values",
+                "The set of all possible estimators",
+                "The range of the distribution function"
+            ],
+            optsDE: [
+                "Die Menge aller Werte, die der unbekannte Parameter annehmen darf",
+                "Die Menge aller beobachteten Datenwerte",
+                "Die Menge aller möglichen Schätzer",
+                "Der Wertebereich der Verteilungsfunktion"
+            ],
+            correct: 0
+        },
+        {
+            q: "We model exam scores as normally distributed with unknown mean μ and known variance 1. The parameter space for μ is:",
+            qDE: "Wir modellieren Prüfungsergebnisse als normalverteilt mit unbekanntem Mittelwert μ und bekannter Varianz 1. Der Parameterraum für μ ist:",
+            opts: [
+                "All real numbers",
+                "Only positive real numbers",
+                "The interval [0, 1]",
+                "Only whole numbers"
+            ],
+            optsDE: [
+                "Alle reellen Zahlen",
+                "Nur positive reelle Zahlen",
+                "Das Intervall [0, 1]",
+                "Nur ganze Zahlen"
+            ],
+            correct: 0
+        },
+        {
+            q: "Two researchers study the same coin-flip data. One assumes a Bernoulli model, the other a Normal model. They get different conclusions. What does this illustrate?",
+            qDE: "Zwei Forscher untersuchen dieselben Münzwurfdaten. Einer nimmt ein Bernoulli-Modell an, der andere ein Normalmodell. Sie kommen zu unterschiedlichen Schlüssen. Was verdeutlicht das?",
+            opts: [
+                "The choice of model family affects the conclusions of the analysis",
+                "The data must be wrong",
+                "Inferential statistics always gives the same answer regardless of model",
+                "Parameters are the same across all model families"
+            ],
+            optsDE: [
+                "Die Wahl der Modellfamilie beeinflusst die Schlussfolgerungen der Analyse",
+                "Die Daten müssen falsch sein",
+                "Schließende Statistik liefert unabhängig vom Modell immer dieselbe Antwort",
+                "Parameter sind über alle Modellfamilien hinweg gleich"
+            ],
+            correct: 0
+        },
+
+        // ── 4. STATISTIK UND SCHÄTZER ─────────────────────────────────────────────
+
+        {
+            q: "In the context of inferential statistics, what is a 'statistic'?",
+            qDE: "Was ist in der schließenden Statistik eine 'Statistik'?",
+            opts: [
+                "A function of the observed data that does not depend on any unknown parameter",
+                "The true value of an unknown parameter",
+                "Any function that includes the unknown parameter",
+                "A fixed constant chosen by the researcher"
+            ],
+            optsDE: [
+                "Eine Funktion der beobachteten Daten, die von keinem unbekannten Parameter abhängt",
+                "Der wahre Wert eines unbekannten Parameters",
+                "Eine beliebige Funktion, die den unbekannten Parameter enthält",
+                "Eine vom Forscher gewählte feste Konstante"
+            ],
+            correct: 0
+        },
+        {
+            q: "Why is an estimator considered a random variable?",
+            qDE: "Warum gilt ein Schätzer als Zufallsvariable?",
+            opts: [
+                "Because it depends on the random sample, which changes each time we collect data",
+                "Because it always equals the true parameter",
+                "Because it has infinite variance",
+                "Because it is only defined for continuous distributions"
+            ],
+            optsDE: [
+                "Weil er von der zufälligen Stichprobe abhängt, die sich bei jeder Datenerhebung ändert",
+                "Weil er immer dem wahren Parameter entspricht",
+                "Weil er unendliche Varianz hat",
+                "Weil er nur für stetige Verteilungen definiert ist"
+            ],
+            correct: 0
+        },
+        {
+            q: "What does it mean for an estimator to be unbiased?",
+            qDE: "Was bedeutet es, dass ein Schätzer erwartungstreu ist?",
+            opts: [
+                "Its expected value equals the true parameter value",
+                "It always produces the exact true parameter value",
+                "Its variance is zero",
+                "It is always larger than the true parameter"
+            ],
+            optsDE: [
+                "Sein Erwartungswert entspricht dem wahren Parameterwert",
+                "Er liefert immer genau den wahren Parameterwert",
+                "Seine Varianz ist null",
+                "Er ist immer größer als der wahre Parameter"
+            ],
+            correct: 0
+        },
+        {
+            q: "What is the difference between an estimator and an estimate?",
+            qDE: "Was ist der Unterschied zwischen einem Schätzer und einem Schätzwert?",
+            opts: [
+                "An estimator is the general rule; an estimate is the specific number obtained after inserting the data",
+                "An estimator is always correct; an estimate may be wrong",
+                "An estimate is a random variable; an estimator is a fixed number",
+                "There is no difference — the terms are interchangeable"
+            ],
+            optsDE: [
+                "Ein Schätzer ist die allgemeine Regel; ein Schätzwert ist die konkrete Zahl nach Einsetzen der Daten",
+                "Ein Schätzer ist immer korrekt; ein Schätzwert kann falsch sein",
+                "Ein Schätzwert ist eine Zufallsvariable; ein Schätzer ist eine feste Zahl",
+                "Es gibt keinen Unterschied — die Begriffe sind austauschbar"
+            ],
+            correct: 0
+        },
+
+        // ── 5. EMPIRISCHE VERTEILUNGSFUNKTION ─────────────────────────────────────
+
+        {
+            q: "The empirical distribution function assigns to each value x:",
+            qDE: "Die empirische Verteilungsfunktion weist jedem Wert x zu:",
+            opts: [
+                "The fraction of observations that are less than or equal to x",
+                "The probability density at x",
+                "The number of observations greater than x",
+                "The expected value of the distribution at x"
+            ],
+            optsDE: [
+                "Den Anteil der Beobachtungen, die kleiner oder gleich x sind",
+                "Die Wahrscheinlichkeitsdichte bei x",
+                "Die Anzahl der Beobachtungen größer als x",
+                "Den Erwartungswert der Verteilung bei x"
+            ],
+            correct: 0
+        },
+        {
+            q: "We observe: 2, 4, 6, 8. What is the value of the empirical distribution function at x = 4?",
+            qDE: "Wir beobachten: 2, 4, 6, 8. Was ist der Wert der empirischen Verteilungsfunktion bei x = 4?",
+            opts: [
+                "0.5",
+                "0.25",
+                "0.75",
+                "1.0"
+            ],
+            optsDE: [
+                "0,5",
+                "0,25",
+                "0,75",
+                "1,0"
+            ],
+            correct: 0
+        },
+        {
+            q: "What is the empirical distribution function used for in inferential statistics?",
+            qDE: "Wofür wird die empirische Verteilungsfunktion in der schließenden Statistik verwendet?",
+            opts: [
+                "As an estimator for the true (unknown) distribution function",
+                "To compute the maximum likelihood estimate",
+                "To define the parameter space",
+                "To generate new random samples"
+            ],
+            optsDE: [
+                "Als Schätzer für die wahre (unbekannte) Verteilungsfunktion",
+                "Zur Berechnung des Maximum-Likelihood-Schätzers",
+                "Zur Definition des Parameterraums",
+                "Zur Erzeugung neuer Zufallsstichproben"
+            ],
+            correct: 0
+        },
+        {
+            q: "As the sample size n grows, the empirical distribution function:",
+            qDE: "Mit wachsendem Stichprobenumfang n nähert sich die empirische Verteilungsfunktion:",
+            opts: [
+                "Gets closer and closer to the true distribution function",
+                "Converges to the uniform distribution",
+                "Stays the same regardless of n",
+                "Becomes equal to the density function"
+            ],
+            optsDE: [
+                "Immer mehr der wahren Verteilungsfunktion an",
+                "Konvergiert gegen die Gleichverteilung",
+                "Bleibt unabhängig von n gleich",
+                "Wird gleich der Dichtefunktion"
+            ],
+            correct: 0
+        },
+
+        // ── 6. LIKELIHOOD-PRINZIP UND MAXIMUM-LIKELIHOOD-SCHÄTZER ────────────────
+
+        {
+            q: "The likelihood function L(θ) for observed data x is interpreted as:",
+            qDE: "Die Likelihood-Funktion L(θ) für beobachtete Daten x wird interpretiert als:",
+            opts: [
+                "How probable the observed data is, viewed as a function of the parameter θ",
+                "The probability that θ equals a specific value",
+                "The distribution of θ across the parameter space",
+                "The variance of the estimator for θ"
+            ],
+            optsDE: [
+                "Wie wahrscheinlich die beobachteten Daten sind, betrachtet als Funktion des Parameters θ",
+                "Die Wahrscheinlichkeit, dass θ einen bestimmten Wert annimmt",
+                "Die Verteilung von θ über den Parameterraum",
+                "Die Varianz des Schätzers für θ"
+            ],
+            correct: 0
+        },
+        {
+            q: "The maximum likelihood estimator chooses the parameter value that:",
+            qDE: "Der Maximum-Likelihood-Schätzer wählt den Parameterwert, der:",
+            opts: [
+                "Maximises the probability of observing the data we actually saw",
+                "Minimises the variance of the estimator",
+                "Equals the sample mean in all cases",
+                "Lies in the middle of the parameter space"
+            ],
+            optsDE: [
+                "Die Wahrscheinlichkeit maximiert, die tatsächlich beobachteten Daten zu sehen",
+                "Die Varianz des Schätzers minimiert",
+                "In allen Fällen dem Stichprobenmittelwert entspricht",
+                "In der Mitte des Parameterraums liegt"
+            ],
+            correct: 0
+        },
+        {
+            q: "We observe 7 heads in 10 coin flips and use a Bernoulli model. What is the maximum likelihood estimate for the probability of heads p?",
+            qDE: "Wir beobachten 7 Kopf in 10 Münzwürfen und verwenden ein Bernoulli-Modell. Was ist der Maximum-Likelihood-Schätzwert für die Kopfwahrscheinlichkeit p?",
+            opts: [
+                "0.7",
+                "0.5",
+                "0.3",
+                "7"
+            ],
+            optsDE: [
+                "0,7",
+                "0,5",
+                "0,3",
+                "7"
+            ],
+            correct: 0
+        },
+        {
+            q: "The likelihood principle states that:",
+            qDE: "Das Likelihood-Prinzip besagt, dass:",
+            opts: [
+                "All information about the parameter contained in the data is captured by the likelihood function",
+                "The parameter with the highest prior probability should always be chosen",
+                "The likelihood function must always be maximised numerically",
+                "Two datasets with different sizes always lead to different conclusions"
+            ],
+            optsDE: [
+                "Alle Information über den Parameter, die in den Daten steckt, durch die Likelihood-Funktion erfasst wird",
+                "Immer der Parameter mit der höchsten a-priori-Wahrscheinlichkeit gewählt werden soll",
+                "Die Likelihood-Funktion immer numerisch maximiert werden muss",
+                "Zwei Datensätze unterschiedlicher Größe immer zu unterschiedlichen Schlüssen führen"
+            ],
+            correct: 0
+        },
+        {
+            q: "Which of the following best describes why the log-likelihood is often used instead of the likelihood?",
+            qDE: "Welche Aussage beschreibt am besten, warum oft die Log-Likelihood statt der Likelihood verwendet wird?",
+            opts: [
+                "Taking the logarithm turns products into sums, which is easier to maximise",
+                "The log-likelihood always gives a larger value than the likelihood",
+                "The logarithm changes the location of the maximum",
+                "The log-likelihood is defined only for discrete distributions"
+            ],
+            optsDE: [
+                "Der Logarithmus verwandelt Produkte in Summen, was die Maximierung erleichtert",
+                "Die Log-Likelihood liefert immer einen größeren Wert als die Likelihood",
+                "Der Logarithmus verschiebt die Lage des Maximums",
+                "Die Log-Likelihood ist nur für diskrete Verteilungen definiert"
+            ],
+            correct: 0
+        },
+
+    ],
 
 
 
@@ -1629,8 +2092,7 @@ const BONUS_QUIZ_POOLS = {
 
 
 
-
-    8: [], 9: [], 10: [], 11: [], 12: [],
+     9: [], 10: [], 11: [], 12: [],
 
 
 

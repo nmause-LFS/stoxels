@@ -204,6 +204,17 @@ function renderLSWorlds() {
             const card = buildLevelCard(p, li, wi, w, tip);
             grid.appendChild(card);
         });
+
+        // INTEGRATION: Inject the special Endgame Hub card at the end of World 13 (index 12)
+
+        /*
+
+        if (wi === 12) {
+            const hubCard = buildEndgameHubCard(w, wi, tip);
+            grid.appendChild(hubCard);
+        }
+        */
+
     });
 }
 
@@ -408,6 +419,78 @@ function buildLevelCard(p, li, wi, w, tip) {
 
     return card;
 }
+
+
+
+//------------------------------------------------------------------------
+//--------------------ENDGAME HUB CARD BUILDER----------------------------
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+
+
+// Dynamically constructs the special Endgame Hub level-card entry.
+// Unlocks automatically when the final standard level of World 13 is completed.
+
+
+
+function buildEndgameHubCard(w, wi, tip) {
+    const hubCard = document.createElement('div');
+
+    // Determine the global index of World 13's last standard stage
+    const finalLevelGi = WORLD_START_GI[wi] + (w.data.length - 1);
+    const isHubUnlocked = w.data.length > 0 ? STATE.done.includes(finalLevelGi) : STATE.tutorialDone;
+
+    // Apply classes matching our custom CSS definitions
+    hubCard.className = 'level-card endgame-hub-card' + (isHubUnlocked ? '' : ' locked');
+
+    hubCard.innerHTML = `
+        <div class="eg-hub-card-icon">👁‍🗨</div>
+        <div class="eg-hub-card-title">${LANG === 'de' ? 'DER ATLAS' : 'THE ATLAS'}</div>
+        <div class="eg-hub-card-sub">${LANG === 'de' ? 'WELT 13 ENDGAME' : 'WORLD 13 ENDGAME'}</div>
+    `;
+
+    // Tooltip and Routing events
+    if (isHubUnlocked) {
+        hubCard.addEventListener('click', () => {
+            tip.classList.remove('show'); // Clean dismiss of the floating tooltip
+            if (typeof showEndgameHub === 'function') {
+                showEndgameHub();
+            } else {
+                console.error("Critical: showEndgameHub() initialization target missing.");
+            }
+        });
+
+        hubCard.addEventListener('mouseenter', () => {
+            tip.textContent = LANG === 'de' ? '🌿 Betrete den Endgame-Hub' : '🌿 Enter the Endgame Hub';
+            tip.classList.add('show');
+        });
+    } else {
+        hubCard.addEventListener('mouseenter', () => {
+            tip.textContent = LANG === 'de'
+                ? '🔒 Schließe Welt 13 ab, um das Endgame freizuschalten'
+                : '🔒 Clear World 13 to unlock the Endgame';
+            tip.classList.add('show');
+        });
+    }
+
+    // Shared floating alignment trackers
+    hubCard.addEventListener('mousemove', e => {
+        tip.style.left = (e.clientX + 14) + 'px';
+        tip.style.top = Math.min(e.clientY + 14, window.innerHeight - 80) + 'px';
+    });
+
+    hubCard.addEventListener('mouseleave', () => tip.classList.remove('show'));
+
+    return hubCard;
+}
+
+
+
+
+
+
+
+
 
 
 //------------------------------------------------------------------------

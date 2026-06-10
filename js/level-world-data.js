@@ -7,15 +7,6 @@ function G(...rows) {
 }
 
 
-
-
-
-
-
-
-
-
-
 //------------------------------------------------------------------------
 //-------------------WORLD 1: Level Data----------------------------------
 //------------------------------------------------------------------------
@@ -630,7 +621,7 @@ const W3 = [
     },
 
 
-    {   //13x40
+    {   //15x40
         hint: "P(A_i | B) = ?",
         hintDE: "P(A_i | B) = ?",
         reveal: "This is the Bayes - Theorem",
@@ -1790,6 +1781,166 @@ const W7 = [
 
 const W8 = [
 
+    {   //5x5
+        hint: "Bandwidth",
+        hintDE: "Bandbreite",
+        reveal: "h is the notation for the bandwidth when building kernel density estimators",
+        revealDE: "h ist die Notation für die Bandbreite bei einem Kerndichteschätzer",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [0, 1, 0, 0, 0], [0, 1, 0, 0, 0], [0, 1, 1, 1, 0],
+            [0, 1, 0, 1, 0], [0, 1, 0, 1, 0]
+        )
+    },
+
+    {   //5x10
+        hint: "Alternative",
+        hintDE: "Alternative",
+        reveal: "Theta_1 is the space of alternatives",
+        revealDE: "Theta_1 ist der Raum der Alternativen",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [1, 1, 1, 1, 1, 0, 0, 0, 0, 0], [1, 0, 0, 0, 1, 0, 0, 0, 0, 0], [1, 1, 1, 1, 1, 0, 0, 1, 0, 0],
+            [1, 0, 0, 0, 1, 0, 1, 1, 0, 0], [1, 1, 1, 1, 1, 0, 0, 1, 0, 0]
+        )
+    },
+
+    {   //5x15
+        hint: "Maximum - Likelihood - Estimator",
+        hintDE: "Maximum - Likelihood - Schätzer",
+        reveal: "MLE is the abbreviation for Maximum-Likelihood-Estimator",
+        revealDE: "MLE ist die englische Abkürzung für Maximum-Likelihood-Schätzer",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0], [0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0], [0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0], [0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0]
+        )
+    },
+
+    {   //5x15
+        hint: "Binary Sample Space",
+        hintDE: "Binärer Stichprobenraum",
+        reveal: "{0,1} is a binary sample space",
+        revealDE: "{0,1} ist ein binärer Stichprobenraum",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0], [0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0], [1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1],
+            [0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0], [0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0]
+        )
+    },
+
+
+    {   //10x10
+        hint: "Theta",
+        hintDE: "Theta",
+        reveal: "Theta is the notation for an unknown parameter",
+        revealDE: "Theta ist die Notation für einen unbekannten Parameter",
+        timer: 300,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 1, 1, 1, 0, 0, 0], [0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 0], [0, 1, 1, 1, 0, 0, 1, 0, 0, 0], [0, 1, 0, 1, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 1, 0, 0, 0], [0, 0, 0, 1, 0, 0, 1, 0, 0, 0], [0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        )
+    },
+
+    {   //10x20
+        hint: "Convergence of Empirical Distribution Function",
+        hintDE: "Konvergenz der empirischen Verteilungsfunktion",
+        reveal: "By the fundamental theorem of statistics the empirical distribution function converges to the distribution function",
+        revealDE: "Nach dem Hauptsatz der Statistik konvergiert die empirische Verteilungsfunktion gegen die wahre Verteilungsfunktion",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0], [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0], [0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0],
+            [0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0], [0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0], [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        )
+    },
+
+    {   //10x35
+        hint: "Distribution of Amount",
+        hintDE: "Verteilung der Anzahl",
+        reveal: "The distribution of the amount of values less or equal than x is a binomial distribution",
+        revealDE: "Die Verteilung der Anzahl der Werte kleiner oder gleich x ist binomialverteilt",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0], [0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0],
+            [0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0], [0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0], [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        )
+    },
+
+
+    {   //10x40
+        hint: "Unbiased Sample Variance",
+        hintDE: "Unverzerrte Stichprobenvarianz",
+        reveal: "With factor 1/(n-1) the sample variance is unbiased",
+        revealDE: "Mit Vorfaktor 1/(n-1) ist die Stichprobenvarianz erwartungstreu",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1], [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
+            [1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0], [1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        )
+    },
+
+
+    {   //15x25
+        hint: "Empirical Distribution Function",
+        hintDE: "Empirische Verteilungsfunktion",
+        reveal: "Definition of the Empirical Distribution Function",
+        revealDE: "Definition der Empirischen Verteilungsfunktion",
+        timer: 1800,
+        bonusHint: "Answer the bonus question correctly",
+        bonusHintDE: "Beantworte die Bonusfrage richtig",
+        bonusType: "quiz",
+        bonusParam: 0,
+        grid: G(
+            [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0], [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0], [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0], [0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0], [0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0], [0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0], [0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0], [0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0], [0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
+            [1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0], [0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0], [0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0]
+        )
+    },
+
+
+
 
 
 
@@ -2138,68 +2289,68 @@ const W22 = [
 
 const W_ENDGAME = [
 
-    {   // 10x10 — Endgame Sandbox Test Puzzle
-        hint: "[ENDGAME] Sandbox",
-        hintDE: "[ENDGAME] Sandbox",
-        reveal: "Endgame sandbox — combat prototype",
-        revealDE: "Endgame-Sandbox — Kampfprototyp",
+    {   // 
+        hint: "endgame test",
+        hintDE: "",
+        reveal: "",
+        revealDE: "",
         timer: 3600,
-        bonusHint: "No mistakes",
-        bonusHintDE: "Keine Fehler",
-        bonusType: "nomiss",
-        bonusParam: 0,
-        maxMonsters: 2,
-        isEndgameSandbox: true,
+        isMonsterLevel: true,
+        monsterLevel: 2,
+        totalMonsters: 10,        // boss spawns at kill #5 (50%), run ends at kill #10
+        requiredPuzzles: 3,       // must solve 3 puzzles to leave
+        requiredQuestions: 2,     // must answer 2 bonus questions correctly to leave
+        puzzlePool: {
+            worlds: [1, 2, 3,4,5,6,7,8],
+            minCells: 35,
+            maxCells: 120,
+            recentWindow: 10,
+        },
+        hasBoss: true,
+        bosses: [{ id: 'boss_null', level: 30 }],
+        /*bosses: [{ id: 'boss_null', level: 2 }],*/
         /*monsters: [
             { id: 'slime', level: 2 },
             { id: 'golem', level: 1 },
         ],*/
         grid: G(
-            [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-            [1, 1, 0, 0, 0, 0, 0, 0, 1, 1],
-            [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
-            [1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
-            [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
-            [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
-            [1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
-            [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
-            [1, 1, 0, 0, 0, 0, 0, 0, 1, 1],
-            [0, 1, 1, 1, 1, 1, 1, 1, 1, 0]
+            [0, 1, 0, 0, 0], [0, 1, 0, 0, 0], [0, 1, 1, 1, 0],
+            [0, 1, 0, 1, 0], [0, 1, 0, 1, 0]
         )
     },
 
+
     {   // 10x10 — Endgame Sandbox Test Puzzle
-        hint: "Boss Testing",
-        hintDE: "[ENDGAME] Sandbox",
-        reveal: "Endgame sandbox — combat prototype",
-        revealDE: "Endgame-Sandbox — Kampfprototyp",
+        hint: "Endgame Test",
+        hintDE: "Endgame Test",
+        reveal: "",
+        revealDE: "",
         timer: 3600,
-        isMonsterLevel: true,   //
-        maxMonsters: 0,         // maximum amount of normal monsters excluding bosses, shall spawn in randomly over time
-        monsterLevel: 30,       // default monster level for scaling stats
-        hasBoss: true,          // after defeating all normal monsters, a boss will spawn
-        maxBosses: 1,
+        isMonsterLevel: true,
+        monsterLevel: 2,
+        totalMonsters: 10,        // boss spawns at kill #5 (50%), run ends at kill #10
+        requiredPuzzles: 3,       // must solve 3 puzzles to leave
+        requiredQuestions: 2,     // must answer 2 bonus questions correctly to leave
+        puzzlePool: {
+            worlds: [1, 2, 3],
+            minCells: 35,
+            maxCells: 120,
+            recentWindow: 10,
+        },
+        hasBoss: true,
+        bosses: [{id: 'boss_null', level: 30}],
+        /*bosses: [{ id: 'boss_null', level: 2 }],*/
         /*monsters: [
-            { id: 'slime' },
-            { id: 'golem' },
-        ],
-        bosses: [
-           { id: 'boss_1' },
-        ],
-        */
+            { id: 'slime', level: 2 },
+            { id: 'golem', level: 1 },
+        ],*/
         grid: G(
-            [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-            [1, 1, 0, 0, 0, 0, 0, 0, 1, 1],
-            [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
-            [1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
-            [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
-            [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
-            [1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
-            [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
-            [1, 1, 0, 0, 0, 0, 0, 0, 1, 1],
-            [0, 1, 1, 1, 1, 1, 1, 1, 1, 0]
+            [0, 1, 0, 0, 0], [0, 1, 0, 0, 0], [0, 1, 1, 1, 0],
+            [0, 1, 0, 1, 0], [0, 1, 0, 1, 0]
         )
     },
+
+    
 
 ];
 
@@ -2222,8 +2373,8 @@ const WORLDS = [
     { label: 'WORLD 5', labelDE: 'WELT 5', data: W5 },
     { label: 'World 6', labelDE: 'Welt 6', data: W6 },
     { label: 'World 7 ', labelDE: 'Welt 7 ', data: W7 },
-    { label: 'World 8 - Will be added soon', labelDE: 'Welt 8 - Wird bald hinzugefügt', data: W8 },
-    { label: 'World 9', labelDE: 'Welt 9', data: W9 },
+    { label: 'World 8 ', labelDE: 'Welt 8', data: W8 },
+    { label: 'World 9 - Will be added soon', labelDE: 'Welt 9 - Wird bald hinzugefügt', data: W9 },
     { label: 'World 10', labelDE: 'Welt 10', data: W10 },
     { label: 'World 11', labelDE: 'Welt 11', data: W11 },
     { label: 'World 12', labelDE: 'Welt 12', data: W12 },
@@ -2238,7 +2389,11 @@ const WORLDS = [
     { label: 'DevWorld6', labelDE: 'DevWorld1', data: W19 },
     { label: 'DevWorld7', labelDE: 'DevWorld2', data: W20 },
     { label: 'DevWorld8', labelDE: 'DevWorld3', data: W21 },
+    
+    
     { label: 'DevWorld9', labelDE: 'DevWorld4', data: W22 },
+
+    
 
     // ENDGAME SANDBOX
     { label: '⚔ ENDGAME SANDBOX', labelDE: '⚔ ENDGAME SANDBOX', data: W_ENDGAME },

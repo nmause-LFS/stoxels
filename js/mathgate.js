@@ -46,6 +46,11 @@ const MATH_GATE_LEVELS = [
     { world: 7, level: 7 },
     { world: 7, level: 9 },
     { world: 7, level: 11 },
+    { world: 8, level: 1 },
+    { world: 8, level: 3 },
+    { world: 8, level: 5 },
+    { world: 8, level: 7 },
+    { world: 8, level: 9 },
 ];
 
 
@@ -304,6 +309,8 @@ function mgHandleCorrectAnswer() {
     mgRollPassiveTreeBonusReward();
 
     Audio_Manager.playSFX('quizCorrect');
+
+    if (typeof _egOnQuestionAnswered === 'function') _egOnQuestionAnswered();
 
     setTimeout(() => {
         hideMathGate();

@@ -220,7 +220,7 @@ function markCellWrongAndPenalize(row, col) {
     Audio_Manager.playSFX('cellWrong');
     applyPenalty(row, col);
 
-    // Endgame: wrong fill may discard a pickup heart
+    // Endgame: wrong fill discards any pickup sitting on this cell
     if (isEndgameLevel() && typeof _egDiscardPickup === 'function') {
         _egDiscardPickup(row, col);
     }
@@ -565,7 +565,13 @@ function applyCell(row, col) {
         if (typeof _bayesTrapProtectionIntercept === 'function' && _bayesTrapProtectionIntercept(row, col)) return;
 
         // Try to absorb or apply the mistake; stop processing if game-over triggered
-        if (handleWrongFill(row, col)) return;
+        if (handleWrongFill(row, col)) {
+            // Whether absorbed or penalised, a wrong click on an endgame pickup discards it
+            if (isEndgameLevel() && typeof _egDiscardPickup === 'function') {
+                _egDiscardPickup(row, col);
+            }
+            return;
+        }
 
         // handleWrongFill handled everything — don't fall through to valid-move logic
         return;

@@ -15,6 +15,7 @@ const CHANGELOG_DATA = [
                     "Added a Passive Tracker that tracks the state of various probability tree nodes while doing a puzzle. The Passive Tracker can be minimized and moved around.",
                     "Achievements for interactions with the Probability Tree and the Inference system have been added.",
                     "Added Pause functionality: Pressing Escape while in a Level now pauses and unpauses the game.",
+                    "Added World 8.",
 
                 ],
             },
