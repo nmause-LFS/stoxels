@@ -1,0 +1,28 @@
+#pause-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.92);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+    #pause-overlay.show {
+        display: flex;
+    }
+
+#pause-label {
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: #fff;
+}
+
+#pause-hint {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 0.1em;
+}

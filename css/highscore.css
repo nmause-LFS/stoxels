@@ -1,0 +1,342 @@
+﻿/* ---------------------------------------------------------------------- */
+/* SCREEN BACKGROUND                                                      */
+/* ---------------------------------------------------------------------- */
+
+#screen-hs.hs-redesign {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: #0a0a0a;
+    display: none; /* hidden by default, like every other .screen */
+    align-items: center;
+    justify-content: center;
+}
+
+    #screen-hs.hs-redesign.active {
+        display: flex; /* only shown when this screen is actually active */
+    }
+
+
+/* ---------------------------------------------------------------------- */
+/* SCROLL FRAME — locked to the artwork's real aspect ratio (same 1376x768
+   canvas your other screens' art uses), so at ANY viewport size the box
+   is letterboxed/pillarboxed within the screen instead of the image
+   itself being cropped by background-size:cover. Because the box ratio
+   now matches the image ratio exactly, "cover" fills it with zero crop.
+   All the percentage-based overlay positions below are relative to THIS
+   box, so they always agree with the artwork underneath it.
+   NOTE: if highscore_background.jpeg isn't actually 1376x768, swap the
+   aspect-ratio value below for the image's real width/height.          */
+/* ---------------------------------------------------------------------- */
+
+.hs-scroll-frame {
+    position: relative;
+    aspect-ratio: 1376 / 768;
+    width: 100%;
+    max-width: 100vw;
+    max-height: 100vh;
+    height: auto;
+    margin: 0 auto;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    background: url('../images/Highscore_Screen/highscore_background.jpeg') center / cover no-repeat;
+}
+
+
+
+
+/* ---------------------------------------------------------------------- */
+/* TOP ROW — menu button (left) + title plaque (center)                   */
+/* ---------------------------------------------------------------------- */
+
+.hs-top-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 17%;
+    min-height: 60px;
+    flex-shrink: 0;
+}
+
+/* ---- Menu button (stone slab, image 5) ---- */
+
+.hs-menu-btn {
+    position: absolute;
+    left: 0%;
+    top: 0%;
+    width: clamp(64px, 10%, 170px);
+    aspect-ratio: 16 / 9;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: filter .15s, transform .1s;
+}
+
+    .hs-menu-btn:hover {
+        filter: brightness(1.25);
+    }
+
+    .hs-menu-btn:active {
+        transform: scale(0.97);
+    }
+
+.hs-menu-btn-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    user-select: none;
+}
+
+.hs-menu-btn-label {
+    position: relative;
+    z-index: 1;
+    font-family: var(--PX);
+    /* CHANGED: floor was 19px — far too high to shrink on narrow screens,
+       which made the label overflow the (correctly-shrinking) button
+       graphic behind it. Floor now scales down to 8px. */
+    font-size: clamp(8px, 2.3vw, 22px);
+    letter-spacing: clamp(0.5px, 0.15vw, 1px);
+    color: #fffdfa;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.25);
+    white-space: nowrap;
+}
+
+/* ---- Title plaque (stone frame, image 4) ---- */
+
+.hs-title-plaque {
+    position: relative;
+    width: clamp(150px, 26%, 420px);
+    aspect-ratio: 16 / 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hs-title-plaque-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    user-select: none;
+}
+
+.hs-title-plaque-label {
+    position: relative;
+    z-index: 1;
+    font-family: var(--PX);
+    font-size: clamp(11px, 2vw, 26px);
+    /* CHANGED: fixed 3px letter-spacing had no floor/ceiling logic — made
+       long words like "HIGHSCORES" push past the plaque's edges on
+       narrow screens. Now scales down with the text itself. */
+    letter-spacing: clamp(0.5px, 0.3vw, 3px);
+    color: #2b2620;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.25);
+    white-space: nowrap;
+}
+
+
+/* ---------------------------------------------------------------------- */
+/* COLUMN HEADERS — each label sits on its own copy of the carved stone
+   header bar (image 7), laid out to match the four table columns.        */
+/* ---------------------------------------------------------------------- */
+
+.hs-col-headers {
+    position: absolute;
+    top: 23%;
+    left: 20%;
+    width: 60%;
+    height: 9%;
+    min-height: 26px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: clamp(2px, 1.5%, 12px);
+    z-index: 2;
+}
+
+.hs-col-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url('../images/Highscore_Screen/highscores_header.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    font-family: var(--PX);
+    /* CHANGED: floor was 8px already reasonable, but letter-spacing and
+       the fixed 18px top padding weren't responsive, so at small sizes
+       the header plate shrank while the text/padding didn't — that's
+       what was squashing the labels together. */
+    font-size: clamp(6px, 1vw, 13px);
+    letter-spacing: clamp(0.2px, 0.15vw, 1px);
+    padding-top: clamp(6px, 2.5%, 18px);
+    color: #2b2620;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.2);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+
+/* ---------------------------------------------------------------------- */
+/* SCROLLABLE BODY — the table itself, sitting on the open parchment.
+   The original .hs-table / td / th rules from screens.css still apply;
+   we only retint them here to read against the parchment and hide the
+   stock <thead> since .hs-col-headers replaces it visually.              */
+/* ---------------------------------------------------------------------- */
+
+.hs-redesign .hs-body {
+    position: absolute;
+    top: 32%; /* just below the headers (headers are at 23%, height 9%) */
+    left: 20%; /* same left as .hs-col-headers */
+    width: 60%; /* same width as .hs-col-headers */
+    bottom: 5%;
+    overflow-y: auto;
+    scrollbar-width: none;
+    padding: 0;
+    margin: 0;
+}
+
+    .hs-redesign .hs-body::-webkit-scrollbar {
+        display: none;
+    }
+
+.hs-redesign .hs-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* ← forces columns to respect the widths you set */
+}
+
+    .hs-redesign .hs-table colgroup col:nth-child(1) {
+        width: 25%;
+    }
+
+    .hs-redesign .hs-table colgroup col:nth-child(2) {
+        width: 25%;
+    }
+
+    .hs-redesign .hs-table colgroup col:nth-child(3) {
+        width: 25%;
+    }
+
+    .hs-redesign .hs-table colgroup col:nth-child(4) {
+        width: 25%;
+    }
+
+
+    .hs-redesign .hs-table thead {
+        /* visually replaced by .hs-col-headers above */
+        display: none;
+    }
+
+    .hs-redesign .hs-table td {
+        border-bottom: none;
+        padding: clamp(2px, 0.6%, 8px) clamp(3px, 1vw, 9px);
+        font-family: var(--PX);
+        font-size: clamp(9px, 1.3vw, 17px);
+        color: #2b2620 !important;
+        text-align: center; /* match the centered header labels */
+        width: 25%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+        /* keep the score column's gold/yellow accent, just darkened slightly
+       to stay legible on the light parchment */
+        .hs-redesign .hs-table td:nth-child(2) {
+            color: #8a5a00 !important;
+            font-weight: bold;
+        }
+
+    .hs-redesign .hs-table tr:hover td {
+        background: rgba(120, 90, 40, 0.12);
+    }
+
+.hs-redesign .hs-empty-msg {
+    font-family: var(--PX);
+    font-size: clamp(10px, 1.3vw, 15px);
+    color: #2b2620;
+    opacity: 0.7;
+    padding: 10px 0;
+}
+
+
+/* ---------------------------------------------------------------------- */
+/* SCROLL-MOVER — purple crystal arrow track running down the right edge.
+   The track is the full-height hit area; the thumb image (image 6)
+   slides up/down inside it. Movement itself is driven by JS reading
+   #hs-body's scroll position (see hs-scrollbar-sync below) — pure CSS
+   cannot read scroll offset, so a tiny script is required for the motion.*/
+/* ---------------------------------------------------------------------- */
+
+.hs-scrollbar-track {
+    position: absolute;
+    right: 15%;
+    top: 30%;
+    width: clamp(10px, 3%, 30px);
+    height: 68%;
+    pointer-events: none;
+}
+
+.hs-scrollbar-thumb {
+    position: absolute;
+    left: -36%;
+    top: 10%; /* JS sets this to the live scroll percentage */
+    width: 100%;
+    height: auto;
+    transform: translateY(0%);
+    transition: top .08s linear;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+}
+
+
+/* ---------------------------------------------------------------------- */
+/* RESPONSIVE — narrow viewports                                          */
+/* ---------------------------------------------------------------------- */
+
+@media (max-width: 700px) {
+
+    .hs-menu-btn-label,
+    .hs-title-plaque-label {
+        letter-spacing: 0.5px;
+    }
+
+    .hs-col-header {
+        font-size: 6px;
+        letter-spacing: 0;
+        padding-top: 4px;
+    }
+
+    /* Give the headers/body a touch more width once the side margins
+       stop being needed for visual breathing room at this size */
+    .hs-col-headers,
+    .hs-redesign .hs-body {
+        left: 12%;
+        width: 76%;
+    }
+}
+
+@media (max-width: 420px) {
+    .hs-menu-btn {
+        width: clamp(56px, 16%, 100px);
+    }
+
+    .hs-title-plaque {
+        width: clamp(120px, 40%, 220px);
+    }
+
+    .hs-col-headers,
+    .hs-redesign .hs-body {
+        left: 6%;
+        width: 88%;
+    }
+}

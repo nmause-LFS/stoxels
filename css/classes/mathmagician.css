@@ -1,0 +1,331 @@
+﻿/* Modified to ensure the massive ring isn't clipped by any hidden overflow properties */
+.balloon-effect-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: visible !important; /* Double-check that nothing clips our mega ring */
+}
+
+/* The actual purple balloon styling */
+.arcane-balloon {
+    width: 24px;
+    height: 24px;
+    background: #a855f7;
+    border-radius: 50% 50% 50% 50% / 45% 45% 55% 55% !important;
+    display: block;
+    position: relative;
+    animation: riseAndPop 1.6s forwards ease-out;
+}
+
+    /* Little tie knot underneath */
+    .arcane-balloon::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: calc(50% - 3px);
+        width: 0;
+        height: 0;
+        border-left: 3px solid transparent;
+        border-right: 3px solid transparent;
+        border-bottom: 5px solid #a855f7;
+    }
+
+    /* ── ENLARGED PURPLE SHOCKWAVE RING EFFECT ── */
+    .arcane-balloon::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 100%;
+        border: 3px solid #d8b4fe;
+        border-radius: 50% !important;
+        pointer-events: none;
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+        animation: purpleShockwave 1.6s forwards ease-out;
+    }
+
+/* --- ANIMATION KEYFRAMES --- */
+
+@keyframes riseAndPop {
+    0% {
+        transform: translateY(15px) scale(0.2);
+        opacity: 0;
+    }
+
+    12% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    88% {
+        transform: translateY(-38px) scale(1.05);
+        opacity: 1;
+        background: #a855f7;
+    }
+
+    92% {
+        transform: translateY(-40px) scale(1.35);
+        background: #f3e8ff;
+        opacity: 0.9;
+    }
+
+    100% {
+        transform: translateY(-40px) scale(0);
+        opacity: 0;
+    }
+}
+
+@keyframes purpleShockwave {
+    0%, 88% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+        border-width: 5px; /* Slightly thicker initial border so it looks clean when stretched out */
+    }
+
+    92% {
+        opacity: 1;
+        border-color: #a855f7;
+    }
+
+    100% {
+        /* Increased from scale(3.5) to scale(6.5) for a massive, screen-ripping expansion */
+        transform: translate(-50%, -50%) scale(6.5);
+        opacity: 0;
+        border-width: 0.5px; /* Thins out into nothingness right at the edge of the explosion */
+    }
+}
+
+
+
+/* ── ARCANE EXPLODING STARS ── */
+.arcane-exploding-star {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    color: #c084fc; /* Bright lavender/purple stars */
+    font-size: 20px; /* Noticeable star visuals */
+    font-family: Arial, sans-serif;
+    line-height: 1;
+    pointer-events: none;
+    text-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7; /* Magical purple glow */
+    transform: translate(-50%, -50%) rotate(0deg) translate(0, 0) scale(1);
+    /* Animate using a highly accelerated curve to simulate an explosive blast */
+    animation: blastOutward 3s cubic-bezier(0.1, 0.8, 0.15, 1) forwards;
+    animation-delay: var(--delay);
+}
+
+@keyframes blastOutward {
+    0% {
+        /* Start tightly clustered at the center explosion point */
+        transform: translate(-50%, -50%) rotate(var(--angle)) translate(0, 0) scale(0.5) rotate(0deg);
+        opacity: 1;
+    }
+
+    15% {
+        /* Quick flash to full size early in the blast */
+        scale: 1.4;
+    }
+
+    80% {
+        opacity: 1;
+    }
+
+    100% {
+        /* Shoot out to its randomized massive off-screen distance, spinning rapidly along the way */
+        transform: translate(-50%, -50%) rotate(var(--angle)) translate(0, calc(-1 * var(--distance))) scale(0.4) rotate(720deg);
+        opacity: 0; /* Fade right at the edge of the screen boundaries */
+    }
+}
+
+
+
+
+
+/* ── Absolute Zero: Frozen Solid Jagged Floor Overlay ── */
+#ability-frozen-floor {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 140px; /* Slightly taller to accommodate the spikes */
+    z-index: 348;
+    pointer-events: none;
+    user-select: none;
+    /* Main body of the ice */
+    background: linear-gradient(180deg, rgba(225, 245, 255, 0.9) 0%, rgba(135, 210, 255, 0.85) 30%, rgba(40, 140, 220, 0.95) 100% );
+    /* This creates an organic, multi-crested jagged ice horizon line */
+    clip-path: polygon( 0% 65%, 4% 45%, 9% 55%, 15% 30%, 22% 58%, 28% 40%, 35% 25%, 41% 50%, 48% 35%, 53% 55%, 60% 20%, 68% 48%, 74% 38%, 81% 60%, 87% 28%, 93% 52%, 100% 40%, 100% 100%, 0% 100% );
+    /* Clean frosty outer highlight and inner glow depth */
+    box-shadow: inset 0 25px 30px rgba(255, 255, 255, 0.7);
+    filter: drop-shadow(0 -6px 12px rgba(100, 200, 255, 0.6));
+    opacity: 0;
+    transform: translateY(60px) scaleY(0.6);
+    transform-origin: bottom;
+    transition: transform 0.6s cubic-bezier(0.15, 0.85, 0.35, 1.1), opacity 0.4s ease;
+}
+
+    /* BACKGROUND SHARD LAYER 1: Adds crystal depth behind the main wall */
+    #ability-frozen-floor::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        bottom: 20px;
+        z-index: -1;
+        background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(100,180,240,0.5) 100%);
+        /* A completely different set of spikes offset from the front layer */
+        clip-path: polygon( 0% 40%, 7% 15%, 18% 50%, 30% 10%, 45% 45%, 55% 5%, 65% 35%, 78% 12%, 89% 45%, 100% 20%, 100% 100%, 0% 100% );
+        opacity: 0.7;
+    }
+
+    /* GLARE/LIGHT LAYER 2: Creates the sharp, angular reflections on the facets */
+    #ability-frozen-floor::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient( 45deg, rgba(255, 255, 255, 0.15) 0px, rgba(255, 255, 255, 0.15) 10px, transparent 10px, transparent 30px );
+        mix-blend-mode: overlay;
+    }
+
+    /* Active Class states */
+    #ability-frozen-floor.active {
+        opacity: 1;
+        transform: translateY(0) scaleY(1);
+        animation: absolute-ice-pulse 3s ease-in-out infinite alternate;
+    }
+
+@keyframes absolute-ice-pulse {
+    0% {
+        filter: drop-shadow(0 -4px 8px rgba(135,206,250,0.5)) brightness(1);
+    }
+
+    100% {
+        filter: drop-shadow(0 -10px 20px rgba(174,228,255,0.85)) brightness(1.1);
+    }
+}
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------ABSOLUTE ZERO: BLIZZARD OVERLAY----------------------
+    ------------------------------------------------------------------------
+    Moved here from class.css — this effect is exclusive to the Mathmagician.
+    ------------------------------------------------------------------------
+*/
+
+/* Full-screen container for falling snowflakes. Sits above the puzzle board. */
+#ability-blizzard-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 350;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(160,220,255,0.08) 0%, rgba(100,180,255,0.04) 100%);
+    overflow: hidden;
+}
+
+/* Individual falling snowflake. Position and animation-duration are set inline by JS. */
+.blizzard-flake {
+    position: absolute;
+    top: -20px;
+    color: #cceeff;
+    font-size: 14px;
+    opacity: 0;
+    animation: blizzard-fall linear forwards;
+    user-select: none;
+    pointer-events: none;
+    text-shadow: 0 0 6px #9de3ff;
+}
+
+/* Flake falls from above the viewport to below it, drifting sideways and spinning. */
+@keyframes blizzard-fall {
+    0% {
+        opacity: 0;
+        transform: translateY(0) translateX(0) rotate(0deg);
+    }
+
+    10% {
+        opacity: 0.9;
+    }
+
+    90% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(110vh) translateX(40px) rotate(360deg);
+    }
+}
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------ABSOLUTE ZERO: ICY SCREEN TINT-----------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Blue-tinted full-screen border that pulses gently while the freeze is active. */
+#ability-ice-tint {
+    position: fixed;
+    inset: 0;
+    z-index: 349;
+    pointer-events: none;
+    background: rgba(100, 200, 255, 0.07);
+    border: 3px solid rgba(100, 200, 255, 0.25);
+    animation: ice-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes ice-pulse {
+    0%, 100% {
+        box-shadow: inset 0 0 40px rgba(100,200,255,0.12);
+    }
+
+    50% {
+        box-shadow: inset 0 0 80px rgba(100,200,255,0.25);
+    }
+}
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------ARCANE REVEAL: SPARKLE BURST-------------------------
+    ------------------------------------------------------------------------
+    Moved here from class.css — this effect is exclusive to the Mathmagician.
+    ------------------------------------------------------------------------
+*/
+
+/* A single sparkle particle. Position and delay are set inline by JS. */
+.arcane-sparkle {
+    position: absolute;
+    pointer-events: none;
+    z-index: 310;
+    font-size: 16px;
+    opacity: 0;
+    animation: sparkle-burst 0.7s ease-out forwards;
+    user-select: none;
+}
+
+/* Particle rises and fades out after a brief flash. */
+@keyframes sparkle-burst {
+    0% {
+        opacity: 1;
+        transform: scale(0.5) translateY(0);
+    }
+
+    60% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1.4) translateY(-28px);
+    }
+}

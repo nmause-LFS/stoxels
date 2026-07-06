@@ -1,0 +1,893 @@
+﻿/*
+    ========================================================================
+    class.css
+    ========================================================================
+    Covers the CLASS SELECTION OVERLAY, CLASS UPGRADE OVERLAY, ASCENDENCY
+    SELECTION / UPGRADE OVERLAY, and the IN-GAME CLASS HUD PANEL.
+
+    Active-ability visual effects that belong to a specific class have been
+    moved to their dedicated CSS files:
+      - mathmagician.css  : Absolute Zero (blizzard, ice tint), Arcane Reveal sparkles
+      - statistician.css  : Data Strike slash, Diagonal Strike slash
+      - probabilist.css   : Precision Mark crosshair, Field Scan beam, Divine Intervention
+      - bayesian.css      : Type I Error Shield cell shimmer
+
+    CSS variables used throughout (defined elsewhere):
+      --PX          pixel / monospace font
+      --accent      primary accent colour
+      --accent2     secondary accent colour
+      --surface     card / panel background
+      --border      subtle border colour
+      --border2     stronger border colour
+      --purple      purple accent (#9b59b6)
+      --green       green accent
+*/
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------SHARED COLOUR TOKENS---------------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+
+    Passive-skill label colour  : #f39c12  (orange)
+    Active-skill label colour   : #3498db  (blue)
+    Ascendency accent colour    : #f1c40f  (gold)
+    Cooldown timer colour       : #e67e22  (amber)
+    Armed / danger colour       : #e74c3c  (red)
+    Shield / variance colour    : #9b59b6  (purple, also --purple)
+*/
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------CLASS SELECTION OVERLAY LAYOUT-----------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Full-screen dimmed backdrop shown during class selection and upgrade screens. */
+#class-selection-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 2500;
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+    /* Flex display is applied by adding the .show class from JS. */
+    #class-selection-overlay.show {
+        display: flex;
+    }
+
+/* Constrains the content to a readable max-width inside the backdrop. */
+#class-selection-content {
+    max-width: 960px;
+    width: 100%;
+}
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------CLASS SELECTION OVERLAY HEADER-----------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Centred header block shown above every overlay screen. */
+.cs-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+/* Main headline, e.g. "CHOOSE YOUR CLASS". */
+.cs-title {
+    font-family: var(--PX);
+    font-size: 22px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-shadow: 0 0 18px var(--accent);
+    margin-bottom: 8px;
+}
+
+/* Supporting line beneath the title, e.g. "You completed a world!". */
+.cs-subtitle {
+    font-family: var(--PX);
+    font-size: 15px;
+    color: var(--accent2);
+    opacity: 0.8;
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.8;
+    font-weight: bold;
+}
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------CLASS SELECTION CARDS--------------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Three-column card grid for the initial class selection screen. */
+.cs-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+/* Stack to a single column on narrow screens. */
+@media (max-width: 700px) {
+    .cs-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Individual class card. Uses --cls-color / --cls-light custom props injected
+   per-card by JS so each class keeps its own colour scheme. */
+.cs-card {
+    background: var(--surface);
+    border: 2px solid var(--cls-color, var(--border));
+    border-left-width: 4px;
+    padding: 18px 16px;
+    cursor: pointer;
+    transition: background 0.18s, box-shadow 0.18s, transform 0.1s;
+    position: relative;
+    overflow: hidden;
+}
+
+    /* Subtle top-left shine overlay — purely decorative. */
+    .cs-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255,255,255,0.02) 0%, transparent 60%);
+        pointer-events: none;
+    }
+
+
+/* Large class emoji icon centred at the top of a card. */
+.cs-card-icon {
+    font-size: 36px;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+/* Class name heading inside a card. */
+.cs-card-name {
+    font-family: var(--PX);
+    font-size: 20px;
+    letter-spacing: 2px;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+/* Short flavour / description text below the class name. */
+.cs-card-desc {
+    font-size: 15px;
+    color: #888;
+    text-align: center;
+    line-height: 1.6;
+    margin-bottom: 14px;
+    font-style: italic;
+}
+
+/* Vertical stack of ability preview blocks inside a card. */
+.cs-card-abilities {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------ABILITY BLOCK (INSIDE CARDS)-------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Single ability row shown on selection and upgrade cards. */
+.cs-ability {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+/* "⚡ PASSIVE" / "🎯 ACTIVE 1" label at the top of an ability block. */
+.cs-ability-tag {
+    font-family: var(--PX);
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+}
+
+    .cs-ability-tag.passive {
+        color: #f39c12;
+    }
+
+    .cs-ability-tag.active {
+        color: #3498db;
+    }
+
+/* Ability name line. */
+.cs-ability-name {
+    font-family: var(--PX);
+    font-size: 15px;
+    color: var(--accent2);
+}
+
+/* Ability description line — green tint to distinguish from normal text. */
+.cs-ability-desc {
+    font-size: 15px;
+    color: #00ff90;
+    line-height: 1.6;
+}
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------CARD SELECT / CTA BUTTON-----------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* "▶ SELECT" / "▶ ASCEND" call-to-action button at the bottom of a card. */
+.cs-card-cta {
+    font-family: var(--PX);
+    font-size: 15px;
+    text-align: center;
+    color: var(--cls-light, var(--accent));
+    border: 1px solid var(--cls-color, var(--accent));
+    padding: 6px;
+    letter-spacing: 1px;
+    transition: background 0.15s;
+}
+
+
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------CLASS UPGRADE SCREEN---------------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Three-column grid for the skill upgrade cards (passive + active1 + active2). */
+.cs-upgrade-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+    .cs-upgrade-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Individual upgrade card — flex column so the CTA button can pin to the bottom. */
+.cs-upgrade-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 2px solid var(--border2);
+    border-left: 4px solid var(--purple);
+    padding: 18px 16px;
+    cursor: pointer;
+    transition: background 0.18s, box-shadow 0.18s, transform 0.1s;
+}
+
+
+    /* Greyed-out state when a skill is already at max rank. */
+    .cs-upgrade-card.maxed {
+        opacity: 0.5;
+        cursor: default;
+        border-left-color: #444;
+    }
+
+/* "⚡ PASSIVE · LEVEL 1 → 2" header line on an upgrade card. */
+.cs-upgrade-tag {
+    font-family: var(--PX);
+    font-size: 15px;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    display: block;
+}
+
+    .cs-upgrade-tag.passive {
+        color: #f39c12;
+    }
+
+    .cs-upgrade-tag.active {
+        color: #3498db;
+    }
+
+/* Skill name heading on the upgrade card. */
+.cs-upgrade-name {
+    font-family: var(--PX);
+    font-size: 20px;
+    color: var(--accent2);
+    margin-bottom: 10px;
+}
+
+/* Current rank description row — muted style to distinguish from the "new" row. */
+.cs-upgrade-current {
+    font-size: 15px;
+    color: #888;
+    line-height: 1.5;
+    margin-bottom: 6px;
+    padding: 6px 8px;
+    background: rgba(0,0,0,0.25);
+    border-left: 2px solid #444;
+}
+
+/* Next rank description row — green tint to signal improvement. */
+.cs-upgrade-new {
+    font-size: 15px;
+    color: var(--accent2);
+    line-height: 1.5;
+    margin-bottom: 10px;
+    padding: 6px 8px;
+    background: rgba(46, 213, 115, 0.06);
+    border-left: 2px solid var(--green);
+}
+
+/* "✓ MAX LEVEL" badge shown when a skill is already capped. */
+.cs-upgrade-maxed {
+    font-family: var(--PX);
+    font-size: 15px;
+    color: var(--green);
+    margin-top: 8px;
+    letter-spacing: 1px;
+}
+
+/* "▶ UPGRADE PASSIVE" call-to-action button — pinned to the bottom via margin-top: auto. */
+.cs-upgrade-cta {
+    font-family: var(--PX);
+    font-size: 15px;
+    color: var(--purple);
+    border: 1px solid var(--purple);
+    padding: 5px 8px;
+    text-align: center;
+    letter-spacing: 1px;
+    margin-top: auto;
+    transition: background 0.15s, color 0.15s;
+}
+
+.cs-upgrade-card:not(.maxed):hover .cs-upgrade-cta {
+    background: var(--purple);
+    color: #fff;
+}
+
+/* "SKIP" / "CLOSE" button shown at the bottom when all skills are maxed. */
+.cs-skip-btn {
+    font-family: var(--PX);
+    font-size: 10px;
+    background: transparent;
+    border: 1px solid #444;
+    color: #666;
+    padding: 8px 20px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+    .cs-skip-btn:hover {
+        border-color: var(--accent2);
+        color: var(--accent2);
+    }
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------ASCENDENCY SELECTION SCREEN--------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Two-column layout for the ascendency selection cards.
+   Inherits .cs-cards grid, but overrides column count and max-width. */
+.cs-ascendency-cards {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 680px;
+    margin: 0 auto;
+    align-items: center;
+}
+
+@media (max-width: 600px) {
+    .cs-ascendency-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Gold top-border distinguishes ascendency cards from base-class cards. */
+.cs-ascendency-card {
+    border-top: 3px solid #f1c40f;
+}
+
+/* "BERSERKER" / "PALADIN" archetype label badge inside an ascendency card. */
+.cs-archetype-tag {
+    font-family: var(--PX);
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #f1c40f;
+    background: rgba(241, 196, 15, 0.1);
+    border: 1px solid rgba(241, 196, 15, 0.35);
+    padding: 2px 8px;
+    text-align: center;
+    margin-bottom: 8px;
+    display: block;
+}
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------ASCENDENCY UPGRADE SCREEN----------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Upgrade cards for ascendency skills use gold accents instead of purple. */
+.cs-ascendency-upgrade-card {
+    border-left-color: #f1c40f;
+}
+
+    .cs-ascendency-upgrade-card:not(.maxed):hover {
+        background: rgba(241, 196, 15, 0.08);
+        box-shadow: 0 0 18px -4px #f1c40f;
+    }
+
+        /* CTA button also switches to gold on hover. */
+        .cs-ascendency-upgrade-card:not(.maxed):hover .cs-upgrade-cta {
+            background: #f1c40f;
+            color: #000;
+            border-color: #f1c40f;
+        }
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------IN-GAME CLASS HUD PANEL (COMPACT)--------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+
+    The compact HUD is a small draggable pill that sits in the top-left corner.
+    It shows the class icon and one skill-button per active ability slot.
+    The drag handle doubles as a visual indicator for Variance Shield stacks
+    (Mathmagician) and the Statistician momentum streak.
+
+    NOTE: The bulk of the compact-HUD styles are injected at runtime by
+    injectCompactHUDStyles() in class-hud.js. Only the styles that need to be
+    available before that function fires (z-index, initial position, display)
+    are kept here.
+*/
+
+/* Outer panel — hidden until the player picks a class. */
+#class-hud-panel {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    width: fit-content;
+    padding: 0;
+    position: fixed;
+    left: 150px;
+    top: 80px;
+    z-index: 200;
+    background: transparent;
+    border: none;
+    font-size: 9px;
+    flex-shrink: 0;
+    align-self: flex-start;
+    user-select: none;
+}
+
+/* Drag handle — the clickable row that contains the class icon and skill buttons. */
+#class-hud-drag-handle {
+    width: auto;
+    padding: 4px 5px;
+    cursor: grab;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--PX);
+    font-size: 8px;
+    color: #555;
+    letter-spacing: 1px;
+}
+
+    #class-hud-drag-handle:active {
+        cursor: grabbing;
+    }
+
+/* NOTE: the old `#puzzle-scaler-wrap.ability-armed { cursor: crosshair }` rule that used
+   to live here has been replaced by the custom animated targeting reticle in
+   targeting-reticle.css/.js (see body.ability-armed there). That old rule only ever
+   covered the wrapper element and was silently overridden by .gc's `cursor: pointer`
+   whenever the mouse was actually over a grid cell. */
+
+/* Mobile: HUD becomes a horizontal strip across the top instead of a vertical pill. */
+@media (max-width: 700px) {
+    #class-hud-panel {
+        width: 100%;
+        min-width: unset;
+        border-right: 1px solid var(--border);
+        border-bottom: none;
+        flex-direction: row;
+        flex-wrap: wrap;
+        max-height: none;
+    }
+}
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------HUD SKILL BUTTONS------------------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Ascendency skill buttons get a gold border to distinguish them from base-
+   class skill buttons (which default to the blue HUD_COLOR_ACTIVE). */
+.chud-asc-btn {
+    border-color: #f1c40f !important;
+}
+
+    .chud-asc-btn:hover:not(.on-cd) {
+        background: rgba(241, 196, 15, 0.15) !important;
+    }
+
+    /* Index number inside an ascendency button is also gold. */
+    .chud-asc-btn .chud-btn-idx {
+        color: #f1c40f;
+    }
+
+/* Small divider icon (the ascendency class emoji) between base and ascendency buttons. */
+.chud-asc-sep {
+    font-size: 13px;
+    opacity: 0.6;
+    line-height: 1;
+    padding: 0 2px;
+    cursor: default;
+}
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------HUD COOLDOWN MINI BAR (MINIMISED MODE)---------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Horizontal bar shown when the HUD is minimised — displays slot index + cd/ready. */
+#chud-mini-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    flex: 1;
+    justify-content: center;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* "1: Ready ✓" label — green when an ability is off cooldown. */
+.chud-mini-ready {
+    color: #2ecc71;
+    font-weight: bold;
+}
+
+/* "1: 1:30" countdown label — amber while an ability is on cooldown. */
+.chud-mini-cd {
+    color: #e67e22;
+}
+
+/* Thin separator between slot entries in the mini bar. */
+.chud-mini-sep {
+    color: var(--border);
+    opacity: 0.5;
+    padding: 0 2px;
+}
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------VARIANCE SHIELD HUD VISUALS (MATHMAGICIAN)-----------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+
+    When the Mathmagician has free-mistake charges (Variance Shield stacks),
+    the drag handle gains coloured box-shadow rings — one ring per stack,
+    up to 3+ stacks where a looping pulse animation kicks in.
+    The stack count is stored in data-shield-stacks on #class-hud-panel.
+*/
+
+/* Any stacks present: tint the drag-handle border to purple. */
+#class-hud-panel[data-shield-stacks]:not([data-shield-stacks="0"]) #class-hud-drag-handle {
+    border-color: rgba(155, 89, 182, 0.6);
+}
+
+/* 1 stack: single thin ring. */
+#class-hud-panel[data-shield-stacks="1"] #class-hud-drag-handle {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 0 2px rgba(155, 89, 182, 0.55), 0 0 8px 2px rgba(155, 89, 182, 0.25);
+}
+
+/* 2 stacks: double ring with extra outer glow. */
+#class-hud-panel[data-shield-stacks="2"] #class-hud-drag-handle {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 0 2px rgba(155, 89, 182, 0.65), 0 0 0 5px rgba(155, 89, 182, 0.30), 0 0 14px 4px rgba(155, 89, 182, 0.35);
+}
+
+/* 3+ stacks: triple ring + pulsing animation. */
+#class-hud-panel[data-shield-stacks="3"] #class-hud-drag-handle,
+#class-hud-panel[data-shield-stacks="4"] #class-hud-drag-handle,
+#class-hud-panel[data-shield-stacks="5"] #class-hud-drag-handle {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 0 2px rgba(155, 89, 182, 0.75), 0 0 0 5px rgba(155, 89, 182, 0.40), 0 0 0 9px rgba(155, 89, 182, 0.18), 0 0 20px 6px rgba(155, 89, 182, 0.45);
+    animation: shield-pulse 2s ease-in-out infinite;
+}
+
+@keyframes shield-pulse {
+    0%, 100% {
+        filter: brightness(1);
+    }
+
+    50% {
+        filter: brightness(1.18);
+    }
+}
+
+/* Horizontal row of small pip dots rendered inside the drag handle. */
+.chud-shield-pips {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-left: 2px;
+}
+
+/* Single pip dot. */
+.chud-shield-pip {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #9b59b6;
+    box-shadow: 0 0 4px 1px rgba(155, 89, 182, 0.7);
+    animation: pip-glow 1.8s ease-in-out infinite;
+}
+
+    /* Stagger the glow animation so pips don't all pulse in sync. */
+    .chud-shield-pip:nth-child(2) {
+        animation-delay: 0.3s;
+    }
+
+    .chud-shield-pip:nth-child(3) {
+        animation-delay: 0.6s;
+    }
+
+@keyframes pip-glow {
+    0%, 100% {
+        opacity: 0.7;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.25);
+        box-shadow: 0 0 6px 2px rgba(155,89,182,0.9);
+    }
+}
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------LEGACY HUD ELEMENTS (EXPANDED HUD)-------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+
+    These classes were used by the old expanded-panel HUD layout that has been
+    replaced by the compact draggable pill. They are kept here for safety in
+    case any residual HTML still references them. Once confirmed unused they
+    can be deleted.
+*/
+
+/* Outer section block used by the old expanded HUD. */
+.chud-section {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--border);
+    padding: 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Class icon in the old expanded HUD. */
+.chud-icon {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 2px;
+}
+
+/* Class name label in the old expanded HUD. */
+.chud-name {
+    font-family: var(--PX);
+    font-size: 9px;
+    text-align: center;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+}
+
+/* "PASSIVE" / "ACTIVE" label line in the old expanded HUD. */
+.chud-label {
+    font-family: var(--PX);
+    font-size: 8px;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+    .chud-label.passive {
+        color: #f39c12;
+    }
+
+    .chud-label.active-lbl {
+        color: #3498db;
+    }
+
+/* Rank badge pill in the old expanded HUD. */
+.chud-lv {
+    font-size: 8px;
+    opacity: 0.7;
+    background: rgba(255,255,255,0.08);
+    padding: 1px 3px;
+}
+
+/* Skill name text in the old expanded HUD. */
+.chud-skill-name {
+    font-family: var(--PX);
+    font-size: 10px;
+    color: var(--accent2);
+}
+
+/* Skill description text in the old expanded HUD — green tint. */
+.chud-skill-desc {
+    font-size: 12px;
+    color: #00ff90;
+    line-height: 1.6;
+}
+
+/* Cooldown countdown in the old expanded HUD. */
+.chud-cooldown {
+    font-family: var(--PX);
+    font-size: 10px;
+    color: #e67e22;
+    text-align: center;
+    margin: 2px 0;
+}
+
+/* Rank suffix appended inside a skill name string. */
+.chud-rank {
+    font-family: var(--PX);
+    font-size: 8px;
+}
+
+/* Clickable active-skill section in the old expanded HUD. */
+.chud-active-section {
+    transition: background 0.15s, box-shadow 0.15s;
+    user-select: none;
+}
+
+    .chud-active-section:not(.on-cooldown):hover {
+        background: rgba(52, 152, 219, 0.12) !important;
+        box-shadow: 0 0 8px -2px #3498db;
+    }
+
+    .chud-active-section.armed:not(.on-cooldown):hover {
+        background: rgba(231, 76, 60, 0.18) !important;
+        box-shadow: 0 0 8px -2px #e74c3c;
+    }
+
+    /* Red pulse ring while the ability is armed and waiting for a cell click. */
+    .chud-active-section.armed {
+        animation: armPulse 0.8s ease-in-out infinite alternate;
+    }
+
+@keyframes armPulse {
+    from {
+        box-shadow: 0 0 4px #e74c3c;
+    }
+
+    to {
+        box-shadow: 0 0 12px #e74c3c, 0 0 24px rgba(231,76,60,0.4);
+    }
+}
+
+/* "Click a cell to activate" hint text in the old expanded HUD. */
+.chud-armed-hint {
+    font-family: var(--PX);
+    font-size: 8px;
+    color: #e74c3c;
+    margin-top: 5px;
+    letter-spacing: 0.5px;
+    opacity: 0.9;
+}
+
+/* Darkened overlay covering the skill description area while on cooldown. */
+.chud-cd-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 10, 20, 0.82);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    pointer-events: none;
+}
+
+/* Large countdown number on the cooldown overlay. */
+.chud-cd-timer {
+    font-family: var(--PX);
+    font-size: 16px;
+    color: #e67e22;
+    letter-spacing: 1px;
+}
+
+/* "COOLDOWN" label beneath the countdown number. */
+.chud-cd-label {
+    font-family: var(--PX);
+    font-size: 8px;
+    color: #888;
+    letter-spacing: 1px;
+}
+
+/*
+    ------------------------------------------------------------------------
+    -------------------COMPANION CHARGE ANIMATION---------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+
+    Applied to companion sprites (#avatar-companion-drifter,
+    #avatar-companion-brownian) while they are mid-charge to a grid cell.
+    The class is added/removed by _chargeCompanionToCell in player_sprite.js.
+*/
+
+/* Scale up slightly and add a glow while the companion is charging. */
+.companion-charging {
+    filter: brightness(1.3) drop-shadow(0 0 8px rgba(255, 220, 100, 0.85));
+    transform: scale(1.15);
+    transition: filter 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+}
+
+/* Minimize button that toggled the old expanded HUD (now a no-op stub in JS). */
+#class-hud-minimize-btn {
+    margin-left: auto;
+    background: transparent;
+    border: 1px solid #444;
+    color: #666;
+    font-size: 9px;
+    padding: 1px 5px;
+    cursor: pointer;
+    font-family: var(--PX);
+    letter-spacing: 1px;
+    line-height: 1.4;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+    #class-hud-minimize-btn:hover {
+        border-color: var(--accent2);
+        color: var(--accent2);
+    }

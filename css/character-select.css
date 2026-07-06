@@ -1,0 +1,335 @@
+/* -----------------------------------------------------------------------
+   CHARACTER SELECTION SCREEN
+   ----------------------------------------------------------------------- */
+
+#screen-character-select {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    padding: clamp(12px, 4vw, 24px) clamp(10px, 3vw, 16px);
+    background: var(--bg, #0d0d1a);
+    overflow-y: auto;
+}
+
+#char-select-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1000px; /* was invalid ("max-width: px;") and silently ignored — fixed to match .cs-cards' own cap */
+    gap: clamp(10px, 2.5vw, 16px);
+}
+
+/* Title */
+.cs-title {
+    font-family: var(--PX, monospace);
+    font-size: clamp(18px, 3vw, 28px);
+    color: var(--accent, #e0e0ff);
+    letter-spacing: 4px;
+    text-align: center;
+    margin-bottom: 2px;
+}
+
+.cs-sub {
+    font-family: var(--PX, monospace);
+    font-size: clamp(9px, 1.6vw, 11px);
+    color: var(--accent2, #8888aa);
+    letter-spacing: 1px;
+    text-align: center;
+    opacity: 0.75;
+    margin-bottom: 8px;
+}
+
+/* Card row — auto-fits as many ~280px columns as fit, so it naturally
+   collapses 3 -> 2 -> 1 as the viewport narrows, no hard breakpoint to
+   maintain. minmax()'s lower bound is the "never squeeze narrower than
+   this" floor; raise/lower it to tune where columns drop. */
+.cs-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+    gap: clamp(14px, 3vw, 28px);
+    width: 100%;
+    max-width: 1000px;
+    justify-items: center; /* Centers the cards in their grid cells */
+}
+
+/* Individual card */
+.cs-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    width: 100%;
+    max-width: 320px; /* keeps a lone/last card from stretching too wide on a 1-column row */
+    max-height: none;
+    background: rgba(255,255,255,0.03);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: clamp(12px, 3vw, 16px) clamp(14px, 4vw, 20px);
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    user-select: none;
+    overflow: hidden;
+}
+
+    .cs-card:hover {
+        border-color: var(--char-accent, #aaa);
+        transform: translateY(-3px);
+        box-shadow: 0 0 20px var(--char-glow, rgba(255,255,255,0.1));
+    }
+
+    .cs-card.selected {
+        border-color: var(--char-accent, #fff);
+        box-shadow: 0 0 28px var(--char-glow, rgba(255,255,255,0.2));
+        background: rgba(255,255,255,0.06);
+    }
+
+/* Ambient glow background element */
+.cs-card-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 30%, var(--char-glow, transparent) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.cs-card:hover .cs-card-glow,
+.cs-card.selected .cs-card-glow {
+    opacity: 1;
+}
+
+/* Character image — height now scales with the card's own width via vw,
+   clamped so it never gets absurdly short (narrow card) or huge (wide card) */
+.cs-card-img {
+    width: 100%;
+    height: clamp(110px, 22vw, 180px);
+    max-height: clamp(110px, 22vw, 180px);
+    object-fit: contain;
+    display: block;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 4px 12px var(--char-glow, transparent));
+    transition: filter 0.2s, transform 0.2s;
+    position: relative;
+    z-index: 1;
+    /* Removed flex-shrink: 0; which can sometimes force flex items to stay huge */
+}
+
+.cs-card:hover .cs-card-img,
+.cs-card.selected .cs-card-img {
+    filter: drop-shadow(0 4px 20px var(--char-accent, #fff)) brightness(1.05);
+    transform: scale(1.04);
+}
+
+/* Card text */
+.cs-card-body {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.cs-card-name {
+    font-family: var(--PX, monospace);
+    font-size: clamp(16px, 3.2vw, 20px);
+    color: var(--char-accent, #fff);
+    letter-spacing: 3px;
+    margin-bottom: 4px;
+}
+
+.cs-card-tag {
+    font-family: var(--PX, monospace);
+    font-size: clamp(9px, 1.8vw, 10px);
+    color: var(--char-accent, #aaa);
+    letter-spacing: 2px;
+    opacity: 0.8;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.cs-card-section {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+    .cs-card-section:last-child {
+        margin-bottom: 0;
+    }
+
+.cs-card-section-label {
+    font-family: var(--PX, monospace);
+    font-size: clamp(8px, 1.6vw, 9px);
+    color: var(--char-accent, #aaa);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    opacity: 0.85;
+    margin-bottom: 3px;
+}
+
+.cs-card-section-text {
+    font-family: var(--PX, monospace);
+    font-size: clamp(9px, 1.8vw, 10px);
+    color: var(--accent2, #8888aa);
+    line-height: 1.7;
+    letter-spacing: 0.5px;
+}
+
+/* Selection checkmark */
+.cs-card-check {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-size: clamp(12px, 2.4vw, 14px);
+    color: var(--char-accent, #fff);
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 2;
+}
+
+.cs-card.selected .cs-card-check {
+    opacity: 1;
+}
+
+/* Confirm button */
+.cs-confirm-btn {
+    font-family: var(--PX, monospace);
+    font-size: clamp(11px, 2.2vw, 13px);
+    letter-spacing: 3px;
+    padding: clamp(10px, 2.4vw, 12px) clamp(24px, 8vw, 40px);
+    background: transparent;
+    border: 2px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.25);
+    cursor: not-allowed;
+    transition: border-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.1s;
+    border-radius: 2px;
+    margin-top: 8px;
+}
+
+    .cs-confirm-btn:not(.disabled) {
+        cursor: pointer;
+    }
+
+        .cs-confirm-btn:not(.disabled):hover {
+            box-shadow: 0 0 16px currentColor;
+            transform: translateY(-1px);
+        }
+
+        .cs-confirm-btn:not(.disabled):active {
+            transform: translateY(0);
+        }
+
+
+.cs-trait-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.cs-trait-icon {
+    flex-shrink: 0;
+    font-size: clamp(12px, 2.6vw, 15px);
+}
+
+.cs-trait-name {
+    font-weight: bold;
+    display: block;
+    font-size: clamp(12px, 2.6vw, 15px);
+}
+
+.cs-trait-desc {
+    font-size: clamp(12px, 2.6vw, 15px);
+}
+
+/* -----------------------------------------------------------------------
+   CHARACTER AVATAR — LEVEL SELECT TOP BAR
+   ----------------------------------------------------------------------- */
+
+.ls-char-avatar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 8px 3px 4px;
+    border: 1px solid var(--char-accent, rgba(255,255,255,0.2));
+    border-radius: 2px;
+    background: rgba(255,255,255,0.04);
+    box-shadow: 0 0 8px var(--char-glow, transparent);
+    cursor: default;
+    transition: box-shadow 0.2s;
+    flex-shrink: 0;
+}
+
+    .ls-char-avatar:hover {
+        box-shadow: 0 0 14px var(--char-glow, transparent);
+    }
+
+.ls-char-avatar-img {
+    width: clamp(36px, 6vw, 60px);
+    height: clamp(36px, 6vw, 60px);
+    object-fit: contain;
+}
+
+.ls-char-avatar-name {
+    font-family: var(--PX, monospace);
+    font-size: clamp(8px, 1.6vw, 10px);
+    letter-spacing: 2px;
+    color: var(--char-accent, #fff);
+}
+
+
+
+/* Container for Syla's flower sprout effect */
+.syla-flower-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Crucial: ensures it doesn't block player clicks or hovers */
+    z-index: 10; /* Renders above the cell background */
+    overflow: visible; /* Allows flowers to organically grow outside strict tile boundaries */
+}
+
+/* Individual sprouted flower or leaf */
+.syla-sprouted-flower {
+    position: absolute;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: 1.3rem;
+    opacity: 0;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    /* 5-second animation with a bouncy, organic entrance curve */
+    animation: syla-sprout-and-fade 5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Keyframes handling the lifetime of the nature effect */
+@keyframes syla-sprout-and-fade {
+    0% {
+        transform: translate(-50%, -50%) scale(0) rotate(0deg);
+        opacity: 0;
+    }
+    /* Sprout and bloom quickly within the first half-second */
+    10% {
+        transform: translate(-50%, -50%) scale(var(--target-scale, 1)) rotate(var(--target-rotate, 0deg));
+        opacity: 1;
+    }
+    /* Gentle swaying and growing upwards over time */
+    35% {
+        transform: translate(-50%, calc(-50% - 4px)) scale(calc(var(--target-scale, 1) * 1.08)) rotate(calc(var(--target-rotate, 0deg) + 6deg));
+    }
+
+    65% {
+        transform: translate(-50%, calc(-50% - 2px)) scale(var(--target-scale, 1)) rotate(calc(var(--target-rotate, 0deg) - 4deg));
+        opacity: 1;
+    }
+    /* Start floating up slightly and fade away at the 5-second mark */
+    90% {
+        transform: translate(-50%, calc(-50% - 6px)) scale(var(--target-scale, 1)) rotate(var(--target-rotate, 0deg));
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-50%, calc(-50% - 12px)) scale(0.4) rotate(var(--target-rotate, 0deg));
+        opacity: 0;
+    }
+}

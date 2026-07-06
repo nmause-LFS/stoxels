@@ -1,0 +1,744 @@
+/*
+    ------------------------------------------------------------------------
+    ----------------------------LAYOUT: PUZZLE WRAPPER----------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Outer wrapper that places puzzle and sidebar side by side */
+.puzzle-and-sidebar {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start; /* align children to top */
+    justify-content: center; /* center the whole game on screen */
+    width: 100%;
+    gap: 0;
+    flex-shrink: 0; /* prevent the game from squishing */
+}
+
+/* Scrollable container around the puzzle table.
+   overflow-y hidden prevents an accidental vertical scrollbar. */
+.puzzle-scaler-inner,
+#puzzle-scaler-wrap {
+    overflow-x: visible;
+    overflow-y: visible;
+}
+
+/* The table itself does not scroll — scrolling is handled by the wrapper above */
+.ptable-scroll {
+    overflow-x: visible;
+}
+
+
+
+
+/*
+    ------------------------------------------------------------------------
+    ----------------------------LAYOUT: GAME META BAR-----------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Full-width bar that holds puzzle name, timer and score.
+   CSS Grid with named areas is used instead of flex + absolute
+   positioning: it reserves real space for the clock column no matter
+   how wide/narrow the bar gets, and — because grid-area placement is
+   independent of source order — it doesn't require any change to the
+   HTML markup (the clock element can stay wherever it already is in
+   the DOM). This replaces the old title-screen-style overlap bug. */
+.game-meta {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-areas: "left clock right";
+    align-items: center;
+    width: 100%;
+    padding: clamp(4px, 1vw, 6px) clamp(6px, 1.5vw, 10px);
+    box-sizing: border-box;
+    flex-shrink: 0;
+    position: relative;
+    min-height: clamp(56px, 9vw, 80px);
+    column-gap: clamp(6px, 1.5vw, 16px);
+    row-gap: 4px;
+}
+
+/* Left column: puzzle name, mod tags, bonus hint */
+.game-meta-rows-left {
+    grid-area: left;
+    min-width: 0; /* allow the column to actually shrink below content size */
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    z-index: 1;
+}
+
+/* Right column: score display and action buttons */
+.game-meta-right {
+    grid-area: right;
+    min-width: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: clamp(6px, 1.2vw, 10px);
+    z-index: 1;
+}
+
+/* ----- Narrow-screen breakpoint -----
+   Below this width the 3-column layout has no room to breathe.
+   Stack left / clock / right vertically instead of shrinking further. */
+@media (max-width: 640px) {
+    .game-meta {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "left"
+            "clock"
+            "right";
+        min-height: 0;
+    }
+
+    .game-meta-right {
+        justify-content: center;
+    }
+}
+
+/* Generic row containers inside the left meta column */
+.game-meta-row1,
+.game-meta-row2,
+.game-meta-row3 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Timer block — now a normal grid child (grid-area: clock) instead of
+   position:absolute, so the layout always reserves real space for it
+   and it can never sit on top of the score/level buttons again. */
+.game-meta-clock {
+    grid-area: clock;
+    position: relative; /* anchors the .gtb-pen badge below */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(4px, 1vw, 8px);
+    pointer-events: none;
+    z-index: 0;
+    min-width: 0;
+}
+
+    /* Clock emoji / icon */
+    .game-meta-clock .timer-icon {
+        font-size: clamp(14px, 2.2vw, 22px);
+        line-height: 1;
+    }
+
+    /* The actual time value (e.g. 02:34) */
+    .game-meta-clock .timer-val {
+        font-family: var(--PX);
+        font-size: clamp(18px, 3.4vw, 36px);
+        color: var(--accent);
+        line-height: 1;
+        letter-spacing: 2px;
+        background: black;
+        white-space: nowrap;
+    }
+
+    /* Time-bonus / penalty label that appears to the right of the clock.
+       On wide layouts it hangs off to the side; on the stacked narrow
+       layout there isn't room for that, so it drops below the clock
+       instead of overflowing off-canvas. */
+    .game-meta-clock .gtb-pen {
+        position: absolute;
+        left: calc(100% + 10px);
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: clamp(9px, 1.2vw, 15px);
+        white-space: nowrap;
+        pointer-events: none;
+    }
+
+@media (max-width: 640px) {
+    .game-meta-clock .gtb-pen {
+        left: 50%;
+        top: calc(100% + 2px);
+        transform: translateX(-50%);
+    }
+}
+
+
+
+
+/*
+    ------------------------------------------------------------------------
+    ----------------------------LAYOUT: BONUS OBJECTIVE---------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Inline bonus objective strip shown inside the meta bar */
+.bonus-inline {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 6px;
+    padding: 3px 10px;
+}
+
+    /* "BONUS:" label text */
+    .bonus-inline .bonus-sidebar-label {
+        font-family: var(--PX);
+        font-size: 13px;
+        color: var(--orange);
+        white-space: nowrap;
+        letter-spacing: 1px;
+    }
+
+    /* The bonus objective description text */
+    .bonus-inline .bonus-sidebar-hint {
+        font-size: clamp(11px, 1.3vw, 13px);
+        color: var(--accent2);
+        line-height: 1.4;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: clamp(140px, 30vw, 400px);
+    }
+
+/* Standalone bonus sidebar (legacy/fallback — kept in normal flow, not fixed) */
+.bonus-sidebar {
+    position: static;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.bonus-sidebar-label {
+    font-family: var(--PX);
+    font-size: 15px;
+    color: var(--orange);
+    letter-spacing: 1px;
+}
+
+.bonus-sidebar-hint {
+    font-size: 15px;
+    color: var(--accent2);
+    line-height: 1.7;
+}
+
+
+
+
+/*
+    ------------------------------------------------------------------------
+    ----------------------------PUZZLE GRID: TABLE & CLUES------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Root table element for the nonogram grid */
+table.ptable {
+    border-collapse: collapse;
+    table-layout: fixed;
+    user-select: none;
+    margin-bottom: 12px;
+}
+
+/* Top-left dead corner cell */
+.corner {
+    background: transparent;
+    border: none;
+}
+
+/* ----- Column clue header (numbers above each column) ----- */
+
+.cch {
+    vertical-align: bottom;
+    text-align: center;
+    padding: 0 1px 3px;
+}
+
+/* Inner flex container stacks the numbers top-to-bottom */
+.ccinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0;
+}
+
+/* ----- Row clue header (numbers left of each row) ----- */
+
+.rct {
+    text-align: right;
+    vertical-align: middle;
+    padding-right: 5px;
+    white-space: nowrap;
+    background: transparent;
+}
+
+/* Inner flex container lays numbers out left-to-right */
+.rcinner {
+    display: flex;
+    flex-direction: row;
+    gap: 3px;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+/* Top-left corner is also sticky so it covers the row-clue column while scrolling */
+td.corner {
+    background: transparent;
+}
+
+/* Shared font style for all clue number spans */
+.ccinner span,
+.rcinner span {
+    font-family: var(--F);
+    color: var(--clue-col);
+    line-height: 1.25;
+    display: block;
+    text-shadow: 0px 0px 0 rgba(0,0,0,0.85), 0px 0px 0 rgba(0,0,0,0.85), 0px 1px 0 rgba(0,0,0,0.85), 1px 1px 0 rgba(0,0,0,0.85), 0 0 6px rgba(0,0,0,0.6);
+}
+
+/* Applied when a row/column is fully solved — strikes out the clue numbers */
+.clue-done {
+    text-decoration: line-through;
+    opacity: 0.45;
+}
+
+
+
+
+/*
+    ------------------------------------------------------------------------
+    ----------------------------PUZZLE GRID: CELLS--------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Base cell style — every grid cell starts here */
+.gc {
+    border: 1px solid var(--cell-border);
+    background: var(--cell-empty);
+    cursor: pointer;
+    position: relative;
+    transition: background .05s, border-color .05s;
+}
+
+    /* Hover glow on empty cells (not filled/marked/wrong) */
+    .gc:hover:not(.filled):not(.marked):not(.wrong-mark) {
+        border-color: rgba(102, 252, 241, .4);
+        background: #182035;
+    }
+
+    /* Cell that has been correctly filled in by the player */
+    .gc.filled {
+        background: var(--cell-filled);
+        border-color: var(--cell-filled-border);
+        box-shadow: inset 1px 1px 0 rgba(255, 255, 255, .12);
+    }
+
+    /* ----- Red cross mark (right-click to mark as empty) ----- */
+
+    /* Shared cross symbol for both user-marked and wrong cells */
+    .gc.marked::after,
+    .gc.wrong-mark::after {
+        content: '✕';
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--F);
+    }
+
+    /* User-placed cross — dim red, indicating "I think this is empty" */
+    .gc.marked::after {
+        color: rgba(255, 69, 69, .55);
+    }
+
+    /* ----- Yellow question mark (middle-click or toggle) ----- */
+
+    .gc.questioned {
+        background: var(--cell-empty);
+    }
+
+        .gc.questioned::after {
+            content: '?';
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f5c542;
+            font-family: var(--PX);
+            font-size: 0.6em;
+            line-height: 1;
+        }
+
+    /* ----- Wrong mark — cell filled incorrectly ----- */
+
+    .gc.wrong-mark {
+        background: var(--cell-wrong-bg);
+        border-color: var(--cell-wrong-border);
+    }
+
+        /* Brighter red cross on wrong cells to distinguish from user marks */
+        .gc.wrong-mark::after {
+            color: rgba(255, 69, 69, .9);
+            font-size: .6em;
+        }
+
+    /* ----- Group divider borders (every 5 cells) ----- */
+
+    /* Thicker right border to visually group columns */
+    .gc.br {
+        border-right: 2px solid var(--cell-group-divider) !important;
+    }
+
+    /* Thicker bottom border to visually group rows */
+    .gc.bb {
+        border-bottom: 3px solid var(--cell-group-divider) !important;
+    }
+
+
+
+
+/*
+    ------------------------------------------------------------------------
+    ----------------------------PUZZLE GRID: ROW & COLUMN HOVER-------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Column clue header highlights when its column is hovered */
+td.cch.hov-col {
+    background: rgba(102, 252, 241, .4);
+}
+
+/* Row clue header highlights when its row is hovered */
+td.rct.hov-row {
+    background: rgba(102, 252, 241, .4) !important;
+}
+
+/* All cells in the hovered row get a subtle background tint */
+div.gc.hov-r:not(.filled):not(.wrong-mark) {
+    background: var(--cell-hover-row-col);
+}
+
+/* All cells in the hovered column get a subtle background tint */
+div.gc.hov-c:not(.filled):not(.wrong-mark) {
+    background: var(--cell-hover-row-col);
+}
+
+/* The cell at the intersection of hovered row + column is highlighted more strongly */
+div.gc.hov-r.hov-c:not(.filled):not(.wrong-mark) {
+    background: var(--cell-hover-intersect);
+    border-color: var(--cell-hover-intersect-border);
+    border-width: 3px;
+}
+
+
+
+
+/*
+    ------------------------------------------------------------------------
+    ----------------------------SKILL & ITEM EFFECTS: CELLS-----------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Tinted background applied to cells revealed by a skill or item */
+.gc.revealed {
+    background: var(--cell-revealed-bg);
+    border-color: var(--cell-revealed-border);
+}
+
+/* Yellow outline flash on cells during a scan/reveal skill animation */
+.gc.scan-reveal {
+    outline: 2px solid #f1c40f;
+    z-index: 2;
+    transition: outline 0.1s;
+}
+
+/* ----- Cursed item — blackout clue numbers ----- */
+
+/* Wrapper that positions the black overlay over a clue number */
+.clue-blackout {
+    position: relative;
+    pointer-events: none;
+}
+
+    /* Solid black rectangle that covers the clue number */
+    .clue-blackout::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: #000;
+        z-index: 10;
+        border-radius: 2px;
+    }
+
+/* ----- Lucky tile shimmer ----- */
+
+/* The lucky cell needs relative + overflow:hidden to clip the shimmer streak */
+.cell-lucky {
+    position: relative;
+    overflow: hidden;
+}
+
+    /* Diagonal gold streak that animates across the cell */
+    .cell-lucky::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient( 135deg, transparent 40%, rgba(255, 215, 0, 0.6) 50%, transparent 60% );
+        background-size: 200% 200%;
+        animation: lucky-shimmer 2s infinite;
+        pointer-events: none;
+        z-index: 5;
+    }
+
+@keyframes lucky-shimmer {
+    0% {
+        background-position: 200% 200%;
+    }
+
+    50% {
+        background-position: 0% 0%;
+    }
+
+    100% {
+        background-position: 200% 200%;
+    }
+}
+
+
+
+
+/*
+    ------------------------------------------------------------------------
+    ----------------------------SKILL & ITEM EFFECTS: MODIFIER TAGS---------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Cursed-level mod tag colour */
+.mod-tag.cl {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* Touched/lucky mod tag colour */
+.mod-tag.tl {
+    border-color: var(--green);
+    color: var(--green);
+}
+
+
+
+
+/*
+    ------------------------------------------------------------------------
+    ----------------------------ADJACENCY MATRIX MODE (Node 302)------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Overlay that shows the neighbour count inside a cell (like Minesweeper numbers) */
+.adj-count {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.52em;
+    font-weight: 700;
+    pointer-events: none;
+    line-height: 1;
+    z-index: 2;
+}
+
+/* Minesweeper-style colours per neighbour count */
+.adj-count-1 {
+    color: #2196f3;
+}
+/* blue */
+.adj-count-2 {
+    color: #4caf50;
+}
+/* green */
+.adj-count-3 {
+    color: #f44336;
+}
+/* red */
+.adj-count-4 {
+    color: #1a237e;
+}
+/* dark navy */
+.adj-count-5 {
+    color: #b71c1c;
+}
+/* dark red */
+.adj-count-6 {
+    color: #00bcd4;
+}
+/* teal */
+.adj-count-7 {
+    color: #9c27b0;
+}
+/* purple */
+.adj-count-8 {
+    color: #555;
+}
+/* grey */
+
+
+
+
+/*
+    ------------------------------------------------------------------------
+    ----------------------------COMPLETION GLIMPSE BAR----------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Thin bar that briefly shows the puzzle's completion flavour text */
+.completion-glimpse-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    padding: 3px 8px;
+    font-size: clamp(12px, 1.6vw, 15px);
+    max-width: min(1500px, 90vw);
+    animation: glimpse-fadein 0.4s ease;
+}
+
+    /* Hidden state — toggled by JS when there is no text to show */
+    .completion-glimpse-bar.hidden {
+        display: none;
+    }
+
+/* Icon/emoji prefix before the flavour text */
+.completion-glimpse-label {
+    flex-shrink: 0;
+}
+
+/* The flavour text itself — truncates with ellipsis if too long */
+.completion-glimpse-text {
+    font-style: italic;
+    opacity: 0.9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@keyframes glimpse-fadein {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+
+
+/*
+    ------------------------------------------------------------------------
+    ----------------------------DRAG INTERACTION----------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Counter overlay shown on a cell while drag-filling multiple cells at once */
+.drag-count-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    font-size: 0.45em;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+    z-index: 20;
+    line-height: 1;
+}
+
+
+
+
+/*
+    ------------------------------------------------------------------------
+    ----------------------------CHARACTER SPEECH BUBBLE---------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+/* Fixed-position bubble anchored to the top-right of the player avatar.
+   Positioned dynamically in JS (character-banter.js); only visuals here. */
+.char-speech-bubble {
+    position: fixed;
+    z-index: 1300;
+    max-width: clamp(160px, 40vw, 220px);
+    min-width: 90px;
+    padding: 8px 12px;
+    background: #fdfdfd;
+    color: #1a1a1a;
+    border: 2px solid #222;
+    border-radius: 14px;
+    font-family: var(--F, sans-serif);
+    font-size: clamp(11px, 1.4vw, 13px);
+    line-height: 1.35;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    transform: translate(-10%, 6px) scale(0.85);
+    transform-origin: bottom left;
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+    /* Visible state — toggled by JS */
+    .char-speech-bubble.show {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+
+    /* Little tail pointing down-left toward the avatar's head */
+    .char-speech-bubble::after {
+        content: '';
+        position: absolute;
+        left: 18px;
+        bottom: -9px;
+        width: 0;
+        height: 0;
+        border: 9px solid transparent;
+        border-top-color: #222;
+        border-bottom: 0;
+        filter: none;
+    }
+
+    .char-speech-bubble::before {
+        content: '';
+        position: absolute;
+        left: 20px;
+        bottom: -6px;
+        width: 0;
+        height: 0;
+        border: 7px solid transparent;
+        border-top-color: #fdfdfd;
+        border-bottom: 0;
+        z-index: 1;
+    }
+
+.char-speech-bubble-text {
+    position: relative;
+    z-index: 2;
+}

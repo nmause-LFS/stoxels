@@ -1,0 +1,677 @@
+/*
+    ------------------------------------------------------------------------
+    -------------------CLASS SPELL UPGRADE PANEL-----------------------------
+    ------------------------------------------------------------------------
+    Styles the "CLASS UPGRADE" (data-mode="upgrade") and "ASCENDENCY UPGRADE"
+    (data-mode="ascend-upgrade") overlay screens so they match the look of
+    the class-selection screen (see class_selection.css): a themed backdrop,
+    a stone title plaque, and a row of glowing cards — one per ability —
+    each with a "spell locker" that reveals a current -> new comparison
+    tooltip on hover instead of always showing the description inline.
+
+    Markup produced by class-ui.js (buildClassUpgradeCard / buildAscendencyUpgradeCard):
+
+    #class-selection-overlay[data-mode="upgrade" | "ascend-upgrade"]
+      #class-selection-content
+        .cs-header > .cs-title / .cs-subtitle
+        .cs-cards.cs-spell-cards
+          .cs-card.cs-spell-card[data-classid][data-type]
+            .cs-card-icon
+            .cs-card-name
+            .cs-spell-level-badge
+            .cs-spell-locker.cs-spell-locker--passive|active
+              .cs-spell-locker-icon
+            .cs-card-cta  (or .cs-upgrade-maxed)
+        #cs-tooltip.cs-tooltip
+          .cs-ability
+            .cs-ability-tag / .cs-ability-name
+            .cs-tooltip-compare > .cs-tooltip-current / .cs-tooltip-arrow / .cs-tooltip-new
+            (or .cs-tooltip-maxed-tag when already at max level)
+*/
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------BACKDROP / BACKGROUND---------------------------------
+    ------------------------------------------------------------------------
+*/
+
+#class-selection-overlay[data-mode="upgrade"],
+#class-selection-overlay[data-mode="ascend-upgrade"] {
+    background-image: url('../images/Class_Selection/class_selection_bg.jpeg');
+    background-size: cover;
+    background-position: center;
+    backdrop-filter: blur(2px);
+}
+
+    #class-selection-overlay[data-mode="upgrade"][data-classid="statistician"] {
+        background-image: url('../images/Class_Spell_Upgrade/statistician_upgrade_bg.jpeg');
+        background-size: cover;
+        background-position: center;
+    }
+
+    #class-selection-overlay[data-mode="upgrade"][data-classid="mathmagician"] {
+        background-image: url('../images/Class_Spell_Upgrade/mathmagician_upgrade_bg.jpeg');
+        background-size: cover;
+        background-position: center;
+    }
+
+    #class-selection-overlay[data-mode="upgrade"][data-classid="probabilist"] {
+        background-image: url('../images/Class_Spell_Upgrade/probabilist_upgrade_bg.jpeg');
+        background-size: cover;
+        background-position: center;
+    }
+    /* ============ END PER-CLASS MAIN BACKGROUND ============ */
+
+
+    #class-selection-overlay[data-mode="upgrade"] #class-selection-content,
+    #class-selection-overlay[data-mode="ascend-upgrade"] #class-selection-content {
+        position: relative;
+        width: 100%;
+        max-width: 1300px;
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: clamp(24px, 4vw, 56px) clamp(12px, 3vw, 40px) clamp(40px, 6vw, 70px);
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+
+    /*
+    ------------------------------------------------------------------------
+    -------------------HEADER / TITLE PLAQUE---------------------------------
+    ------------------------------------------------------------------------
+*/
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-header,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-header {
+        position: relative;
+        margin: 0 auto clamp(20px, 3vw, 36px);
+        padding: clamp(6px, 1.4vw, 14px) clamp(20px, 6vw, 60px) clamp(4px, 1vw, 10px);
+        max-width: 1000px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-title,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-title {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        font-size: clamp(20px, 3.4vw, 34px);
+        letter-spacing: 4px;
+        color: #f3e9ff;
+        text-transform: uppercase;
+        padding: clamp(12px, 2.2vw, 22px) clamp(10px, 1.8vw, 18px);
+        background-image: url('../images/Class_Selection/title_banner.png');
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        background-position: center;
+        text-shadow: 0 0 14px rgba(176, 108, 255, 0.9), 0 2px 3px rgba(0, 0, 0, 0.9);
+        text-align: center;
+    }
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-subtitle,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-subtitle {
+        display: block;
+        text-align: center;
+        margin-top: -1.5em;
+        font-size: clamp(9px, 1.3vw, 15px);
+        color: #cbb8e8;
+        font-weight: normal;
+        opacity: 0.9;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+    }
+
+
+    /*
+    ------------------------------------------------------------------------
+    -------------------CARD ROW---------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-cards,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-cards {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: stretch;
+        justify-content: center;
+        gap: clamp(14px, 2.4vw, 28px);
+        width: 100%;
+        max-width: 1200px;
+        box-sizing: border-box;
+    }
+
+
+    /*
+    ------------------------------------------------------------------------
+    -------------------SPELL CARD--------------------------------------------
+    ------------------------------------------------------------------------
+    Same visual language as .cs-card in class_selection.css (border/glow tied
+    to --cls-color), just declared under the upgrade data-modes instead.
+*/
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-card,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1 1 260px;
+        max-width: 340px;
+        min-width: 220px;
+        padding: clamp(14px, 2vw, 22px);
+        box-sizing: border-box;
+        border: 2px solid var(--cls-color, #8a5cff);
+        border-radius: 10px;
+        background: linear-gradient(180deg, rgba(30, 24, 40, 0.9), rgba(12, 9, 18, 0.95));
+        box-shadow: 0 0 22px -6px var(--cls-color, transparent), inset 0 0 24px rgba(0, 0, 0, 0.45);
+        text-align: center;
+        transition: box-shadow 0.2s ease, opacity 0.2s ease, filter 0.2s ease;
+    }
+
+        #class-selection-overlay[data-mode="upgrade"] .cs-card:hover,
+        #class-selection-overlay[data-mode="ascend-upgrade"] .cs-card:hover {
+            box-shadow: 0 0 30px -4px var(--cls-color, transparent), inset 0 0 24px rgba(0, 0, 0, 0.45);
+        }
+
+        /* Already-maxed ability card: dimmed so the eye goes to the ones still upgradeable. */
+        #class-selection-overlay[data-mode="upgrade"] .cs-card.maxed,
+        #class-selection-overlay[data-mode="ascend-upgrade"] .cs-card.maxed {
+            opacity: 0.72;
+            filter: grayscale(0.25);
+        }
+
+
+    /*
+    ------------------------------------------------------------------------
+    -------------------ICON / NAME / LEVEL BADGE------------------------------
+    ------------------------------------------------------------------------
+*/
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-card-icon,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-card-icon {
+        width: clamp(34px, 4.6vw, 54px);
+        height: clamp(34px, 4.6vw, 54px);
+        line-height: clamp(34px, 4.6vw, 54px);
+        font-size: clamp(16px, 2.2vw, 28px);
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.12), transparent 60%), linear-gradient(180deg, #3a3244, #201a28);
+        border: 2px solid var(--cls-color, var(--accent));
+        box-shadow: 0 0 16px -2px var(--cls-color, var(--accent)), inset 0 0 10px rgba(0, 0, 0, 0.6);
+        text-align: center;
+        margin-bottom: clamp(6px, 1vw, 10px);
+        flex: 0 0 auto;
+    }
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-card-name,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-card-name {
+        font-size: clamp(12px, 1.6vw, 19px);
+        letter-spacing: 1.5px;
+        line-height: 1.2;
+        margin-bottom: clamp(6px, 1vw, 10px);
+        text-shadow: 0 0 12px var(--cls-color, transparent), 0 2px 3px rgba(0, 0, 0, 0.9);
+    }
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-spell-level-badge,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-spell-level-badge {
+        display: inline-block;
+        font-size: clamp(8px, 1vw, 11px);
+        letter-spacing: 1px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        margin-bottom: clamp(10px, 1.6vw, 16px);
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        color: #cbb8e8;
+    }
+
+        #class-selection-overlay[data-mode="upgrade"] .cs-spell-level-badge.passive,
+        #class-selection-overlay[data-mode="ascend-upgrade"] .cs-spell-level-badge.passive {
+            color: #ffd27f;
+            border-color: rgba(255, 210, 127, 0.35);
+        }
+
+        #class-selection-overlay[data-mode="upgrade"] .cs-spell-level-badge.active,
+        #class-selection-overlay[data-mode="ascend-upgrade"] .cs-spell-level-badge.active {
+            color: #7fe0ff;
+            border-color: rgba(127, 224, 255, 0.35);
+        }
+
+
+    /*
+    ------------------------------------------------------------------------
+    -------------------SPELL LOCKER (hover = tooltip)-------------------------
+    ------------------------------------------------------------------------
+    Placeholder art: a glowing glyph inside a generic gradient frame, styled
+    the same way as .cs-weapon-locker in class_selection.css. Swap in real
+    per-ability artwork later — see the commented example below.
+*/
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-spell-locker,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-spell-locker {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.10), transparent 60%), linear-gradient(180deg, #2c2438, #15111c);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        border: 2px solid rgba(255, 255, 255, 0.12);
+        border-radius: 8px;
+        cursor: pointer;
+        overflow: hidden;
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+        transition: box-shadow 0.2s ease, filter 0.2s ease;
+        margin-bottom: clamp(10px, 1.6vw, 18px);
+    }
+
+        #class-selection-overlay[data-mode="upgrade"] .cs-spell-locker:hover,
+        #class-selection-overlay[data-mode="ascend-upgrade"] .cs-spell-locker:hover {
+            box-shadow: 0 0 24px -2px var(--cls-color, #8a5cff);
+            filter: brightness(1.15);
+        }
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-spell-locker--passive,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-spell-locker--passive {
+        background: radial-gradient(circle at 35% 30%, rgba(255, 210, 127, 0.14), transparent 60%), linear-gradient(180deg, #332c22, #17130d);
+    }
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-spell-locker--active,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-spell-locker--active {
+        background: radial-gradient(circle at 35% 30%, rgba(127, 224, 255, 0.14), transparent 60%), linear-gradient(180deg, #1c2c33, #0d1417);
+    }
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-spell-locker-icon,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-spell-locker-icon {
+        font-size: clamp(28px, 4.4vw, 46px);
+        filter: drop-shadow(0 0 10px var(--cls-color, #8a5cff));
+        opacity: 0.9;
+    }
+
+    /* ============ EXAMPLE: swapping in real per-class / per-ability art ============
+   #class-selection-overlay[data-mode="upgrade"] .cs-spell-card[data-classid="statistician"][data-type="passive"] .cs-spell-locker {
+       background-image: url('../images/Class_Selection/spells/statistician_momentum.png');
+   }
+   Once a background-image is set the .cs-spell-locker-icon glyph can simply
+   be left empty (or hidden) in class-ui.js for that card.
+*/
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-spell-card[data-classid="statistician"][data-type="passive"] .cs-spell-locker {
+        background-image: url('../images/Class_Spell_Upgrade/momentum.png');
+        background-size: cover;
+    }
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-spell-card[data-classid="statistician"][data-type="active1"] .cs-spell-locker {
+        background-image: url('../images/Class_Spell_Upgrade/data_strike.png');
+        background-size: cover;
+    }
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-spell-card[data-classid="statistician"][data-type="active2"] .cs-spell-locker {
+        background-image: url('../images/Class_Spell_Upgrade/diagonal_strike.png');
+        background-size: cover;
+    }
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-spell-card[data-classid="mathmagician"][data-type="passive"] .cs-spell-locker {
+        background-image: url('../images/Class_Spell_Upgrade/variance_shield.png');
+        background-size: cover;
+    }
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-spell-card[data-classid="mathmagician"][data-type="active1"] .cs-spell-locker {
+        background-image: url('../images/Class_Spell_Upgrade/arcane_reveal.png');
+        background-size: cover;
+    }
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-spell-card[data-classid="mathmagician"][data-type="active2"] .cs-spell-locker {
+        background-image: url('../images/Class_Spell_Upgrade/absolute_zero.png');
+        background-size: cover;
+    }
+
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-spell-card[data-classid="probabilist"][data-type="passive"] .cs-spell-locker {
+        background-image: url('../images/Class_Spell_Upgrade/bayesian_insight.png');
+        background-size: cover;
+    }
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-spell-card[data-classid="probabilist"][data-type="active1"] .cs-spell-locker {
+        background-image: url('../images/Class_Spell_Upgrade/precision_shot.png');
+        background-size: cover;
+    }
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-spell-card[data-classid="probabilist"][data-type="active2"] .cs-spell-locker {
+        background-image: url('../images/Class_Spell_Upgrade/rain_of_arrows.png');
+        background-size: cover;
+    }
+
+
+    /*
+    ------------------------------------------------------------------------
+    -------------------CTA / MAXED BADGE--------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-card-cta,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-card-cta {
+        padding: clamp(6px, 1vw, 10px) clamp(16px, 2.4vw, 26px);
+        border: 2px solid var(--cls-color, var(--accent));
+        border-radius: 4px;
+        background: transparent;
+        color: var(--cls-light, var(--accent));
+        font-size: clamp(9px, 1.1vw, 13px);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, text-shadow 0.2s ease;
+    }
+
+        #class-selection-overlay[data-mode="upgrade"] .cs-card-cta:hover,
+        #class-selection-overlay[data-mode="ascend-upgrade"] .cs-card-cta:hover {
+            background: var(--cls-color, var(--accent));
+            color: #0d0d1a;
+            box-shadow: 0 0 16px -2px var(--cls-color, var(--accent));
+            text-shadow: none;
+        }
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-upgrade-maxed,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-upgrade-maxed {
+        padding: clamp(6px, 1vw, 10px) clamp(16px, 2.4vw, 26px);
+        border: 2px solid #27ae60;
+        border-radius: 4px;
+        color: #27ae60;
+        font-size: clamp(9px, 1.1vw, 13px);
+        letter-spacing: 2px;
+    }
+
+
+    /*
+    ------------------------------------------------------------------------
+    -------------------CUSTOM TOOLTIP (CURRENT -> NEW COMPARISON)------------
+    ------------------------------------------------------------------------
+    Reuses the same #cs-tooltip element / fixed-position-follows-cursor
+    approach as class_selection.css's weapon-locker tooltip, but declared
+    here too since it needs to render while data-mode is "upgrade" or
+    "ascend-upgrade" (class_selection.css only scopes it to "select").
+*/
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-tooltip,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-tooltip {
+        position: fixed;
+        z-index: 1000;
+        display: none;
+        pointer-events: none;
+        width: clamp(240px, 27vw, 320px);
+        max-width: 82vw;
+        box-sizing: border-box;
+        padding: clamp(10px, 1.6vw, 16px);
+        background: linear-gradient(180deg, #1d1728, #110d18);
+        border: 2px solid var(--cls-color, #8a5cff);
+        border-radius: 6px;
+        box-shadow: 0 0 20px -2px var(--cls-color, #8a5cff), 0 10px 24px rgba(0, 0, 0, 0.65);
+        font-family: var(--PX);
+        text-align: left;
+    }
+
+        #class-selection-overlay[data-mode="upgrade"] .cs-tooltip.show,
+        #class-selection-overlay[data-mode="ascend-upgrade"] .cs-tooltip.show {
+            display: block;
+        }
+
+        #class-selection-overlay[data-mode="upgrade"] .cs-tooltip .cs-ability-tag,
+        #class-selection-overlay[data-mode="ascend-upgrade"] .cs-tooltip .cs-ability-tag {
+            display: inline-block;
+            font-size: 9px;
+            letter-spacing: 1px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-bottom: 4px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #cbb8e8;
+        }
+
+            #class-selection-overlay[data-mode="upgrade"] .cs-tooltip .cs-ability-tag.passive,
+            #class-selection-overlay[data-mode="ascend-upgrade"] .cs-tooltip .cs-ability-tag.passive {
+                color: #ffd27f;
+            }
+
+            #class-selection-overlay[data-mode="upgrade"] .cs-tooltip .cs-ability-tag.active,
+            #class-selection-overlay[data-mode="ascend-upgrade"] .cs-tooltip .cs-ability-tag.active {
+                color: #7fe0ff;
+            }
+
+        #class-selection-overlay[data-mode="upgrade"] .cs-tooltip .cs-ability-name,
+        #class-selection-overlay[data-mode="ascend-upgrade"] .cs-tooltip .cs-ability-name {
+            display: block;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            color: #f3e9ff;
+            margin-bottom: 6px;
+        }
+
+        /* Current -> New comparison stack shown when the ability isn't maxed yet. */
+        #class-selection-overlay[data-mode="upgrade"] .cs-tooltip .cs-tooltip-compare,
+        #class-selection-overlay[data-mode="ascend-upgrade"] .cs-tooltip .cs-tooltip-compare {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        #class-selection-overlay[data-mode="upgrade"] .cs-tooltip .cs-tooltip-current,
+        #class-selection-overlay[data-mode="ascend-upgrade"] .cs-tooltip .cs-tooltip-current {
+            font-size: 10px;
+            line-height: 1.35;
+            color: #a89bc2;
+            opacity: 0.85;
+        }
+
+        #class-selection-overlay[data-mode="upgrade"] .cs-tooltip .cs-tooltip-new,
+        #class-selection-overlay[data-mode="ascend-upgrade"] .cs-tooltip .cs-tooltip-new {
+            font-size: 10.5px;
+            line-height: 1.35;
+            color: #d8fbe6;
+        }
+
+        #class-selection-overlay[data-mode="upgrade"] .cs-tooltip .cs-tooltip-compare-label,
+        #class-selection-overlay[data-mode="ascend-upgrade"] .cs-tooltip .cs-tooltip-compare-label {
+            display: block;
+            font-size: 8px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #7fe0ff;
+            margin-bottom: 2px;
+            opacity: 0.9;
+        }
+
+        #class-selection-overlay[data-mode="upgrade"] .cs-tooltip .cs-tooltip-arrow,
+        #class-selection-overlay[data-mode="ascend-upgrade"] .cs-tooltip .cs-tooltip-arrow {
+            text-align: center;
+            font-size: 12px;
+            color: var(--cls-color, #8a5cff);
+            line-height: 1;
+        }
+
+        #class-selection-overlay[data-mode="upgrade"] .cs-tooltip .cs-tooltip-maxed-tag,
+        #class-selection-overlay[data-mode="ascend-upgrade"] .cs-tooltip .cs-tooltip-maxed-tag {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 9px;
+            letter-spacing: 1px;
+            color: #ffd27f;
+        }
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------RESPONSIVE---------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+@media (max-width: 900px) {
+    #class-selection-overlay[data-mode="upgrade"] .cs-title,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-title {
+        letter-spacing: 2px;
+    }
+}
+
+@media (max-width: 700px) {
+    #class-selection-overlay[data-mode="upgrade"] .cs-header,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-header {
+        padding: clamp(4px, 1.4vw, 10px) clamp(4px, 1.4vw, 10px) clamp(3px, 1vw, 6px);
+    }
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-cards,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-card,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-card {
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
+@media (max-width: 420px) {
+    #class-selection-overlay[data-mode="upgrade"] .cs-title,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-title {
+        font-size: 16px;
+        letter-spacing: 1px;
+    }
+
+    #class-selection-overlay[data-mode="upgrade"] .cs-tooltip,
+    #class-selection-overlay[data-mode="ascend-upgrade"] .cs-tooltip {
+        width: 80vw;
+    }
+}
+
+
+
+
+
+
+/* Ascendency Spell Upgrades   */
+
+/* Full Background images for the specific-classes */
+
+#class-selection-overlay[data-mode="ascend-upgrade"][data-classid="outlier"] {
+    background-image: url('../images/Class_Spell_Upgrade/outlier_upgrade_bg.jpeg');
+    background-size: cover;
+    background-position: center;
+}
+
+#class-selection-overlay[data-mode="ascend-upgrade"][data-classid="actuary"] {
+    background-image: url('../images/Class_Spell_Upgrade/actuary_upgrade_bg.jpeg');
+    background-size: cover;
+    background-position: center;
+}
+
+
+#class-selection-overlay[data-mode="ascend-upgrade"][data-classid="recursionist"] {
+    background-image: url('../images/Class_Spell_Upgrade/recursionist_upgrade_bg.jpeg');
+    background-size: cover;
+    background-position: center;
+}
+
+#class-selection-overlay[data-mode="ascend-upgrade"][data-classid="markovian"] {
+    background-image: url('../images/Class_Spell_Upgrade/markovian_upgrade_bg.jpeg');
+    background-size: cover;
+    background-position: center;
+}
+
+#class-selection-overlay[data-mode="ascend-upgrade"][data-classid="bayesian"] {
+    background-image: url('../images/Class_Spell_Upgrade/bayesian_upgrade_bg.jpeg');
+    background-size: cover;
+    background-position: center;
+}
+
+#class-selection-overlay[data-mode="ascend-upgrade"][data-classid="random_walker"] {
+    background-image: url('../images/Class_Spell_Upgrade/random_walker_upgrade_bg.jpeg');
+    background-size: cover;
+    background-position: center;
+}
+
+
+
+
+
+
+
+/* Specific Ascendency Skill Upgrade Tooltip Images*/
+
+/*Outlier*/
+#class-selection-overlay[data-mode="ascend-upgrade"] .cs-spell-card[data-classid="outlier"][data-type="active1"] .cs-spell-locker {
+    background-image: url('../images/Class_Spell_Upgrade/tail_risk.png');
+    background-size: cover;
+}
+
+#class-selection-overlay[data-mode="ascend-upgrade"] .cs-spell-card[data-classid="outlier"][data-type="active2"] .cs-spell-locker {
+    background-image: url('../images/Class_Spell_Upgrade/speedforce.png');
+    background-size: cover;
+}
+
+
+/*Actuary */
+
+#class-selection-overlay[data-mode="ascend-upgrade"] .cs-spell-card[data-classid="actuary"][data-type="active1"] .cs-spell-locker {
+    background-image: url('../images/Class_Spell_Upgrade/regression_to_prior.png');
+    background-size: cover;
+}
+
+#class-selection-overlay[data-mode="ascend-upgrade"] .cs-spell-card[data-classid="actuary"][data-type="active2"] .cs-spell-locker {
+    background-image: url('../images/Class_Spell_Upgrade/significance_threshold.png');
+    background-size: cover;
+}
+
+/* Recursionist */
+
+#class-selection-overlay[data-mode="ascend-upgrade"] .cs-spell-card[data-classid="recursionist"][data-type="active1"] .cs-spell-locker {
+    background-image: url('../images/Class_Spell_Upgrade/residual.png');
+    background-size: cover;
+}
+
+#class-selection-overlay[data-mode="ascend-upgrade"] .cs-spell-card[data-classid="recursionist"][data-type="active2"] .cs-spell-locker {
+    background-image: url('../images/Class_Spell_Upgrade/degrees_of_freedom.png');
+    background-size: cover;
+}
+
+/* Markovian */
+
+#class-selection-overlay[data-mode="ascend-upgrade"] .cs-spell-card[data-classid="markovian"][data-type="active1"] .cs-spell-locker {
+    background-image: url('../images/Class_Spell_Upgrade/state_rollback.png');
+    background-size: cover;
+}
+
+#class-selection-overlay[data-mode="ascend-upgrade"] .cs-spell-card[data-classid="markovian"][data-type="active2"] .cs-spell-locker {
+    background-image: url('../images/Class_Spell_Upgrade/transition_matrix.png');
+    background-size: cover;
+}
+
+/* Bayesian */
+
+#class-selection-overlay[data-mode="ascend-upgrade"] .cs-spell-card[data-classid="bayesian"][data-type="active1"] .cs-spell-locker {
+    background-image: url('../images/Class_Spell_Upgrade/bayes_traps.png');
+    background-size: cover;
+}
+
+#class-selection-overlay[data-mode="ascend-upgrade"] .cs-spell-card[data-classid="bayesian"][data-type="active2"] .cs-spell-locker {
+    background-image: url('../images/Class_Spell_Upgrade/type1_error_shield.png');
+    background-size: cover;
+}
+
+
+/* Random Walker */
+
+#class-selection-overlay[data-mode="ascend-upgrade"] .cs-spell-card[data-classid="random_walker"][data-type="active1"] .cs-spell-locker {
+    background-image: url('../images/Class_Spell_Upgrade/brownian_motion.png');
+    background-size: cover;
+}
+
+#class-selection-overlay[data-mode="ascend-upgrade"] .cs-spell-card[data-classid="random_walker"][data-type="active2"] .cs-spell-locker {
+    background-image: url('../images/Class_Spell_Upgrade/drifter.png');
+    background-size: cover;
+}

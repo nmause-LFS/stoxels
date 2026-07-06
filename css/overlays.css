@@ -1,0 +1,418 @@
+/*
+    ------------------------------------------------------------------------
+    ---------------------------WIN / LOSE OVERLAY---------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+
+/* --- Overlay base container ---
+   Hidden by default. JS adds .show to display it when a level ends. */
+.overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 10, 0.97);
+    z-index: 400;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+    /* JS toggles this class to make the overlay visible */
+    .overlay.show {
+        display: flex;
+    }
+
+
+/* --- Overlay title --- */
+.ov-title {
+    font-family: var(--PX);
+    font-size: clamp(14px, 3vw, 22px);
+    letter-spacing: 3px;
+}
+
+    /* Neon glow on win, red glow on lose */
+    .ov-title.win {
+        color: var(--accent);
+        text-shadow: 0 0 30px var(--accent);
+    }
+
+    .ov-title.lose {
+        color: var(--red);
+        text-shadow: 0 0 30px var(--red);
+    }
+
+
+/* --- Stats / detail text block below the title --- */
+.ov-sub {
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+}
+
+/* Generic line — still needed? Check JS usage before removing */
+.ov-sub-line {
+    font-size: 20px;
+    line-height: 2;
+}
+
+/* EN / DE level reveal / solve flavour text */
+.ov-sub-reveal {
+    color: var(--accent2);
+    font-style: italic;
+    font-size: 20px;
+}
+
+/* Points earned */
+.ov-sub-pts {
+    color: var(--yellow);
+    font-family: var(--PX);
+    font-size: 20px;
+}
+
+/* Time remaining / solve time */
+.ov-sub-time {
+    color: var(--green);
+    font-size: 20px;
+}
+
+/* Mistake counter — grey when mistakes were made */
+.ov-sub-miss {
+    color: #c0c0c0;
+    font-size: 20px;
+}
+
+/* Mistake counter — green when zero mistakes */
+.ov-sub-miss-ok {
+    color: var(--green);
+    font-size: 20px;
+}
+
+
+/* --- Faint puzzle grid watermark centered behind the overlay content --- */
+.ov-reveal {
+    display: grid;
+    gap: 3px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 401;
+    margin: 0;
+}
+
+/* Default (empty) cell */
+.ov-reveal-cell {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    min-width: 0;
+    min-height: 0;
+}
+
+    /* Filled cell — accent colour */
+    .ov-reveal-cell.f {
+        background: var(--accent);
+    }
+
+
+/* --- Bottom action buttons (Next Level, Retry, Level Select) --- */
+.ov-btns {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Shared base style for all overlay buttons */
+.ob {
+    font-family: var(--PX);
+    font-size: 12px;
+    background: transparent;
+    padding: 10px 16px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all .12s;
+}
+
+    /* Primary action (e.g. Next Level) — accent colour */
+    .ob.p {
+        border: 1px solid var(--accent);
+        color: var(--accent);
+    }
+
+        .ob.p:hover {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+    /* Secondary action (e.g. Level Select) — muted */
+    .ob.s {
+        border: 1px solid var(--border2);
+        color: var(--ov-sub);
+    }
+
+        .ob.s:hover {
+            border-color: var(--setup-opt-inactive);
+            color: var(--accent2);
+        }
+
+    /* Yellow action (e.g. Retry) */
+    .ob.y {
+        border: 1px solid var(--yellow);
+        color: var(--yellow);
+    }
+
+        .ob.y:hover {
+            background: var(--yellow);
+            color: var(--bg);
+        }
+
+
+/* --- Bonus objective badges --- */
+.bonus-list {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 4px 0;
+}
+
+/* Individual badge — green if earned, muted if missed */
+.bonus-badge {
+    font-family: var(--PX);
+    font-size: 12px;
+    padding: 5px 9px;
+    border: 1px solid;
+}
+
+    .bonus-badge.earned {
+        border-color: var(--green);
+        color: var(--green);
+    }
+
+    .bonus-badge.missed {
+        border-color: var(--border);
+        color: var(--setup-opt-inactive);
+    }
+
+
+/* --- Item reward notice (shown when a bonus objective was already claimed) --- */
+.item-reward {
+    background: var(--item-reward-bg);
+    border: 1px solid var(--purple);
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--purple);
+    max-width: 360px;
+    line-height: 1.6;
+}
+
+
+
+
+/*
+    ------------------------------------------------------------------------
+    ---------------------------MATH QUIZ OVERLAY----------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+
+/* --- Quiz overlay base container ---
+   Sits above the win/lose overlay (z-index 450 vs 400). */
+.quiz-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .95);
+    z-index: 450;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+}
+
+    .quiz-overlay.show {
+        display: flex;
+    }
+
+
+/* --- Quiz header title ("BONUS QUESTION") --- */
+.quiz-title {
+    font-family: var(--PX);
+    font-size: 20px;
+    color: var(--yellow);
+    letter-spacing: 2px;
+}
+
+
+/* --- Quiz question body text ---
+   Uses a math-friendly font stack for formula rendering. */
+.quiz-q {
+    font-family: "STIX Two Math", "Cambria Math", "DejaVu Sans", var(--F), monospace;
+    font-size: 20px;
+    color: var(--accent2);
+    max-width: 750px;
+    text-align: center;
+    line-height: 1.8;
+}
+
+
+/* --- Multiple choice answer grid --- */
+.quiz-opts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    max-width: 600px;
+    width: 67%;
+}
+
+/* Single answer option button */
+.quiz-opt {
+    font-family: var(--F);
+    font-size: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    color: var(--accent2);
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all .12s;
+    text-align: left;
+}
+
+    .quiz-opt:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+    }
+
+    /* Correct answer selected */
+    .quiz-opt.correct {
+        border-color: var(--green);
+        color: var(--green);
+        background: rgba(61, 220, 132, .1);
+    }
+
+    /* Wrong answer selected */
+    .quiz-opt.wrong {
+        border-color: var(--red);
+        color: var(--red);
+        background: rgba(255, 69, 69, .1);
+    }
+
+
+/* --- Result feedback line below the answer grid --- */
+.quiz-result {
+    font-family: var(--PX);
+    font-size: 20px;
+    min-height: 20px;
+}
+
+    .quiz-result.ok {
+        color: var(--green);
+    }
+
+    .quiz-result.bad {
+        color: var(--red);
+    }
+
+
+/* --- Secondary quiz action buttons (Skip / Open Tutor) ---
+   Both share the same base shape; only border colour differs. */
+.quiz-skip {
+    font-family: var(--PX);
+    font-size: 12px;
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--setup-opt-inactive);
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: all .12s;
+}
+
+    .quiz-skip:hover {
+        border-color: var(--accent2);
+        color: var(--accent2);
+    }
+
+.quiz-tutor-btn {
+    font-family: var(--PX);
+    font-size: 12px;
+    background: transparent;
+    border: 1px solid var(--yellow);
+    color: var(--yellow);
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: all .12s;
+}
+
+    .quiz-tutor-btn:hover {
+        background: var(--yellow);
+        color: var(--bg);
+    }
+
+
+
+
+/*
+    ------------------------------------------------------------------------
+    ---------------------------PENALTY FLASH--------------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+
+/* --- Full-screen red flash shown when the player makes a mistake ---
+   Transparent by default; JS adds .show to trigger the tint. */
+.penalty-flash {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 800;
+    background: rgba(255, 69, 69, 0);
+    transition: background .2s;
+}
+
+    .penalty-flash.show {
+        background: var(--penalty-flash);
+    }
+
+
+
+
+/*
+    ------------------------------------------------------------------------
+    ---------------------------CUSTOM SCROLLBARS----------------------------
+    ------------------------------------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 3px;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--scrollbar-thumb-hover);
+    }
