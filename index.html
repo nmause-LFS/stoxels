@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STOXELS - v0.25 BETA</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/pause.css">
+    <link rel="stylesheet" href="css/settings.css">
+    <link rel="stylesheet" href="css/title-screen.css">
+    <link rel="stylesheet" href="css/screens.css">
+    <link rel="stylesheet" href="css/game.css">
+    <link rel="stylesheet" href="css/setup-screen.css">
+    <link rel="stylesheet" href="css/inventory.css">
+    <link rel="stylesheet" href="css/overlays.css">
+    <link rel="stylesheet" href="css/modals.css">
+    <link rel="stylesheet" href="css/class.css">
+    <link rel="stylesheet" href="css/achievements.css">
+    <link rel="stylesheet" href="css/item_effects.css">
+    <link rel="stylesheet" href="css/probability_tree.css">
+    <link rel="stylesheet" href="css/passive_effects.css">
+    <link rel="stylesheet" href="css/quests.css">
+    <link rel="stylesheet" href="css/passive-tracker.css">
+    <link rel="stylesheet" href="css/changelog.css">
+    <link rel="stylesheet" href="css/classes/actuary.css">
+    <link rel="stylesheet" href="css/classes/bayesian.css">
+    <link rel="stylesheet" href="css/classes/markovian.css">
+    <link rel="stylesheet" href="css/classes/mathmagician.css">
+    <link rel="stylesheet" href="css/classes/outlier.css">
+    <link rel="stylesheet" href="css/classes/probabilist.css">
+    <link rel="stylesheet" href="css/classes/random-walker.css">
+    <link rel="stylesheet" href="css/classes/recursionist.css">
+    <link rel="stylesheet" href="css/classes/statistician.css">
+    <link rel="stylesheet" href="css/classes/targeting-reticle.css">
+    <link rel="stylesheet" href="css/endgame/monsters.css">
+    <link rel="stylesheet" href="css/endgame/endgame-hub.css">
+    <link rel="stylesheet" href="css/endgame/endgame-tooltip-styles.css">
+    <link rel="stylesheet" href="css/endgame/objectives_hud.css">
+    <link rel="stylesheet" href="css/character-select.css">
+    <link rel="stylesheet" href="css/map-view.css">
+    <link rel="stylesheet" href="css/map-view-topbar.css">
+    <link rel="stylesheet" href="css/quiz-excercises.css">
+    <link rel="stylesheet" href="css/highscore.css">
+    <link rel="stylesheet" href="css/moodle-codes.css">
+    <link rel="stylesheet" href="css/inference.css">
+    <link rel="stylesheet" href="css/tutorial.css">
+    <link rel="stylesheet" href="css/class_selection.css">
+    <link rel="stylesheet" href="css/class_spell_upgrade.css">
+    <link rel="stylesheet" href="css/class_ascendency_selection.css">
+</head>
+<body>
+
+    <!-- TITLE SCREEN -->
+    <div id="screen-title" class="screen active">
+
+        <!-- Background image fills the whole screen -->
+        <img class="title-bg-img" src="images/Title_Screen/Title_Background2.jpeg" alt="">
+
+        <!-- All content sits in a container that matches the bg image's aspect ratio -->
+        <div class="title-canvas">
+
+            <!-- Logo image replaces the old <h1> text -->
+            <img class="title-logo-img" src="images/Title_Screen/STOXELS.png" alt="STOXELS">
+
+            <!-- Subtitle + version replace the old <p class="title-tag"> and title-version span -->
+            <div class="title-subtitle">CARTOGRAPHERS OF CHANCE</div>
+            <div class="title-version-line">v0.25 BETA</div>
+            <div class="title-lang-overlay">
+                <button class="lang-btn active" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="de">DE</button>
+            </div>
+
+            <button class="title-overlay-btn" id="btn-play"
+                    style="--bx: 50%; --by: 40%;"
+                    data-t="btn_play">
+                ▶ PLAY
+            </button>
+
+            <button class="title-overlay-btn block-general" id="btn-settings"
+                    style="--bx: 30%; --by: 35%;"
+                    data-t="btn_settings">
+                ⚙ SETTINGS
+            </button>
+
+            <button class="title-overlay-btn block-general" id="btn-how-to-play"
+                    style="--bx: 30%; --by: 45%;"
+                    data-t="btn_howtoplay">
+                ? HOW TO PLAY
+            </button>
+
+            <button class="title-overlay-btn block-general" id="btn-changelog"
+                    style="--bx: 30%; --by: 55%;">
+                📝 CHANGELOG
+            </button>
+
+            <button class="title-overlay-btn block-general" id="btn-highscores"
+                    style="--bx: 70%; --by: 35%;"
+                    data-t="btn_highscores">
+                🏆 HIGHSCORES
+            </button>
+
+            <button class="title-overlay-btn block-general" id="btn-codes"
+                    style="--bx: 70%; --by: 45%;"
+                    data-t="btn_codes">
+                🔑 MOODLE CODES
+            </button>
+
+            <button class="title-overlay-btn block-general" id="btn-achievements"
+                    style="--bx: 70%; --by: 55%;"
+                    data-t="btn_achievements">
+                🏆 ACHIEVEMENTS
+            </button>
+
+            <button class="title-overlay-btn btn-danger" id="btn-reset"
+                    style="--bx: 50%; --by: 55%;"
+                    data-t="btn_reset">
+                🗑 RESET
+            </button>
+
+            <!-- Decoration kept but hidden — initTitleDecoration() in main.js still runs safely -->
+            <div class="title-deco" id="tdeco" style="display:none;"></div>
+        </div>
+    </div>
+
+
+
+    <!-- HOW TO PLAY MODAL -->
+    <div id="tut-modal" class="modal-bg">
+        <div class="modal-box">
+            <button class="modal-close" data-modal-close="tut-modal">✕ CLOSE</button>
+            <div class="modal-title" data-t="tut_title">▸ HOW TO PLAY STOXELS</div>
+            <div class="modal-section">
+                <h3 data-t="tut_s1h">WHAT IS A NONOGRAM?</h3>
+                <p data-t="tut_s1p">A nonogram is a grid puzzle. Numbers along rows and columns tell you how many consecutive filled cells exist. Reveal the hidden symbol to win!</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s2h">CONTROLS</h3>
+                <p data-t="tut_s2p"><strong>Left click</strong> — fill a cell (wrong fills cost time!)<br><strong>Right click</strong> — mark a cell with ✕ (safe, no penalty)<br><strong>Drag</strong> — paint multiple cells<br><strong>Escape</strong> — go back to previous screen</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s3h">DIFFICULTY</h3>
+                <p data-t="tut_s3p"><strong class="text-green">Easy</strong> — small penalties (×1), ×0.5 score<br><strong class="text-yellow">Normal</strong> — standard (×2), ×1 score<br><strong class="text-red">Hard</strong> — heavy penalties (×4), ×1.5 score</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s4h">MODIFIERS</h3>
+                <p data-t="tut_s4p"><strong class="text-orange">Time Trial</strong> — only 5 minutes!<br><strong class="text-red">Hardcore</strong> — one mistake fails the level<br><strong class="text-purple">Ironman</strong> — no items allowed, +15% score</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s5h">ITEMS &amp; INVENTORY</h3>
+                <p data-t="tut_s5p">Complete the level's bonus objective to earn ONE random item. Items range from Common to Legendary — rarer items are more powerful. Corrupted items are gambles! Items cost score to use, and can be sold. Ironman disables all item use.</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s8h">CLASSES &amp; CLASS SKILLS</h3>
+                <p data-t="tut_s8p">Completing Ascension - Levels allows you to select one out of three possible classes. Each class has a passive ability and two active abilities, which can heavily alter the way you approach a Stoxel and help in case you get stuck. Abilities can be upgraded by playing more Ascension - Levels.</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s9h">CONVERGENCE, INFERENCE &amp; PROBABILITY TREE</h3>
+                <p data-t="tut_s9p">Completing Convergence - Levels grants Convergence Points, which can be spent on the Probability Tree to customize the way you play the game. Completing Inference - Objectives rewards additional Convergence Points.</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s6h">BONUS OBJECTIVE &amp; QUIZ</h3>
+                <p data-t="tut_s6p">Each level has a bonus objective (shown on the level card). If you <strong>meet</strong> the bonus objective, a stats multiple-choice quiz appears after a brief pause — answer correctly for +50 pts and a bonus item! If you miss the objective, no quiz appears.</p>
+            </div>
+            <div class="modal-section">
+                <h3 data-t="tut_s7h">MOODLE CODES</h3>
+                <p data-t="tut_s7p">Complete all levels in a World to unlock a Moodle Code. Enter it in Moodle to earn a badge that is stored in your Moodle profile.</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- GAME SETUP SCREEN -->
+    <div id="screen-setup" class="screen">
+        <img class="setup-bg-img" src="images/Game_Setup/Game_Setup_New_Background.jpeg" alt="">
+
+        <div class="setup-box">
+
+            <!-- ============ THE OPEN BOOK ============ -->
+            <div class="setup-book">
+                <img class="setup-book-img" src="images/Game_Setup/Book-Frame.png" alt="">
+
+                <!-- ============ LEFT PAGE ============ -->
+                <div class="setup-page setup-page-left">
+
+                    <img class="setup-char-name-img" id="setup-char-name-img" src="" alt="">
+
+                    <!-- Char Portrait must be based on selected character and not hardcoded-->
+                    <img class="setup-char-portrait" id="setup-char-portrait" src="" alt="">
+
+                </div>
+
+                <!-- ============ RIGHT PAGE ============ -->
+                <div class="setup-page setup-page-right">
+
+                    <div class="setup-difficulty-label" data-t="setup_diff">GAME DIFFICULTY</div>
+                    <div class="setup-options setup-options-diff" id="diff-opts">
+                        <button class="setup-opt setup-opt-diff" data-diff="easy" data-t="diff_easy">EASY</button>
+                        <button class="setup-opt setup-opt-diff sel" data-diff="normal" data-t="diff_normal">NORMAL</button>
+                        <button class="setup-opt setup-opt-diff" data-diff="hard" data-t="diff_hard">HARD</button>
+                    </div>
+                    <div class="setup-desc-ribbon">
+                        <span class="setup-desc" id="diff-desc"></span>
+                    </div>
+
+                    <div class="setup-group-label" data-t="setup_mod">OPTIONAL MODIFIERS</div>
+                    <div class="setup-options">
+                        <div class="mod-wrapper">
+                            <button class="setup-opt setup-opt-mod mod-timetrial" data-mod="timetrial">
+                                <span class="mod-icon mod-icon-timetrial"></span>
+                                <span class="mod-title mod-title-orange" data-t="mod_tt">TIME TRIAL</span>
+                                <span class="mod-score-tag">+SCORE (20%)</span>
+                            </button>
+                            <span class="mod-per-desc" data-t="mod_desc_tt"></span>
+                        </div>
+                        <div class="mod-wrapper">
+                            <button class="setup-opt setup-opt-mod mod-hardcore" data-mod="hardcore">
+                                <span class="mod-icon mod-icon-hardcore"></span>
+                                <span class="mod-title mod-title-red" data-t="mod_hc">HARDCORE</span>
+                                <span class="mod-score-tag">+SCORE (30%)</span>
+                            </button>
+                            <span class="mod-per-desc" data-t="mod_desc_hc"></span>
+                        </div>
+                        <div class="mod-wrapper">
+                            <button class="setup-opt setup-opt-mod mod-ironman" data-mod="ironman">
+                                <span class="mod-icon mod-icon-ironman"></span>
+                                <span class="mod-title mod-title-purple" data-t="mod_im">IRONMAN</span>
+                                <span class="mod-score-tag">+SCORE (15%)</span>
+                            </button>
+                            <span class="mod-per-desc" data-t="mod_desc_im"></span>
+                        </div>
+                        <div class="mod-wrapper">
+                            <button class="setup-opt setup-opt-mod mod-classless" data-mod="classless">
+                                <span class="mod-icon mod-icon-classless"></span>
+                                <span class="mod-title mod-title-cyan" data-t="mod_cl">CLASSLESS</span>
+                                <span class="mod-score-tag">+SCORE (20%)</span>
+                            </button>
+                            <span class="mod-per-desc" data-t="mod_desc_cl"></span>
+                        </div>
+                        <div class="mod-wrapper">
+                            <button class="setup-opt setup-opt-mod mod-treeless" data-mod="treeless">
+                                <span class="mod-icon mod-icon-treeless"></span>
+                                <span class="mod-title mod-title-green" data-t="mod_tl">TREELESS</span>
+                                <span class="mod-score-tag">+SCORE (25%)</span>
+                            </button>
+                            <span class="mod-per-desc" data-t="mod_desc_tl"></span>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- ============ END RIGHT PAGE ============ -->
+
+            </div>
+            <!-- ============ END BOOK ============ -->
+
+            <button class="setup-back-corner-btn" id="btn-setup-back" data-t="btn_back">◀ BACK</button>
+            <div class="setup-btns">
+                <button class="title-btn setup-btn-img" id="btn-start-setup" data-t="btn_confirm">▶ SELECT LEVEL</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <!-- RESET MODAL -->
+    <div id="reset-modal" class="modal-bg">
+        <div class="modal-box modal-box-danger">
+            <button class="modal-close" data-modal-close="reset-modal" data-t="reset_close">✕ CLOSE</button>
+            <div class="modal-title text-red" data-t="reset_title">⚠ RESET ALL PROGRESS</div>
+            <div class="modal-section">
+                <p class="reset-body-text" data-t="reset_body">
+                    This will permanently erase:<br>
+                    <strong class="text-accent2">
+                        · All completed levels<br>
+                        · All highscores<br>
+                        · All bonus claims<br>
+                        · All inventory items<br>
+                        · All Moodle codes
+                    </strong><br><br>
+                    Your current playthrough will be gone. This cannot be undone.
+                </p>
+            </div>
+            <div class="modal-actions">
+                <button class="title-btn back-btn" id="btn-confirm-reset" data-t="reset_confirm">🗑 YES, RESET EVERYTHING</button>
+                <button class="title-btn back-btn" data-modal-close="reset-modal" data-t="reset_cancel">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- SETTINGS MODAL -->
+    <div id="settings-modal" class="modal-bg">
+        <div class="modal-box settings-box">
+            <button class="modal-close" data-modal-close="settings-modal" data-t="btn_settings_close">✕ CLOSE</button>
+            <div class="modal-title" data-t="settings_title">⚙ SETTINGS</div>
+
+            <!-- AUDIO -->
+            <div class="settings-section">
+                <div class="settings-section-title" data-t="settings_audio">🎵 AUDIO</div>
+
+                <div class="settings-row">
+                    <label class="settings-label" data-t="settings_bgm">Background Music</label>
+                    <div class="settings-controls">
+                        <button class="settings-toggle" id="stt-bgm">ON</button>
+                        <input type="range" class="settings-slider" id="sld-bgm"
+                               min="0" max="100" value="40" step="5">
+                        <span class="settings-val" id="val-bgm">40%</span>
+                    </div>
+                </div>
+
+                <div class="settings-row">
+                    <label class="settings-label" data-t="settings_sfx">Sound Effects</label>
+                    <div class="settings-controls">
+                        <button class="settings-toggle" id="stt-sfx">ON</button>
+                        <input type="range" class="settings-slider" id="sld-sfx"
+                               min="0" max="100" value="70" step="5">
+                        <span class="settings-val" id="val-sfx">70%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTROLS -->
+            <div class="settings-section">
+                <div class="settings-section-title" data-t="settings_controls">🖱 CONTROLS</div>
+
+                <div class="settings-row">
+                    <label class="settings-label">
+                        <span data-t="settings_axis_lock">Axis Lock</span>
+                        <span class="settings-hint" data-t="settings_axis_lock_hint">Lock drag to starting row or column</span>
+                    </label>
+                    <button class="settings-toggle" id="stt-axis">OFF</button>
+                </div>
+                <div class="settings-row">
+                    <label class="settings-label">
+                        <span data-t="settings_qmark">Question Mark</span>
+                        <span class="settings-hint" data-t="settings_qmark_hint">Right Click a X - marked cell to add a yellow ?  </span>
+                    </label>
+                    <button class="settings-toggle" id="stt-qmark">ON</button>
+                </div>
+                <div class="settings-row">
+                    <label class="settings-label">
+                        <span data-t="settings_touchpad">Touchpad Mode</span>
+                        <span class="settings-hint" data-t="settings_touchpad_hint">Adds an in-game button to switch left-click between Fill and Mark</span>
+                    </label>
+                    <button class="settings-toggle" id="stt-touchpad">OFF</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- CHANGELOG MODAL-->
+    <div id="changelog-modal" class="modal-bg">
+        <div class="modal-box changelog-box">
+            <button class="modal-close" data-modal-close="changelog-modal">✕ CLOSE</button>
+            <div class="modal-title">📝 CHANGELOG (English Only)</div>
+
+            <div id="changelog-content" class="changelog-scroll-area"></div>
+        </div>
+    </div>
+
+    <!-- CHARACTER SELECT SCREEN -->
+    <div id="screen-character-select" class="screen">
+        <div id="char-select-content"></div>
+    </div>
+
+
+
+    <!-- LEVEL SELECT SCREEN -->
+    <div id="screen-levels" class="screen">
+        <div class="ls-topbar">
+            <div class="ls-topbar-row1">
+                <button class="back-btn" id="btn-levels-back">◀ <span data-t="btn_setup">SETUP</span></button>
+                <span class="ls-title" data-t="ls_title">SELECT LEVEL</span>
+                <button id="btn-toggle-map-view" class="btn-toggle-view">🗺️ MAP VIEW</button>
+                <div class="ls-topbar-right">
+                    <span class="ls-class-status" id="ls-class-status"></span>
+                    <button class="gtb-btn gtb-btn-inference" id="btn-quest-log">
+                        📋 <span data-t="btn_inference">INFERENCE</span> <span id="quest-log-badge" class="quest-badge" style="display:none;">!</span>
+                    </button>
+                    <button class="gtb-btn" id="btn-go-passive-tree">🌿 PROBABILITY TREE</button>
+                </div>
+            </div>
+            <div class="ls-topbar-row2">
+                <span class="ls-mods-label" id="ls-mods"></span>
+                <span class="ls-score" id="ls-score">TOTAL: 0</span>
+                <span class="ls-pts-next" id="ls-pts-next"></span>
+            </div>
+        </div>
+        <div class="ls-body" id="ls-body"></div>
+    </div>
+
+    <!-- MAP - VIEW OF LEVEL SELECT SCREEN  -->
+    <div id="screen-map-view" class="screen">
+        <div class="ls-topbar">
+            <button class="back-btn" id="mv-btn-back"><span data-t="btn_setup">SETUP</span></button>
+            <button id="btn-toggle-map-view-mv" class="btn-toggle-view"></button>
+            <div class="mv-ribbon-combined">
+                <span id="mv-ls-score"> 0</span>
+                <span id="mv-ls-pts-next"></span>
+            </div>
+            <span class="ls-title" data-t="ls_title">SELECT LEVEL</span>
+
+            <div class="ls-topbar-right">
+                <span class="ls-class-status" id="mv-class-status"></span>
+                <button class="gtb-btn gtb-btn-inference" id="mv-btn-quest-log" data-t="btn_inference">
+                    INFERENCE <span id="mv-quest-log-badge" class="quest-badge" style="display:none;">!</span>
+                </button>
+                <button class="gtb-btn" id="mv-btn-passive-tree" data-t="tree">TREE</button>
+            </div>
+        </div>
+
+        <div id="mv-walking-bar" class="mv-walking-bar">
+            🚶 Travelling...
+        </div>
+
+        <div id="mv-canvas-wrap" class="mv-canvas-wrap" style="position: relative; width: 100%; height: calc(100vh - 60px); overflow: hidden;">
+        </div>
+    </div>
+
+    <div id="screen-world-detail" class="screen">
+        <div class="wd-topbar" style="display: flex; gap: 15px; align-items: center; padding: 10px; background: rgba(0,0,0,0.1);">
+            <button id="btn-wd-back" class="btn-back" onclick="wdGoBackToMap()">← BACK TO OVERWORLD</button>
+        </div>
+
+        <div id="wd-canvas-wrap" class="wd-canvas-wrap" style="position: relative; width: 100%; height: calc(100vh - 60px); overflow: hidden;">
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <!-- GAME SCREEN -->
+    <div id="screen-game" class="screen">
+        <div class="game-main">
+
+            <!-- TOP META BAR -->
+            <div class="game-meta">
+
+                <div class="game-meta-rows-left">
+                    <div class="game-meta-row1">
+                        <div class="puzzle-hint" id="top-hint"></div>
+                        <div class="mod-tags-row" id="mod-tags"></div>
+                    </div>
+                    <div class="game-meta-row2">
+                        <span class="gtb-lvl" id="top-id">1-1</span>
+                        <span class="gtb-mistakes" id="mistake-counter">✗ 0</span>
+                        <button class="touchpad-mode-btn hidden" id="btn-touchpad-mode" data-t="touchpad_btn_fill">
+                            🖊️ FILL
+                        </button>
+                    </div>
+                    <div class="game-meta-row3">
+                        <div class="bonus-inline" id="bonus-sidebar">
+                            <span class="bonus-sidebar-label">🎯 BONUS</span>
+                            <span class="bonus-sidebar-hint" id="bonus-sidebar-hint"></span>
+                        </div>
+                    </div>
+                    <div class="game-meta-row4">
+                        <div class="completion-glimpse-bar hidden" id="completion-glimpse-bar">
+                            <span class="completion-glimpse-label">📋</span>
+                            <span class="completion-glimpse-text" id="completion-glimpse-text"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-meta-clock">
+                    <span class="timer-icon">⏱</span>
+                    <span class="timer-val" id="timer-val">30:00</span>
+                    <span class="gtb-pen" id="pen-info"></span>
+                </div>
+
+                <div class="game-meta-right">
+                    <div class="gtb-score-wrap">
+                        <span class="gtb-score-val" id="sc-disp">0</span>
+                        <span class="gtb-score-lbl" data-t="score_lbl">SCORE</span>
+                    </div>
+                    <button class="gtb-btn" id="btn-go-levels" data-t="btn_levels">◀ LEVELS</button>
+                </div>
+            </div>
+            <div id="eg-monster-wrapper" class="eg-hidden">
+                <div id="eg-monster-panel" class="eg-spawn-zone"></div>
+            </div>
+
+            <div id="eg-panel-left" class="eg-floating-panel eg-spawn-zone"></div>
+            <div id="eg-panel-right" class="eg-floating-panel eg-spawn-zone"></div>
+            <div id="eg-panel-bottom" class="eg-floating-panel eg-spawn-zone"></div>
+            <div id="eg-panel-top-corner" class="eg-floating-panel eg-spawn-zone"></div>
+
+            <!-- PUZZLE AREA: timer sits above the grid, inside puzzle-scaler -->
+            <div class="puzzle-and-sidebar">
+                <div id="class-hud-panel"></div>
+                <div class="puzzle-scaler-wrap" id="puzzle-scaler-wrap">
+                    <div class="puzzle-scaler" id="puzzle-scaler">
+                        <div class="puzzle-hud">
+                        </div>
+                        <div class="picross-wrap">
+                            <div class="ptable-scroll">
+                                <table class="ptable" id="ptable"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="item-use-toast" id="item-toast"></div>
+            <div id="inv-panel"></div>
+        </div>
+        <!-- ENDGAME OBJECTIVES — fixed left panel, zero layout impact -->
+        <div id="eg-objectives-strip" class="eg-hidden"></div>
+    </div>
+
+
+    <!-- HIGHSCORES SCREEN -->
+    <div id="screen-hs" class="screen hs-redesign">
+        <div class="hs-scroll-frame">
+
+            <!-- top row: menu button (left) + title plaque (center) -->
+            <div class="hs-top-row">
+                <button class="hs-menu-btn" id="btn-hs-back">
+                    <img class="hs-menu-btn-img" src="images/Highscore_Screen/return_to_menu_button.png" alt="">
+                    <span class="hs-menu-btn-label"><span data-t="btn_menu">MENU</span></span>
+                </button>
+
+                <div class="hs-title-plaque">
+                    <img class="hs-title-plaque-img" src="images/Highscore_Screen/highscores_header_stone.png" alt="">
+                    <span class="hs-title-plaque-label" data-t="hs_title">HIGHSCORES</span>
+                </div>
+            </div>
+
+            <!-- column headers, each using the stone header bar as its background -->
+            <div class="hs-col-headers" id="hs-col-headers">
+                <span class="hs-col-header hs-col-level">LEVEL</span>
+                <span class="hs-col-header hs-col-score">BEST SCORE</span>
+                <span class="hs-col-header hs-col-diff">DIFFICULTY</span>
+                <span class="hs-col-header hs-col-mods">MODIFIERS</span>
+            </div>
+
+            <!-- scrollable list itself -->
+            <div class="hs-body" id="hs-body"></div>
+
+            <!-- vertical scroll-mover track running down the right edge -->
+            <div class="hs-scrollbar-track" id="hs-scrollbar-track">
+                <img class="hs-scrollbar-thumb" id="hs-scrollbar-thumb"
+                     src="images/Highscore_Screen/vertical_scroll_mover.png" alt="">
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MOODLE CODES SCREEN -->
+    <div id="screen-codes" class="screen"></div>
+
+
+    <!-- WIN OVERLAY -->
+    <div class="overlay" id="ov-win">
+        <div id="ov-reveal" class="ov-reveal"></div>
+        <div class="ov-win-content" style="position:relative; z-index:402; display:flex; flex-direction:column; align-items:center; gap:12px; width:100%;">
+            <div class="ov-title win" data-t="ov_win">STOXEL SOLVED!</div>
+            <div class="ov-sub" id="ov-sub"></div>
+            <div class="bonus-list" id="bonus-list"></div>
+            <div id="item-reward-zone"></div>
+            <div class="ov-btns">
+                <button class="ob p" id="btn-next-lvl" data-t="btn_next">NEXT ▶</button>
+                <button class="ob s" id="btn-win-retry" data-t="btn_retry">RETRY</button>
+                <button class="ob s" id="btn-win-levels" data-t="btn_levels">LEVELS</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- LOSE OVERLAY -->
+    <div class="overlay" id="ov-lose">
+        <div class="ov-title lose" id="lose-title" data-t="ov_lose">TIME'S UP!</div>
+        <div class="ov-sub" id="lose-sub"></div>
+        <div class="ov-btns">
+            <button class="ob p" id="btn-lose-retry" data-t="btn_retry2">TRY AGAIN</button>
+            <button class="ob s" id="btn-lose-levels" data-t="btn_levels">LEVELS</button>
+        </div>
+    </div>
+
+
+    <!-- QUIZ OVERLAY -->
+    <div class="qr-backdrop" id="quiz-overlay">
+        <div class="qr-panel">
+
+            <!-- Portrait: JS injects an <img> here -->
+            <div class="qr-portrait" id="quiz-portrait"></div>
+
+            <div class="qr-content">
+
+                <div class="qr-title" data-t="quiz_title">⭐ BONUS QUESTION ⭐</div>
+
+                <div class="qr-question" id="quiz-q"></div>
+
+                <!-- MC options (shown for MC questions) -->
+                <div class="qr-opts" id="quiz-opts"></div>
+
+                <!-- Input row (shown for numeric questions) -->
+                <div class="qr-input-row" id="quiz-input-row" style="display:none;">
+                    <div class="qr-input-wrap">
+                        <input type="text" id="quiz-input" class="qr-input"
+                               autocomplete="off" spellcheck="false" />
+                    </div>
+                    <span class="qr-unit" id="quiz-input-unit" style="display:none;"></span>
+                    <button class="qr-submit-btn" id="quiz-input-submit">CHECK</button>
+                </div>
+
+                <div class="qr-hint" id="quiz-input-hint"></div>
+                <div class="qr-result" id="quiz-result"></div>
+
+                <div class="qr-reward-zone" id="item-reward-zone"></div>
+
+                <div class="qr-footer">
+                    <button class="qr-btn qr-btn--tutor" id="quiz-tutor-btn" style="display:none;">🎓 TUTOR</button>
+                    <button class="qr-btn qr-btn--continue" id="quiz-continue" style="display:none;" data-t="quiz_continue">CONTINUE ▶</button>
+                    <button class="qr-btn qr-btn--skip" id="btn-skip-quiz" data-t="quiz_skip">SKIP</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- CODE MODAL -->
+    <div id="pw-modal" class="modal-bg">
+        <div class="modal-box pw-box">
+            <button class="modal-close" data-modal-close="pw-modal">✕ CLOSE</button>
+            <div class="modal-title" data-t="pw_title">🔑 NEW CODE UNLOCKED!</div>
+            <div id="pw-content"></div>
+        </div>
+    </div>
+
+
+    <!-- PENALTY FLASH -->
+    <div class="penalty-flash" id="pen-flash"></div>
+
+
+    <!-- TUTORIAL SCREEN -->
+    <div id="screen-tutorial" class="screen">
+        <div class="tut-screen-layout">
+            <div class="tut-canvas" id="tut-canvas">
+                <!-- Demo area (background image + text box + arrow) fills the canvas -->
+                <div class="tut-demo-area" id="tut-demo-area"></div>
+            </div>
+
+            <div class="tut-topbar">
+                <span class="tut-topbar-title"></span>
+                <span class="tut-step-counter" id="tut-step-counter">1 / 11</span>
+            </div>
+
+            <div class="tut-nav">
+                <button class="tut-nav-btn sec" id="tut-prev-btn">◀ PREV</button>
+                <button class="tut-nav-btn" id="tut-next-btn">NEXT ▶</button>
+            </div>
+            <button class="tut-skip-btn" id="btn-skip-tutorial">SKIP TUTORIAL ▶</button>
+        </div>
+    </div>
+
+
+    <!-- MATH / PROBABILITY GATE MODAL -->
+    <div id="mg-modal" class="modal-bg">
+        <div class="qr-panel">
+
+            <!-- Portrait -->
+            <div class="qr-portrait" id="mg-portrait"></div>
+
+            <div class="qr-content">
+
+                <div class="qr-title" style="color:#b06cff; text-shadow: 0 0 10px rgba(176,108,255,0.6);" data-t="mg_instruction">Solve this to unlock:</div>
+
+                <div class="qr-question" id="mg-question"></div>
+
+                <div class="qr-input-row">
+                    <div class="qr-input-wrap">
+                        <input type="text" id="mg-answer-input" class="qr-input"
+                               autocomplete="off" spellcheck="false" />
+                    </div>
+                    <span class="qr-unit" id="mg-unit" style="display:none;"></span>
+                    <button class="qr-submit-btn" id="mg-submit-btn" data-t="mg_submit">CHECK</button>
+                </div>
+
+                <div class="qr-hint" id="mg-hint-box">
+                    <div class="qr-hint-text" id="mg-hint-text"></div>
+                </div>
+
+                <div class="qr-result mg-feedback" id="mg-feedback"></div>
+
+                <div class="qr-footer">
+                    <button class="qr-btn qr-btn--tutor" id="mg-tutor-btn" style="display:none;">🎓 TUTOR</button>
+                    <button class="qr-btn qr-btn--newq" id="mg-new-q-btn" style="display:none;" data-t="mg_new_q">🔄 NEW Q</button>
+                    <button class="qr-btn qr-btn--skip" id="btn-mg-close">✕ CLOSE</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- CLASS SELECTION OVERLAY -->
+    <div id="class-selection-overlay">
+        <div id="class-selection-content"></div>
+    </div>
+
+
+    <!-- ACHIEVEMENTS SCREEN -->
+    <div id="screen-achievements" class="screen">
+        <div class="ach-topbar">
+            <button class="gtb-btn" id="btn-ach-back">MENU</button>
+            <div class="ach-title">ACHIEVEMENTS</div>
+            <button class="gtb-btn btn-danger" id="btn-reset-achievements">RESET ALL ACHIEVEMENTS</button>
+        </div>
+        <div class="ach-body" id="ach-body"></div>
+    </div>
+
+
+    <!-- PROBABILITY TREE SCREEN -->
+    <div class="screen" id="screen-passive-tree">
+        <div class="pt-topbar">
+            <button class="gtb-btn" id="btn-pt-back">← BACK</button>
+            <span class="pt-title">🌿 <span data-t="pt_title">PROBABILITY TREE</span></span>
+            <div id="pt-search-wrap"></div>
+            <div id="pt-zoom-wrap">
+                <span id="pt-zoom-label">110%</span>
+                <input type="range" id="pt-zoom-bar" min="0" max="100" value="50" step="1">
+            </div>
+            <span class="pt-points" id="pt-points"></span>
+        </div>
+        <div class="pt-canvas" id="pt-canvas"></div>
+    </div>
+
+    <!-- CONVERGENCE -->
+    <div class="modal-bg" id="convergence-modal">
+        <div class="modal convergence-modal-box">
+            <div class="convergence-modal-icon">🌿</div>
+            <div class="convergence-modal-title" data-t="convergence">Convergence!</div>
+            <div class="convergence-modal-desc" data-t="convergence_desc_1">You've reached a milestone and earned 1 Convergence Point.</div>
+            <div class="convergence-modal-btns">
+                <button class="btn convergence-btn-tree" data-t="convergence_open_tree" onclick="hideConvergenceModal(); hideResultOverlays(); showPassiveTree();">
+                    🌿 Open Probability Tree
+                </button>
+                <button class="btn convergence-btn-next" data-t="convergence_next_level" onclick="hideConvergenceModal(); goToNextLevel();">
+                    ▶ <span>Next Level</span>
+                </button>
+                <button class="btn convergence-btn-levels" data-t="convergence_level_select" onclick="hideConvergenceModal(); goToLevelSelect();">
+                    ☰ <span>Level Select</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ACHIEVEMENT RESET CONFIRM MODAL -->
+    <div id="ach-reset-modal" class="modal-bg">
+        <div class="modal-box modal-box-danger">
+            <button class="modal-close" onclick="hideAchResetModal()">✕ CLOSE</button>
+            <div class="modal-title text-red">⚠ RESET ACHIEVEMENTS</div>
+            <div class="modal-section">
+                <p class="reset-body-text">
+                    This will permanently erase all achievement progress and unlocked tiers.<br><br>
+                    <strong class="text-accent2">This cannot be undone.</strong>
+                </p>
+            </div>
+            <div class="modal-actions">
+                <button class="title-btn back-btn" onclick="hideAchResetModal(); _doResetAchievements();">🗑 YES, RESET ACHIEVEMENTS</button>
+                <button class="title-btn back-btn" onclick="hideAchResetModal()">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="pause-overlay">
+        <div id="pause-label" data-t="game_paused">PAUSED</div>
+        <div id="pause-hint" data-t="game_paused_hint">Press Esc to continue</div>
+    </div>
+
+
+
+    <!-- SCRIPTS -->
+    <script src="js/audio.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/translations-strings.js"></script>
+    <script src="js/translations.js"></script>
+    <script src="js/quests-data.js"></script>
+    <script src="js/quests-stats.js"></script>
+    <script src="js/quests-logic.js"></script>
+    <script src="js/quests-styles.js"></script>
+    <script src="js/quests-ui.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/difficulty-modifiers.js"></script>
+    <script src="js/level-world-data.js"></script>
+    <script src="js/levels.js"></script>
+    <script src="js/item-data.js"></script>
+    <script src="js/items.js"></script>
+    <script src="js/cell_effects.js"></script>
+    <script src="js/item_effects.js"></script>
+    <script src="js/quiz-questions.js"></script>
+    <script src="js/quiz.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/grid.js"></script>
+    <script src="js/grid-scaling.js"></script>
+    <script src="js/mouse-over.js"></script>
+    <script src="js/mouse-button-handlers.js"></script>
+    <script src="js/penalty.js"></script>
+    <script src="js/scoring.js"></script>
+    <script src="js/inventory-ui.js"></script>
+    <script src="js/inventory-use-item.js"></script>
+    <script src="js/inventory-reshuffle.js"></script>
+    <script src="js/inventory.js"></script>
+    <script src="js/codes.js"></script>
+    <script src="js/screens/screens-highscore.js"></script>
+    <script src="js/screens/screens-map-view.js"></script>
+    <script src="js/screens/screens-world-levels-config.js"></script>
+    <script src="js/screens/screens-world-levels.js"></script>
+    <script src="js/screens/screens-level-select.js"></script>
+    <script src="js/screens/screens.js"></script>
+    <script src="js/scouts-primer.js"></script>
+    <script src="js/start-level.js"></script>
+    <script src="js/ui-reset.js"></script>
+    <script src="js/tutorial.js"></script>
+    <script src="js/mathgate-questions.js"></script>
+    <script src="js/mathgate.js"></script>
+    <script src="js/class-defs.js"></script>
+    <script src="js/class-cooldown-state.js"></script>
+    <script src="js/class-ui.js"></script>
+    <script src="js/class-hud.js"></script>
+    <script src="js/class-abilities.js"></script>
+    <script src="js/class-statistician.js"></script>
+    <script src="js/class-mathmagician.js"></script>
+    <script src="js/class-probabilist.js"></script>
+    <script src="js/class-outlier.js"></script>
+    <script src="js/class-actuary.js"></script>
+    <script src="js/class-recursionist.js"></script>
+    <script src="js/class-random-walker.js"></script>
+    <script src="js/class-markovian.js"></script>
+    <script src="js/class-bayesian.js"></script>
+    <script src="js/achievements.js"></script>
+    <script src="js/achievements-data.js"></script>
+    <script src="js/achievements-ui.js"></script>
+    <script src="js/passive-tree-data.js"></script>
+    <script src="js/passive-tree-state-points.js"></script>
+    <script src="js/passive-tree-ui.js"></script>
+    <script src="js/passive-tree-viewport.js"></script>
+    <script src="js/passive-tree-special-nodes-logic.js"></script>
+    <script src="js/passive-tree.js"></script>
+    <script src="js/passive-tracker.js"></script>
+    <script src="js/passive-effects.js"></script>
+    <script src="js/sprite/character-select.js"></script>
+    <script src="js/ui-events.js"></script>
+    <script src="js/changelog.js"></script>
+    <script src="js/endgame/endgame-state.js"></script>
+    <script src="js/endgame/endgame-player-stats.js"></script>
+    <script src="js/endgame/endgame-monsters.js"></script>
+    <script src="js/endgame/endgame-bosses.js"></script>
+    <script src="js/endgame/endgame-boss-abilities.js"></script>
+    <script src="js/endgame/endgame-combat-calculations.js"></script>
+    <script src="js/endgame/endgame-class-projectiles.js"></script>
+    <script src="js/endgame/endgame-grid-pickups.js"></script>
+    <script src="js/endgame/endgame-encounter.js"></script>
+    <script src="js/endgame/endgame-encounter-chain.js"></script>
+    <script src="js/endgame/endgame-ui.js"></script>
+    <script src="js/endgame/endgame-screens.js"></script>
+    <script src="js/endgame/endgame-atlas.js"></script>
+    <script src="js/endgame/endgame-atlas-ui.js"></script>
+    <script src="js/endgame/endgame-equipment-base-items.js"></script>
+    <script src="js/endgame/endgame-equipment-generator.js"></script>
+    <script src="js/endgame/endgame-equipment-tooltip.js"></script>
+    <script src="js/endgame/endgame-leveling.js"></script>
+    <script src="js/endgame/endgame-hub.js"></script>
+    <script src="js/endgame/endgame-hub-drag-and-drop.js"></script>
+    <script src="js/endgame/endgame-mod-tables.js"></script>
+    <script src="js/sprite/sprite_animations.js"></script>
+    <script src="js/sprite/player_sprite.js"></script>
+    <script src="js/sprite/character-banter.js"></script>
+    <script src="js/classes/targeting-reticle.js"></script>
+    <script src="js/storyline/storyline-engine.js"></script>
+    <script src="js/storyline/storyline-intro.js"></script>
+    <script src="js/storyline/storyline-intro-stox.js"></script>
+    <script src="js/storyline/storyline-intro-trix.js"></script>
+    <script src="js/storyline/storyline-intro-syla.js"></script>
+    <script src="js/storyline/storyline-beats.js"></script>
+
+
+    <script src="main.js"></script>
+</body>
+</html>
