@@ -213,23 +213,44 @@ function _quizRenderMcOptions(q) {
     });
 }
 
-// Passive-tree: tries to visually strike through one random wrong answer.
+// Called after the MC buttons have been rendered.
+// Eliminates a single wrong-answer button visually and tracks the stat.
+function _quizEliminateButton(btn) {
+    btn.disabled = true;
+    btn.style.opacity = '0.35';
+    btn.style.textDecoration = 'line-through';
+    btn.onclick = null;
+    questStat_mcWrongAnswerEliminated();
+}
+
+// Converts a chance that may exceed 100% into a concrete removal count.
+// e.g. 1.10 → 1 guaranteed removal, plus a 10% roll for a 2nd.
+//      0.65 → 0 guaranteed, 65% roll for 1.
+function _quizCalcEliminationCount(elimChance) {
+    if (elimChance <= 0) return 0;
+    const guaranteed = Math.floor(elimChance);
+    const remainder = elimChance - guaranteed;
+    const bonus = (remainder > 0 && Math.random() < remainder) ? 1 : 0;
+    return guaranteed + bonus;
+}
+
+// Passive-tree: tries to visually strike through wrong answer(s).
 // Called after the MC buttons have been rendered.
 function _quizTryEliminateWrongAnswer() {
     const elimChance = _quizCalcEliminationChance();
-    if (elimChance <= 0 || Math.random() >= elimChance) return;
+    const count = _quizCalcEliminationCount(elimChance);
+    if (count <= 0) return;
 
     const optsEl = document.getElementById('quiz-opts');
     const wrongBtns = Array.from(optsEl.children).filter(b => b.dataset.isCorrect !== '1');
     if (!wrongBtns.length) return;
 
-    const target = wrongBtns[Math.floor(Math.random() * wrongBtns.length)];
-    target.disabled = true;
-    target.style.opacity = '0.35';
-    target.style.textDecoration = 'line-through';
-    target.onclick = null;
+    // Always leave at least one distractor standing, even at very high chances.
+    const toRemove = Math.min(count, wrongBtns.length - 1);
+    if (toRemove <= 0) return;
 
-    questStat_mcWrongAnswerEliminated();
+    shuffle(wrongBtns); // reuses the existing shuffle() helper (see _quizBuildMcQuestion)
+    wrongBtns.slice(0, toRemove).forEach(_quizEliminateButton);
 }
 
 
@@ -568,7 +589,10 @@ function finishQuiz() {
     checkWorldCodes();
     checkWorldCompletion();
     save();
-    setTimeout(() => document.getElementById('ov-win').classList.add('show'), 300);
+    setTimeout(() => {
+        document.getElementById('ov-win').classList.add('show');
+        requestAnimationFrame(() => buildReveal());
+    }, 300);
 }
 
 // Called when the player clicks "SKIP" or presses Escape.
@@ -582,7 +606,10 @@ function skipQuiz() {
         return;
     }
     closeQuiz();
-    setTimeout(() => document.getElementById('ov-win').classList.add('show'), 300);
+    setTimeout(() => {
+        document.getElementById('ov-win').classList.add('show');
+        requestAnimationFrame(() => buildReveal());
+    }, 300);
 }
 
 // Hides the quiz overlay and clears all active state.
@@ -688,10 +715,12 @@ function _quizRefreshTutorButton() {
     const btn = document.getElementById('quiz-tutor-btn');
     if (!btn) return;
 
-    const hasTutorSkill = PT.hasSkill('tutor_enable');
+    // Trix's Silver Tongue trait grants Tutor access on its own;
+    // the tutor_enable node grants it for everyone else.
+    const canUseTutor = PT.hasSkill('tutor_enable') || _charIs('trix');
     const tutorCount = _quizCountTutorItems();
 
-    if (hasTutorSkill && tutorCount > 0) {
+    if (canUseTutor && tutorCount > 0) {
         btn.style.display = 'inline-block';
         btn.textContent = LANG === 'de'
             ? `🎓 Tutor um Hilfe bitten (${tutorCount})`

@@ -25,6 +25,20 @@ let dragAxis = null;
 // How many cells have been correctly filled in the current left-click drag stroke
 let dragStrokeCount = 0;
 
+// How many already-correct cells are contiguous with the drag-start cell,
+// along the row axis and the column axis respectively (computed at cellDown).
+let dragPrefillRow = 0;
+let dragPrefillCol = 0;
+
+// Whether the prefill offset has already been folded into dragStrokeCount
+// for the current stroke (only ever applied once, on first real movement).
+let dragPrefillApplied = false;
+
+// The pre-fill count folded into the current stroke's display total.
+// Starts as a best guess (max of row/col prefill) on the start cell,
+// then gets locked to the correct axis once the drag direction resolves.
+let dragPrefillOffset = 0;
+
 // When true (Touchpad Mode active), left-click behaves like a right-click (mark),
 // and right-click behaves like a left-click (fill). Toggled via the in-game button,
 // only available when SETTINGS.touchpadModeEnabled is true.
@@ -457,10 +471,27 @@ function handleLuckyTileClaim(row, col) {
 // Increments the drag stroke counter and notifies the drag-counter overlay
 // (only when actively painting in a left-click drag).
 function updateDragStrokeCounter(row, col) {
-    if (!painting || pval !== 1) return;   // dropped the mbtn !== 0 check — pval already tells us it's a fill
+    if (!painting || pval !== 1) return;
     dragStrokeCount++;
-    if (dragStrokeCount > 1) {
-        dragCounterApply(row, col, dragStrokeCount);
+
+    if (!dragPrefillApplied) {
+        const movedOff = (row !== dragStartRow || col !== dragStartCol);
+        if (movedOff) {
+            // Direction is now known — lock in the correct axis's prefill count.
+            const axis = (row === dragStartRow) ? 'row'
+                : (col === dragStartCol) ? 'col'
+                    : 'row'; // diagonal fallback, mirrors _isDragCellAllowed
+            dragPrefillOffset = (axis === 'row') ? dragPrefillRow : dragPrefillCol;
+            dragPrefillApplied = true;
+        } else {
+            // Still on the start cell — best guess before we know direction.
+            dragPrefillOffset = Math.max(dragPrefillRow, dragPrefillCol);
+        }
+    }
+
+    const displayCount = dragStrokeCount + dragPrefillOffset;
+    if (displayCount > 1) {
+        dragCounterApply(row, col, displayCount);
     }
 }
 
@@ -689,6 +720,12 @@ function cellDown(e, row, col) {
     dragAxis = null;
     dragStrokeCount = 0;
 
+    // snapshot how many correct cells already sit adjacent to the
+    // start cell along each axis, so the counter can pick up from there.
+    dragPrefillRow = _countAdjacentPrefillRun(row, col, 'row');
+    dragPrefillCol = _countAdjacentPrefillRun(row, col, 'col');
+    dragPrefillApplied = false;
+
     // Touchpad Mode: swap which physical button means "fill" vs "mark".
     // effectiveBtn is what we treat the click AS, regardless of the real button pressed.
     const effectiveBtn = (touchpadMarkModeActive && mbtn === 0) ? 2
@@ -722,6 +759,10 @@ function stopPainting() {
     dragStartCol = -1;
     dragAxis = null;
     dragStrokeCount = 0;
+    dragPrefillRow = 0;
+    dragPrefillCol = 0;
+    dragPrefillApplied = false;
+    dragPrefillOffset = 0;
     dragCounterClear();
 }
 

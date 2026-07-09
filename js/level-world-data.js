@@ -173,7 +173,7 @@ const W1 = [
     {   //10x20
         hint: "De Morgan",
         hintDE: "De Morgan",
-        reveal: "This is De Morgan",
+        reveal: "This is the De Morgan rule for the intersection of two sets",
         revealDE: "Dies ist die Regel von De Morgan für den Schnitt zweier Mengen",
         timer: 1800,
         bonusHint: "Answer the bonus question correctly",
@@ -2278,7 +2278,41 @@ const W9 = [
 
 const W10 = [
 
+    {   //5x15
+        hint: "Confidence Interval",
+        hintDE: "Konfidenzintervall",
+        reveal: "Typical notation for a confidence interval",
+        revealDE: "Typische Notation eines Konfidenzintervalls",
+        timer: 300,
+        bonusHint: "Complete level",
+        bonusHintDE: "Complete level (DE)",
+        bonusType: "nomiss",
+        bonusParam: 0,
+        grid: G(
+            [1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1], [1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1], [1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1],
+            [1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1], [1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1]
+        )
+    },
 
+
+
+    {   //10x30
+        hint: "Property of CI",
+        hintDE: "Eigenschaft eines KI",
+        reveal: "The parameter b is in the Confidence Interval [L,U] with probability larger than 1-a",
+        revealDE: "Der Parameter b liegt mit Wahrscheinlichkeit von mehr als 1-a in dem Konfidenzintervall [L,U]",
+        timer: 1800,
+        bonusHint: "Complete level",
+        bonusHintDE: "Complete level (DE)",
+        bonusType: "nomiss",
+        bonusParam: 0,
+        grid: G(
+            [1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1], [1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1], [1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1],
+            [1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1], [1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1], [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0]
+        )
+    },
 
 
 ];

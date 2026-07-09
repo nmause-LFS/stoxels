@@ -809,6 +809,7 @@ function _primerCalcTutorSuccessChance() {
     if (PT.hasSkill('statistics_tutor')) chance += 0.10;
     if (PT.hasSkill('maths_tutor')) chance += 0.10;
     if (PT.hasSkill('professor_tutor')) chance += 0.20;
+    if (_charIs('trix')) chance += 0.10;
     return chance;
 }
 
@@ -883,10 +884,10 @@ function _primerRefreshTutorButton() {
     const btn = document.getElementById('primer-tutor-btn');
     if (!btn) return;
 
-    const hasTutorSkill = PT.hasSkill('tutor_enable');
+    const canUseTutor = PT.hasSkill('tutor_enable') || _charIs('trix');
     const tutorCount = _primerCountTutorItems();
 
-    if (hasTutorSkill && tutorCount > 0) {
+    if (canUseTutor && tutorCount > 0) {
         btn.style.display = 'inline-block';
         btn.textContent = LANG === 'de'
             ? `🎓 Tutor um Hilfe bitten (${tutorCount})`

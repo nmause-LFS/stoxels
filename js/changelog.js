@@ -4,6 +4,48 @@
 //------------------------------------------------------------------------
 
 const CHANGELOG_DATA = [
+
+    {
+        version: "v0.25.1 Update 1",
+        date: "09.07.2026",
+        changes: [
+            {
+                category: "New Features",
+                items: [
+                    "Game Reset Screen has been completely remade.",
+                    "The Win Overlay Screen has been redesigned to properly show a solved Stoxel visual.",
+
+
+                ],
+
+            },
+            {
+                category: "General Adjustments", 
+                items: [
+                    "Adjusted the way the Drag Stroke Counter works. It is now checking for correctly pre-filled correct cells, and if there are any then it starts counting the increased correctly filled counter instead of only the newly created new correct fills.",
+                    "Clarified the description of the Unshakeable trait for Stox: Mistake penalties escalate 30% more slowly for Stox. The Trait description has been updated.",
+                    "Multiple Choice question elimination chance can now exceed 100%. Values above 100% have a chance for multiple wrong answer removals.",
+                    "Syla's Trait Quick Study now requires no Probability Tree investment and stacks with Probability Tree effects properly. The Trait description has been updated.",
+                    "Optimized image loading and performance. In some cases this results in up to 75% improved load times.",
+                ],
+
+            },
+            {
+                category: "Bug Fixes",
+                items: [
+                    "Potentially fixed a bug that cause issues image loading in the intro while having a higher than usual connection delay. Together with image load optimization this should result in a smoother Intro sequence.",
+                    "Fixed a bug that still caused console log output.",
+                ],
+
+            },
+
+
+        ],
+
+
+    },
+
+
     {
         version: "v0.25 BETA - CARTOGRAPHERS OF CHANCE Expansion",
         date: "06.07.2026",

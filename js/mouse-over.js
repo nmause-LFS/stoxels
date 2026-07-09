@@ -140,6 +140,29 @@ function _isDragCellAllowed(row, col) {
 }
 
 
+// True if (row, col) is a cell the player has correctly resolved
+// (either filled themselves or via a reveal).
+function _isCellCorrectlyFilled(row, col) {
+    return (userGrid[row][col] === 1 || revealedGrid[row][col]) && cur.grid[row][col] === 1;
+}
+
+// Counts the contiguous run of already-correct cells touching (row, col)
+// along the given axis ('row' = scan left/right, 'col' = scan up/down).
+// Does NOT include (row, col) itself.
+function _countAdjacentPrefillRun(row, col, axis) {
+    let count = 0;
+    if (axis === 'row') {
+        const cols = cur.grid[0].length;
+        for (let c = col - 1; c >= 0 && _isCellCorrectlyFilled(row, c); c--) count++;
+        for (let c = col + 1; c < cols && _isCellCorrectlyFilled(row, c); c++) count++;
+    } else {
+        const rows = cur.grid.length;
+        for (let r = row - 1; r >= 0 && _isCellCorrectlyFilled(r, col); r--) count++;
+        for (let r = row + 1; r < rows && _isCellCorrectlyFilled(r, col); r++) count++;
+    }
+    return count;
+}
+
 //------------------------------------------------------------------------
 //-------------------DRAG PAINTING - MAIN---------------------------------
 //------------------------------------------------------------------------

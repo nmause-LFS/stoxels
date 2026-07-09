@@ -381,22 +381,20 @@ function buildMistakeLine() {
     return `<div class="ov-sub-line ${cssClass}">✗ ${mistakeCount} ${mistakeWord}</div>`;
 }
 
-// Writes the stats block (reveal quote, score, time, mistakes) into #ov-sub.
-function renderStatsBlock(pts, ptsAwarded, prevBest, mult, elapsed) {
+function buildScoreColumn(pts, ptsAwarded, prevBest, mult) {
     const gainNote = buildGainNote(pts, ptsAwarded, prevBest);
-    const mistakeLine = buildMistakeLine();
+    document.getElementById('ov-col-score').innerHTML = `
+        <div class="ov-sub-line ov-sub-pts">${pts} ${t('ov_win_pts')}</div>
+        <div class="ov-sub-line ov-sub-pts">${t('ov_win_multiplier')} ×${mult.toFixed(2)}</div>
+        <div class="ov-sub-line ov-sub-pts">${gainNote}</div>`;
+}
 
-    document.getElementById('ov-sub').innerHTML =
-        `<div class="ov-sub-line ov-sub-reveal">"${lvText(cur, 'reveal')}"</div>` +
-        `<div class="ov-sub-line ov-sub-pts">
-            ${pts} ${t('ov_win_pts')} <br>
-            ${t('ov_win_multiplier')} ×${mult.toFixed(2)}<br>
-            ${gainNote}
-        </div>` +
-        `<div class="ov-sub-line ov-sub-time">
+function buildTimeColumn(elapsed) {
+    document.getElementById('ov-col-time').innerHTML = `
+        <div class="ov-sub-line ov-sub-time">
             ⏱ ${formatTime(timerSecs)} ${t('ov_win_left')} · ${t('ov_win_solved_in')} ${formatTime(elapsed)}
-        </div>` +
-        mistakeLine;
+        </div>
+        ${buildMistakeLine()}`;
 }
 
 // Writes the bonus badge into #bonus-list.
@@ -478,7 +476,9 @@ function renderItemRewardZone(gi, bonusMet, isFirstClear, isAscensionLevel) {
 
 // Orchestrates the full win overlay render: stats, bonus badge, and item rewards.
 function renderWinOverlay({ gi, pts, ptsAwarded, prevBest, mult, elapsed, bonusMet, isAscensionLevel, isFirstClear }) {
-    renderStatsBlock(pts, ptsAwarded, prevBest, mult, elapsed);
+    document.getElementById('ov-reveal-quote').innerHTML = `"${lvText(cur, 'reveal')}"`;
+    buildScoreColumn(pts, ptsAwarded, prevBest, mult);
+    buildTimeColumn(elapsed);
     renderBonusBadge(bonusMet);
     renderItemRewardZone(gi, bonusMet, isFirstClear, isAscensionLevel);
 }
@@ -529,6 +529,7 @@ function checkIsLargeAdjMatrix() {
 // Called after every valid cell change to check whether the puzzle is complete.
 // If solved, halts the game, calculates the final score, fires all end-of-level
 // hooks (achievements, rewards, quest stats), and shows the win overlay.
+
 function checkWin() {
     if (!isPuzzleSolved()) return;
 
@@ -590,8 +591,9 @@ function checkWin() {
 
     if (typeof triggerBanter === 'function') triggerBanter('win');
 
-    // Build the grid reveal animation, then render the win overlay
-    buildReveal();
+    // Render the win overlay content (buildReveal() is deferred until
+    // #ov-win is actually visible — see the two branches below, and
+    // finishQuiz()/skipQuiz() in quiz.js for the quiz-bonus path)
     renderWinOverlay({ gi, pts, ptsAwarded, prevBest, mult, elapsed, bonusMet, isAscensionLevel, isFirstClear });
 
     // World completion hooks (codes popup delayed so it feels distinct)
@@ -600,9 +602,15 @@ function checkWin() {
 
     // Show the win overlay (or quiz flow if the bonus type is 'quiz')
     if (bonusMet && cur.bonusType === 'quiz') {
+        // ov-win itself isn't shown yet here — showQuiz() opens the separate
+        // quiz-overlay first. buildReveal() runs later, in finishQuiz()/skipQuiz()
+        // in quiz.js, right when ov-win actually becomes visible.
         setTimeout(() => showQuiz(cur.world), 1500);
     } else {
-        setTimeout(() => document.getElementById('ov-win').classList.add('show'), 1000);
+        setTimeout(() => {
+            document.getElementById('ov-win').classList.add('show');
+            requestAnimationFrame(() => buildReveal());
+        }, 1000);
     }
 
     Audio_Manager.playSFX('win');

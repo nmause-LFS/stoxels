@@ -262,7 +262,7 @@ const T = {
         ls_all_codes: 'All codes unlocked!',
 
         reset_close: '✕ CLOSE',
-        reset_title: '⚠ RESET ALL PROGRESS',
+        reset_title: 'RESET ALL PROGRESS',
         reset_body: 'This will permanently erase:<br><strong style="color:var(--accent2)">· All completed levels<br>· All highscores<br>· All bonus claims<br>· All inventory items<br>· All Moodle codes<br>· Your selected class <br>· Your completed Inference tasks <br>· Your collected Convergence Points<br><br>This will NOT reset your collected achievements.</strong><br><br>Your current playthrough will be gone. This cannot be undone.',
         reset_confirm: '🗑 YES, RESET EVERYTHING',
         reset_cancel: 'CANCEL',
@@ -333,6 +333,18 @@ const T = {
         touchpad_btn_mark: '✕ MARK',
 
         tree: 'TREE',
+
+        reset_item_levels: 'All completed levels',
+        reset_item_highscores: 'All highscores',
+        reset_item_bonus: 'All bonus claims',
+        reset_item_inventory: 'All inventory items',
+        reset_item_codes: 'All Moodle codes',
+        reset_item_class: 'Your selected class',
+        reset_item_inference: 'Your completed Inference tasks',
+        reset_item_convergence: 'Your collected Convergence Points',
+        reset_note_1: 'This will NOT reset your collected achievements.',
+        reset_note_2: 'Your current playthrough will be gone. This cannot be undone.',
+
 
 
     },
@@ -606,7 +618,7 @@ const T = {
         ls_all_codes: 'Alle Codes freigeschaltet!',
 
         reset_close: '✕ SCHLIESSEN',
-        reset_title: '⚠ RESET',
+        reset_title: 'RESETTE DEINEN FORTSCHRITT',
         reset_body: 'Folgendes wird dauerhaft gelöscht:<br><strong style="color:var(--accent2)">· Alle abgeschlossenen Level<br>· Alle Highscores<br>· Alle Bonus-Erfolge<br>· Alle Inventar-Gegenstände<br>· Alle Moodle-Codes<br>· Deine ausgewählte Klasse<br>· Deine abgeschlossenen Inferenz-Aufgaben<br>· Deine gesammelten Konvergenz-Punkte</strong><br><br>Dein aktueller Spielstand geht verloren. Dies kann nicht rückgängig gemacht werden.',
         reset_confirm: '🗑 JA, ALLES LÖSCHEN',
         reset_cancel: 'ABBRECHEN',
@@ -673,6 +685,18 @@ const T = {
         settings_touchpad_hint: 'Fügt einen Button hinzu, der Linksklick zwischen Füllen und Markieren umschaltet',
         touchpad_btn_fill: '🖊️ FÜLLEN',
         touchpad_btn_mark: '✕ MARKIEREN',
+
+
+        reset_item_levels: 'Alle abgeschlossenen Level',
+        reset_item_highscores: 'Alle Highscores',
+        reset_item_bonus: 'Alle Bonus-Erfolge',
+        reset_item_inventory: 'Alle Inventar-Gegenstände',
+        reset_item_codes: 'Alle Moodle-Codes',
+        reset_item_class: 'Deine ausgewählte Klasse',
+        reset_item_inference: 'Deine abgeschlossenen Inferenz-Aufgaben',
+        reset_item_convergence: 'Deine gesammelten Konvergenz-Punkte',
+        reset_note_1: 'Dies wird deine gesammelten Erfolge NICHT zurücksetzen.',
+        reset_note_2: 'Dein aktueller Spielstand geht verloren. Dies kann nicht rückgängig gemacht werden.',
 
     }
 };

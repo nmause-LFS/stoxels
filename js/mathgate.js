@@ -336,19 +336,24 @@ function mgHandleCorrectAnswer() {
 //------------------------------------------------------------------------
 
 
-// Returns the attempt count at which the hint becomes visible, based on
-// passive tree node allocations. Returns null if the player has not
-// unlocked the hint feature at all (wisdom_through_failure node required).
+// Returns the attempt count at which the hint becomes visible, or null if
+// the hint feature isn't available at all. Available either via the
+// wisdom_through_failure passive node, or automatically for Syla (whose
+// trait grants the hint feature for free, one attempt sooner than base).
+// Reductions from tree nodes and the Syla trait stack additively; the
+// result can reach 0, meaning the hint is shown immediately.
 function mgCalcHintThreshold() {
-    if (!PT.hasSkill('wisdom_through_failure')) return null;
+    const hasTreeUnlock = PT.hasSkill('wisdom_through_failure');
+    const isSyla = _charIs('syla');
+    if (!hasTreeUnlock && !isSyla) return null;
 
     let threshold = MG_HINT_BASE_THRESHOLD;
     if (PT.hasSkill('quick_study')) threshold -= 1;
     if (PT.hasSkill('accelerated_insight')) threshold -= 1;
     if (PT.hasSkill('instant_comprehension')) threshold -= 1;
     if (PT.hasSkill('probability_gate_mastery')) threshold -= 1;
-    if (_charIs('syla')) threshold -= 1;
-    return Math.max(1, threshold);
+    if (isSyla) threshold -= 1;
+    return Math.max(0, threshold);
 }
 
 // Reveals the hint for the current question inside the modal.
@@ -647,10 +652,10 @@ function mgRefreshTutorButton() {
     const btn = document.getElementById('mg-tutor-btn');
     if (!btn) return;
 
-    const hasTutorSkill = PT.hasSkill('tutor_enable');
+    const canUseTutor = PT.hasSkill('tutor_enable') || _charIs('trix');
     const tutorCount = STATE.inventory.filter(i => TUTOR_ITEM_IDS_2.includes(i.defId)).length;
 
-    if (hasTutorSkill && tutorCount > 0) {
+    if (canUseTutor && tutorCount > 0) {
         btn.style.display = 'inline-block';
         btn.textContent = LANG === 'de'
             ? `🎓 Tutor um Hilfe bitten (${tutorCount})`

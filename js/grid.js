@@ -879,15 +879,21 @@ function buildReveal() {
     const sol = cur.grid;
     const rows = sol.length;
     const cols = sol[0].length;
-    const maxDim = Math.max(rows, cols);
     const ct = document.getElementById('ov-reveal');
+    const wrap = document.getElementById('ov-top-half'); // new container
 
-    // Fill 92% of the smaller viewport dimension, divided across all cells
-    const maxSize = Math.min(window.innerWidth, window.innerHeight) * 0.92;
-    const cellSize = Math.floor(maxSize / maxDim);
+    const availW = wrap.clientWidth * 0.94;
+    const availH = wrap.clientHeight * 0.94;
+    const gap = 3;
 
-    const gridWidth = cellSize * cols + (cols - 1) * 3; // 3px gap between cells
-    const gridHeight = cellSize * rows + (rows - 1) * 3;
+    // Fit independently on each axis, then take the smaller cell size
+    // so the grid fills the box without ever overflowing either dimension.
+    const cellW = Math.floor((availW - (cols - 1) * gap) / cols);
+    const cellH = Math.floor((availH - (rows - 1) * gap) / rows);
+    const cellSize = Math.max(4, Math.min(cellW, cellH));
+
+    const gridWidth = cellSize * cols + (cols - 1) * gap;
+    const gridHeight = cellSize * rows + (rows - 1) * gap;
 
     ct.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
     ct.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
@@ -903,6 +909,11 @@ function buildReveal() {
         }
     }
 }
+
+window.addEventListener('resize', () => {
+    const ov = document.getElementById('ov-win');
+    if (ov && ov.classList.contains('show')) buildReveal();
+});
 
 
 
