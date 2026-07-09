@@ -47,6 +47,7 @@
     <link rel="stylesheet" href="css/class_selection.css">
     <link rel="stylesheet" href="css/class_spell_upgrade.css">
     <link rel="stylesheet" href="css/class_ascendency_selection.css">
+    <link rel="stylesheet" href="css/reset-game.css">
 </head>
 <body>
 
@@ -260,36 +261,104 @@
     </div>
 
 
-
-
-
-
-
     <!-- RESET MODAL -->
     <div id="reset-modal" class="modal-bg">
-        <div class="modal-box modal-box-danger">
-            <button class="modal-close" data-modal-close="reset-modal" data-t="reset_close">✕ CLOSE</button>
-            <div class="modal-title text-red" data-t="reset_title">⚠ RESET ALL PROGRESS</div>
-            <div class="modal-section">
-                <p class="reset-body-text" data-t="reset_body">
-                    This will permanently erase:<br>
-                    <strong class="text-accent2">
-                        · All completed levels<br>
-                        · All highscores<br>
-                        · All bonus claims<br>
-                        · All inventory items<br>
-                        · All Moodle codes
-                    </strong><br><br>
-                    Your current playthrough will be gone. This cannot be undone.
-                </p>
+        <div class="reset-modal-box">
+
+            <button class="reset-close-btn" data-modal-close="reset-modal" data-t="reset_close">✕ CLOSE</button>
+
+            <div class="reset-header">
+                <div class="reset-icon-slot reset-header-slot">
+                    <div class="reset-header-icon reset-icon-swirl"></div>
+                </div>
+                <div class="reset-title" data-t="reset_title">RESET ALL PROGRESS</div>
+                <div class="reset-icon-slot reset-header-slot">
+                    <div class="reset-header-icon reset-icon-gear"></div>
+                </div>
             </div>
-            <div class="modal-actions">
-                <button class="title-btn back-btn" id="btn-confirm-reset" data-t="reset_confirm">🗑 YES, RESET EVERYTHING</button>
-                <button class="title-btn back-btn" data-modal-close="reset-modal" data-t="reset_cancel">CANCEL</button>
+
+            <div class="reset-body">
+                <div class="reset-col reset-col-left">
+                    <div class="reset-item">
+                        <div class="reset-icon-slot">
+                            <div class="reset-item-icon reset-icon-levels"></div>
+                        </div>
+                        <span class="reset-item-text" data-t="reset_item_levels">All completed levels</span>
+                    </div>
+                    <div class="reset-item">
+                        <div class="reset-icon-slot">
+                            <div class="reset-item-icon reset-icon-highscores"></div>
+                        </div>
+                        <span class="reset-item-text" data-t="reset_item_highscores">All highscores</span>
+                    </div>
+                    <div class="reset-item">
+                        <div class="reset-icon-slot">
+                            <div class="reset-item-icon reset-icon-bonus"></div>
+                        </div>
+                        <span class="reset-item-text" data-t="reset_item_bonus">All bonus claims</span>
+                    </div>
+                    <div class="reset-item">
+                        <div class="reset-icon-slot">
+                            <div class="reset-item-icon reset-icon-inventory"></div>
+                        </div>
+                        <span class="reset-item-text" data-t="reset_item_inventory">All inventory items</span>
+                    </div>
+                    <div class="reset-item">
+                        <div class="reset-icon-slot">
+                            <div class="reset-item-icon reset-icon-codes"></div>
+                        </div>
+                        <span class="reset-item-text" data-t="reset_item_codes">All Moodle codes</span>
+                    </div>
+                </div>
+
+                <div class="reset-col reset-col-right">
+                    <div class="reset-item">
+                        <div class="reset-icon-slot">
+                            <div class="reset-item-icon reset-icon-class"></div>
+                        </div>
+                        <span class="reset-item-text" data-t="reset_item_class">Your selected class</span>
+                    </div>
+                    <div class="reset-item">
+                        <div class="reset-icon-slot">
+                            <div class="reset-item-icon reset-icon-inference"></div>
+                        </div>
+                        <span class="reset-item-text" data-t="reset_item_inference">Your completed Inference tasks</span>
+                    </div>
+                    <div class="reset-item">
+                        <div class="reset-icon-slot">
+                            <div class="reset-item-icon reset-icon-convergence"></div>
+                        </div>
+                        <span class="reset-item-text" data-t="reset_item_convergence">Your collected Convergence Points</span>
+                    </div>
+                    <div class="reset-companions-deco"></div>
+                </div>
             </div>
+
+            <div class="reset-note-banner">
+                <div class="reset-icon-slot reset-note-slot">
+                    <div class="reset-note-icon reset-icon-trophy"></div>
+                </div>
+                <div class="reset-note-text">
+                    <span data-t="reset_note_1">This will NOT reset your collected achievements.</span><br>
+                    <span data-t="reset_note_2">Your current playthrough will be gone. This cannot be undone.</span>
+                </div>
+                <div class="reset-icon-slot reset-note-slot">
+                    <div class="reset-note-icon reset-icon-shield"></div>
+                </div>
+            </div>
+
+            <div class="reset-footer">
+                <button class="reset-btn reset-btn-confirm" id="btn-confirm-reset" data-t="reset_confirm">
+                    YES, RESET EVERYTHING
+                </button>
+                <div class="reset-portal-deco"></div>
+                <button class="reset-btn reset-btn-cancel" data-modal-close="reset-modal" data-t="reset_cancel">
+                    CANCEL
+                </button>
+            </div>
+
         </div>
     </div>
-
 
     <!-- SETTINGS MODAL -->
     <div id="settings-modal" class="modal-bg">
@@ -558,12 +627,21 @@
 
     <!-- WIN OVERLAY -->
     <div class="overlay" id="ov-win">
-        <div id="ov-reveal" class="ov-reveal"></div>
-        <div class="ov-win-content" style="position:relative; z-index:402; display:flex; flex-direction:column; align-items:center; gap:12px; width:100%;">
+        <div class="ov-top-half" id="ov-top-half">
+            <div id="ov-reveal" class="ov-reveal"></div>
+        </div>
+        <div class="ov-bottom-half">
             <div class="ov-title win" data-t="ov_win">STOXEL SOLVED!</div>
-            <div class="ov-sub" id="ov-sub"></div>
+            <div class="ov-reveal-quote" id="ov-reveal-quote"></div>
+
+            <div class="ov-stats-columns">
+                <div class="ov-col" id="ov-col-score"></div>
+                <div class="ov-col" id="ov-col-time"></div>
+            </div>
+
             <div class="bonus-list" id="bonus-list"></div>
             <div id="item-reward-zone"></div>
+
             <div class="ov-btns">
                 <button class="ob p" id="btn-next-lvl" data-t="btn_next">NEXT ▶</button>
                 <button class="ob s" id="btn-win-retry" data-t="btn_retry">RETRY</button>
