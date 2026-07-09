@@ -716,13 +716,21 @@ const StorylineRenderer = (() => {
         const outgoing = layers[activeIdx];
         const incoming = layers[nextIdx];
 
-        incoming.src = songImagePath + imageFile;
-        incoming.style.opacity = '0';
+        const url = songImagePath + imageFile;
 
-        requestAnimationFrame(() => {
-            incoming.style.opacity = '1';
-            outgoing.style.opacity = '0';
-        });
+        const doFade = () => {
+            requestAnimationFrame(() => {
+                incoming.style.opacity = '1';
+                outgoing.style.opacity = '0';
+            });
+        };
+
+        if (incoming.src === url && incoming.complete) {
+            doFade(); // already loaded (e.g. preloaded ahead of time)
+        } else {
+            incoming.onload = doFade;
+            incoming.src = url;
+        }
 
         songImgEls.activeLayer = nextIdx;
     }
