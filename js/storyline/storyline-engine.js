@@ -53,6 +53,26 @@ function _wordsFromLine(text, lineStartMs, lineEndMs) {
 }
 
 
+
+const _imgCache = new Map(); // url -> Promise<HTMLImageElement>
+
+function _preloadImage(url) {
+    if (_imgCache.has(url)) return _imgCache.get(url);
+    const img = new Image();
+    const p = new Promise((resolve) => {
+        img.onload = () => {
+            if (img.decode) img.decode().then(() => resolve(img)).catch(() => resolve(img));
+            else resolve(img);
+        };
+        img.onerror = () => resolve(img); // don't hang the queue on one bad file
+    });
+    img.src = url;
+    _imgCache.set(url, p);
+    return p;
+}
+
+
+
 // ---------------------------------------------------------------------------
 // RENDERER
 // ---------------------------------------------------------------------------
@@ -712,25 +732,17 @@ const StorylineRenderer = (() => {
         const layers = songImgEls.layers;
         const activeIdx = songImgEls.activeLayer;
         const nextIdx = activeIdx === 0 ? 1 : 0;
-
         const outgoing = layers[activeIdx];
         const incoming = layers[nextIdx];
-
         const url = songImagePath + imageFile;
 
-        const doFade = () => {
+        _preloadImage(url).then((img) => {
+            incoming.src = img.src;
             requestAnimationFrame(() => {
                 incoming.style.opacity = '1';
                 outgoing.style.opacity = '0';
             });
-        };
-
-        if (incoming.src === url && incoming.complete) {
-            doFade(); // already loaded (e.g. preloaded ahead of time)
-        } else {
-            incoming.onload = doFade;
-            incoming.src = url;
-        }
+        });
 
         songImgEls.activeLayer = nextIdx;
     }
@@ -884,6 +896,8 @@ const StorylineRenderer = (() => {
         songCurrentImageIdx = -1;
         songCurrentLineIdx = -1;
         songLineRowEls = [];
+
+        songImages.forEach(entry => _preloadImage(songImagePath + entry.image));
 
         renderSong(song);
 
