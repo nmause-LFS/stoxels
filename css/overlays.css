@@ -5,35 +5,47 @@
     ------------------------------------------------------------------------
 */
 
-
-/* --- Overlay base container ---
-   Hidden by default. JS adds .show to display it when a level ends. */
 .overlay {
     display: none;
     position: fixed;
     inset: 0;
     background: rgba(10, 10, 10, 0.97);
     z-index: 400;
-    align-items: center;
-    justify-content: center;
     flex-direction: column;
-    gap: 12px;
-    text-align: center;
-    padding: 20px;
     overflow-y: auto;
 }
 
-    /* JS toggles this class to make the overlay visible */
     .overlay.show {
         display: flex;
     }
+
+
+.ov-top-half {
+    flex: 0 0 40%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    padding: clamp(6px, 1.5vw, 12px);
+}
+
+.ov-bottom-half {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(6px, 1.2vw, 10px);
+    padding: clamp(10px, 2.5vw, 16px) clamp(12px, 3vw, 20px) clamp(14px, 3.5vw, 24px);
+    min-height: 0;
+}
 
 
 /* --- Overlay title --- */
 .ov-title {
     font-family: var(--PX);
     font-size: clamp(14px, 3vw, 22px);
-    letter-spacing: 3px;
+    letter-spacing: clamp(1px, 0.4vw, 3px);
+    text-align: center;
 }
 
     /* Neon glow on win, red glow on lose */
@@ -48,9 +60,19 @@
     }
 
 
-/* --- Stats / detail text block below the title --- */
+/* --- Reveal quote line (level's flavour/hint text) --- */
+.ov-reveal-quote {
+    color: var(--accent2);
+    font-style: italic;
+    font-size: clamp(11px, 1.8vw, 20px);
+    max-width: min(1000px, 92vw);
+    text-align: center;
+}
+
+
+/* --- Stats / detail text block below the title (legacy container) --- */
 .ov-sub {
-    max-width: 1000px;
+    max-width: min(1000px, 92vw);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -58,57 +80,53 @@
     text-align: center;
 }
 
-/* Generic line — still needed? Check JS usage before removing */
+/* Generic line — used inside .ov-col blocks (score / time columns) */
 .ov-sub-line {
-    font-size: 20px;
-    line-height: 2;
+    font-size: clamp(11px, 1.8vw, 20px);
+    line-height: 1.6;
 }
 
-/* EN / DE level reveal / solve flavour text */
+/* EN / DE level reveal / solve flavour text (legacy — superseded by .ov-reveal-quote) */
 .ov-sub-reveal {
     color: var(--accent2);
     font-style: italic;
-    font-size: 20px;
+    font-size: clamp(11px, 1.8vw, 20px);
 }
 
 /* Points earned */
 .ov-sub-pts {
     color: var(--yellow);
     font-family: var(--PX);
-    font-size: 20px;
+    font-size: clamp(11px, 1.8vw, 20px);
 }
 
 /* Time remaining / solve time */
 .ov-sub-time {
     color: var(--green);
-    font-size: 20px;
+    font-size: clamp(11px, 1.8vw, 20px);
 }
 
 /* Mistake counter — grey when mistakes were made */
 .ov-sub-miss {
     color: #c0c0c0;
-    font-size: 20px;
+    font-size: clamp(11px, 1.8vw, 20px);
 }
 
 /* Mistake counter — green when zero mistakes */
 .ov-sub-miss-ok {
     color: var(--green);
-    font-size: 20px;
+    font-size: clamp(11px, 1.8vw, 20px);
 }
 
 
-/* --- Faint puzzle grid watermark centered behind the overlay content --- */
+/* --- Solved-puzzle reveal grid, shown large in the top half --- */
 .ov-reveal {
     display: grid;
     gap: 3px;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 0.15;
-    pointer-events: none;
-    z-index: 401;
+    opacity: 0.95;
     margin: 0;
+    max-width: 100%;
+    max-height: 100%;
 }
 
 /* Default (empty) cell */
@@ -120,16 +138,35 @@
     min-height: 0;
 }
 
-    /* Filled cell — accent colour */
+    /* Filled cell — accent colour with glow */
     .ov-reveal-cell.f {
         background: var(--accent);
+        box-shadow: 0 0 6px var(--accent);
     }
+
+
+/* --- Two-column stats layout (score | time & penalty) --- */
+.ov-stats-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(10px, 3vw, 24px);
+    max-width: min(1050px, 94vw);
+    width: 100%;
+}
+
+.ov-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+    min-width: 0; /* lets text/columns shrink instead of forcing overflow */
+}
 
 
 /* --- Bottom action buttons (Next Level, Retry, Level Select) --- */
 .ov-btns {
     display: flex;
-    gap: 15px;
+    gap: clamp(8px, 2vw, 15px);
     flex-wrap: wrap;
     justify-content: center;
 }
@@ -137,12 +174,13 @@
 /* Shared base style for all overlay buttons */
 .ob {
     font-family: var(--PX);
-    font-size: 12px;
+    font-size: clamp(9px, 1.5vw, 12px);
     background: transparent;
-    padding: 10px 16px;
+    padding: clamp(7px, 1.4vw, 10px) clamp(10px, 2.4vw, 16px);
     cursor: pointer;
     letter-spacing: 1px;
     transition: all .12s;
+    white-space: nowrap;
 }
 
     /* Primary action (e.g. Next Level) — accent colour */
@@ -191,8 +229,8 @@
 /* Individual badge — green if earned, muted if missed */
 .bonus-badge {
     font-family: var(--PX);
-    font-size: 12px;
-    padding: 5px 9px;
+    font-size: clamp(9px, 1.4vw, 12px);
+    padding: clamp(4px, 0.9vw, 5px) clamp(6px, 1.4vw, 9px);
     border: 1px solid;
 }
 
@@ -211,10 +249,10 @@
 .item-reward {
     background: var(--item-reward-bg);
     border: 1px solid var(--purple);
-    padding: 10px 14px;
-    font-size: 12px;
+    padding: clamp(7px, 1.6vw, 10px) clamp(10px, 2.2vw, 14px);
+    font-size: clamp(9px, 1.4vw, 12px);
     color: var(--purple);
-    max-width: 360px;
+    max-width: min(360px, 90vw);
     line-height: 1.6;
 }
 
@@ -240,8 +278,9 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    gap: 14px;
-    padding: 20px;
+    gap: clamp(8px, 1.8vw, 14px);
+    padding: clamp(10px, 2.5vw, 20px);
+    overflow-y: auto;
 }
 
     .quiz-overlay.show {
@@ -252,9 +291,10 @@
 /* --- Quiz header title ("BONUS QUESTION") --- */
 .quiz-title {
     font-family: var(--PX);
-    font-size: 20px;
+    font-size: clamp(13px, 2.2vw, 20px);
     color: var(--yellow);
     letter-spacing: 2px;
+    text-align: center;
 }
 
 
@@ -262,9 +302,9 @@
    Uses a math-friendly font stack for formula rendering. */
 .quiz-q {
     font-family: "STIX Two Math", "Cambria Math", "DejaVu Sans", var(--F), monospace;
-    font-size: 20px;
+    font-size: clamp(13px, 2.2vw, 20px);
     color: var(--accent2);
-    max-width: 750px;
+    max-width: min(750px, 92vw);
     text-align: center;
     line-height: 1.8;
 }
@@ -274,19 +314,19 @@
 .quiz-opts {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    max-width: 600px;
+    gap: clamp(6px, 1.5vw, 8px);
+    max-width: min(600px, 92vw);
     width: 67%;
 }
 
 /* Single answer option button */
 .quiz-opt {
     font-family: var(--F);
-    font-size: 20px;
+    font-size: clamp(13px, 2.2vw, 20px);
     background: var(--surface);
     border: 1px solid var(--border2);
     color: var(--accent2);
-    padding: 12px 16px;
+    padding: clamp(8px, 2vw, 12px) clamp(10px, 2.4vw, 16px);
     cursor: pointer;
     transition: all .12s;
     text-align: left;
@@ -315,8 +355,9 @@
 /* --- Result feedback line below the answer grid --- */
 .quiz-result {
     font-family: var(--PX);
-    font-size: 20px;
+    font-size: clamp(13px, 2.2vw, 20px);
     min-height: 20px;
+    text-align: center;
 }
 
     .quiz-result.ok {
@@ -332,11 +373,11 @@
    Both share the same base shape; only border colour differs. */
 .quiz-skip {
     font-family: var(--PX);
-    font-size: 12px;
+    font-size: clamp(9px, 1.5vw, 12px);
     background: transparent;
     border: 1px solid var(--border2);
     color: var(--setup-opt-inactive);
-    padding: 7px 14px;
+    padding: clamp(5px, 1.4vw, 7px) clamp(10px, 2.4vw, 14px);
     cursor: pointer;
     transition: all .12s;
 }
@@ -348,11 +389,11 @@
 
 .quiz-tutor-btn {
     font-family: var(--PX);
-    font-size: 12px;
+    font-size: clamp(9px, 1.5vw, 12px);
     background: transparent;
     border: 1px solid var(--yellow);
     color: var(--yellow);
-    padding: 7px 14px;
+    padding: clamp(5px, 1.4vw, 7px) clamp(10px, 2.4vw, 14px);
     cursor: pointer;
     transition: all .12s;
 }
@@ -416,3 +457,53 @@
     ::-webkit-scrollbar-thumb:hover {
         background: var(--scrollbar-thumb-hover);
     }
+
+
+
+
+/*
+    ------------------------------------------------------------------------
+    ---------------------RESPONSIVE — NARROW SCREENS------------------------
+    ------------------------------------------------------------------------
+    Same breakpoint used across title-screen.css / setup-screen.css / etc.
+    Below this width the two-column stats block no longer has room to
+    breathe, so it collapses to a single stacked column, and the top
+    half gives a bit more room back to the bottom half so buttons and
+    text don't get squeezed against the viewport edge.
+*/
+
+@media (max-width: 640px) {
+
+    .ov-top-half {
+        flex: 0 0 34%;
+        padding: 6px;
+    }
+
+    .ov-bottom-half {
+        gap: 6px;
+        padding: 8px 10px 16px;
+    }
+
+    .ov-stats-columns {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        max-width: 94vw;
+    }
+
+    .ov-col {
+        gap: 2px;
+    }
+
+    .ov-btns {
+        gap: 8px;
+    }
+
+    .ob {
+        padding: 8px 12px;
+    }
+
+    .quiz-opts {
+        grid-template-columns: 1fr;
+        width: 90%;
+    }
+}
