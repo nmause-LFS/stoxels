@@ -1,0 +1,322 @@
+﻿/*
+    ------------------------------------------------------------------------
+    ------------------------INFINITE HUNGER OVERLAY-------------------------
+    ------------------------------------------------------------------------
+    Locked-aspect-ratio canvas approach — same pattern as .title-canvas /
+    .tut-canvas / .setup-book, so every % coordinate below stays pinned to
+    the same point on the artwork at any screen size.
+*/
+
+#tail-risk-overlay {
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 0;
+    z-index: 3000;
+}
+
+/* ── THE CANVAS ── locked to the background artwork's native ratio */
+.ih-canvas {
+    position: relative;
+    aspect-ratio: 1376 / 768; /* ← adjust if infinite-hunger-background.jpeg differs */
+    width: 100%;
+    max-width: min(1300px, 94vw);
+    max-height: 92vh;
+    height: auto;
+    margin: 0 auto;
+}
+
+.ih-bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* ── STONE TABLET — central panel, positioned relative to the canvas ── */
+.ih-tablet {
+    position: absolute;
+    bottom: -22%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    aspect-ratio: 1030 / 620; /* ← adjust to stone-tablet.png's real ratio */
+    z-index: 1;
+}
+
+.ih-tablet-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+}
+
+/* ── TITLE — "INFINITE HUNGER" ── */
+.ih-title {
+    position: absolute;
+    top: 14%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    text-align: center;
+    font-family: var(--PX);
+    font-size: clamp(12px, 2.4cqw, 22px);
+    letter-spacing: 2px;
+    color: #ff6b5b;
+    text-shadow: 0 0 10px rgba(255, 60, 40, 0.6);
+    z-index: 2;
+    white-space: nowrap;
+}
+
+/* ── PROMPT TEXT ── */
+.ih-prompt {
+    position: absolute;
+    top: 27%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 82%;
+    text-align: center;
+    font-family: var(--PX);
+    font-size: clamp(10px, 1.6cqw, 15px);
+    line-height: 1.7;
+    color: var(--accent2, #cfd8e3);
+    z-index: 2;
+}
+
+/* ── SLIDER ROW — track with the clock as the moving thumb ── */
+.ih-slider-row {
+    position: absolute;
+    top: 46%;
+    left: 8%;
+    width: 84%;
+    z-index: 2;
+}
+
+.ih-slider-track {
+    position: relative;
+    width: 100%;
+    /* Bar stays slim regardless of thumb/icon size — tweak these two vars only */
+    --ih-track-h: clamp(22px, 3.6%, 32px);
+    --ih-thumb-size: clamp(70px, 30%, 200px);
+    height: var(--ih-track-h);
+    top: -110%;
+}
+
+.ih-selector-bar-img {
+    position: absolute;
+    top: -100%;
+    inset: 0;
+    width: 100%;
+    height: 400%;
+    object-fit: fill;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+}
+
+/* Broken clock — static, overlaps the bar's right end, layered on top */
+.ih-clock-broken-icon {
+    position: absolute;
+    right: 4%;
+    top: 200%;
+    transform: translate(30%, -50%);
+    width: clamp(56px, 20%, 100px);
+    height: auto;
+    z-index: 5; /* above bar (0) and slider (1) */
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Native range input — invisible track, clock.png as the thumb */
+.ih-slider {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+    .ih-slider::-webkit-slider-runnable-track {
+        background: transparent;
+        height: 100%;
+    }
+
+    .ih-slider::-moz-range-track {
+        background: transparent;
+        height: 100%;
+    }
+
+    .ih-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: var(--ih-thumb-size);
+        height: var(--ih-thumb-size);
+        margin-top: calc((var(--ih-track-h) - var(--ih-thumb-size)) / 2 + 30px); /* ← tweak this offset */
+        border-radius: 0;
+        background-image: url('../../images/Infinite_Hunger/clock.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-color: transparent;
+        border: none;
+        box-shadow: none;
+        cursor: pointer;
+    }
+
+    .ih-slider::-moz-range-thumb {
+        width: var(--ih-thumb-size);
+        height: var(--ih-thumb-size);
+        border-radius: 0;
+        background-image: url('../../images/Infinite_Hunger/clock.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-color: transparent;
+        border: none;
+        box-shadow: none;
+        cursor: pointer;
+        transform: translateY(30px); /* ← keep in sync with the webkit offset above */
+    }
+
+/* ── COST LINE — "Cost: 1:30" ── */
+.ih-cost-line {
+    position: absolute;
+    top: 70%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    font-family: var(--PX);
+    font-size: clamp(12px, 2cqw, 18px);
+    color: #ff6b5b;
+    text-shadow: 0 0 8px rgba(255, 60, 40, 0.5);
+    z-index: 2;
+    white-space: nowrap;
+}
+
+/* ── BUTTON ROW — SACRIFICE / CANCEL ── */
+.ih-btns {
+    position: absolute;
+    top: 78%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: clamp(10px, 2.4%, 24px);
+    z-index: 2;
+}
+
+.ih-btn {
+    position: relative;
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    width: clamp(120px, 15%, 220px);
+    aspect-ratio: 3.4 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .12s, filter .12s;
+}
+
+    .ih-btn:hover {
+        filter: brightness(1.15);
+        transform: translateY(-2px);
+    }
+
+    .ih-btn:active {
+        transform: translateY(0);
+    }
+
+.ih-btn-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+}
+
+.ih-btn-label {
+    position: relative;
+    z-index: 1;
+    font-family: var(--PX);
+    font-size: clamp(9px, 1.3cqw, 13px);
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.ih-btn-sacrifice .ih-btn-label {
+    color: #ff6b5b;
+}
+
+.ih-btn-cancel .ih-btn-label {
+    color: #ff6b5b;
+}
+
+/* ── NARROW-SCREEN BREAKPOINT — stack instead of overlay-position ── */
+@media (max-width: 640px) {
+
+    .ih-canvas {
+        aspect-ratio: auto;
+        width: 94vw;
+        height: auto;
+    }
+
+    .ih-bg-img {
+        border-radius: 8px;
+    }
+
+    .ih-tablet {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        width: 100%;
+        aspect-ratio: auto;
+        padding: 6% 4%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .ih-tablet-img {
+        display: none; /* flat panel on mobile instead of the tablet graphic */
+    }
+
+    .ih-title,
+    .ih-prompt,
+    .ih-cost-line,
+    .ih-slider-row,
+    .ih-btns {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        width: 100%;
+    }
+
+    .ih-btns {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .ih-btn {
+        width: 70%;
+        max-width: 240px;
+    }
+}

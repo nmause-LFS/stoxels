@@ -1,0 +1,178 @@
+﻿/* ── Endgame Objectives Panel ─────────────── */
+#eg-objectives-strip {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 250;
+    display: flex;
+    flex-direction: column;
+    gap: 2px; /* Added slight gap so larger text breathes */
+    /* Brighter background for better readability */
+    background: rgba(40, 48, 60, 0.95);
+    border: 1px solid #4a5568;
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    padding: 10px 12px 10px 8px; /* Slightly more padding */
+    /* Increased width to accommodate larger text */
+    min-width: 170px;
+    max-width: 220px;
+    pointer-events: auto;
+    backdrop-filter: blur(4px);
+}
+
+    #eg-objectives-strip.eg-hidden {
+        display: none !important;
+    }
+
+/* Section label at the top */
+.eg-obj-header {
+    font-size: 0.8em; /* Increased from 0.62em */
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #e2e8f0; /* Brighter text */
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #4a5568; /* Brighter border */
+}
+
+/* Individual objective row */
+.eg-obj-item {
+    font-size: 0.9em; /* Increased from 0.72em */
+    padding: 6px 8px; /* Increased padding */
+    border-radius: 4px;
+    color: #f7fafc; /* Much brighter text */
+    white-space: nowrap;
+    line-height: 1.4;
+    transition: color 0.2s, background 0.2s;
+}
+
+.eg-obj-done {
+    color: #4ade80;
+    background: rgba(74, 222, 128, 0.12); /* Slightly more visible background */
+}
+
+.eg-obj-pending {
+    color: #cbd5e1; /* Lighter pending text */
+    background: transparent;
+}
+
+/* --- LOOT TOOLTIP STYLES --- */
+.eg-loot-container {
+    position: relative;
+    cursor: help;
+}
+
+.eg-loot-tooltip {
+    display: none;
+    position: absolute;
+    left: 100%; /* Show to the right of the panel */
+    margin-left: 8px; /* Visual spacing */
+    top: 0;
+    background: rgba(26, 32, 44, 0.98); /* Dark slate background */
+    border: 1px solid #4a5568;
+    padding: 8px 12px;
+    border-radius: 6px;
+    min-width: 140px;
+    z-index: 300;
+    white-space: nowrap;
+    box-shadow: 4px 4px 10px rgba(0,0,0,0.5);
+    font-size: 0.95em;
+    pointer-events: auto; /* Allow the mouse to interact with the list inside */
+}
+
+    /* Invisible bridge to prevent the tooltip from collapsing while the mouse travels to it */
+    .eg-loot-tooltip::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: -15px; /* Reaches back over the gap to the main panel */
+        width: 15px;
+    }
+
+/* Show the tooltip when hovering over the Loot row */
+.eg-loot-container:hover .eg-loot-tooltip {
+    display: block;
+}
+
+/* Leave Map button inside the panel */
+.eg-leave-btn {
+    margin-top: 10px;
+    font-size: 0.8em; /* Increased from 0.7em */
+    font-weight: 700;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.1s;
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.eg-leave-locked {
+    background: #2d3748; /* Brighter locked state */
+    color: #a0aec0;
+    cursor: not-allowed;
+    border-color: #4a5568;
+}
+
+.eg-leave-ready {
+    background: #0d2b1a;
+    color: #4ade80;
+    border-color: #2d7a4f;
+}
+
+    .eg-leave-ready:hover {
+        background: #2d7a4f;
+        color: #fff;
+        transform: translateY(-1px);
+        border-color: #4ade80;
+    }
+
+
+/* --- INDIVIDUAL LOOT ITEM ROWS --- */
+.eg-loot-item-row {
+    position: relative;
+    padding: 5px 0;
+    font-size: 0.95em;
+    cursor: help;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+}
+
+    .eg-loot-item-row:last-child {
+        border-bottom: none;
+    }
+
+.eg-loot-item-icon {
+    opacity: 0.8;
+    margin-right: 6px;
+    font-size: 1.1em;
+}
+
+/* --- NESTED HUB TOOLTIP --- */
+.eg-nested-tooltip {
+    display: none;
+    position: absolute;
+    left: 105%; /* Pop out to the right of the first tooltip */
+    top: -10px; /* Align slightly above the hovered item row */
+    z-index: 400;
+    pointer-events: none; /* Prevent mouse interference */
+    /* Adds a deep shadow to separate the nested tooltip from the background */
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.8);
+    border-radius: 6px;
+    /* Ensure the Hub's tooltip frame doesn't wrap awkwardly */
+    min-width: 200px;
+    white-space: normal;
+}
+
+/* Reveal the nested tooltip when hovering over an item row */
+.eg-loot-item-row:hover .eg-nested-tooltip {
+    display: block;
+}

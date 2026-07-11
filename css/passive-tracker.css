@@ -1,0 +1,350 @@
+/* passive-tracker.css */
+/* Passive Tree Effect Tracker Panel */
+
+/* -------------------------------------------------------------------------*/
+/* -------------------------  CSS CUSTOM PROPERTIES  ---------------------- */
+/* -------------------------------------------------------------------------*/
+/* All shared color values, sizes, and timing defined here.                 */
+/* Change a value here and it updates everywhere that references it.        */
+/* ------------------------------------------------------------------------- */
+
+:root {
+    /* Gold accent — used for borders, text highlights, scrollbar, hover tints */
+    --pt-gold: 184, 154, 80;
+    --pt-gold-text: #d4b870;
+    --pt-gold-title: rgba(212, 184, 112, 0.8);
+    /* Background layers */
+    --pt-bg-panel: rgba(6, 8, 16, 0.93);
+    --pt-bg-tooltip: rgba(8, 10, 20, 0.97);
+    /* Text colors */
+    --pt-text-body: rgba(210, 200, 180, 0.85);
+    --pt-text-muted: #888;
+    --pt-text-gold: #bba870;
+    --pt-text-highlight: #e8d490;
+    --pt-text-accent: #66fcf1; /* Tooltip title — teal pop */
+    --pt-text-warn: #ff8060; /* Warning / error state */
+    /* Shared shape */
+    --pt-radius: 6px;
+    --pt-radius-sm: 3px;
+    /* Shared font */
+    --pt-font: var(--PX, monospace);
+    /* Transition timing */
+    --pt-transition-fast: 0.12s;
+    --pt-transition-mid: 0.2s;
+    --pt-transition-slow: 0.5s;
+}
+
+
+/* -------------------------------------------------------------------------*/
+/* ----------------------------  PANEL SHELL  ----------------------------- */
+/* -------------------------------------------------------------------------*/
+/* The outermost fixed container that holds the entire tracker widget.      */
+/* ------------------------------------------------------------------------- */
+
+.pt-tracker-panel {
+    position: fixed;
+    z-index: 500;
+    width: 220px;
+    background: var(--pt-bg-panel);
+    border: 1px solid rgba(var(--pt-gold), 0.35);
+    border-radius: var(--pt-radius);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    font-family: var(--pt-font);
+    font-size: 11px;
+    user-select: none;
+    pointer-events: all;
+    transition: opacity var(--pt-transition-mid);
+}
+
+    /* Panel dims when collapsed so it is less visually dominant */
+    .pt-tracker-panel.pt-tracker-collapsed {
+        opacity: 0.7;
+    }
+
+
+/* -------------------------------------------------------------------------*/
+/* ----------------------------  PANEL HEADER  ---------------------------- */
+/* -------------------------------------------------------------------------*/
+/* Title bar at the top of the panel with the collapse toggle button.       */
+/* ------------------------------------------------------------------------- */
+
+.pt-tracker-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 8px 4px;
+    border-bottom: 1px solid rgba(var(--pt-gold), 0.2);
+    cursor: default;
+}
+
+/* Small all-caps label — styled like a HUD readout */
+.pt-tracker-title {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--pt-gold-title);
+    text-transform: uppercase;
+}
+
+/* Small square button that collapses / expands the panel body */
+.pt-tracker-collapse {
+    background: none;
+    border: 1px solid rgba(var(--pt-gold), 0.3);
+    color: rgba(var(--pt-gold), 0.7);
+    font-family: var(--pt-font);
+    font-size: 12px;
+    line-height: 1;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--pt-radius-sm);
+    cursor: pointer;
+    padding: 0;
+    transition: background var(--pt-transition-fast), color var(--pt-transition-fast);
+}
+
+    .pt-tracker-collapse:hover {
+        background: rgba(var(--pt-gold), 0.15);
+        color: var(--pt-gold-text);
+    }
+
+
+/* -------------------------------------------------------------------------*/
+/* ----------------------------  PANEL BODY  ------------------------------ */
+/* -------------------------------------------------------------------------*/
+/* Scrollable area that contains all tracker rows.                          */
+/* Capped at 60vh so the panel never overflows on shorter screens.          */
+/* ------------------------------------------------------------------------- */
+
+.pt-tracker-body {
+    padding: 4px 0;
+    max-height: 60vh;
+    overflow-y: auto;
+    /* Firefox scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(var(--pt-gold), 0.3) transparent;
+}
+
+    /* Webkit scrollbar — keep it thin and gold-tinted */
+    .pt-tracker-body::-webkit-scrollbar {
+        width: 3px;
+    }
+
+    .pt-tracker-body::-webkit-scrollbar-thumb {
+        background: rgba(var(--pt-gold), 0.3);
+        border-radius: 2px;
+    }
+
+
+/* -------------------------------------------------------------------------*/
+/* ----------------------------  TRACKER ROWS  ---------------------------- */
+/* -------------------------------------------------------------------------*/
+/* Each effect entry is a single flex row.                                  */
+/* Modifier classes handle warning state and the flash-on-change animation. */
+/* ------------------------------------------------------------------------- */
+
+.pt-tracker-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    cursor: default;
+    border-radius: var(--pt-radius-sm);
+    margin: 1px 3px;
+    transition: background var(--pt-transition-fast);
+    position: relative;
+}
+
+    .pt-tracker-row:hover {
+        background: rgba(var(--pt-gold), 0.08);
+    }
+
+/* Left red bar indicates the effect is in a warning / capped state */
+.pt-tracker-row--warn {
+    border-left: 2px solid rgba(255, 96, 96, 0.5);
+    padding-left: 6px;
+}
+
+/* Brief gold flash triggered by JS when a value changes */
+.pt-tracker-row--flash {
+    animation: pt-flash 0.6s ease-out;
+}
+
+@keyframes pt-flash {
+    0% {
+        background: rgba(255, 215, 0, 0.28);
+    }
+
+    100% {
+        background: transparent;
+    }
+}
+
+
+/* -------------------------------------------------------------------------*/
+/* --------------------------  ROW INNER PARTS  --------------------------- */
+/* -------------------------------------------------------------------------*/
+/* The individual elements inside each row: dot, icon, label, value.        */
+/* These flex together to fill the row width cleanly.                       */
+/* ------------------------------------------------------------------------- */
+
+/* Small colored circle — used to indicate effect category or status */
+.pt-tracker-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    opacity: 0.85;
+}
+
+/* Emoji / symbol icon for the effect type */
+.pt-tracker-icon {
+    font-size: 11px;
+    flex-shrink: 0;
+    width: 14px;
+    text-align: center;
+}
+
+/* Effect name — truncates with ellipsis if too long */
+.pt-tracker-label {
+    color: var(--pt-text-body);
+    flex: 1;
+    font-size: 10px;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Numeric readout — always right-aligned, bold, fixed minimum width */
+.pt-tracker-value {
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+    min-width: 32px;
+    text-align: right;
+}
+
+
+/* -------------------------------------------------------------------------*/
+/* ----------------------------  PROGRESS BAR  ---------------------------- */
+/* -------------------------------------------------------------------------*/
+/* Optional bar shown beside the value for effects with a visual capacity.  */
+/* The fill color is driven by --bar-color set inline on the element.       */
+/* ------------------------------------------------------------------------- */
+
+/* Wrapper keeps the bar and its text label inline */
+.pt-tracker-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+/* Track / background of the bar */
+.pt-tracker-bar {
+    width: 52px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: var(--pt-radius-sm);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+/* The colored fill — width is set inline as a percentage */
+.pt-tracker-bar-fill {
+    height: 100%;
+    background: var(--bar-color, #6dbf40);
+    border-radius: var(--pt-radius-sm);
+    transition: width var(--pt-transition-slow) linear;
+    /* Soft glow matching the fill color */
+    box-shadow: 0 0 4px var(--bar-color, #6dbf40);
+}
+
+/* Fill-type bars update faster to feel more responsive */
+.pt-tracker-bar--fills .pt-tracker-bar-fill {
+    transition: width 0.2s ease-out;
+}
+
+/* Small text label shown to the right of the bar (e.g. "80%") */
+.pt-tracker-bar-label {
+    color: rgba(var(--pt-gold), 0.75);
+    font-size: 9px;
+    letter-spacing: 0.3px;
+    min-width: 22px;
+    text-align: right;
+}
+
+
+/* -------------------------------------------------------------------------*/
+/* ----------------------------  TOOLTIP  --------------------------------- */
+/* -------------------------------------------------------------------------*/
+/* Fixed-position tooltip that appears on row hover.                        */
+/* Visibility is toggled by adding / removing the .visible class via JS.    */
+/* ------------------------------------------------------------------------- */
+
+.pt-tracker-tooltip {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    max-width: 280px;
+    min-width: 160px;
+    background: var(--pt-bg-tooltip);
+    border: 1px solid rgba(var(--pt-gold), 0.45);
+    border-radius: var(--pt-radius);
+    padding: 9px 12px;
+    font-family: var(--pt-font);
+    font-size: 11px;
+    color: var(--pt-text-gold);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    line-height: 1.55;
+    /* Hidden by default — JS adds .visible to show */
+    opacity: 0;
+    transition: opacity 0.1s;
+}
+
+    .pt-tracker-tooltip.visible {
+        opacity: 1;
+    }
+
+
+/* -------------------------------------------------------------------------*/
+/* --------------------------  TOOLTIP CONTENT  --------------------------- */
+/* -------------------------------------------------------------------------*/
+/* Inner layout of the tooltip: a title line and a body block.              */
+/* Child utility classes handle highlighted values, warnings, and muted text*/
+/* ------------------------------------------------------------------------- */
+
+/* Teal title — stands out clearly against the dark background */
+.pt-tip-title {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--pt-text-accent);
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+}
+
+.pt-tip-body {
+    color: var(--pt-text-gold);
+    font-size: 11px;
+}
+
+    /* Inline highlighted value inside body text */
+    .pt-tip-body b {
+        color: var(--pt-text-highlight);
+    }
+
+    /* Warning line — shown below the main body when a cap or issue is active */
+    .pt-tip-body .tip-warn {
+        color: var(--pt-text-warn);
+        display: block;
+        margin-top: 4px;
+    }
+
+    /* Secondary / footnote text — de-emphasized */
+    .pt-tip-body .tip-mute {
+        color: var(--pt-text-muted);
+        font-size: 10px;
+    }

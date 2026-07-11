@@ -1,0 +1,923 @@
+﻿/*
+========================================================================
+ENDGAME HUB SCREEN STYLESHEET
+========================================================================
+Layout Architecture:
+  TOP ROW:
+    - LEFT:   Character Equipment Panel (paperdoll armory)
+    - RIGHT:  Map Device Panel
+  BOTTOM:
+    - STASH:  Full-width item grid (wider, more slots)
+========================================================================
+*/
+
+/* ── SCREEN WRAPPER ── */
+#screen-endgame-hub {
+    background: var(--bg);
+    overflow: hidden;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.eg-hub-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* ── TOP BAR — mirrors ls-topbar ── */
+.eg-topbar {
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.eg-back-btn {
+    font-family: var(--PX);
+    font-size: 9px;
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--accent2);
+    padding: 7px 12px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.12s;
+    white-space: nowrap;
+}
+
+    .eg-back-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+    }
+
+.eg-topbar-title {
+    font-family: var(--PX);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 2px;
+}
+
+.eg-topbar-sub {
+    font-family: var(--PX);
+    font-size: 8px;
+    color: var(--setup-opt-inactive);
+    letter-spacing: 2px;
+    margin-left: auto;
+}
+
+/* ── BODY: two-column top row + stash bottom ── */
+.eg-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.eg-body-top {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+}
+
+/* ── SHARED PANEL BASE ── */
+.eg-panel {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    overflow: hidden;
+    background: var(--panel);
+}
+
+    .eg-panel:last-child {
+        border-right: none;
+    }
+
+.eg-panel-label {
+    font-family: var(--PX);
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: var(--yellow);
+    padding: 6px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+    flex-shrink: 0;
+    user-select: none;
+}
+
+/* ── LEFT TOP PANEL: CHARACTER ── */
+.eg-panel-char {
+    overflow: hidden;
+}
+
+/* Character panel*/
+.eg-char-panel.eg-char-panel-no-model {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 8px;
+    padding: 8px;
+    align-items: start;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.eg-equip-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.eg-equip-slot {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+    transition: border-color 0.15s, background-color 0.15s;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+    .eg-equip-slot.eg-dragover {
+        border-color: var(--accent);
+        background: rgba(102, 252, 241, 0.05);
+    }
+
+
+
+.eg-equip-slot-item {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    flex-shrink: 0;
+}
+
+.eg-equip-slot-placeholder {
+    font-size: 16px;
+    opacity: 0.25;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+}
+
+.eg-char-model-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 0 8px;
+}
+
+.eg-char-model {
+    width: 110px;
+    height: 190px;
+    position: relative;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.eg-char-silhouette {
+    width: 80px;
+    height: 160px;
+}
+
+.eg-silhouette-svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* CSS var used inside the SVG stroke attribute */
+:root {
+    --eg-silhouette: #4a5475;
+}
+
+.eg-char-scanline {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient( to bottom, transparent 0px, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px );
+    pointer-events: none;
+    animation: eg-scan-scroll 8s linear infinite;
+}
+
+@keyframes eg-scan-scroll {
+    from {
+        background-position-y: 0;
+    }
+
+    to {
+        background-position-y: 40px;
+    }
+}
+
+.eg-equip-bottom-row {
+    display: flex;
+    gap: 16px; /* was 3px */
+    justify-content: center;
+    padding: 8px 16px 10px;
+    flex-shrink: 0;
+    border-top: 1px solid var(--border);
+}
+
+    .eg-equip-bottom-row .eg-equip-slot {
+        width: 48px;
+        height: 48px;
+        max-width: none;
+        flex: 0 0 auto;
+    }
+
+/* ── RIGHT TOP PANEL: MAP DEVICE ── */
+.eg-panel-map {
+    align-items: center;
+    padding-top: 0;
+    border-right: none;
+}
+
+.eg-map-device {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 16px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.eg-map-device-frame {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.eg-map-orb-ring {
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(102, 252, 241, 0.15);
+    border-radius: 50%;
+    animation: eg-ring-spin 20s linear infinite;
+}
+
+@keyframes eg-ring-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.eg-map-orb-rune {
+    position: absolute;
+    font-size: 10px;
+    color: rgba(102, 252, 241, 0.35);
+    font-family: var(--PX);
+    transform: translate(-50%, -50%);
+}
+
+.eg-rune-top {
+    top: 4px;
+    left: 50%;
+}
+
+.eg-rune-right {
+    top: 50%;
+    right: -4px;
+    transform: translate(50%, -50%);
+}
+
+.eg-rune-bottom {
+    bottom: 4px;
+    left: 50%;
+    transform: translate(-50%, 50%);
+}
+
+.eg-rune-left {
+    top: 50%;
+    left: -4px;
+    transform: translate(-50%, -50%);
+}
+
+.eg-map-slot {
+    width: 108px;
+    height: 108px;
+    border: 2px dashed rgba(102, 252, 241, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    position: relative;
+    z-index: 1;
+}
+
+    .eg-map-slot.eg-dragover {
+        border-color: var(--accent);
+        background: rgba(102, 252, 241, 0.07);
+        box-shadow: 0 0 18px rgba(102, 252, 241, 0.2);
+    }
+
+.eg-map-slot-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.eg-map-slot-empty-text {
+    font-family: var(--PX);
+    font-size: 7px;
+    color: var(--setup-opt-inactive);
+    letter-spacing: 2px;
+    text-align: center;
+    user-select: none;
+}
+
+.eg-map-socket-row {
+    display: none;
+}
+
+.eg-map-socket {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+}
+
+.eg-socket-red {
+    background: #c0392b;
+    box-shadow: 0 0 5px rgba(192,57,43,0.5);
+}
+
+.eg-socket-green {
+    background: #27ae60;
+    box-shadow: 0 0 5px rgba(39,174,96,0.5);
+}
+
+.eg-socket-blue {
+    background: #2980b9;
+    box-shadow: 0 0 5px rgba(41,128,185,0.5);
+}
+
+.eg-socket-white {
+    background: #bdc3c7;
+    box-shadow: 0 0 5px rgba(189,195,199,0.5);
+}
+
+.eg-map-info {
+    text-align: center;
+    padding: 2px 8px;
+}
+
+.eg-map-info-text {
+    font-family: var(--PX);
+    font-size: 7px;
+    color: var(--setup-opt-inactive);
+    letter-spacing: 1px;
+}
+
+.eg-activate-btn {
+    font-family: var(--PX);
+    font-size: 9px;
+    padding: 10px 20px;
+    border: 1px solid var(--accent);
+    background: transparent;
+    color: var(--accent);
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 190px;
+    z-index: 1;
+}
+
+    .eg-activate-btn::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.2s;
+        z-index: -1;
+    }
+
+    .eg-activate-btn:not(:disabled):hover {
+        color: var(--bg);
+    }
+
+        .eg-activate-btn:not(:disabled):hover::before {
+            transform: scaleX(1);
+        }
+
+    .eg-activate-btn:disabled {
+        border-color: var(--border);
+        color: var(--border2);
+        cursor: not-allowed;
+    }
+
+/* ── BOTTOM PANEL: STASH (full width) ── */
+.eg-panel-inv {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    border-right: none;
+    border-top: 1px solid var(--border);
+    min-height: 0;
+}
+
+.eg-inv-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 14px;
+    flex-shrink: 0;
+    user-select: none;
+}
+
+.eg-inv-sub {
+    font-family: var(--PX);
+    font-size: 7px;
+    color: var(--setup-opt-inactive);
+    letter-spacing: 2px;
+}
+
+.eg-inv-count {
+    font-family: var(--PX);
+    font-size: 7px;
+    color: var(--setup-opt-inactive);
+}
+
+.eg-inv-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--eg-inv-cols, 16), 1fr);
+    gap: 2px;
+    padding: 4px 8px 6px;
+    flex: 1;
+    overflow-y: auto;
+    align-content: start;
+}
+
+.eg-inv-cell {
+    aspect-ratio: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    transition: border-color 0.12s, background-color 0.12s;
+    position: relative;
+    cursor: default;
+    box-sizing: border-box;
+}
+
+    .eg-inv-cell.eg-dragover {
+        border-color: var(--accent);
+        background: rgba(102, 252, 241, 0.07);
+    }
+
+.eg-inv-legend {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 10px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    user-select: none;
+}
+
+    .eg-inv-legend span {
+        font-family: var(--PX);
+        font-size: 6px;
+        color: var(--setup-opt-inactive);
+        letter-spacing: 1px;
+    }
+
+.eg-legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    display: inline-block;
+}
+
+.eg-legend-map {
+    background: #1eff00;
+}
+
+.eg-legend-equip {
+    background: #0070dd;
+}
+
+.eg-legend-currency {
+    background: #aa9060;
+}
+
+/* ── ITEM CHIPS ── */
+.eg-item-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    padding: 2px;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+    user-select: none;
+    border: 1px solid transparent;
+    transition: border-color 0.1s;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+    .eg-item-chip:active {
+        cursor: grabbing;
+    }
+
+    .eg-item-chip:hover {
+        border-color: rgba(255,255,255,0.2);
+    }
+
+.eg-item-chip-icon {
+    font-size: 13px;
+    line-height: 1;
+}
+
+.eg-item-chip-name {
+    font-family: var(--PX);
+    font-size: 5px;
+    line-height: 1.3;
+    letter-spacing: 0.5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+    display: block;
+}
+
+.eg-item-chip-large .eg-item-chip-icon {
+    font-size: 22px;
+}
+
+.eg-item-chip-large .eg-item-chip-name {
+    font-size: 6px;
+}
+
+/* Rarity colors */
+.eg-rarity-common .eg-item-chip-name {
+    color: #9d9d9d;
+}
+
+.eg-rarity-uncommon .eg-item-chip-name {
+    color: #1eff00;
+}
+
+.eg-rarity-rare .eg-item-chip-name {
+    color: #0070dd;
+}
+
+.eg-rarity-epic .eg-item-chip-name {
+    color: #a335ee;
+}
+
+.eg-rarity-currency .eg-item-chip-name {
+    color: #aa9060;
+}
+
+.eg-rarity-uncommon {
+    border-color: rgba(30,255,0,0.25) !important;
+}
+
+.eg-rarity-rare {
+    border-color: rgba(0,112,221,0.35) !important;
+}
+
+.eg-rarity-epic {
+    border-color: rgba(163,53,238,0.4) !important;
+}
+
+/* ── WORLD 13 LEVEL CARD (level select) ── */
+.level-card.endgame-hub-card {
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 10px rgba(102,252,241,0.1);
+    cursor: pointer;
+    animation: eg-hub-pulse 3s ease-in-out infinite;
+    box-sizing: border-box;
+}
+
+    .level-card.endgame-hub-card:hover {
+        border-color: var(--accent);
+        box-shadow: 0 0 22px rgba(102,252,241,0.3);
+        background: rgba(102,252,241,0.05);
+    }
+
+.eg-hub-card-icon {
+    font-size: 38px;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.eg-hub-card-title {
+    font-family: var(--PX);
+    font-size: 11px;
+    color: var(--accent);
+    text-align: center;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+}
+
+.eg-hub-card-sub {
+    font-family: var(--PX);
+    font-size: 7px;
+    color: var(--setup-opt-inactive);
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+@keyframes eg-hub-pulse {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(102,252,241,0.1);
+    }
+
+    50% {
+        box-shadow: 0 0 22px rgba(102,252,241,0.25);
+    }
+}
+
+
+
+
+
+.eg-currency-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    padding: 4px 6px;
+    overflow-y: auto;
+    flex: 1;
+    align-content: start;
+}
+
+
+.eg-map-stash-grid {
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    gap: 2px;
+    padding: 4px 6px;
+    overflow-y: auto;
+    flex: 1;
+    align-content: start;
+}
+
+.eg-map-stash-section {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+    min-height: 0;
+}
+
+
+
+
+
+
+
+
+
+/* ── CENTER PANEL: TOOLTIP ── */
+.eg-panel-tooltip {
+    align-items: stretch;
+    overflow: hidden;
+}
+
+.eg-tooltip-panel-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 16px 12px;
+    gap: 6px;
+    overflow-y: auto;
+}
+
+.eg-tooltip-empty {
+    font-family: var(--PX);
+    font-size: 7px;
+    color: var(--setup-opt-inactive);
+    letter-spacing: 2px;
+    text-align: center;
+    margin-top: 40px;
+}
+
+.eg-tooltip-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+}
+
+.eg-tooltip-icon {
+    font-size: 32px;
+    line-height: 1;
+}
+
+.eg-tooltip-name {
+    font-family: var(--PX);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-align: center;
+    color: var(--accent);
+}
+
+.eg-tooltip-rarity {
+    font-family: var(--PX);
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: var(--setup-opt-inactive);
+}
+
+.eg-tooltip-type {
+    font-family: var(--PX);
+    font-size: 7px;
+    letter-spacing: 3px;
+    color: var(--yellow);
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+}
+
+.eg-tooltip-desc {
+    font-family: var(--PX);
+    font-size: 7px;
+    line-height: 1.6;
+    color: var(--setup-opt-inactive);
+    text-align: center;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+    width: 100%;
+}
+
+.eg-tooltip-stat {
+    font-family: var(--PX);
+    font-size: 8px;
+    color: #1eff00;
+    letter-spacing: 1px;
+}
+
+/* Rarity-colored name in tooltip */
+.eg-tooltip-item.eg-rarity-common .eg-tooltip-name {
+    color: #9d9d9d;
+}
+
+.eg-tooltip-item.eg-rarity-uncommon .eg-tooltip-name {
+    color: #1eff00;
+}
+
+.eg-tooltip-item.eg-rarity-rare .eg-tooltip-name {
+    color: #0070dd;
+}
+
+.eg-tooltip-item.eg-rarity-epic .eg-tooltip-name {
+    color: #a335ee;
+}
+
+.eg-tooltip-item.eg-rarity-currency .eg-tooltip-name {
+    color: #aa9060;
+}
+
+/* ── CURRENCY STRIP (horizontal band between panels and stash) ── */
+.eg-currency-strip {
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+}
+
+.eg-currency-row {
+    display: grid;
+    gap: 2px;
+    padding: 3px 8px 4px;
+}
+
+/* Currency cells are smaller than stash cells */
+.eg-currency-cell {
+    min-height: 0 !important;
+    height: 22px !important;
+    aspect-ratio: 1;
+}
+
+/* ── STASH: more columns, no-scroll target ── */
+.eg-panel-inv {
+    max-height: none; /* override the old 260px cap */
+    flex: 1;
+}
+
+.eg-inv-grid {
+    /* columns are set inline; just make sure it fills available space */
+    flex: 1;
+    overflow-y: auto;
+}
+
+
+/* ── CHARACTER STATS CENTER PANEL ── */
+.eg-char-stats-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 4px 6px;
+    min-width: 0;
+    overflow-y: auto;
+    align-self: stretch;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+}
+
+.eg-stats-header {
+    font-family: var(--PX);
+    font-size: 7px;
+    letter-spacing: 3px;
+    color: var(--yellow);
+    text-align: center;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    user-select: none;
+}
+
+.eg-stats-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.eg-stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 2px 4px;
+}
+
+.eg-stat-name {
+    font-family: var(--PX);
+    font-size: 7px;
+    color: var(--setup-opt-inactive);
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.eg-stat-value {
+    font-family: var(--PX);
+    font-size: 7px;
+    color: #1eff00;
+    letter-spacing: 1px;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.eg-stat-placeholder {
+    justify-content: center;
+    margin-top: 20px;
+}
+
+    .eg-stat-placeholder .eg-stat-name {
+        text-align: center;
+        opacity: 0.5;
+    }

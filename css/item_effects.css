@@ -1,0 +1,1513 @@
+/* -----------------------------------------------------------------------
+   ITEM VISUAL EFFECTS  (item_effects.css)
+   All CSS keyframes and classes for item-use animations.
+   Defined alongside inventory_effects.js.
+   Mirrors the structure of class.css for class ability effects.
+
+   SECTION ORDER:
+     1. Shared Utility Classes
+     2. Reveal Items
+     3. Mark-Wrong Items
+     4. Add-Time Items
+     5. Utility Items
+     6. Board Solve Items
+     7. Artifact Complete
+     8. Cursed Items
+----------------------------------------------------------------------- */
+
+
+/* -----------------------------------------------------------------------
+   SHARED UTILITY CLASSES
+   Generic base classes and reusable keyframes shared across all effects.
+----------------------------------------------------------------------- */
+
+/* Generic floating particle base class.
+   Subclasses override the animation property to use their own keyframe. */
+@keyframes fx-particle-float {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+
+    60% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(0, -40px) scale(0.6);
+    }
+}
+
+.fx-particle-generic {
+    position: absolute;
+    pointer-events: none;
+    z-index: 322;
+    user-select: none;
+    opacity: 0;
+    animation: fx-particle-float 900ms ease-out forwards;
+}
+
+/* Icon pop — centered scale-in/bounce/fade used by many item icons.
+   Applied directly via JS on positioned absolute elements. */
+@keyframes fx-icon-pop {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.3);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.25);
+    }
+
+    70% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+
+    85% {
+        opacity: 0.9;
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+
+/* -----------------------------------------------------------------------
+   REVEAL ITEMS
+   Items that uncover hidden cells or provide information to the player.
+   Includes: Candle, Magnifier, Spyglass, Scanner
+----------------------------------------------------------------------- */
+
+/* ----- Candle — warm amber bloom ----- */
+
+/* Soft radiating glow that expands and fades, simulating candlelight */
+@keyframes fx-candle-bloom {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 180, 60, 0.00);
+    }
+
+    25% {
+        box-shadow: 0 0 80px 60px rgba(255, 180, 60, 0.25);
+    }
+
+    65% {
+        box-shadow: 0 0 140px 100px rgba(255, 140, 20, 0.18);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 180, 60, 0.00);
+    }
+}
+
+.fx-candle-glow {
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(255, 180, 60, 0);
+    animation: fx-candle-bloom 1.6s ease-out forwards;
+    pointer-events: none;
+}
+
+/* Flame emoji that flickers and drifts upward */
+@keyframes fx-candle-flicker {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.5) translateY(10px);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1.2) translateY(0px);
+    }
+
+    50% {
+        opacity: 0.9;
+        transform: translateX(-52%) scale(1.0) translateY(-5px);
+    }
+
+    75% {
+        opacity: 0.8;
+        transform: translateX(-48%) scale(1.1) translateY(-8px);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.6) translateY(-20px);
+    }
+}
+
+.fx-candle-flame {
+    font-size: 42px;
+    position: absolute;
+    pointer-events: none;
+    z-index: 326;
+    transform: translateX(-50%);
+    animation: fx-candle-flicker 1.8s ease-out forwards;
+}
+
+
+/* ----- Magnifier — slides across the board ----- */
+
+/* Magnifier icon glides from left to right with a wobble.
+   Uses --slide-end CSS variable set by JS for the travel distance. */
+@keyframes fx-magnifier-slide {
+    0% {
+        opacity: 0;
+        left: calc(var(--slide-end) * -0.1);
+        transform: scale(0.7) rotate(-15deg);
+    }
+
+    15% {
+        opacity: 1;
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    70% {
+        opacity: 1;
+        left: calc(var(--slide-end) * 0.5);
+        transform: scale(1.0) rotate(-3deg);
+    }
+
+    100% {
+        opacity: 0;
+        left: var(--slide-end);
+        transform: scale(0.8) rotate(10deg);
+    }
+}
+
+.fx-magnifier-lens {
+    pointer-events: none;
+    z-index: 325;
+    font-size: 48px;
+    position: absolute;
+}
+
+
+/* ----- Spyglass — concentric expanding rings ----- */
+
+/* Each ring expands from center outward then fades.
+   Uses --ring-size CSS variable for the final diameter. */
+@keyframes fx-ring-expand {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0.9;
+    }
+
+    60% {
+        opacity: 0.6;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0;
+    }
+}
+
+.fx-spyglass-ring {
+    width: var(--ring-size);
+    height: var(--ring-size);
+    border-radius: 50%;
+    border: 3px solid rgba(80, 200, 255, 0.7);
+    box-shadow: 0 0 12px 3px rgba(80, 200, 255, 0.35);
+    pointer-events: none;
+}
+
+
+/* ----- Scanner — green horizontal scan bar ----- */
+
+/* A bright green bar sweeps downward across the target area.
+   Uses --scan-distance CSS variable for travel distance. */
+@keyframes fx-scanner-sweep {
+    0% {
+        opacity: 0;
+        transform: translateY(0);
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 0.85;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(var(--scan-distance));
+    }
+}
+
+.fx-scanner-bar {
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent 0%, rgba( 39, 174, 96, 0.6) 20%, rgba(150, 255, 200, 0.9) 50%, rgba( 39, 174, 96, 0.6) 80%, transparent 100% );
+    box-shadow: 0 0 16px 4px rgba(39, 174, 96, 0.5);
+    border-radius: 2px;
+}
+
+
+/* -----------------------------------------------------------------------
+   MARK-WRONG ITEMS
+   Items that eliminate incorrect answers or highlight mistakes.
+   Includes: Eraser, Sweeper, Error Magnet, Error Gem
+----------------------------------------------------------------------- */
+
+/* ----- Eraser — pink rubber wipe ----- */
+
+/* A pink streak scales in from the left, slides across, then fades */
+@keyframes fx-eraser-wipe {
+    0% {
+        opacity: 0;
+        transform: scaleX(0) translateX(-30px);
+        transform-origin: left;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    75% {
+        opacity: 0.8;
+        transform: scaleX(1) translateX(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scaleX(1) translateX(10px);
+    }
+}
+
+.fx-eraser-streak {
+    pointer-events: none;
+    border-radius: 4px;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 182, 193, 0.75) 30%, rgba(255, 150, 180, 0.90) 50%, rgba(255, 182, 193, 0.75) 70%, transparent 100% );
+    box-shadow: 0 0 10px 3px rgba(255, 130, 160, 0.4);
+}
+
+
+/* ----- Sweeper — broom slides across, kicking up dust ----- */
+
+/* Broom icon slides from --broom-start to --broom-end (set by JS),
+   tilting slightly as it moves to simulate a sweeping motion */
+@keyframes fx-sweeper-broom {
+    0% {
+        opacity: 0;
+        left: var(--broom-start);
+        transform: scaleX(-1) rotate(-15deg);
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    80% {
+        opacity: 1;
+        left: var(--broom-end);
+        transform: scaleX(-1) rotate(10deg);
+    }
+
+    100% {
+        opacity: 0;
+        left: var(--broom-end);
+        transform: scaleX(-1) rotate(20deg);
+    }
+}
+
+.fx-sweeper-icon {
+    pointer-events: none;
+    z-index: 325;
+}
+
+/* Small circular dust puff particles kicked up by the broom */
+@keyframes fx-dust-puff {
+    0% {
+        opacity: 0.9;
+        transform: scale(0.5) translateY(0);
+    }
+
+    60% {
+        opacity: 0.5;
+        transform: scale(1.4) translateY(-14px) translateX(8px);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(2.0) translateY(-28px) translateX(16px);
+    }
+}
+
+.fx-dust-particle {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(200, 180, 140, 0.7);
+    position: absolute;
+    pointer-events: none;
+    animation: fx-dust-puff 0.7s ease-out forwards;
+}
+
+
+/* ----- Error Magnet — drops in and pulls wrong-answer crosses toward it ----- */
+
+/* Main magnet icon drops from above with a slight overshoot bounce */
+@keyframes fx-magnet-drop {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-30px) scale(0.70);
+    }
+
+    40% {
+        opacity: 1;
+        transform: translateX(-50%) translateY( 4px) scale(1.15);
+    }
+
+    65% {
+        transform: translateX(-50%) translateY( -3px) scale(0.97);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY( 0px) scale(1.00);
+    }
+}
+
+.fx-magnet-icon {
+    pointer-events: none;
+    z-index: 326;
+    font-size: 52px;
+    position: absolute;
+    transform: translateX(-50%);
+}
+
+/* Individual ✕ symbols fly from their cell toward the magnet.
+   Uses --dx and --dy CSS variables (set per-cross by JS) for direction. */
+@keyframes fx-cross-fly {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+
+    70% {
+        opacity: 0.8;
+        transform: translate(calc(var(--dx) * 0.7), calc(var(--dy) * 0.7)) scale(0.7);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(var(--dx), var(--dy)) scale(0.2);
+    }
+}
+
+.fx-magnet-cross {
+    position: absolute;
+    pointer-events: none;
+    font-size: 18px;
+    color: #f44;
+    font-weight: bold;
+    text-shadow: 0 0 6px #f44;
+    animation: fx-cross-fly 0.55s ease-in forwards;
+}
+
+
+/* ----- Error Gem — crystalline burst that absorbs wrong answers ----- */
+
+/* Main gem icon pops in with a rotate-burst then fades */
+@keyframes fx-gem-burst {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.40) rotate(-10deg);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.35) rotate( 5deg);
+    }
+
+    55% {
+        opacity: 0.9;
+        transform: translate(-50%, -50%) scale(1.00) rotate( 0deg);
+    }
+
+    80% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.80) rotate( -5deg);
+    }
+}
+
+.fx-gem-pulse {
+    position: absolute;
+    pointer-events: none;
+    z-index: 326;
+}
+
+/* Sparkle particles that fall downward from the gem after it lands */
+@keyframes fx-gem-spark-fall {
+    0% {
+        opacity: 0.9;
+        transform: translate(0, 0px) scale(1.0);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: translate(0, 30px) scale(0.8);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(0, 90px) scale(0.4);
+    }
+}
+
+.fx-gem-spark {
+    position: absolute;
+    pointer-events: none;
+    z-index: 323;
+    opacity: 0;
+    animation: fx-gem-spark-fall 1100ms ease-out forwards;
+}
+
+
+/* -----------------------------------------------------------------------
+   ADD-TIME ITEMS
+   Items that grant the player extra time on the clock.
+   Includes: Hourglass, Stopwatch, Clock, Chronobolt
+----------------------------------------------------------------------- */
+
+/* ----- Hourglass — spins 180° while sand grains fall ----- */
+
+/* Hourglass icon rotates halfway (flips) to show time being added.
+   Applied directly via JS — no paired class in this file. */
+@keyframes fx-hourglass-spin {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5) rotate( 0deg);
+    }
+
+    25% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2) rotate( 90deg);
+    }
+
+    60% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.0) rotate(180deg);
+    }
+
+    85% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8) rotate(180deg);
+    }
+}
+
+.fx-hourglass-icon {
+    pointer-events: none;
+    z-index: 326;
+    position: absolute;
+}
+
+/* Individual sand grain drops from the hourglass neck downward.
+   Uses --fall-dist CSS variable (set per-grain by JS) for travel distance. */
+@keyframes fx-sand-fall {
+    0% {
+        opacity: 0.9;
+        transform: translateY(0) scale(1.0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(var(--fall-dist)) scale(0.5);
+    }
+}
+
+.fx-sand-grain {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #d4a853;
+    position: absolute;
+    pointer-events: none;
+    animation: fx-sand-fall 0.6s ease-in forwards;
+}
+
+
+/* ----- Stopwatch — golden expanding time rings ----- */
+
+/* Each ring expands outward from center and fades.
+   Uses --ring-max CSS variable for the final diameter. */
+@keyframes fx-time-ring-expand {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0.9;
+    }
+
+    55% {
+        opacity: 0.6;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0;
+    }
+}
+
+.fx-time-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 200, 50, 0.8);
+    box-shadow: 0 0 8px 2px rgba(255, 200, 50, 0.35);
+    width: var(--ring-max);
+    height: var(--ring-max);
+    pointer-events: none;
+}
+
+
+/* ----- Clock — golden core pulse with radiating rays ----- */
+
+/* Central golden dot that expands outward like a shockwave */
+@keyframes fx-clock-core-pulse {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 1;
+    }
+
+    40% {
+        transform: translate(-50%, -50%) scale(4);
+        opacity: 0.6;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(8);
+        opacity: 0;
+    }
+}
+
+.fx-clock-burst {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ffd700;
+    box-shadow: 0 0 20px 10px rgba(255, 215, 0, 0.5);
+    animation: fx-clock-core-pulse 1.4s ease-out forwards;
+    pointer-events: none;
+}
+
+/* Individual rays that shoot outward from the clock center.
+   Uses --ray-len CSS variable. transform-origin: left centers them at the clock. */
+@keyframes fx-clock-ray-shoot {
+    0% {
+        opacity: 0;
+        width: 0;
+    }
+
+    30% {
+        opacity: 1;
+        width: var(--ray-len);
+    }
+
+    70% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+        width: var(--ray-len);
+    }
+}
+
+.fx-clock-ray {
+    width: var(--ray-len);
+    height: 3px;
+    position: absolute;
+    background: linear-gradient(90deg, #ffd700 0%, rgba(255, 215, 0, 0) 100%);
+    box-shadow: 0 0 6px 2px rgba(255, 215, 0, 0.4);
+    border-radius: 2px;
+    pointer-events: none;
+    transform-origin: left center;
+}
+
+
+/* ----- Chronobolt — double screen flash with a lightning strike ----- */
+
+/* Full-screen yellow flash that pulses twice to simulate a lightning strike */
+@keyframes fx-bolt-flash {
+    0% {
+        opacity: 0;
+    }
+
+    8% {
+        opacity: 1;
+        background: rgba(255, 240, 80, 0.35);
+    }
+
+    20% {
+        opacity: 0;
+    }
+
+    32% {
+        opacity: 1;
+        background: rgba(255, 240, 80, 0.20);
+    }
+
+    60% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.fx-chronobolt-flash {
+    background: rgba(255, 240, 80, 0.15);
+    animation: fx-bolt-flash 0.6s ease-out forwards;
+    pointer-events: none;
+}
+
+/* Lightning bolt icon that pops in at the flash center.
+   Applied directly via JS — no paired class in this file. */
+@keyframes fx-bolt-icon {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.4);
+    }
+
+    50% {
+        opacity: 0.9;
+        transform: translate(-50%, -50%) scale(1.0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.7);
+    }
+}
+
+/* Lightning strike visual that fades in and holds briefly before fading.
+   Applied directly via JS — no paired class in this file. */
+@keyframes fx-bolt-strike {
+    0% {
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    60% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.fx-lightning-bolt {
+    position: absolute;
+    pointer-events: none;
+    z-index: 329;
+}
+
+
+/* -----------------------------------------------------------------------
+   UTILITY ITEMS
+   Miscellaneous items with supportive or strategic effects.
+   Includes: Shield, Chalk Smear, Scout's Primer
+----------------------------------------------------------------------- */
+
+/* Shield border — slow golden pulse while active */
+@keyframes fx-shield-border-pulse {
+    0% {
+        box-shadow: 0 0 0 3px rgba(255,215,0,0.9), 0 0 12px 4px rgba(255,215,0,0.55), 0 0 28px 8px rgba(255,215,0,0.25);
+    }
+
+    50% {
+        box-shadow: 0 0 0 3px rgba(255,235,80,1.0), 0 0 20px 8px rgba(255,215,0,0.80), 0 0 40px 14px rgba(255,215,0,0.40);
+    }
+
+    100% {
+        box-shadow: 0 0 0 3px rgba(255,215,0,0.9), 0 0 12px 4px rgba(255,215,0,0.55), 0 0 28px 8px rgba(255,215,0,0.25);
+    }
+}
+
+/* Shield border — quick flash-out when shield breaks */
+@keyframes fx-shield-border-shatter {
+    0% {
+        opacity: 1;
+        transform: scale(1.0);
+    }
+
+    40% {
+        opacity: 1;
+        transform: scale(1.04);
+        box-shadow: 0 0 0 4px rgba(255,100,0,1), 0 0 30px 12px rgba(255,100,0,0.7);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(0.97);
+    }
+}
+
+
+/* ----- Shield — gold border flash with expanding hex rings ----- */
+
+/* Gold border that pulses on the protected element */
+@keyframes fx-shield-pulse {
+    0% {
+        border-color: rgba(255, 215, 0, 0);
+        box-shadow: none;
+    }
+
+    25% {
+        border-color: rgba(255, 215, 0, 0.7);
+        box-shadow: inset 0 0 30px rgba(255, 215, 0, 0.2), 0 0 20px rgba(255, 215, 0, 0.4);
+    }
+
+    70% {
+        border-color: rgba(255, 215, 0, 0.4);
+    }
+
+    100% {
+        border-color: rgba(255, 215, 0, 0);
+        box-shadow: none;
+    }
+}
+
+.fx-shield-overlay {
+    pointer-events: none;
+    border: 3px solid rgba(255, 215, 0, 0);
+    border-radius: 4px;
+}
+
+/* Large shield emoji that scales in and then expands as it fades */
+@keyframes fx-shield-icon {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.4);
+    }
+
+    35% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+
+    60% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(1.0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.4);
+    }
+}
+
+.fx-shield-hex {
+    font-size: 80px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: fx-shield-icon 1.3s ease-out forwards;
+    pointer-events: none;
+}
+
+/* Concentric gold rings that expand outward from the shield center.
+   Uses --ring-max CSS variable for the final diameter. */
+@keyframes fx-shield-ring-expand {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 1;
+    }
+
+    65% {
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0;
+    }
+}
+
+.fx-shield-ring {
+    position: absolute;
+    width: var(--ring-max);
+    height: var(--ring-max);
+    border-radius: 50%;
+    border: 2px solid rgba(255, 215, 0, 0.6);
+    box-shadow: 0 0 10px 3px rgba(255, 215, 0, 0.3);
+    pointer-events: none;
+}
+
+
+/* ----- Chalk Smear (Mistake Eraser) — grey chalk wipe ----- */
+
+/* A chalky grey smear that wipes from left to right then fades */
+@keyframes fx-chalk-wipe {
+    0% {
+        opacity: 0;
+        transform: scaleX(0) rotate(-2deg);
+        transform-origin: left;
+    }
+
+    30% {
+        opacity: 1;
+        transform: scaleX(1) rotate( 1deg);
+    }
+
+    70% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+        transform: scaleX(1.1) rotate(-1deg);
+    }
+}
+
+.fx-chalk-smear {
+    width: 80px;
+    height: 18px;
+    border-radius: 6px;
+    background: rgba(200, 200, 200, 0.55);
+    box-shadow: 0 0 10px 4px rgba(200, 200, 200, 0.3);
+    pointer-events: none;
+}
+
+
+/* ----- Scout's Primer — compass arrows shoot outward ----- */
+
+/* Arrow emoji that shoots from center toward its target cell.
+   Uses --dx and --dy CSS variables (set per-arrow by JS) for direction. */
+@keyframes fx-primer-shoot {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translate(0, 0) scale(0.5);
+    }
+
+    25% {
+        opacity: 1;
+        transform: translate(-50%, -50%) translate(calc(var(--dx) * 0.30), calc(var(--dy) * 0.30)) scale(1.2);
+    }
+
+    70% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) translate(calc(var(--dx) * 0.85), calc(var(--dy) * 0.85)) scale(1.0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) scale(0.5);
+    }
+}
+
+.fx-primer-arrow {
+    position: absolute;
+    pointer-events: none;
+    z-index: 323;
+    font-size: 22px;
+    transform: translate(-50%, -50%);
+    animation: fx-primer-shoot 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+
+/* -----------------------------------------------------------------------
+   BOARD SOLVE ITEMS
+   Items that solve entire rows or columns at once.
+   Includes: Row Solve, Column Solve
+----------------------------------------------------------------------- */
+
+/* ----- Row Solve — golden sweep bar moving left to right ----- */
+
+/* Full-width bar that sweeps horizontally across the solved row.
+   Uses --sweep-dist CSS variable for horizontal travel distance. */
+@keyframes fx-rowsolve-sweep {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(var(--sweep-dist));
+        opacity: 0.3;
+    }
+}
+
+.fx-rowsolve-bar {
+    background: linear-gradient(90deg, transparent, rgba(255, 210, 60, 0.55), rgba(255, 235, 120, 0.75), rgba(255, 210, 60, 0.55), transparent );
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 322;
+}
+
+/* Underline flash that highlights the solved row after the sweep */
+@keyframes fx-rowsolve-line-flash {
+    0% {
+        opacity: 0;
+        background: rgba(255, 255, 180, 0.9);
+    }
+
+    40% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        background: rgba(255, 210, 60, 0.0);
+    }
+}
+
+.fx-rowsolve-line {
+    background: rgba(255, 235, 100, 0.7);
+    pointer-events: none;
+    z-index: 321;
+}
+
+
+/* ----- Column Solve — golden sweep bar moving top to bottom ----- */
+
+/* Full-height bar that sweeps vertically down the solved column.
+   Uses --sweep-dist CSS variable for vertical travel distance. */
+@keyframes fx-colsolve-sweep {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateY(var(--sweep-dist));
+        opacity: 0.3;
+    }
+}
+
+.fx-colsolve-bar {
+    background: linear-gradient(180deg, transparent, rgba(255, 210, 60, 0.55), rgba(255, 235, 120, 0.75), rgba(255, 210, 60, 0.55), transparent );
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 322;
+}
+
+/* Side-line flash that highlights the solved column after the sweep */
+@keyframes fx-colsolve-line-flash {
+    0% {
+        opacity: 0;
+        background: rgba(255, 255, 180, 0.9);
+    }
+
+    40% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        background: rgba(255, 210, 60, 0.0);
+    }
+}
+
+.fx-colsolve-line {
+    background: rgba(255, 235, 100, 0.7);
+    pointer-events: none;
+    z-index: 321;
+}
+
+
+/* -----------------------------------------------------------------------
+   ARTIFACT COMPLETE
+   Visual fanfare played when the player completes an artifact piece.
+----------------------------------------------------------------------- */
+
+/* Full board golden flash that signals artifact completion */
+@keyframes fx-artifact-fill-flash {
+    0% {
+        background: rgba(255, 215, 0, 0.00);
+        box-shadow: none;
+    }
+
+    15% {
+        background: rgba(255, 215, 0, 0.35);
+        box-shadow: inset 0 0 60px rgba(255, 215, 0, 0.4);
+    }
+
+    45% {
+        background: rgba(255, 215, 0, 0.15);
+    }
+
+    100% {
+        background: rgba(255, 215, 0, 0.00);
+        box-shadow: none;
+    }
+}
+
+.fx-artifact-fill {
+    pointer-events: none;
+    border-radius: 3px;
+    animation: fx-artifact-fill-flash 1.8s ease-out forwards;
+}
+
+/* Rays that shoot outward from the artifact center.
+   Uses --ray-len CSS variable. transform-origin: left pins them at the center. */
+@keyframes fx-artifact-ray-shoot {
+    0% {
+        opacity: 0;
+        width: 0;
+    }
+
+    25% {
+        opacity: 1;
+        width: var(--ray-len);
+    }
+
+    70% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.fx-artifact-ray {
+    height: 4px;
+    width: var(--ray-len);
+    position: absolute;
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.9) 0%, rgba(255, 215, 0, 0) 100%);
+    box-shadow: 0 0 8px 2px rgba(255, 215, 0, 0.5);
+    border-radius: 2px;
+    pointer-events: none;
+    transform-origin: left center;
+}
+
+/* Star particles that drift upward from the artifact after completion */
+@keyframes fx-artifact-star-burst {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0px) scale(1.0) rotate( 0deg);
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(0, -60px) scale(0.3) rotate(180deg);
+    }
+}
+
+.fx-artifact-star {
+    position: absolute;
+    pointer-events: none;
+    z-index: 323;
+    opacity: 0;
+    animation: fx-artifact-star-burst 1.4s ease-out forwards;
+}
+
+/* Artifact icon that pops in with a spin and then fades.
+   Applied directly via JS — no paired class in this file. */
+@keyframes fx-artifact-icon {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2) rotate(-20deg);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.3) rotate( 5deg);
+    }
+
+    60% {
+        opacity: 0.9;
+        transform: translate(-50%, -50%) scale(1.0) rotate( 0deg);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8) rotate( -5deg);
+    }
+}
+
+
+/* -----------------------------------------------------------------------
+   CURSED ITEMS
+   Items with negative or chaotic effects that work against the player.
+   Includes: Cursed Reveal, Cursed Time, Cursed Shield,
+             Tidal Wave, Vortex, Chaos Grid
+----------------------------------------------------------------------- */
+
+/* ----- Cursed Reveal — toxic green board tint ----- */
+
+/* Green overlay that flashes across the board to signal a cursed reveal */
+@keyframes fx-cursed-green-flash {
+    0% {
+        background: rgba(50, 200, 50, 0.00);
+        box-shadow: none;
+    }
+
+    20% {
+        background: rgba(50, 200, 50, 0.20);
+        box-shadow: inset 0 0 40px rgba(50, 200, 50, 0.3);
+    }
+
+    60% {
+        background: rgba(50, 200, 50, 0.08);
+    }
+
+    100% {
+        background: rgba(50, 200, 50, 0.00);
+        box-shadow: none;
+    }
+}
+
+.fx-cursed-tint {
+    pointer-events: none;
+    border-radius: 3px;
+    animation: fx-cursed-green-flash 1.4s ease-out forwards;
+}
+
+/* ✕ symbols that dissolve and float upward from each wrong cell */
+@keyframes fx-cross-dissolve {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.0) translateY( 0px);
+    }
+
+    50% {
+        opacity: 0.6;
+        transform: translate(-50%, -50%) scale(0.7) translateY(-20px);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.3) translateY(-40px);
+    }
+}
+
+.fx-cursed-cross {
+    position: absolute;
+    pointer-events: none;
+    z-index: 323;
+    font-weight: bold;
+    opacity: 0;
+    animation: fx-cross-dissolve 900ms ease-out forwards;
+}
+
+
+/* ----- Cursed Time — dark purple fog blobs ----- */
+
+/* A dark purple radial blob that blooms and expands until it disappears */
+@keyframes fx-fog-bloom {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2);
+    }
+
+    35% {
+        opacity: 0.85;
+        transform: translate(-50%, -50%) scale(1.3);
+    }
+
+    65% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(1.6);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(2.2);
+    }
+}
+
+.fx-cursed-fog {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(50, 0, 80, 0.60) 0%, rgba(20, 0, 40, 0.35) 50%, transparent 100% );
+    position: absolute;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    animation: fx-fog-bloom 1.2s ease-out forwards;
+}
+
+/* Skull icon that rises upward and fades — used by both Cursed Reveal and Cursed Time.
+   Applied directly via JS — no paired class in this file. */
+@keyframes fx-skull-rise {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.3) translateY( 20px);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2) translateY( -5px);
+    }
+
+    60% {
+        opacity: 0.9;
+        transform: translate(-50%, -50%) scale(1.0) translateY( 0px);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.7) translateY(-20px);
+    }
+}
+
+
+/* ----- Cursed Shield — demon eye opens with a red scanline ----- */
+
+/* Eye icon that opens from a horizontal slit, glares, then fades out.
+   Applied directly via JS — no paired class in this file. */
+@keyframes fx-eye-open {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scaleY(0.05);
+        filter: blur(4px);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scaleY(1.2) scale(1.1);
+        filter: blur(0);
+    }
+
+    50% {
+        opacity: 0.9;
+        transform: translate(-50%, -50%) scale(1.0);
+    }
+
+    80% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.4);
+    }
+}
+
+/* Red scanline that sweeps across the board as the eye opens */
+@keyframes fx-scanline-darken {
+    0% {
+        opacity: 0;
+        background: rgba(180, 0, 0, 0.0);
+    }
+
+    50% {
+        opacity: 1;
+        background: rgba(180, 0, 0, 0.2);
+    }
+
+    100% {
+        opacity: 0;
+        background: rgba(180, 0, 0, 0.0);
+    }
+}
+
+.fx-eye-scanline {
+    pointer-events: none;
+    animation: fx-scanline-darken 0.5s ease-in forwards;
+    opacity: 0;
+}
+
+
+/* ----- Tidal Wave — blue wave bar sweeps across all cells ----- */
+
+/* A wide blue gradient bar that sweeps horizontally across the board.
+   Uses --wave-dist CSS variable for horizontal travel distance. */
+@keyframes fx-wave-sweep {
+    0% {
+        opacity: 0;
+        transform: translateX(0);
+    }
+
+    12% {
+        opacity: 1;
+    }
+
+    85% {
+        opacity: 0.9;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(var(--wave-dist));
+    }
+}
+
+.fx-tidal-wave {
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent 0%, rgba( 41, 128, 185, 0.60) 15%, rgba(100, 180, 255, 0.80) 40%, rgba(200, 240, 255, 0.90) 50%, rgba(100, 180, 255, 0.80) 60%, rgba( 41, 128, 185, 0.50) 80%, transparent 100% );
+    box-shadow: 0 0 20px 6px rgba(41, 128, 185, 0.4);
+    border-radius: 4px;
+}
+
+
+/* ----- Vortex — spinning chaos that scrambles the board ----- */
+
+/* Debris emoji/symbol that orbits inward and vanishes */
+@keyframes fx-vortex-swirl {
+    0% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) rotate( 0deg) translateX( 0px) scale(1.0);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) rotate(180deg) translateX(20px) scale(0.7);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(360deg) translateX( 0px) scale(0.2);
+    }
+}
+
+.fx-vortex-debris {
+    position: absolute;
+    pointer-events: none;
+    z-index: 323;
+    opacity: 0;
+    animation: fx-vortex-swirl 1400ms ease-out forwards;
+}
+
+/* Central vortex icon that spins into existence then out.
+   Applied directly via JS — no paired class in this file. */
+@keyframes fx-vortex-spin {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate( 0deg) scale(0.4);
+    }
+
+    25% {
+        opacity: 1;
+        transform: translate(-50%, -50%) rotate( 90deg) scale(1.2);
+    }
+
+    65% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) rotate(270deg) scale(1.0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(420deg) scale(0.6);
+    }
+}
+
+/* Row strips that twist and compress horizontally as the vortex takes hold */
+@keyframes fx-vortex-strip-swirl {
+    0% {
+        opacity: 0;
+        transform: scaleX(1.00);
+        background: rgba(150, 150, 200, 0.00);
+    }
+
+    30% {
+        opacity: 0.4;
+        transform: scaleX(0.95);
+        background: rgba(100, 100, 180, 0.25);
+    }
+
+    70% {
+        opacity: 0.2;
+    }
+
+    100% {
+        opacity: 0;
+        transform: scaleX(0.10);
+    }
+}
+
+.fx-vortex-strip {
+    pointer-events: none;
+    animation: fx-vortex-strip-swirl 0.9s ease-in forwards;
+    opacity: 0;
+}
+
+
+/* ----- Chaos Grid — random explosion blasts across cells ----- */
+
+/* Circular blast that expands outward from a cell center.
+   Uses --blast-color CSS variable (set per-blast by JS) for color. */
+@keyframes fx-chaos-explode {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 1;
+        box-shadow: 0 0 0px 0px var(--blast-color);
+    }
+
+    40% {
+        transform: translate(-50%, -50%) scale(3);
+        opacity: 0.9;
+        box-shadow: 0 0 20px 12px var(--blast-color);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(6);
+        opacity: 0;
+        box-shadow: 0 0 0px 0px transparent;
+    }
+}
+
+.fx-chaos-blast {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    background: var(--blast-color);
+    box-shadow: 0 0 0 0 var(--blast-color);
+    pointer-events: none;
+    animation: fx-chaos-explode 0.5s ease-out forwards;
+}
+
+/* Shard fragments that fly outward from the explosion origin.
+   Note: random() in transforms is not standard CSS — these are
+   controlled via inline style overrides set by JS per shard. */
+@keyframes fx-chaos-shard-fly {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) translate(0, 0) scale(1.0);
+    }
+
+    60% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translate(calc((random() - 0.5) * 60px), calc(-30px - random() * 30px)) scale(0.3);
+    }
+}
+
+.fx-chaos-shard {
+    position: absolute;
+    pointer-events: none;
+    z-index: 324;
+    opacity: 0;
+    animation: fx-chaos-shard-fly 600ms ease-out forwards;
+}
+
+
+

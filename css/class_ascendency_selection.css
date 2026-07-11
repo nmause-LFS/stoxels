@@ -1,0 +1,410 @@
+/*
+    ------------------------------------------------------------------------
+    -------------------ASCENDENCY CLASS SELECTION SCREEN----------------------
+    ------------------------------------------------------------------------
+    Mirrors the visual language of class_selection.css (the base "CHOOSE YOUR
+    CLASS" screen) but scoped to data-mode="ascend-select". Only the two
+    ascendencies belonging to the player's chosen base class are ever
+    rendered here (filtered in class-ui.js), so this screen always shows
+    exactly 2 cards instead of 3.
+
+    Markup produced by class-ui.js (buildAscendencyCard / showAscendencySelection):
+
+    #class-selection-overlay[data-mode="ascend-select"][data-classid=<baseClassId>]
+      #class-selection-content
+        .cs-header > .cs-title / .cs-subtitle
+        .cs-cards.cs-ascendency-cards
+          .cs-card[data-classid=<ascendencyId>]
+            .cs-card-icon
+            .cs-card-name
+            .cs-archetype-tag
+            .cs-card-desc
+            .cs-ascendency-locker (hover -> tooltip)
+            .cs-card-cta
+        #cs-tooltip.cs-tooltip
+          .cs-ability (x2 — SKILL 1 / SKILL 2)
+
+    data-classid on the OVERLAY = the player's base class (statistician /
+    mathmagician / probabilist), used only for background tinting.
+    data-classid on each .cs-CARD = the specific ascendency id (outlier,
+    actuary, recursionist, markovian, bayesian, random_walker), used for
+    per-ascendency locker artwork. These never collide since they live on
+    different elements.
+*/
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------BACKDROP / BACKGROUND---------------------------------
+    ------------------------------------------------------------------------
+*/
+
+#class-selection-overlay[data-mode="ascend-select"] {
+    background-image: url('../images/Class_Selection/class_selection_bg.jpeg');
+    background-size: cover;
+    background-position: center;
+    backdrop-filter: blur(2px);
+}
+
+    /* Optional per-base-class tint — reusing the class-upgrade backgrounds as
+       placeholders for now. Swap for dedicated ascend-select art later. */
+    #class-selection-overlay[data-mode="ascend-select"][data-classid="statistician"] {
+        background-image: url('../images/Class_Ascendency_Selection/statistician_ascendency_selection.jpeg');
+    }
+
+    #class-selection-overlay[data-mode="ascend-select"][data-classid="mathmagician"] {
+        background-image: url('../images/Class_Ascendency_Selection/mathmagician_ascendency_selection.jpeg');
+    }
+
+    #class-selection-overlay[data-mode="ascend-select"][data-classid="probabilist"] {
+        background-image: url('../images/Class_Ascendency_Selection/probabilist_ascendency_selection.jpeg');
+    }
+    /* ============ END PER-BASE-CLASS BACKGROUND ============ */
+
+
+    #class-selection-overlay[data-mode="ascend-select"] #class-selection-content {
+        position: relative;
+        width: 100%;
+        max-width: 1100px;
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: clamp(24px, 4vw, 56px) clamp(12px, 3vw, 40px) clamp(40px, 6vw, 70px);
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+
+    /*
+    ------------------------------------------------------------------------
+    -------------------HEADER / TITLE PLAQUE---------------------------------
+    ------------------------------------------------------------------------
+    */
+
+    #class-selection-overlay[data-mode="ascend-select"] .cs-header {
+        position: relative;
+        margin: 0 auto clamp(20px, 3vw, 36px);
+        padding: clamp(6px, 1.4vw, 14px) clamp(20px, 6vw, 60px) clamp(4px, 1vw, 10px);
+        max-width: 1000px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    #class-selection-overlay[data-mode="ascend-select"] .cs-title {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        font-size: clamp(20px, 3.4vw, 34px);
+        letter-spacing: 4px;
+        color: #f3e9ff;
+        text-transform: uppercase;
+        padding: clamp(12px, 2.2vw, 22px) clamp(10px, 1.8vw, 18px);
+        background-image: url('../images/Class_Selection/title_banner.png');
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        background-position: center;
+        text-shadow: 0 0 14px rgba(176, 108, 255, 0.9), 0 2px 3px rgba(0, 0, 0, 0.9);
+        text-align: center;
+    }
+
+    #class-selection-overlay[data-mode="ascend-select"] .cs-subtitle {
+        display: block;
+        text-align: center;
+        margin-top: -1.5em;
+        font-size: clamp(9px, 1.3vw, 15px);
+        color: #cbb8e8;
+        font-weight: normal;
+        opacity: 0.9;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+    }
+
+
+    /*
+    ------------------------------------------------------------------------
+    -------------------CARD ROW---------------------------------------------
+    ------------------------------------------------------------------------
+    Only ever 2 cards on this screen, so they get more breathing room than
+    the 3-card base-class-selection row.
+    */
+
+    #class-selection-overlay[data-mode="ascend-select"] .cs-cards {
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: clamp(20px, 4vw, 48px);
+        width: 100%;
+        max-width: 1000px;
+        margin: 0 auto;
+        box-sizing: border-box;
+    }
+
+
+    /*
+    ------------------------------------------------------------------------
+    -------------------ASCENDENCY CARD----------------------------------------
+    ------------------------------------------------------------------------
+    Same visual language as .cs-card in class_selection.css (border/glow tied
+    to --cls-color), declared here under the ascend-select data-mode.
+    */
+
+    #class-selection-overlay[data-mode="ascend-select"] .cs-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1 1 320px;
+        min-width: 0;
+        max-width: 400px;
+        padding: clamp(14px, 2vw, 26px);
+        box-sizing: border-box;
+        border: 2px solid var(--cls-color, #8a5cff);
+        border-radius: 10px;
+        background: linear-gradient(180deg, rgba(30, 24, 40, 0.88), rgba(12, 9, 18, 0.94));
+        box-shadow: 0 0 22px -6px var(--cls-color, transparent), inset 0 0 24px rgba(0, 0, 0, 0.45);
+        text-align: center;
+        transition: box-shadow 0.2s ease;
+    }
+
+        #class-selection-overlay[data-mode="ascend-select"] .cs-card:hover {
+            box-shadow: 0 0 30px -4px var(--cls-color, transparent), inset 0 0 24px rgba(0, 0, 0, 0.45);
+        }
+
+
+    /*
+    ------------------------------------------------------------------------
+    -------------------ICON / NAME / ARCHETYPE / DESCRIPTION------------------
+    ------------------------------------------------------------------------
+    */
+
+    #class-selection-overlay[data-mode="ascend-select"] .cs-card-icon {
+        width: clamp(38px, 5vw, 62px);
+        height: clamp(38px, 5vw, 62px);
+        line-height: clamp(38px, 5vw, 62px);
+        font-size: clamp(18px, 2.4vw, 32px);
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.12), transparent 60%), linear-gradient(180deg, #3a3244, #201a28);
+        border: 2px solid var(--cls-color, var(--accent));
+        box-shadow: 0 0 16px -2px var(--cls-color, var(--accent)), inset 0 0 10px rgba(0,0,0,0.6);
+        text-align: center;
+        margin-bottom: clamp(6px, 1vw, 10px);
+        flex: 0 0 auto;
+    }
+
+    #class-selection-overlay[data-mode="ascend-select"] .cs-card-name {
+        font-size: clamp(14px, 2vw, 24px);
+        letter-spacing: 2px;
+        line-height: 1.2;
+        margin-bottom: clamp(4px, 0.8vw, 8px);
+        text-shadow: 0 0 12px var(--cls-color, transparent), 0 2px 3px rgba(0,0,0,0.9);
+    }
+
+    #class-selection-overlay[data-mode="ascend-select"] .cs-archetype-tag {
+        display: inline-block;
+        font-size: clamp(8px, 1vw, 11px);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 3px 10px;
+        border-radius: 20px;
+        margin-bottom: clamp(8px, 1.2vw, 14px);
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--cls-color, rgba(255,255,255,0.14));
+        color: var(--cls-light, #cbb8e8);
+    }
+
+    #class-selection-overlay[data-mode="ascend-select"] .cs-card-desc {
+        color: #efe8fa;
+        font-style: italic;
+        font-size: clamp(10px, 1.2vw, 15px);
+        line-height: 1.4;
+        margin-bottom: clamp(10px, 1.6vw, 18px);
+    }
+
+
+    /*
+    ------------------------------------------------------------------------
+    -------------------ASCENDENCY LOCKER (hover = tooltip)---------------------
+    ------------------------------------------------------------------------
+    */
+
+    #class-selection-overlay[data-mode="ascend-select"] .cs-ascendency-locker {
+        width: 100%;
+        aspect-ratio: 3 / 4;
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        cursor: pointer;
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+        transition: box-shadow 0.2s ease, filter 0.2s ease;
+        margin-bottom: clamp(10px, 1.6vw, 18px);
+    }
+
+        #class-selection-overlay[data-mode="ascend-select"] .cs-ascendency-locker:hover {
+            box-shadow: 0 0 24px -2px var(--cls-color, #8a5cff);
+            filter: brightness(1.15);
+        }
+
+    /* ============ PER-ASCENDENCY LOCKER ARTWORK ============
+       Placeholder images — reusing the base weapon-locker art for now.
+       Swap these urls once real per-ascendency art is ready. */
+    #class-selection-overlay[data-mode="ascend-select"] .cs-card[data-classid="outlier"] .cs-ascendency-locker {
+        background-image: url('../images/Class_Ascendency_Selection/outlier_weapons.png');
+    }
+
+    #class-selection-overlay[data-mode="ascend-select"] .cs-card[data-classid="actuary"] .cs-ascendency-locker {
+        background-image: url('../images/Class_Ascendency_Selection/actuary_weapons.png');
+    }
+
+    #class-selection-overlay[data-mode="ascend-select"] .cs-card[data-classid="recursionist"] .cs-ascendency-locker {
+        background-image: url('../images/Class_Ascendency_Selection/recursionist_weapons.png');
+    }
+
+    #class-selection-overlay[data-mode="ascend-select"] .cs-card[data-classid="markovian"] .cs-ascendency-locker {
+        background-image: url('../images/Class_Ascendency_Selection/markovian_weapons.png');
+    }
+
+    #class-selection-overlay[data-mode="ascend-select"] .cs-card[data-classid="bayesian"] .cs-ascendency-locker {
+        background-image: url('../images/Class_Ascendency_Selection/bayesian_weapons.png');
+    }
+
+    #class-selection-overlay[data-mode="ascend-select"] .cs-card[data-classid="random_walker"] .cs-ascendency-locker {
+        background-image: url('../images/Class_Ascendency_Selection/random_walker_weapons.png');
+    }
+
+
+    /*
+    ------------------------------------------------------------------------
+    -------------------ASCEND BUTTON (CTA)------------------------------------
+    ------------------------------------------------------------------------
+    */
+
+    #class-selection-overlay[data-mode="ascend-select"] .cs-card-cta {
+        padding: clamp(6px, 1vw, 10px) clamp(16px, 2.4vw, 26px);
+        border: 2px solid var(--cls-color, var(--accent));
+        border-radius: 4px;
+        background: transparent;
+        color: var(--cls-light, var(--accent));
+        font-size: clamp(10px, 1.2vw, 15px);
+        letter-spacing: 3px;
+        cursor: pointer;
+        transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, text-shadow 0.2s ease;
+    }
+
+        #class-selection-overlay[data-mode="ascend-select"] .cs-card-cta:hover {
+            background: var(--cls-color, var(--accent));
+            color: #0d0d1a;
+            box-shadow: 0 0 16px -2px var(--cls-color, var(--accent));
+            text-shadow: none;
+        }
+
+
+    /*
+    ------------------------------------------------------------------------
+    -------------------CUSTOM TOOLTIP (SKILL 1 / SKILL 2)----------------------
+    ------------------------------------------------------------------------
+    Single shared #cs-tooltip element, same fixed + follows-cursor approach
+    as class_selection.css's weapon-locker tooltip.
+    */
+
+    #class-selection-overlay[data-mode="ascend-select"] .cs-tooltip {
+        position: fixed;
+        z-index: 1000;
+        display: none;
+        pointer-events: none;
+        width: clamp(220px, 26vw, 300px);
+        max-width: 80vw;
+        box-sizing: border-box;
+        padding: clamp(10px, 1.6vw, 16px);
+        background: linear-gradient(180deg, #1d1728, #110d18);
+        border: 2px solid var(--cls-color, #8a5cff);
+        border-radius: 6px;
+        box-shadow: 0 0 20px -2px var(--cls-color, #8a5cff), 0 10px 24px rgba(0, 0, 0, 0.65);
+        font-family: var(--PX);
+        text-align: left;
+    }
+
+        #class-selection-overlay[data-mode="ascend-select"] .cs-tooltip.show {
+            display: block;
+        }
+
+        #class-selection-overlay[data-mode="ascend-select"] .cs-tooltip .cs-ability {
+            margin-bottom: 10px;
+        }
+
+            #class-selection-overlay[data-mode="ascend-select"] .cs-tooltip .cs-ability:last-child {
+                margin-bottom: 0;
+            }
+
+        #class-selection-overlay[data-mode="ascend-select"] .cs-tooltip .cs-ability-tag {
+            display: inline-block;
+            font-size: 9px;
+            letter-spacing: 1px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-bottom: 4px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #cbb8e8;
+        }
+
+            #class-selection-overlay[data-mode="ascend-select"] .cs-tooltip .cs-ability-tag.active {
+                color: #7fe0ff;
+            }
+
+        #class-selection-overlay[data-mode="ascend-select"] .cs-tooltip .cs-ability-name {
+            display: block;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            color: #f3e9ff;
+            margin-bottom: 3px;
+        }
+
+        #class-selection-overlay[data-mode="ascend-select"] .cs-tooltip .cs-ability-desc {
+            display: block;
+            font-size: 10px;
+            color: #dcd2ea;
+            opacity: 0.9;
+            line-height: 1.35;
+        }
+
+
+/*
+    ------------------------------------------------------------------------
+    -------------------RESPONSIVE---------------------------------------------
+    ------------------------------------------------------------------------
+*/
+
+@media (max-width: 900px) {
+    #class-selection-overlay[data-mode="ascend-select"] .cs-title {
+        letter-spacing: 2px;
+    }
+}
+
+@media (max-width: 700px) {
+    #class-selection-overlay[data-mode="ascend-select"] .cs-header {
+        padding: clamp(4px, 1.4vw, 10px) clamp(4px, 1.4vw, 10px) clamp(3px, 1vw, 6px);
+    }
+
+    #class-selection-overlay[data-mode="ascend-select"] .cs-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #class-selection-overlay[data-mode="ascend-select"] .cs-card {
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
+@media (max-width: 420px) {
+    #class-selection-overlay[data-mode="ascend-select"] .cs-title {
+        font-size: 16px;
+        letter-spacing: 1px;
+    }
+
+    #class-selection-overlay[data-mode="ascend-select"] .cs-tooltip {
+        width: 80vw;
+    }
+}

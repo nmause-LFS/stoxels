@@ -1,0 +1,342 @@
+﻿/* =========================================================
+   MAP VIEW TOPBAR — css/map-view-topbar.css
+   =========================================================
+   Dedicated stylesheet for the redesigned top bar of the
+   Map View level-selection screen ONLY.
+
+   Every rule here is scoped under #screen-map-view so it
+   cannot leak into the old list-view topbar (screens.css).
+
+   RESPONSIVE STRATEGY (matches title-screen.css / setup-screen.css /
+   character-select.css):
+     - Every size (fonts, block dimensions, gaps) uses clamp() so the
+       whole bar scales continuously as the window shrinks — no sudden
+       jumps between breakpoints.
+     - The "SELECT LEVEL" title used to be position:absolute, centered
+       on top of the flex row. That's what caused it to overlap the
+       other buttons at smaller widths — it wasn't part of the flex
+       layout at all, so nothing made room for it. It is now a normal
+       flex child (flex: 1 1 ...), so the row always reserves space
+       for it and it can never sit on top of anything else again.
+     - Below 760px the bar wraps onto two rows: the title takes its
+       own full-width row up top, everything else wraps to the row(s)
+       below it. Below 480px the two big square buttons and the
+       ribbon shrink further so nothing overflows on very small
+       phones.
+
+   EXPECTED IMAGE ASSETS (place in images/Level_Select_Topbar/):
+     - topbar-stone-background.png
+     - back-arrow.png
+     - list-square.png
+     - score-pts-scroll.png
+     - banner-title.png
+     - Inference-Block.png
+     - Probability-Tree-Block.png
+
+   NOTE: class-status.png is no longer used — the class status
+   span (#mv-class-status) has been removed from the topbar HTML.
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   1. TOPBAR ROOT — flex row that wraps once it runs out of room
+   --------------------------------------------------------- */
+
+#screen-map-view .ls-topbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    row-gap: clamp(4px, 1vw, 8px);
+    background-image: url('../images/Level_Select_Topbar/topbar-stone-background.png');
+    background-size: auto;
+    background-repeat: repeat-x;
+    background-position: center;
+    border-bottom: 2px solid #5a3a14;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.6), inset 0 -2px 0 rgba(200, 168, 75, 0.25);
+    padding: clamp(4px, 1vw, 6px) clamp(8px, 2vw, 14px);
+    gap: clamp(6px, 1.5vw, 12px);
+    min-height: 70px;
+    box-sizing: border-box;
+}
+
+
+/* ---------------------------------------------------------
+   2. SETUP (back) BUTTON
+   --------------------------------------------------------- */
+
+#screen-map-view #mv-btn-back {
+    font-family: var(--PX, monospace);
+    font-size: clamp(9px, 1.4vw, 17px);
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: #f5e9c8;
+    background: url('../images/Level_Select_Topbar/back-arrow.png') center / 100% 100% no-repeat;
+    height: auto;
+    width: clamp(90px, 15vw, 200px);
+    aspect-ratio: 2.5 / 1;
+    box-sizing: border-box;
+    border: none;
+    /* Push text toward the right/center — the arrow graphic is on the left of the image */
+    padding: 0 clamp(6px, 2vw, 12px) 0 clamp(28px, 9vw, 70px);
+    cursor: pointer;
+    text-shadow: 1px 1px 3px #000, 0 0 8px rgba(0,0,0,0.8);
+    transition: filter 0.15s, transform 0.1s;
+    white-space: nowrap;
+    flex-shrink: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    #screen-map-view #mv-btn-back:hover {
+        filter: brightness(1.25);
+    }
+
+    #screen-map-view #mv-btn-back:active {
+        transform: translateY(1px);
+    }
+
+
+/* ---------------------------------------------------------
+   3. LIST VIEW TOGGLE BUTTON
+   --------------------------------------------------------- */
+
+#screen-map-view #btn-toggle-map-view-mv {
+    font-family: var(--PX, monospace);
+    font-size: clamp(8px, 1vw, 11px);
+    letter-spacing: 1px;
+    color: #f5e9c8;
+    background: url('../images/Level_Select_Topbar/list-square.png') center / 100% 100% no-repeat;
+    height: auto;
+    width: clamp(56px, 8vw, 100px);
+    aspect-ratio: 1.6 / 1;
+    box-sizing: border-box;
+    border: none;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: clamp(5px, 1.2vw, 10px);
+    text-shadow: 1px 1px 2px #000;
+    white-space: nowrap;
+    flex-shrink: 1;
+    cursor: auto;
+}
+
+    #screen-map-view #btn-toggle-map-view-mv:hover {
+        filter: brightness(1.25);
+    }
+
+    #screen-map-view #btn-toggle-map-view-mv:active {
+        transform: translateY(1px);
+    }
+
+/* ---------------------------------------------------------
+   4. COMBINED SCORE + DIFFICULTY RIBBON (single scroll)
+   --------------------------------------------------------- */
+
+#screen-map-view .mv-ribbon-combined {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: url('../images/Level_Select_Topbar/score-pts-scroll.png') center / 100% 100% no-repeat;
+    width: clamp(140px, 20vw, 300px);
+    height: auto;
+    aspect-ratio: 3.75 / 1;
+    box-sizing: border-box;
+    padding: clamp(3px, 0.8vw, 6px) clamp(10px, 2.5vw, 20px);
+    font-family: var(--PX, monospace);
+    white-space: nowrap;
+    flex-shrink: 1;
+    line-height: 1.35;
+}
+
+/* Line 1 — total score (e.g. "TOTAL: 2939") */
+#screen-map-view #mv-ls-score {
+    font-size: clamp(9px, 1.3vw, 15px);
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 1px 1px 2px #000, 0 0 8px rgba(255, 215, 0, 0.3);
+    letter-spacing: 1px;
+}
+
+/* Line 2 — points to next code */
+#screen-map-view #mv-ls-pts-next {
+    font-size: clamp(7px, 1vw, 11px);
+    color: #010101;
+    opacity: 1;
+    letter-spacing: 0.5px;
+}
+
+
+/* ---------------------------------------------------------
+   5. TITLE BANNER — a normal flex child now (NOT absolute),
+   so the row always reserves room for it and it can never
+   overlap the buttons on either side, at any width.
+   --------------------------------------------------------- */
+
+#screen-map-view .ls-title {
+    flex: 1 1 clamp(140px, 30vw, 500px);
+    min-width: 0;
+    max-width: 700px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--PX, monospace);
+    font-size: clamp(11px, 2.6vw, 30px);
+    letter-spacing: clamp(1px, 0.5vw, 6px);
+    color: #f0d090;
+    background: url('../images/Level_Select_Topbar/banner-title.png') center / 100% 100% no-repeat;
+    height: clamp(40px, 8vw, 90px);
+    box-sizing: border-box;
+    padding: 0 clamp(4px, 1vw, 10px);
+    text-shadow: 1px 1px 0 #000, 2px 2px 4px #000, 0 0 18px rgba(255, 200, 80, 0.35);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* ---------------------------------------------------------
+   6. RIGHT-SIDE BADGE GROUP
+   --------------------------------------------------------- */
+
+#screen-map-view .ls-topbar-right {
+    margin-left: auto;
+    display: flex;
+    position: relative;
+    flex-direction: row;
+    align-items: center;
+    gap: clamp(4px, 1vw, 6px);
+    flex-shrink: 1;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+/* Class status badge */
+#screen-map-view #mv-class-status {
+    font-family: var(--PX, monospace);
+    font-size: clamp(8px, 1vw, 11px);
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 5px;
+    padding: 3px 8px;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.4;
+    cursor: help;
+    flex-shrink: 1;
+    text-shadow: 1px 1px 2px #000;
+}
+
+    #screen-map-view #mv-class-status:empty {
+        display: none;
+    }
+
+/*
+   Inference + Probability Tree buttons
+   Both use their stone-block background images.
+   Text is pushed to the BOTTOM so the icon graphic at the top
+   of each image stays visible.
+*/
+#screen-map-view #mv-btn-quest-log,
+#screen-map-view #mv-btn-passive-tree {
+    font-family: var(--PX, monospace);
+    font-size: clamp(7px, 0.9vw, 10px);
+    letter-spacing: 1px;
+    color: #f0d090; /* warm gold-cream, visible on dark stone */
+
+    border: none !important;
+    width: clamp(70px, 11vw, 200px);
+    height: auto;
+    aspect-ratio: 2.5 / 1;
+    box-sizing: border-box;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: clamp(4px, 1vw, 8px);
+    text-shadow: 1px 1px 3px #000, 0 0 6px rgba(0,0,0,0.9);
+    white-space: normal; /* allow "PROBABILITY TREE" to wrap to two lines */
+    text-align: center;
+    line-height: 1.2;
+    cursor: pointer;
+    flex-shrink: 1;
+    transition: filter 0.15s;
+}
+
+#screen-map-view #mv-btn-quest-log {
+    background: url('../images/Level_Select_Topbar/Inference-Block.png') center / 100% 100% no-repeat;
+}
+
+#screen-map-view #mv-btn-passive-tree {
+    background: url('../images/Level_Select_Topbar/Probability-Tree-Block.png') center / 100% 100% no-repeat;
+    color: #f0d090 !important; /* override any inline JS color */
+}
+
+    #screen-map-view #mv-btn-quest-log:hover,
+    #screen-map-view #mv-btn-passive-tree:hover {
+        filter: brightness(1.25);
+    }
+
+/* Notification badge ("!" dot on Inference button) */
+#screen-map-view #mv-quest-log-badge {
+    background: var(--red, #e74c3c);
+    color: #fff;
+    border-radius: 50%;
+    font-family: var(--PX, monospace);
+    font-size: clamp(7px, 0.9vw, 9px);
+    padding: 1px 5px;
+    margin-left: 4px;
+    box-shadow: 0 0 6px rgba(231, 76, 60, 0.8);
+}
+
+
+/* ---------------------------------------------------------
+   7. RESPONSIVE BREAKPOINTS
+   --------------------------------------------------------- */
+
+/* Below this width there isn't room for the title AND every
+   button on one line even with clamp() shrinking them — force
+   the title onto its own full-width row, everything else wraps
+   into the row(s) beneath it. */
+@media (max-width: 760px) {
+
+    #screen-map-view .ls-topbar {
+        justify-content: center;
+    }
+
+    #screen-map-view .ls-title {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    #screen-map-view .ls-topbar-right {
+        margin-left: 0;
+        justify-content: center;
+    }
+}
+
+/* Very small phones — shrink the two big square buttons and the
+   ribbon further so nothing wraps to a third/fourth row. */
+@media (max-width: 480px) {
+
+    #screen-map-view #mv-btn-back {
+        width: clamp(70px, 24vw, 120px);
+        padding-left: clamp(22px, 8vw, 40px);
+    }
+
+    #screen-map-view #mv-btn-quest-log,
+    #screen-map-view #mv-btn-passive-tree {
+        width: clamp(52px, 18vw, 90px);
+        font-size: 7px;
+    }
+
+    #screen-map-view .mv-ribbon-combined {
+        width: clamp(110px, 34vw, 180px);
+    }
+
+    #screen-map-view #mv-class-status {
+        font-size: 7px;
+        padding: 2px 5px;
+    }
+}
