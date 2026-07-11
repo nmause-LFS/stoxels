@@ -2431,6 +2431,197 @@ const MATH_GATE_POOLS = {
 
 
 
+    10: [
+
+        // ── 1. KONFIDENZINTERVALL FÜR ERWARTUNGSWERT (σ² bekannt) ────────────────
+
+        {
+            q: 'X̄ₙ = 50, σ = 8, n = 16. Compute the margin of error for a two-sided 95% CI for μ using z_{0.975} = 1.96. Round to 2 decimal places.',
+            qDE: 'X̄ₙ = 50, σ = 8, n = 16. Berechne die Fehlerspanne für ein zweiseitiges 95%-KI für μ mit z_{0,975} = 1,96. Auf 2 Dezimalstellen runden.',
+            answer: 3.92, tolerance: 0.05, unit: '',
+            hintEn: 'Margin = z_{1−α/2} · σ/√n = 1.96 × 8/√16 = 1.96 × 2 = 3.92.',
+            hintDE: 'Fehlerspanne = z_{1−α/2} · σ/√n = 1,96 × 8/√16 = 1,96 × 2 = 3,92.'
+        },
+        {
+            q: 'X̄ₙ = 100, σ = 15, n = 25, z_{0.95} = 1.645. What is the upper bound of the one-sided (upper) 95% CI for μ? Round to 2 decimal places.',
+            qDE: 'X̄ₙ = 100, σ = 15, n = 25, z_{0,95} = 1,645. Wie lautet die obere Grenze des einseitigen (oberen) 95%-KI für μ? Auf 2 Dezimalstellen runden.',
+            answer: 104.94, tolerance: 0.1, unit: '',
+            hintEn: 'Upper bound = X̄ₙ + z_{1−α} · σ/√n = 100 + 1.645 × 15/5 = 100 + 4.935.',
+            hintDE: 'Obere Grenze = X̄ₙ + z_{1−α} · σ/√n = 100 + 1,645 × 15/5 = 100 + 4,935.'
+        },
+        {
+            q: 'A 95% two-sided CI for μ is [46.08, 53.92]. What is the point estimate X̄ₙ (the midpoint)?',
+            qDE: 'Ein zweiseitiges 95%-KI für μ ist [46,08, 53,92]. Wie lautet der Punktschätzer X̄ₙ (der Mittelpunkt)?',
+            answer: 50, tolerance: 0.1, unit: '',
+            hintEn: 'The midpoint of a symmetric CI is the point estimate.',
+            hintDE: 'Der Mittelpunkt eines symmetrischen KI ist der Punktschätzer.'
+        },
+
+        // ── 2. KONFIDENZINTERVALL FÜR ERWARTUNGSWERT (σ² unbekannt, t-Verteilung) ──
+
+        {
+            q: 'X̄ₙ = 20, Sₙ = 4, n = 9, t_{8, 0.975} = 2.306. Compute the margin of error of the two-sided 95% CI for μ. Round to 2 decimal places.',
+            qDE: 'X̄ₙ = 20, Sₙ = 4, n = 9, t_{8; 0,975} = 2,306. Berechne die Fehlerspanne des zweiseitigen 95%-KI für μ. Auf 2 Dezimalstellen runden.',
+            answer: 3.07, tolerance: 0.05, unit: '',
+            hintEn: 'Margin = t_{n−1, 1−α/2} · Sₙ/√n = 2.306 × 4/3 ≈ 3.07.',
+            hintDE: 'Fehlerspanne = t_{n−1; 1−α/2} · Sₙ/√n = 2,306 × 4/3 ≈ 3,07.'
+        },
+        {
+            q: 'A sample has n = 10 observations. How many degrees of freedom does the t-distribution have for the CI of μ (unknown σ²)?',
+            qDE: 'Eine Stichprobe hat n = 10 Beobachtungen. Wie viele Freiheitsgrade hat die t-Verteilung für das KI von μ (σ² unbekannt)?',
+            answer: 9, tolerance: 0, unit: '',
+            hintEn: 'Degrees of freedom = n − 1 = 10 − 1 = 9.',
+            hintDE: 'Freiheitsgrade = n − 1 = 10 − 1 = 9.'
+        },
+
+        // ── 3. KONFIDENZINTERVALL FÜR VARIANZ (CHI-QUADRAT) ──────────────────────
+
+        {
+            q: 'n = 10, Sₙ² = 4. How many degrees of freedom does the chi-squared distribution have for the CI of σ²?',
+            qDE: 'n = 10, Sₙ² = 4. Wie viele Freiheitsgrade hat die Chi-Quadrat-Verteilung für das KI von σ²?',
+            answer: 9, tolerance: 0, unit: '',
+            hintEn: 'The chi-squared distribution here has n − 1 degrees of freedom.',
+            hintDE: 'Die Chi-Quadrat-Verteilung hat hier n − 1 Freiheitsgrade.'
+        },
+        {
+            q: 'n = 15, Sₙ² = 6, χ²_{14, 0.975} = 26.12. Compute the lower bound of the two-sided 95% CI for σ². Round to 2 decimal places.',
+            qDE: 'n = 15, Sₙ² = 6, χ²_{14; 0,975} = 26,12. Berechne die untere Grenze des zweiseitigen 95%-KI für σ². Auf 2 Dezimalstellen runden.',
+            answer: 3.22, tolerance: 0.05, unit: '',
+            hintEn: 'Lower bound = (n−1)·Sₙ² / χ²_{n−1, 1−α/2} = 14×6/26.12 ≈ 3.22.',
+            hintDE: 'Untere Grenze = (n−1)·Sₙ² / χ²_{n−1; 1−α/2} = 14×6/26,12 ≈ 3,22.'
+        },
+
+        // ── 4. KONFIDENZINTERVALL FÜR p (BINOMIAL, APPROXIMATIV) ─────────────────
+
+        {
+            q: 'In a sample of n = 200, X = 40 successes are observed. What is the point estimate p̂?',
+            qDE: 'In einer Stichprobe von n = 200 werden X = 40 Erfolge beobachtet. Wie lautet der Punktschätzer p̂?',
+            answer: 0.2, tolerance: 0.001, unit: '',
+            hintEn: 'p̂ = X/n = 40/200 = 0.2.',
+            hintDE: 'p̂ = X/n = 40/200 = 0,2.'
+        },
+        {
+            q: 'p̂ = 0.2, n = 200, z_{0.975} = 1.96. Compute the margin of error of the approximate two-sided 95% CI for p. Round to 3 decimal places.',
+            qDE: 'p̂ = 0,2, n = 200, z_{0,975} = 1,96. Berechne die Fehlerspanne des approximativen zweiseitigen 95%-KI für p. Auf 3 Dezimalstellen runden.',
+            answer: 0.055, tolerance: 0.003, unit: '',
+            hintEn: 'Margin = z_{1−α/2}·√(p̂(1−p̂)/n) = 1.96×√(0.2×0.8/200) ≈ 1.96×0.0283 ≈ 0.055.',
+            hintDE: 'Fehlerspanne = z_{1−α/2}·√(p̂(1−p̂)/n) = 1,96×√(0,2×0,8/200) ≈ 1,96×0,0283 ≈ 0,055.'
+        },
+
+        // ── 5. FEHLER 1./2. ART, SIGNIFIKANZNIVEAU, POWER ────────────────────────
+
+        {
+            q: 'A test has significance level α = 0.05. What is the maximum allowed probability of a Type I error?',
+            qDE: 'Ein Test hat das Signifikanzniveau α = 0,05. Wie hoch ist die maximal zulässige Wahrscheinlichkeit für einen Fehler 1. Art?',
+            answer: 0.05, tolerance: 0.001, unit: '',
+            hintEn: 'By definition, α bounds the probability of a Type I error.',
+            hintDE: 'Per Definition begrenzt α die Wahrscheinlichkeit eines Fehlers 1. Art.'
+        },
+        {
+            q: 'The probability of a Type II error is β = 0.2. What is the power of the test?',
+            qDE: 'Die Wahrscheinlichkeit für einen Fehler 2. Art beträgt β = 0,2. Wie groß ist die Power des Tests?',
+            answer: 0.8, tolerance: 0.001, unit: '',
+            hintEn: 'Power = 1 − β = 1 − 0.2 = 0.8.',
+            hintDE: 'Power = 1 − β = 1 − 0,2 = 0,8.'
+        },
+        {
+            q: 'A test has power 0.75. What is the probability β of a Type II error?',
+            qDE: 'Ein Test hat die Power 0,75. Wie groß ist die Wahrscheinlichkeit β für einen Fehler 2. Art?',
+            answer: 0.25, tolerance: 0.001, unit: '',
+            hintEn: 'β = 1 − Power = 1 − 0.75 = 0.25.',
+            hintDE: 'β = 1 − Power = 1 − 0,75 = 0,25.'
+        },
+
+        // ── 6. GAUSS-TEST (Z-TEST, EIN STICHPROBE) ───────────────────────────────
+
+        {
+            q: 'H₀: μ = 50. X̄ₙ = 53, σ = 6, n = 36. Compute the test statistic Z of the one-sample Gauß-test. Round to 2 decimal places.',
+            qDE: 'H₀: μ = 50. X̄ₙ = 53, σ = 6, n = 36. Berechne die Teststatistik Z des Ein-Stichproben-Gauß-Tests. Auf 2 Dezimalstellen runden.',
+            answer: 3, tolerance: 0.05, unit: '',
+            hintEn: 'Z = (X̄ₙ − μ₀)/(σ/√n) = (53−50)/(6/6) = 3/1 = 3.',
+            hintDE: 'Z = (X̄ₙ − μ₀)/(σ/√n) = (53−50)/(6/6) = 3/1 = 3.'
+        },
+        {
+            q: 'A two-sided Gauß-test gives Z = 2.5. The critical value is z_{0.975} = 1.96. Is H₀ rejected? Enter 1 for yes, 0 for no.',
+            qDE: 'Ein zweiseitiger Gauß-Test ergibt Z = 2,5. Der kritische Wert ist z_{0,975} = 1,96. Wird H₀ verworfen? Gib 1 für ja, 0 für nein ein.',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: 'Reject H₀ if |Z| > z_{1−α/2}. Here |2.5| > 1.96.',
+            hintDE: 'H₀ wird verworfen, wenn |Z| > z_{1−α/2}. Hier gilt |2,5| > 1,96.'
+        },
+        {
+            q: 'A one-sided (upper-tailed) Gauß-test of H₀: μ ≤ μ₀ gives Z = 1.5. The critical value is z_{0.95} = 1.645. Is H₀ rejected? Enter 1 for yes, 0 for no.',
+            qDE: 'Ein einseitiger (oberer) Gauß-Test von H₀: μ ≤ μ₀ ergibt Z = 1,5. Der kritische Wert ist z_{0,95} = 1,645. Wird H₀ verworfen? Gib 1 für ja, 0 für nein ein.',
+            answer: 0, tolerance: 0, unit: '',
+            hintEn: 'Reject H₀ only if Z > z_{1−α}. Here 1.5 < 1.645, so H₀ is not rejected.',
+            hintDE: 'H₀ wird nur verworfen, wenn Z > z_{1−α}. Hier gilt 1,5 < 1,645, also wird H₀ nicht verworfen.'
+        },
+
+        // ── 7. T-TEST (EIN STICHPROBE) ────────────────────────────────────────────
+
+        {
+            q: 'H₀: μ = 10. X̄ₙ = 11.5, Sₙ = 3, n = 16. Compute the test statistic T of the one-sample t-test. Round to 2 decimal places.',
+            qDE: 'H₀: μ = 10. X̄ₙ = 11,5, Sₙ = 3, n = 16. Berechne die Teststatistik T des Ein-Stichproben-t-Tests. Auf 2 Dezimalstellen runden.',
+            answer: 2, tolerance: 0.05, unit: '',
+            hintEn: 'T = (X̄ₙ − μ₀)/(Sₙ/√n) = (11.5−10)/(3/4) = 1.5/0.75 = 2.',
+            hintDE: 'T = (X̄ₙ − μ₀)/(Sₙ/√n) = (11,5−10)/(3/4) = 1,5/0,75 = 2.'
+        },
+        {
+            q: 'A one-sample t-test uses a sample of size n = 12. How many degrees of freedom does the test statistic have under H₀?',
+            qDE: 'Ein Ein-Stichproben-t-Test verwendet eine Stichprobe der Größe n = 12. Wie viele Freiheitsgrade hat die Teststatistik unter H₀?',
+            answer: 11, tolerance: 0, unit: '',
+            hintEn: 'Degrees of freedom = n − 1 = 12 − 1 = 11.',
+            hintDE: 'Freiheitsgrade = n − 1 = 12 − 1 = 11.'
+        },
+        {
+            q: 'A two-sided t-test gives T = 1.8 with critical value t_{n−1, 0.975} = 2.1. Is H₀ rejected? Enter 1 for yes, 0 for no.',
+            qDE: 'Ein zweiseitiger t-Test ergibt T = 1,8 mit kritischem Wert t_{n−1; 0,975} = 2,1. Wird H₀ verworfen? Gib 1 für ja, 0 für nein ein.',
+            answer: 0, tolerance: 0, unit: '',
+            hintEn: 'Reject H₀ if |T| > t_{n−1, 1−α/2}. Here |1.8| < 2.1, so H₀ is not rejected.',
+            hintDE: 'H₀ wird verworfen, wenn |T| > t_{n−1; 1−α/2}. Hier gilt |1,8| < 2,1, also wird H₀ nicht verworfen.'
+        },
+
+        // ── 8. ZUSAMMENHANG TEST UND KONFIDENZINTERVALL ──────────────────────────
+
+        {
+            q: 'A 95% CI for μ is [40, 48]. A two-sided test of H₀: μ = 50 is performed at α = 0.05. Is H₀ rejected? Enter 1 for yes, 0 for no.',
+            qDE: 'Ein 95%-KI für μ ist [40, 48]. Ein zweiseitiger Test von H₀: μ = 50 wird zum Niveau α = 0,05 durchgeführt. Wird H₀ verworfen? Gib 1 für ja, 0 für nein ein.',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: 'Reject H₀ iff μ₀ lies outside the CI. Here 50 is outside [40, 48].',
+            hintDE: 'H₀ wird verworfen, wenn μ₀ außerhalb des KI liegt. Hier liegt 50 außerhalb von [40, 48].'
+        },
+        {
+            q: 'A 99% CI for μ is [18, 26]. A two-sided test of H₀: μ = 22 is performed at α = 0.01. Is H₀ rejected? Enter 1 for yes, 0 for no.',
+            qDE: 'Ein 99%-KI für μ ist [18, 26]. Ein zweiseitiger Test von H₀: μ = 22 wird zum Niveau α = 0,01 durchgeführt. Wird H₀ verworfen? Gib 1 für ja, 0 für nein ein.',
+            answer: 0, tolerance: 0, unit: '',
+            hintEn: 'Reject H₀ iff μ₀ lies outside the CI. Here 22 lies inside [18, 26], so H₀ is not rejected.',
+            hintDE: 'H₀ wird verworfen, wenn μ₀ außerhalb des KI liegt. Hier liegt 22 innerhalb von [18, 26], also wird H₀ nicht verworfen.'
+        },
+
+        // ── 9. P-WERT ──────────────────────────────────────────────────────────
+
+        {
+            q: 'A test gives a p-value of 0.03. At significance level α = 0.05, is H₀ rejected? Enter 1 for yes, 0 for no.',
+            qDE: 'Ein Test ergibt einen p-Wert von 0,03. Wird H₀ zum Signifikanzniveau α = 0,05 verworfen? Gib 1 für ja, 0 für nein ein.',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: 'Reject H₀ if p-value ≤ α. Here 0.03 ≤ 0.05.',
+            hintDE: 'H₀ wird verworfen, wenn p-Wert ≤ α. Hier gilt 0,03 ≤ 0,05.'
+        },
+        {
+            q: 'A test gives a p-value of 0.12. At significance level α = 0.05, is H₀ rejected? Enter 1 for yes, 0 for no.',
+            qDE: 'Ein Test ergibt einen p-Wert von 0,12. Wird H₀ zum Signifikanzniveau α = 0,05 verworfen? Gib 1 für ja, 0 für nein ein.',
+            answer: 0, tolerance: 0, unit: '',
+            hintEn: 'Reject H₀ if p-value ≤ α. Here 0.12 > 0.05, so H₀ is not rejected.',
+            hintDE: 'H₀ wird verworfen, wenn p-Wert ≤ α. Hier gilt 0,12 > 0,05, also wird H₀ nicht verworfen.'
+        },
+        {
+            q: 'A two-sided Gauß-test gives Z = 2. Using Φ(2) ≈ 0.9772, compute the p-value. Round to 4 decimal places.',
+            qDE: 'Ein zweiseitiger Gauß-Test ergibt Z = 2. Mit Φ(2) ≈ 0,9772: Berechne den p-Wert. Auf 4 Dezimalstellen runden.',
+            answer: 0.0456, tolerance: 0.002, unit: '',
+            hintEn: 'p-value = 2·(1 − Φ(|Z|)) = 2·(1 − 0.9772) = 2×0.0228 = 0.0456.',
+            hintDE: 'p-Wert = 2·(1 − Φ(|Z|)) = 2·(1 − 0,9772) = 2×0,0228 = 0,0456.'
+        },
+
+    ],
 
 
 
@@ -2442,11 +2633,7 @@ const MATH_GATE_POOLS = {
 
 
 
-
-
-
-
-    10: [], 11: [], 12: [],
+    11: [], 12: [],
 
 
 

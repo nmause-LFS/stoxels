@@ -2291,6 +2291,318 @@ const BONUS_QUIZ_POOLS = {
     ],
 
 
+    10: [
+
+        // --- Konfidenzintervall: Grundidee ---
+        {
+            q: "A confidence interval with confidence level 1−α is constructed so that:",
+            qDE: "Ein Konfidenzintervall mit Konfidenzniveau 1−α wird so konstruiert, dass:",
+            opts: ["It contains the true parameter with probability 1−α (over repeated sampling)", "It contains the true parameter with certainty", "It equals the point estimate exactly", "It always has width 1−α"],
+            optsDE: ["Es den wahren Parameter mit Wahrscheinlichkeit 1−α überdeckt (bei wiederholter Stichprobenziehung)", "Es den wahren Parameter mit Sicherheit enthält", "Es genau dem Punktschätzer entspricht", "Es stets die Breite 1−α hat"],
+            correct: 0
+        },
+        {
+            q: "A two-sided confidence interval for a parameter θ has the form:",
+            qDE: "Ein zweiseitiges Konfidenzintervall für einen Parameter θ hat die Form:",
+            opts: ["[θ̂ − c, θ̂ + c] bounding θ from both below and above", "(−∞, θ̂ + c] only", "[θ̂ − c, ∞) only", "A single point estimate θ̂"],
+            optsDE: ["[θ̂ − c, θ̂ + c], das θ von unten und oben begrenzt", "Nur (−∞, θ̂ + c]", "Nur [θ̂ − c, ∞)", "Ein einzelner Punktschätzer θ̂"],
+            correct: 0
+        },
+        {
+            q: "A one-sided (upper) confidence interval for θ has the form:",
+            qDE: "Ein einseitiges (oberes) Konfidenzintervall für θ hat die Form:",
+            opts: ["(−∞, θ̂ + c]", "[θ̂ − c, θ̂ + c]", "[θ̂ − c, ∞)", "{θ̂}"],
+            optsDE: ["(−∞, θ̂ + c]", "[θ̂ − c, θ̂ + c]", "[θ̂ − c, ∞)", "{θ̂}"],
+            correct: 0
+        },
+        {
+            q: "Increasing the confidence level from 90% to 99% (all else equal) makes the confidence interval:",
+            qDE: "Eine Erhöhung des Konfidenzniveaus von 90% auf 99% (bei sonst gleichen Bedingungen) macht das Konfidenzintervall:",
+            opts: ["Wider", "Narrower", "Unchanged", "Negative"],
+            optsDE: ["Breiter", "Schmaler", "Unverändert", "Negativ"],
+            correct: 0
+        },
+        {
+            q: "Increasing the sample size n (all else equal) typically makes a confidence interval:",
+            qDE: "Eine Erhöhung des Stichprobenumfangs n (bei sonst gleichen Bedingungen) macht ein Konfidenzintervall typischerweise:",
+            opts: ["Narrower", "Wider", "Unchanged", "Undefined"],
+            optsDE: ["Schmaler", "Breiter", "Unverändert", "Undefiniert"],
+            correct: 0
+        },
+
+        // --- Konfidenzintervall für Erwartungswert ---
+        {
+            q: "For X₁,…,Xₙ i.i.d. N(μ, σ²) with σ² known, the two-sided CI for μ at level 1−α is:",
+            qDE: "Für X₁,…,Xₙ i.i.d. N(μ, σ²) mit bekanntem σ² lautet das zweiseitige KI für μ zum Niveau 1−α:",
+            opts: ["X̄ₙ ± z_{1−α/2} · σ/√n", "X̄ₙ ± z_{1−α} · σ/√n", "X̄ₙ ± t_{1−α/2} · σ/√n", "X̄ₙ ± σ²/n"],
+            optsDE: ["X̄ₙ ± z_{1−α/2} · σ/√n", "X̄ₙ ± z_{1−α} · σ/√n", "X̄ₙ ± t_{1−α/2} · σ/√n", "X̄ₙ ± σ²/n"],
+            correct: 0
+        },
+        {
+            q: "When σ² is unknown and must be estimated from the sample, the two-sided CI for μ uses:",
+            qDE: "Wenn σ² unbekannt ist und aus der Stichprobe geschätzt werden muss, verwendet das zweiseitige KI für μ:",
+            opts: ["The t-distribution with n−1 degrees of freedom", "The standard normal distribution", "The chi-squared distribution", "The binomial distribution"],
+            optsDE: ["Die t-Verteilung mit n−1 Freiheitsgraden", "Die Standardnormalverteilung", "Die Chi-Quadrat-Verteilung", "Die Binomialverteilung"],
+            correct: 0
+        },
+        {
+            q: "The two-sided CI for μ with unknown σ² is given by:",
+            qDE: "Das zweiseitige KI für μ bei unbekanntem σ² lautet:",
+            opts: ["X̄ₙ ± t_{n−1, 1−α/2} · Sₙ/√n", "X̄ₙ ± z_{1−α/2} · Sₙ/√n", "X̄ₙ ± t_{n−1, 1−α/2} · σ/√n", "X̄ₙ ± Sₙ/√n"],
+            optsDE: ["X̄ₙ ± t_{n−1, 1−α/2} · Sₙ/√n", "X̄ₙ ± z_{1−α/2} · Sₙ/√n", "X̄ₙ ± t_{n−1, 1−α/2} · σ/√n", "X̄ₙ ± Sₙ/√n"],
+            correct: 0
+        },
+        {
+            q: "A one-sided upper CI for μ (σ² known) at level 1−α is:",
+            qDE: "Ein einseitiges oberes KI für μ (σ² bekannt) zum Niveau 1−α lautet:",
+            opts: ["(−∞, X̄ₙ + z_{1−α} · σ/√n]", "(−∞, X̄ₙ + z_{1−α/2} · σ/√n]", "[X̄ₙ − z_{1−α} · σ/√n, ∞)", "[X̄ₙ, ∞)"],
+            optsDE: ["(−∞, X̄ₙ + z_{1−α} · σ/√n]", "(−∞, X̄ₙ + z_{1−α/2} · σ/√n]", "[X̄ₙ − z_{1−α} · σ/√n, ∞)", "[X̄ₙ, ∞)"],
+            correct: 0
+        },
+
+        // --- Konfidenzintervall für Varianz (Chi-Quadrat) ---
+        {
+            q: "For X₁,…,Xₙ i.i.d. N(μ, σ²), the quantity (n−1)Sₙ²/σ² follows a:",
+            qDE: "Für X₁,…,Xₙ i.i.d. N(μ, σ²) folgt die Größe (n−1)Sₙ²/σ² einer:",
+            opts: ["Chi-squared distribution with n−1 degrees of freedom", "Standard normal distribution", "t-distribution with n−1 degrees of freedom", "Binomial distribution"],
+            optsDE: ["Chi-Quadrat-Verteilung mit n−1 Freiheitsgraden", "Standardnormalverteilung", "t-Verteilung mit n−1 Freiheitsgraden", "Binomialverteilung"],
+            correct: 0
+        },
+        {
+            q: "The two-sided CI for σ² is constructed using two quantiles of:",
+            qDE: "Das zweiseitige KI für σ² wird mithilfe zweier Quantile folgender Verteilung konstruiert:",
+            opts: ["The chi-squared distribution with n−1 degrees of freedom", "The standard normal distribution", "The t-distribution", "The exponential distribution"],
+            optsDE: ["Der Chi-Quadrat-Verteilung mit n−1 Freiheitsgraden", "Der Standardnormalverteilung", "Der t-Verteilung", "Der Exponentialverteilung"],
+            correct: 0
+        },
+        {
+            q: "The two-sided CI for σ² at level 1−α is:",
+            qDE: "Das zweiseitige KI für σ² zum Niveau 1−α lautet:",
+            opts: ["[(n−1)Sₙ² / χ²_{n−1, 1−α/2}, (n−1)Sₙ² / χ²_{n−1, α/2}]", "[Sₙ² − χ²_{1−α/2}, Sₙ² + χ²_{1−α/2}]", "X̄ₙ ± χ²_{1−α/2}", "[Sₙ² / χ²_{α/2}, ∞)"],
+            optsDE: ["[(n−1)Sₙ² / χ²_{n−1, 1−α/2}, (n−1)Sₙ² / χ²_{n−1, α/2}]", "[Sₙ² − χ²_{1−α/2}, Sₙ² + χ²_{1−α/2}]", "X̄ₙ ± χ²_{1−α/2}", "[Sₙ² / χ²_{α/2}, ∞)"],
+            correct: 0
+        },
+        {
+            q: "Unlike the CI for μ, the CI for σ² based on the chi-squared distribution is generally:",
+            qDE: "Im Gegensatz zum KI für μ ist das KI für σ² auf Basis der Chi-Quadrat-Verteilung im Allgemeinen:",
+            opts: ["Not symmetric around the point estimate", "Symmetric around the point estimate", "Always of infinite width", "Independent of n"],
+            optsDE: ["Nicht symmetrisch um den Punktschätzer", "Symmetrisch um den Punktschätzer", "Stets von unendlicher Breite", "Unabhängig von n"],
+            correct: 0
+        },
+
+        // --- Konfidenzintervall für p (Binomialverteilung, approximativ) ---
+        {
+            q: "For X ~ Bin(n, p) with p̂ = X/n, the approximate (Wald) CI for p relies on which theorem?",
+            qDE: "Für X ~ Bin(n, p) mit p̂ = X/n beruht das approximative (Wald-)KI für p auf welchem Satz?",
+            opts: ["The Central Limit Theorem", "The Law of Large Numbers", "Bayes' theorem", "The Fundamental Theorem of Statistics"],
+            optsDE: ["Dem Zentralen Grenzwertsatz", "Dem Gesetz der großen Zahlen", "Dem Satz von Bayes", "Dem Hauptsatz der Statistik"],
+            correct: 0
+        },
+        {
+            q: "The approximate two-sided CI for p (Wald interval) at level 1−α is:",
+            qDE: "Das approximative zweiseitige KI für p (Wald-Intervall) zum Niveau 1−α lautet:",
+            opts: ["p̂ ± z_{1−α/2} · √(p̂(1−p̂)/n)", "p̂ ± z_{1−α} · √(p̂(1−p̂)/n)", "p̂ ± z_{1−α/2} · p̂(1−p̂)/n", "p̂ ± z_{1−α/2}/√n"],
+            optsDE: ["p̂ ± z_{1−α/2} · √(p̂(1−p̂)/n)", "p̂ ± z_{1−α} · √(p̂(1−p̂)/n)", "p̂ ± z_{1−α/2} · p̂(1−p̂)/n", "p̂ ± z_{1−α/2}/√n"],
+            correct: 0
+        },
+        {
+            q: "The approximate CI for p is generally considered reliable when:",
+            qDE: "Das approximative KI für p gilt im Allgemeinen als zuverlässig, wenn:",
+            opts: ["n is large enough that n·p̂ and n·(1−p̂) are both sufficiently large", "n is small and p̂ is close to 0.5", "p̂ = 0 or p̂ = 1", "n is any value at all"],
+            optsDE: ["n groß genug ist, sodass n·p̂ und n·(1−p̂) beide ausreichend groß sind", "n klein ist und p̂ nahe 0,5 liegt", "p̂ = 0 oder p̂ = 1 ist", "n einen beliebigen Wert hat"],
+            correct: 0
+        },
+
+        // --- Statistische Tests: Grundbegriffe ---
+        {
+            q: "In hypothesis testing, the null hypothesis H₀ typically represents:",
+            qDE: "Beim Hypothesentest repräsentiert die Nullhypothese H₀ typischerweise:",
+            opts: ["The default or status-quo claim to be tested against evidence", "The claim the researcher wants to prove", "A claim that is always true", "The sample mean"],
+            optsDE: ["Die Standard- bzw. Status-quo-Annahme, die gegen die Evidenz getestet wird", "Die Behauptung, die der Forscher beweisen möchte", "Eine stets wahre Aussage", "Den Stichprobenmittelwert"],
+            correct: 0
+        },
+        {
+            q: "The alternative hypothesis H₁ represents:",
+            qDE: "Die Alternativhypothese H₁ repräsentiert:",
+            opts: ["The claim that contradicts H₀ and is accepted if H₀ is rejected", "The claim that is assumed true by default", "A restatement of H₀", "The observed sample data"],
+            optsDE: ["Die Behauptung, die H₀ widerspricht und akzeptiert wird, falls H₀ verworfen wird", "Die standardmäßig als wahr angenommene Behauptung", "Eine Umformulierung von H₀", "Die beobachteten Stichprobendaten"],
+            correct: 0
+        },
+        {
+            q: "A Type I error occurs when:",
+            qDE: "Ein Fehler 1. Art tritt auf, wenn:",
+            opts: ["H₀ is true but is rejected", "H₀ is false but is not rejected", "H₀ is true and not rejected", "H₁ is true and accepted"],
+            optsDE: ["H₀ wahr ist, aber verworfen wird", "H₀ falsch ist, aber nicht verworfen wird", "H₀ wahr ist und nicht verworfen wird", "H₁ wahr ist und akzeptiert wird"],
+            correct: 0
+        },
+        {
+            q: "A Type II error occurs when:",
+            qDE: "Ein Fehler 2. Art tritt auf, wenn:",
+            opts: ["H₀ is false but is not rejected", "H₀ is true but is rejected", "H₀ is true and not rejected", "H₁ is rejected while true"],
+            optsDE: ["H₀ falsch ist, aber nicht verworfen wird", "H₀ wahr ist, aber verworfen wird", "H₀ wahr ist und nicht verworfen wird", "H₁ verworfen wird, obwohl sie wahr ist"],
+            correct: 0
+        },
+        {
+            q: "The significance level α of a test is defined as:",
+            qDE: "Das Signifikanzniveau α eines Tests ist definiert als:",
+            opts: ["The maximum allowed probability of a Type I error", "The probability of a Type II error", "The probability that H₀ is true", "The probability that H₁ is true"],
+            optsDE: ["Die maximal zulässige Wahrscheinlichkeit für einen Fehler 1. Art", "Die Wahrscheinlichkeit für einen Fehler 2. Art", "Die Wahrscheinlichkeit, dass H₀ wahr ist", "Die Wahrscheinlichkeit, dass H₁ wahr ist"],
+            correct: 0
+        },
+        {
+            q: "The power of a test is defined as:",
+            qDE: "Die Power (Trennschärfe) eines Tests ist definiert als:",
+            opts: ["1 minus the probability of a Type II error", "The probability of a Type I error", "The significance level α", "The sample size n"],
+            optsDE: ["1 minus die Wahrscheinlichkeit eines Fehlers 2. Art", "Die Wahrscheinlichkeit eines Fehlers 1. Art", "Das Signifikanzniveau α", "Der Stichprobenumfang n"],
+            correct: 0
+        },
+        {
+            q: "Increasing the sample size n, all else equal, typically has which effect on the power of a test?",
+            qDE: "Eine Erhöhung des Stichprobenumfangs n hat, bei sonst gleichen Bedingungen, typischerweise welchen Effekt auf die Power eines Tests?",
+            opts: ["It increases the power", "It decreases the power", "It has no effect on power", "It always sets power to 1"],
+            optsDE: ["Sie erhöht die Power", "Sie verringert die Power", "Sie hat keinen Einfluss auf die Power", "Sie setzt die Power stets auf 1"],
+            correct: 0
+        },
+        {
+            q: "The power function (Gütefunktion) of a test, as a function of the true parameter θ, gives:",
+            qDE: "Die Gütefunktion eines Tests gibt in Abhängigkeit vom wahren Parameter θ an:",
+            opts: ["The probability of rejecting H₀ for each value of θ", "The probability of accepting H₀ for each value of θ", "The sample mean for each θ", "The significance level for each θ"],
+            optsDE: ["Die Wahrscheinlichkeit, H₀ für jeden Wert von θ zu verwerfen", "Die Wahrscheinlichkeit, H₀ für jeden Wert von θ anzunehmen", "Den Stichprobenmittelwert für jedes θ", "Das Signifikanzniveau für jedes θ"],
+            correct: 0
+        },
+        {
+            q: "For θ values under H₀, the power function of a valid level-α test should be:",
+            qDE: "Für θ-Werte unter H₀ sollte die Gütefunktion eines gültigen Tests zum Niveau α:",
+            opts: ["At most α", "Exactly 1", "At least 1−α", "Equal to the power"],
+            optsDE: ["Höchstens α sein", "Genau 1 sein", "Mindestens 1−α sein", "Gleich der Power sein"],
+            correct: 0
+        },
+
+        // --- Tests für den Erwartungswert ---
+        {
+            q: "For a one-sample test of H₀: μ = μ₀ against H₁: μ ≠ μ₀, the test is called:",
+            qDE: "Für einen Ein-Stichproben-Test von H₀: μ = μ₀ gegen H₁: μ ≠ μ₀ heißt der Test:",
+            opts: ["Two-sided (two-tailed) test", "One-sided (one-tailed) test", "Chi-squared test", "Approximate test only"],
+            optsDE: ["Zweiseitiger Test", "Einseitiger Test", "Chi-Quadrat-Test", "Nur ein approximativer Test"],
+            correct: 0
+        },
+        {
+            q: "For a one-sample test of H₀: μ ≤ μ₀ against H₁: μ > μ₀, the test is called:",
+            qDE: "Für einen Ein-Stichproben-Test von H₀: μ ≤ μ₀ gegen H₁: μ > μ₀ heißt der Test:",
+            opts: ["One-sided (upper-tailed) test", "Two-sided test", "Lower-tailed test only", "A test without a rejection region"],
+            optsDE: ["Einseitiger Test (oberer Ablehnungsbereich)", "Zweiseitiger Test", "Nur ein unterer Test", "Ein Test ohne Ablehnungsbereich"],
+            correct: 0
+        },
+        {
+            q: "The Gauß-test (one-sample z-test) for the mean is used when:",
+            qDE: "Der Gauß-Test (Ein-Stichproben-z-Test) für den Erwartungswert wird verwendet, wenn:",
+            opts: ["The variance σ² is known and the data are (approximately) normal", "The variance is unknown", "The sample size is very small and σ² unknown", "The data follow a binomial distribution"],
+            optsDE: ["Die Varianz σ² bekannt ist und die Daten (annähernd) normalverteilt sind", "Die Varianz unbekannt ist", "Der Stichprobenumfang sehr klein ist und σ² unbekannt", "Die Daten binomialverteilt sind"],
+            correct: 0
+        },
+        {
+            q: "The test statistic of the one-sample Gauß-test for H₀: μ = μ₀ is:",
+            qDE: "Die Teststatistik des Ein-Stichproben-Gauß-Tests für H₀: μ = μ₀ lautet:",
+            opts: ["Z = (X̄ₙ − μ₀) / (σ/√n)", "Z = (X̄ₙ − μ₀) / (Sₙ/√n)", "Z = (X̄ₙ − μ₀) · σ√n", "Z = X̄ₙ / σ"],
+            optsDE: ["Z = (X̄ₙ − μ₀) / (σ/√n)", "Z = (X̄ₙ − μ₀) / (Sₙ/√n)", "Z = (X̄ₙ − μ₀) · σ√n", "Z = X̄ₙ / σ"],
+            correct: 0
+        },
+        {
+            q: "Under H₀, the test statistic of the one-sample Gauß-test follows:",
+            qDE: "Unter H₀ folgt die Teststatistik des Ein-Stichproben-Gauß-Tests:",
+            opts: ["The standard normal distribution N(0,1)", "The t-distribution with n−1 degrees of freedom", "The chi-squared distribution", "The binomial distribution"],
+            optsDE: ["Der Standardnormalverteilung N(0,1)", "Der t-Verteilung mit n−1 Freiheitsgraden", "Der Chi-Quadrat-Verteilung", "Der Binomialverteilung"],
+            correct: 0
+        },
+        {
+            q: "The one-sample t-test for the mean is used instead of the Gauß-test when:",
+            qDE: "Der Ein-Stichproben-t-Test für den Erwartungswert wird anstelle des Gauß-Tests verwendet, wenn:",
+            opts: ["The variance σ² is unknown and must be estimated from the sample", "The variance σ² is known exactly", "n is extremely large only", "The data are binomially distributed"],
+            optsDE: ["Die Varianz σ² unbekannt ist und aus der Stichprobe geschätzt werden muss", "Die Varianz σ² exakt bekannt ist", "n nur extrem groß ist", "Die Daten binomialverteilt sind"],
+            correct: 0
+        },
+        {
+            q: "The test statistic of the one-sample t-test for H₀: μ = μ₀ is:",
+            qDE: "Die Teststatistik des Ein-Stichproben-t-Tests für H₀: μ = μ₀ lautet:",
+            opts: ["T = (X̄ₙ − μ₀) / (Sₙ/√n)", "T = (X̄ₙ − μ₀) / (σ/√n)", "T = (X̄ₙ − μ₀) · Sₙ√n", "T = X̄ₙ / Sₙ"],
+            optsDE: ["T = (X̄ₙ − μ₀) / (Sₙ/√n)", "T = (X̄ₙ − μ₀) / (σ/√n)", "T = (X̄ₙ − μ₀) · Sₙ√n", "T = X̄ₙ / Sₙ"],
+            correct: 0
+        },
+        {
+            q: "Under H₀, the test statistic of the one-sample t-test follows:",
+            qDE: "Unter H₀ folgt die Teststatistik des Ein-Stichproben-t-Tests:",
+            opts: ["The t-distribution with n−1 degrees of freedom", "The standard normal distribution N(0,1)", "The chi-squared distribution with n degrees of freedom", "The F-distribution"],
+            optsDE: ["Der t-Verteilung mit n−1 Freiheitsgraden", "Der Standardnormalverteilung N(0,1)", "Der Chi-Quadrat-Verteilung mit n Freiheitsgraden", "Der F-Verteilung"],
+            correct: 0
+        },
+        {
+            q: "For a two-sided Gauß-test at level α, H₀ is rejected when:",
+            qDE: "Bei einem zweiseitigen Gauß-Test zum Niveau α wird H₀ verworfen, wenn:",
+            opts: ["|Z| > z_{1−α/2}", "Z > z_{1−α}", "Z < z_{α}", "|Z| < z_{1−α/2}"],
+            optsDE: ["|Z| > z_{1−α/2}", "Z > z_{1−α}", "Z < z_{α}", "|Z| < z_{1−α/2}"],
+            correct: 0
+        },
+        {
+            q: "For a one-sided (upper-tailed) Gauß-test of H₀: μ ≤ μ₀ at level α, H₀ is rejected when:",
+            qDE: "Bei einem einseitigen (oberen) Gauß-Test von H₀: μ ≤ μ₀ zum Niveau α wird H₀ verworfen, wenn:",
+            opts: ["Z > z_{1−α}", "Z > z_{1−α/2}", "|Z| > z_{1−α}", "Z < z_{1−α}"],
+            optsDE: ["Z > z_{1−α}", "Z > z_{1−α/2}", "|Z| > z_{1−α}", "Z < z_{1−α}"],
+            correct: 0
+        },
+
+        // --- Zusammenhang Test und Konfidenzintervall ---
+        {
+            q: "The duality between confidence intervals and hypothesis tests states that a two-sided level-α test rejects H₀: μ = μ₀ if and only if:",
+            qDE: "Die Dualität zwischen Konfidenzintervallen und Hypothesentests besagt: Ein zweiseitiger Test zum Niveau α verwirft H₀: μ = μ₀ genau dann, wenn:",
+            opts: ["μ₀ lies outside the (1−α) confidence interval for μ", "μ₀ lies inside the (1−α) confidence interval for μ", "The sample mean equals μ₀", "The p-value is exactly α"],
+            optsDE: ["μ₀ außerhalb des (1−α)-Konfidenzintervalls für μ liegt", "μ₀ innerhalb des (1−α)-Konfidenzintervalls für μ liegt", "Der Stichprobenmittelwert gleich μ₀ ist", "Der p-Wert genau α beträgt"],
+            correct: 0
+        },
+        {
+            q: "If the 95% confidence interval for μ is [2.1, 4.8], a two-sided test of H₀: μ = 5 at α = 0.05:",
+            qDE: "Wenn das 95%-Konfidenzintervall für μ [2.1, 4.8] ist, ein zweiseitiger Test von H₀: μ = 5 zum Niveau α = 0.05:",
+            opts: ["Rejects H₀, since 5 lies outside the interval", "Does not reject H₀, since 5 lies inside the interval", "Cannot be determined from the interval", "Always rejects H₀ regardless of the interval"],
+            optsDE: ["Verwirft H₀, da 5 außerhalb des Intervalls liegt", "Verwirft H₀ nicht, da 5 innerhalb des Intervalls liegt", "Kann anhand des Intervalls nicht bestimmt werden", "Verwirft H₀ stets, unabhängig vom Intervall"],
+            correct: 0
+        },
+        {
+            q: "Constructing a confidence interval and performing a hypothesis test are related because both are based on:",
+            qDE: "Die Konstruktion eines Konfidenzintervalls und die Durchführung eines Hypothesentests hängen zusammen, da beide auf Folgendem beruhen:",
+            opts: ["The same test statistic and its sampling distribution", "Completely unrelated statistics", "The p-value alone", "The sample size alone"],
+            optsDE: ["Derselben Teststatistik und ihrer Stichprobenverteilung", "Vollkommen unabhängigen Statistiken", "Nur dem p-Wert", "Nur dem Stichprobenumfang"],
+            correct: 0
+        },
+
+        // --- p-Wert ---
+        {
+            q: "The p-value of a test is defined as:",
+            qDE: "Der p-Wert eines Tests ist definiert als:",
+            opts: ["The probability, under H₀, of observing a test statistic at least as extreme as the one observed", "The probability that H₀ is true", "The significance level α", "The probability that H₁ is true"],
+            optsDE: ["Die Wahrscheinlichkeit unter H₀, eine Teststatistik zu beobachten, die mindestens so extrem ist wie die beobachtete", "Die Wahrscheinlichkeit, dass H₀ wahr ist", "Das Signifikanzniveau α", "Die Wahrscheinlichkeit, dass H₁ wahr ist"],
+            correct: 0
+        },
+        {
+            q: "Using the p-value decision rule, H₀ is rejected at significance level α when:",
+            qDE: "Bei der p-Wert-Entscheidungsregel wird H₀ zum Signifikanzniveau α verworfen, wenn:",
+            opts: ["p-value ≤ α", "p-value ≥ α", "p-value = 1", "p-value = 0.5"],
+            optsDE: ["p-Wert ≤ α", "p-Wert ≥ α", "p-Wert = 1", "p-Wert = 0,5"],
+            correct: 0
+        },
+        {
+            q: "A very small p-value (e.g. 0.001) provides:",
+            qDE: "Ein sehr kleiner p-Wert (z. B. 0,001) liefert:",
+            opts: ["Strong evidence against H₀", "Strong evidence for H₀", "No information at all", "Proof that H₁ is true with certainty"],
+            optsDE: ["Starke Evidenz gegen H₀", "Starke Evidenz für H₀", "Überhaupt keine Information", "Den sicheren Beweis, dass H₁ wahr ist"],
+            correct: 0
+        },
+        {
+            q: "A common misinterpretation of the p-value is to treat it as:",
+            qDE: "Eine verbreitete Fehlinterpretation des p-Werts besteht darin, ihn zu behandeln als:",
+            opts: ["The probability that H₀ is true given the data", "The probability, under H₀, of data as extreme as observed", "A measure of effect size", "The confidence level"],
+            optsDE: ["Die Wahrscheinlichkeit, dass H₀ angesichts der Daten wahr ist", "Die Wahrscheinlichkeit unter H₀, Daten mindestens so extrem wie beobachtet zu erhalten", "Ein Maß für die Effektstärke", "Das Konfidenzniveau"],
+            correct: 0
+        },
+    ],
 
 
 
@@ -2300,7 +2612,7 @@ const BONUS_QUIZ_POOLS = {
 
 
 
-    10: [], 11: [], 12: [],
+    11: [], 12: [],
 
 
 
