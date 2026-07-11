@@ -192,6 +192,21 @@ const Audio_Manager = (() => {
         level_9_15: 'audio/bgm_39.mp3',
         level_9_16: 'audio/bgm_39.mp3',
 
+        // World 10
+        level_10_1: 'audio/bgm_40.mp3',
+        level_10_2: 'audio/bgm_40.mp3',
+        level_10_3: 'audio/bgm_40.mp3',
+        level_10_4: 'audio/bgm_40.mp3',
+        level_10_5: 'audio/bgm_40.mp3',
+        level_10_6: 'audio/bgm_40.mp3',
+        level_10_7: 'audio/bgm_40.mp3',
+        level_10_8: 'audio/bgm_40.mp3',
+        level_10_9: 'audio/bgm_40.mp3',
+        level_10_10: 'audio/bgm_40.mp3',
+        level_10_11: 'audio/bgm_40.mp3',
+        level_10_12: 'audio/bgm_40.mp3',
+        level_10_13: 'audio/bgm_40.mp3',
+
     };
 
 
