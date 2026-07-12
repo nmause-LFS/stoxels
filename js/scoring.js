@@ -51,7 +51,13 @@ function isPuzzleSolved() {
 // each mistake deducts points. Score is floored at 10.
 function computeRawScore(rows, cols) {
     const baseScore = 100 + (rows + cols) * 2;
-    const cappedTime = Math.min(timerSecs, 3600);   // cap at 1 hour to prevent abuse
+
+    // Time Trial halves the starting clock, which would otherwise also halve
+    // the time bonus. Add back exactly what was cut so the bonus reflects
+    // the same effective time budget as normal mode.
+    const normalizedSecs = timerSecs + (curMods.timetrial ? (window._timetrialTimeCut || 0) : 0);
+
+    const cappedTime = Math.min(normalizedSecs, 3600);   // cap at 1 hour to prevent abuse
     const timeBonus = Math.floor(cappedTime / 10);
     const mistakePenalty = mistakeCount * 20;
     return Math.max(10, baseScore + timeBonus - mistakePenalty);

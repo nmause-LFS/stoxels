@@ -42,6 +42,7 @@ const CHANGELOG_DATA = [
                     "Fixed a bug that made Level 8-5 only have 5 minutes duration instead of 30 minutes.",
                     "Fixed a bug that caused the glowing border effect around the grid applied by Shield items to remain on screen when leaving a level through the LEVELS button.",
                     "Fixed a bug that caused the CLUES button to create an arbitrary gap between row clue numbers after they have been switched back from right to left again. Now there is no more gap and the CLUES button remains in the same position permanently.",
+                    "Fixed a bug that made the Time Trial modifier penalize the Base Score for level completion incorrectly.",
                 ],
 
             },

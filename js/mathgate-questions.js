@@ -2626,6 +2626,163 @@ const MATH_GATE_POOLS = {
 
 
 
+    11: [
+
+        // ── 1. ASYMPTOTISCHER BINOMIALTEST ───────────────────────────────────────
+
+        {
+            q: 'H₀: p = 0.5. n = 100, p̂ = 0.58. Compute the test statistic Z of the asymptotic binomial test. Round to 2 decimal places.',
+            qDE: 'H₀: p = 0,5. n = 100, p̂ = 0,58. Berechne die Teststatistik Z des asymptotischen Binomialtests. Auf 2 Dezimalstellen runden.',
+            answer: 1.6, tolerance: 0.05, unit: '',
+            hintEn: 'Z = (p̂ − p₀)/√(p₀(1−p₀)/n) = 0.08/√(0.25/100) = 0.08/0.05 = 1.6.',
+            hintDE: 'Z = (p̂ − p₀)/√(p₀(1−p₀)/n) = 0,08/√(0,25/100) = 0,08/0,05 = 1,6.'
+        },
+        {
+            q: 'H₀: p = 0.3. n = 200, X = 70 successes. Compute p̂. Round to 2 decimal places.',
+            qDE: 'H₀: p = 0,3. n = 200, X = 70 Erfolge. Berechne p̂. Auf 2 Dezimalstellen runden.',
+            answer: 0.35, tolerance: 0.005, unit: '',
+            hintEn: 'p̂ = X/n = 70/200 = 0.35.',
+            hintDE: 'p̂ = X/n = 70/200 = 0,35.'
+        },
+        {
+            q: 'A two-sided asymptotic binomial test gives Z = 2.3 with critical value z_{0.975} = 1.96. Is H₀ rejected? Enter 1 for yes, 0 for no.',
+            qDE: 'Ein zweiseitiger asymptotischer Binomialtest ergibt Z = 2,3 mit kritischem Wert z_{0,975} = 1,96. Wird H₀ verworfen? Gib 1 für ja, 0 für nein ein.',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: 'Reject H₀ if |Z| > z_{1−α/2}. Here 2.3 > 1.96.',
+            hintDE: 'H₀ wird verworfen, wenn |Z| > z_{1−α/2}. Hier gilt 2,3 > 1,96.'
+        },
+
+        // ── 2. VERBUNDENES DESIGN (PAIRED TEST) ─────────────────────────────────
+
+        {
+            q: 'Paired data: Xᵢ = (5, 7, 6) and Yᵢ = (8, 9, 7). Compute the differences Dᵢ = Yᵢ − Xᵢ and find D̄ (mean difference).',
+            qDE: 'Verbundene Daten: Xᵢ = (5, 7, 6) und Yᵢ = (8, 9, 7). Berechne die Differenzen Dᵢ = Yᵢ − Xᵢ und bestimme D̄ (mittlere Differenz).',
+            answer: 2, tolerance: 0.01, unit: '',
+            hintEn: 'Dᵢ = (3, 2, 1), so D̄ = (3+2+1)/3 = 2.',
+            hintDE: 'Dᵢ = (3, 2, 1), also D̄ = (3+2+1)/3 = 2.'
+        },
+        {
+            q: 'Paired-sample test: n = 9, D̄ = 4, S_D = 6. Compute the test statistic T = √n · D̄ / S_D. Round to 2 decimal places.',
+            qDE: 'Test bei verbundenen Stichproben: n = 9, D̄ = 4, S_D = 6. Berechne die Teststatistik T = √n · D̄ / S_D. Auf 2 Dezimalstellen runden.',
+            answer: 2, tolerance: 0.05, unit: '',
+            hintEn: 'T = √9 · 4/6 = 3 · 0.667 = 2.',
+            hintDE: 'T = √9 · 4/6 = 3 · 0,667 = 2.'
+        },
+        {
+            q: 'A paired-sample t-test uses n = 15 pairs. How many degrees of freedom does the test statistic have?',
+            qDE: 'Ein Test bei verbundenen Stichproben verwendet n = 15 Paare. Wie viele Freiheitsgrade hat die Teststatistik?',
+            answer: 14, tolerance: 0, unit: '',
+            hintEn: 'Degrees of freedom = n − 1 = 15 − 1 = 14.',
+            hintDE: 'Freiheitsgrade = n − 1 = 15 − 1 = 14.'
+        },
+        {
+            q: 'Paired test: n = 25, T = 2.9, critical value t_{24, 0.975} = 2.064. Is H₀: E[D] = 0 rejected (two-sided)? Enter 1 for yes, 0 for no.',
+            qDE: 'Verbundener Test: n = 25, T = 2,9, kritischer Wert t_{24; 0,975} = 2,064. Wird H₀: E[D] = 0 (zweiseitig) verworfen? Gib 1 für ja, 0 für nein ein.',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: 'Reject H₀ if |T| > t_{n−1, 1−α/2}. Here 2.9 > 2.064.',
+            hintDE: 'H₀ wird verworfen, wenn |T| > t_{n−1; 1−α/2}. Hier gilt 2,9 > 2,064.'
+        },
+
+        // ── 3. F-TEST AUF VARIANZHOMOGENITÄT ────────────────────────────────────
+
+        {
+            q: 'Two independent samples give S_X² = 25 and S_Y² = 16. Compute the F-test statistic F = S_X²/S_Y². Round to 2 decimal places.',
+            qDE: 'Zwei unabhängige Stichproben ergeben S_X² = 25 und S_Y² = 16. Berechne die F-Teststatistik F = S_X²/S_Y². Auf 2 Dezimalstellen runden.',
+            answer: 1.56, tolerance: 0.02, unit: '',
+            hintEn: 'F = 25/16 = 1.5625.',
+            hintDE: 'F = 25/16 = 1,5625.'
+        },
+        {
+            q: 'An F-test for variance homogeneity uses samples of size m = 10 and n = 8. What are the degrees of freedom of the numerator?',
+            qDE: 'Ein F-Test auf Varianzhomogenität verwendet Stichproben der Größe m = 10 und n = 8. Wie groß ist der Freiheitsgrad des Zählers?',
+            answer: 9, tolerance: 0, unit: '',
+            hintEn: 'Numerator degrees of freedom = m − 1 = 10 − 1 = 9.',
+            hintDE: 'Freiheitsgrad des Zählers = m − 1 = 10 − 1 = 9.'
+        },
+        {
+            q: 'F-test: F = 3.2, critical value F_{9,7,0.975} = 4.20 (upper bound of the acceptance region). Is H₀: σ_X² = σ_Y² rejected (two-sided, using only the upper critical value shown)? Enter 1 for yes, 0 for no.',
+            qDE: 'F-Test: F = 3,2, kritischer Wert F_{9,7;0,975} = 4,20 (obere Grenze des Annahmebereichs). Wird H₀: σ_X² = σ_Y² (zweiseitig, nur mit dem gezeigten oberen kritischen Wert) verworfen? Gib 1 für ja, 0 für nein ein.',
+            answer: 0, tolerance: 0, unit: '',
+            hintEn: 'H₀ is not rejected since F = 3.2 < 4.20.',
+            hintDE: 'H₀ wird nicht verworfen, da F = 3,2 < 4,20.'
+        },
+
+        // ── 4. UNVERBUNDENER 2-STICHPROBEN-T-TEST (GLEICHE VARIANZ) ─────────────
+
+        {
+            q: 'Two-sample t-test: m = 10, n = 12, S_X² = 4, S_Y² = 5. Compute the pooled variance S_p² using S_p² = [(m−1)S_X² + (n−1)S_Y²]/(m+n−2). Round to 2 decimal places.',
+            qDE: 'Zwei-Stichproben-t-Test: m = 10, n = 12, S_X² = 4, S_Y² = 5. Berechne die gepoolte Varianz S_p² mit S_p² = [(m−1)S_X² + (n−1)S_Y²]/(m+n−2). Auf 2 Dezimalstellen runden.',
+            answer: 4.55, tolerance: 0.05, unit: '',
+            hintEn: 'S_p² = (9×4 + 11×5)/(20) = (36+55)/20 = 91/20 = 4.55.',
+            hintDE: 'S_p² = (9×4 + 11×5)/(20) = (36+55)/20 = 91/20 = 4,55.'
+        },
+        {
+            q: 'Two-sample t-test: X̄ = 20, Ȳ = 17, S_p = 3, m = 10, n = 10. Compute T = (X̄ − Ȳ)/(S_p·√(1/m + 1/n)). Round to 2 decimal places.',
+            qDE: 'Zwei-Stichproben-t-Test: X̄ = 20, Ȳ = 17, S_p = 3, m = 10, n = 10. Berechne T = (X̄ − Ȳ)/(S_p·√(1/m + 1/n)). Auf 2 Dezimalstellen runden.',
+            answer: 2.24, tolerance: 0.05, unit: '',
+            hintEn: 'T = 3/(3·√0.2) = 3/(3×0.447) = 3/1.342 ≈ 2.24.',
+            hintDE: 'T = 3/(3·√0,2) = 3/(3×0,447) = 3/1,342 ≈ 2,24.'
+        },
+        {
+            q: 'A two-sample t-test (equal variances) uses m = 14 and n = 18. How many degrees of freedom does T have?',
+            qDE: 'Ein Zwei-Stichproben-t-Test (gleiche Varianzen) verwendet m = 14 und n = 18. Wie viele Freiheitsgrade hat T?',
+            answer: 30, tolerance: 0, unit: '',
+            hintEn: 'Degrees of freedom = m + n − 2 = 14 + 18 − 2 = 30.',
+            hintDE: 'Freiheitsgrade = m + n − 2 = 14 + 18 − 2 = 30.'
+        },
+
+        // ── 5. WELCH-TEST ────────────────────────────────────────────────────────
+
+        {
+            q: 'Welch test: X̄ = 15, Ȳ = 12, S_X² = 9, S_Y² = 4, m = 12, n = 9. Compute T = (X̄ − Ȳ)/√(S_X²/m + S_Y²/n). Round to 2 decimal places.',
+            qDE: 'Welch-Test: X̄ = 15, Ȳ = 12, S_X² = 9, S_Y² = 4, m = 12, n = 9. Berechne T = (X̄ − Ȳ)/√(S_X²/m + S_Y²/n). Auf 2 Dezimalstellen runden.',
+            answer: 2.75, tolerance: 0.05, unit: '',
+            hintEn: 'T = 3/√(9/12 + 4/9) = 3/√(0.75+0.444) = 3/√1.194 = 3/1.093 ≈ 2.75',
+            hintDE: 'T = 3/√(9/12 + 4/9) = 3/√(0,75+0,444) = 3/√1,194 ≈ 3/1,093 ≈ 2,75.'
+        },
+        {
+            q: 'Two independent samples have variances S_X² = 16 (m = 5) and S_Y² = 4 (n = 20). Which test is more appropriate: Welch (enter 1) or standard pooled t-test (enter 0)?',
+            qDE: 'Zwei unabhängige Stichproben haben Varianzen S_X² = 16 (m = 5) und S_Y² = 4 (n = 20). Welcher Test ist angemessener: Welch (1 eingeben) oder Standard-gepoolter t-Test (0 eingeben)?',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: 'Very unequal variances and sample sizes call for the Welch test.',
+            hintDE: 'Stark ungleiche Varianzen und Stichprobenumfänge erfordern den Welch-Test.'
+        },
+
+        // ── 6. UNVERBUNDENES DESIGN (GENERAL) ───────────────────────────────────
+
+        {
+            q: 'An unpaired study has a treatment group of 18 patients and an independent control group of 24 patients. What is the total combined sample size m + n?',
+            qDE: 'Eine unverbundene Studie hat eine Behandlungsgruppe von 18 Patienten und eine unabhängige Kontrollgruppe von 24 Patienten. Wie groß ist der kombinierte Stichprobenumfang m + n?',
+            answer: 42, tolerance: 0, unit: '',
+            hintEn: 'm + n = 18 + 24 = 42.',
+            hintDE: 'm + n = 18 + 24 = 42.'
+        },
+
+        // ── 7. 2-STICHPROBEN-BINOMIALTEST ───────────────────────────────────────
+
+        {
+            q: 'Two-sample binomial test: X successes = 40 out of m = 100, Y successes = 55 out of n = 100. Compute the pooled proportion p̂. Round to 2 decimal places.',
+            qDE: 'Zwei-Stichproben-Binomialtest: X-Erfolge = 40 von m = 100, Y-Erfolge = 55 von n = 100. Berechne den gepoolten Anteil p̂. Auf 2 Dezimalstellen runden.',
+            answer: 0.48, tolerance: 0.01, unit: '',
+            hintEn: 'p̂ = (40+55)/(100+100) = 95/200 = 0.475 ≈ 0.48.',
+            hintDE: 'p̂ = (40+55)/(100+100) = 95/200 = 0,475 ≈ 0,48.'
+        },
+        {
+            q: 'Two-sample binomial test: p̂_X = 0.4, p̂_Y = 0.3, m = n = 100, pooled p̂ = 0.35. Compute Z = (p̂_X − p̂_Y)/√(p̂(1−p̂)(1/m+1/n)). Round to 2 decimal places.',
+            qDE: 'Zwei-Stichproben-Binomialtest: p̂_X = 0,4, p̂_Y = 0,3, m = n = 100, gepoolt p̂ = 0,35. Berechne Z = (p̂_X − p̂_Y)/√(p̂(1−p̂)(1/m+1/n)). Auf 2 Dezimalstellen runden.',
+            answer: 1.48, tolerance: 0.05, unit: '',
+            hintEn: 'Z = 0.1/√(0.35×0.65×0.02) = 0.1/√0.00455 = 0.1/0.0675 ≈ 1.48.',
+            hintDE: 'Z = 0,1/√(0,35×0,65×0,02) = 0,1/√0,00455 = 0,1/0,0675 ≈ 1,48.'
+        },
+        {
+            q: 'A two-sample binomial test gives Z = 2.1 with critical value z_{0.975} = 1.96 (two-sided test). Is H₀: p_X = p_Y rejected? Enter 1 for yes, 0 for no.',
+            qDE: 'Ein Zwei-Stichproben-Binomialtest ergibt Z = 2,1 mit kritischem Wert z_{0,975} = 1,96 (zweiseitiger Test). Wird H₀: p_X = p_Y verworfen? Gib 1 für ja, 0 für nein ein.',
+            answer: 1, tolerance: 0, unit: '',
+            hintEn: 'Reject H₀ if |Z| > z_{1−α/2}. Here 2.1 > 1.96.',
+            hintDE: 'H₀ wird verworfen, wenn |Z| > z_{1−α/2}. Hier gilt 2,1 > 1,96.'
+        },
+
+    ],
 
 
 
@@ -2633,7 +2790,13 @@ const MATH_GATE_POOLS = {
 
 
 
-    11: [], 12: [],
+
+
+
+
+
+
+    12: [],
 
 
 

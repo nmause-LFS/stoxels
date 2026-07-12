@@ -163,7 +163,16 @@ function _applyExpectedValueBonus() {
 // keystone_dead_reckoning (264) grants +10 minutes (600s), also blocked by gamblers_ruin.
 function _initTimer() {
     if (window._egSuppressEncounterStop) return; // preserve timer across chain puzzles
-    timerSecs = _calcBaseTime();
+
+    const cfg = DIFF_CFG[curDiff];
+    const fullBaseTimer = cur.timer || cfg.timerStart;
+    const base = _calcBaseTime();
+
+    // Remember exactly how many seconds Time Trial shaved off the base timer,
+    // so scoring.js can add it back when computing the time bonus.
+    window._timetrialTimeCut = curMods.timetrial ? (fullBaseTimer - base) : 0;
+
+    timerSecs = base;
     timerSecs += _applyExtendedSessionBonus();
     timerSecs += _applyExpectedValueBonus();
 

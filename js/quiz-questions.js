@@ -2605,6 +2605,219 @@ const BONUS_QUIZ_POOLS = {
     ],
 
 
+    11: [
+
+        // --- Asymptotischer Binomialtest ---
+        {
+            q: "The asymptotic (approximate) binomial test for H₀: p = p₀ uses which distribution as its approximation for the test statistic?",
+            qDE: "Der asymptotische (approximative) Binomialtest für H₀: p = p₀ verwendet welche Verteilung zur Approximation der Teststatistik?",
+            opts: ["The standard normal distribution N(0,1)", "The exact binomial distribution", "The t-distribution", "The chi-squared distribution"],
+            optsDE: ["Die Standardnormalverteilung N(0,1)", "Die exakte Binomialverteilung", "Die t-Verteilung", "Die Chi-Quadrat-Verteilung"],
+            correct: 0
+        },
+        {
+            q: "The test statistic of the asymptotic binomial test for H₀: p = p₀, based on p̂ = X/n, is:",
+            qDE: "Die Teststatistik des asymptotischen Binomialtests für H₀: p = p₀, basierend auf p̂ = X/n, lautet:",
+            opts: ["Z = (p̂ − p₀) / √(p₀(1−p₀)/n)", "Z = (p̂ − p₀) / √(p̂(1−p̂))", "Z = p̂ / p₀", "Z = (p̂ − p₀) · n"],
+            optsDE: ["Z = (p̂ − p₀) / √(p₀(1−p₀)/n)", "Z = (p̂ − p₀) / √(p̂(1−p̂))", "Z = p̂ / p₀", "Z = (p̂ − p₀) · n"],
+            correct: 0
+        },
+        {
+            q: "The asymptotic binomial test relies on which theorem to justify the normal approximation?",
+            qDE: "Der asymptotische Binomialtest stützt sich auf welchen Satz, um die Normalapproximation zu rechtfertigen?",
+            opts: ["The Central Limit Theorem", "The Law of Total Probability", "Bayes' theorem", "The Fundamental Theorem of Statistics"],
+            optsDE: ["Den Zentralen Grenzwertsatz", "Den Satz der totalen Wahrscheinlichkeit", "Den Satz von Bayes", "Den Hauptsatz der Statistik"],
+            correct: 0
+        },
+        {
+            q: "A common rule of thumb for the asymptotic binomial test to be reliable is:",
+            qDE: "Eine gängige Faustregel für die Zuverlässigkeit des asymptotischen Binomialtests lautet:",
+            opts: ["n·p₀·(1−p₀) is sufficiently large (e.g. ≥ 9)", "n is at least 1000", "p₀ = 0.5 exactly", "The data must be continuous"],
+            optsDE: ["n·p₀·(1−p₀) ist ausreichend groß (z. B. ≥ 9)", "n ist mindestens 1000", "p₀ = 0,5 genau", "Die Daten müssen stetig sein"],
+            correct: 0
+        },
+
+        // --- Verbundenes Design (paired samples) ---
+        {
+            q: "In a paired (verbundenes) design, the two samples X₁,…,Xₙ and Y₁,…,Yₙ must satisfy:",
+            qDE: "Bei einem verbundenen Design müssen die beiden Stichproben X₁,…,Xₙ und Y₁,…,Yₙ erfüllen:",
+            opts: ["Both samples have the same size n, and Xᵢ and Yᵢ belong to the same unit (e.g. same subject before/after)", "The samples must have different sizes", "The samples must be independent of each other", "The variances must be known"],
+            optsDE: ["Beide Stichproben haben denselben Umfang n, und Xᵢ und Yᵢ gehören zur selben Einheit (z. B. dieselbe Person vorher/nachher)", "Die Stichproben müssen unterschiedliche Umfänge haben", "Die Stichproben müssen unabhängig voneinander sein", "Die Varianzen müssen bekannt sein"],
+            correct: 0
+        },
+        {
+            q: "For a paired design, the differences are defined as:",
+            qDE: "Bei einem verbundenen Design sind die Differenzen definiert als:",
+            opts: ["Dᵢ = Yᵢ − Xᵢ", "Dᵢ = Yᵢ + Xᵢ", "Dᵢ = Yᵢ · Xᵢ", "Dᵢ = Yᵢ / Xᵢ"],
+            optsDE: ["Dᵢ = Yᵢ − Xᵢ", "Dᵢ = Yᵢ + Xᵢ", "Dᵢ = Yᵢ · Xᵢ", "Dᵢ = Yᵢ / Xᵢ"],
+            correct: 0
+        },
+        {
+            q: "The test statistic for the paired-sample test on the mean difference is T = √n · D̄ / S_D, where S_D denotes:",
+            qDE: "Die Teststatistik des Tests bei verbundenen Stichproben für den mittleren Unterschied ist T = √n · D̄ / S_D, wobei S_D bezeichnet:",
+            opts: ["The sample standard deviation of the differences Dᵢ", "The standard deviation of Xᵢ only", "The standard deviation of Yᵢ only", "The pooled standard deviation of X and Y"],
+            optsDE: ["Die Stichprobenstandardabweichung der Differenzen Dᵢ", "Die Standardabweichung von Xᵢ allein", "Die Standardabweichung von Yᵢ allein", "Die gepoolte Standardabweichung von X und Y"],
+            correct: 0
+        },
+        {
+            q: "The paired-sample test essentially reduces the two-sample problem to:",
+            qDE: "Der Test bei verbundenen Stichproben reduziert das Zwei-Stichproben-Problem im Wesentlichen auf:",
+            opts: ["A one-sample t-test on the differences Dᵢ against H₀: E[D] = 0", "A two-sample F-test", "An unpaired t-test", "A chi-squared test"],
+            optsDE: ["Einen Ein-Stichproben-t-Test auf die Differenzen Dᵢ gegen H₀: E[D] = 0", "Einen Zwei-Stichproben-F-Test", "Einen unverbundenen t-Test", "Einen Chi-Quadrat-Test"],
+            correct: 0
+        },
+        {
+            q: "Under H₀: E[D] = 0, and assuming the Dᵢ are i.i.d. normal, the statistic T = √n · D̄ / S_D follows:",
+            qDE: "Unter H₀: E[D] = 0 und unter der Annahme, dass die Dᵢ i.i.d. normalverteilt sind, folgt die Statistik T = √n · D̄ / S_D:",
+            opts: ["A t-distribution with n−1 degrees of freedom", "A standard normal distribution", "A chi-squared distribution with n degrees of freedom", "An F-distribution"],
+            optsDE: ["Einer t-Verteilung mit n−1 Freiheitsgraden", "Einer Standardnormalverteilung", "Einer Chi-Quadrat-Verteilung mit n Freiheitsgraden", "Einer F-Verteilung"],
+            correct: 0
+        },
+        {
+            q: "A paired design is typically preferred over an unpaired design when:",
+            qDE: "Ein verbundenes Design wird einem unverbundenen Design typischerweise vorgezogen, wenn:",
+            opts: ["Observations naturally come in related pairs (e.g. before/after on the same subject), reducing variability", "The two samples are collected from unrelated subjects", "The sample sizes differ", "The variances are known"],
+            optsDE: ["Beobachtungen natürlich in zusammengehörigen Paaren vorliegen (z. B. vorher/nachher bei derselben Person), was die Variabilität verringert", "Die beiden Stichproben von nicht zusammenhängenden Personen stammen", "Die Stichprobenumfänge unterschiedlich sind", "Die Varianzen bekannt sind"],
+            correct: 0
+        },
+
+        // --- Unverbundenes Design (unpaired samples) ---
+        {
+            q: "In an unpaired (unverbundenes) design, the two samples X₁,…,Xₘ and Y₁,…,Yₙ are assumed to be:",
+            qDE: "Bei einem unverbundenen Design wird für die beiden Stichproben X₁,…,Xₘ und Y₁,…,Yₙ angenommen, dass sie:",
+            opts: ["Independent of each other, and may have different sample sizes m ≠ n", "Always the same size", "Paired observations on the same units", "Perfectly correlated"],
+            optsDE: ["Unabhängig voneinander sind und unterschiedliche Stichprobenumfänge m ≠ n haben können", "Immer denselben Umfang haben", "Gepaarte Beobachtungen derselben Einheiten sind", "Perfekt korreliert sind"],
+            correct: 0
+        },
+        {
+            q: "An unpaired design is typically used when:",
+            qDE: "Ein unverbundenes Design wird typischerweise verwendet, wenn:",
+            opts: ["The two groups consist of different, unrelated subjects (e.g. treatment vs. control group)", "The same subjects are measured twice", "The sample sizes must be equal", "There is no variability between groups"],
+            optsDE: ["Die beiden Gruppen aus unterschiedlichen, nicht zusammenhängenden Personen bestehen (z. B. Behandlungs- vs. Kontrollgruppe)", "Dieselben Personen zweimal gemessen werden", "Die Stichprobenumfänge gleich sein müssen", "Es keine Variabilität zwischen den Gruppen gibt"],
+            correct: 0
+        },
+
+        // --- F-Test auf Varianzhomogenität ---
+        {
+            q: "The F-test for homogeneity of variance tests the null hypothesis:",
+            qDE: "Der F-Test auf Varianzhomogenität testet die Nullhypothese:",
+            opts: ["H₀: σ_X² = σ_Y²", "H₀: μ_X = μ_Y", "H₀: σ_X² = 0", "H₀: p_X = p_Y"],
+            optsDE: ["H₀: σ_X² = σ_Y²", "H₀: μ_X = μ_Y", "H₀: σ_X² = 0", "H₀: p_X = p_Y"],
+            correct: 0
+        },
+        {
+            q: "The F-test statistic for comparing two variances is:",
+            qDE: "Die F-Teststatistik zum Vergleich zweier Varianzen lautet:",
+            opts: ["F = S_X² / S_Y²", "F = S_X² − S_Y²", "F = S_X² · S_Y²", "F = (S_X² + S_Y²) / 2"],
+            optsDE: ["F = S_X² / S_Y²", "F = S_X² − S_Y²", "F = S_X² · S_Y²", "F = (S_X² + S_Y²) / 2"],
+            correct: 0
+        },
+        {
+            q: "Under H₀: σ_X² = σ_Y², assuming both samples are normal and independent, the F-statistic S_X²/S_Y² follows:",
+            qDE: "Unter H₀: σ_X² = σ_Y², bei normalverteilten und unabhängigen Stichproben, folgt die F-Statistik S_X²/S_Y²:",
+            opts: ["An F-distribution with (m−1, n−1) degrees of freedom", "A t-distribution with m+n−2 degrees of freedom", "A standard normal distribution", "A chi-squared distribution"],
+            optsDE: ["Einer F-Verteilung mit (m−1, n−1) Freiheitsgraden", "Einer t-Verteilung mit m+n−2 Freiheitsgraden", "Einer Standardnormalverteilung", "Einer Chi-Quadrat-Verteilung"],
+            correct: 0
+        },
+        {
+            q: "Why is the F-test on variance homogeneity often performed before a two-sample t-test?",
+            qDE: "Warum wird der F-Test auf Varianzhomogenität oft vor einem Zwei-Stichproben-t-Test durchgeführt?",
+            opts: ["To check whether the equal-variance assumption needed for the standard t-test holds, or whether the Welch test should be used instead", "To estimate the sample means", "To determine the correct sample size", "Because it replaces the need for a t-test entirely"],
+            optsDE: ["Um zu prüfen, ob die für den Standard-t-Test nötige Annahme gleicher Varianzen zutrifft, oder ob stattdessen der Welch-Test verwendet werden sollte", "Um die Stichprobenmittelwerte zu schätzen", "Um den richtigen Stichprobenumfang zu bestimmen", "Weil er den t-Test vollständig ersetzt"],
+            correct: 0
+        },
+
+        // --- 2-Stichproben-t-Test (gleiche Varianz) ---
+        {
+            q: "The two-sample t-test for a location difference μ_X − μ_Y assumes:",
+            qDE: "Der Zwei-Stichproben-t-Test auf einen Lageunterschied μ_X − μ_Y setzt voraus:",
+            opts: ["Both samples are normal, independent, and have equal (but unknown) variances", "Both samples have known, possibly unequal variances", "The samples are paired", "The variances are unequal"],
+            optsDE: ["Beide Stichproben sind normalverteilt, unabhängig und besitzen gleiche (aber unbekannte) Varianzen", "Beide Stichproben haben bekannte, möglicherweise ungleiche Varianzen", "Die Stichproben sind verbunden", "Die Varianzen sind ungleich"],
+            correct: 0
+        },
+        {
+            q: "In the two-sample t-test (equal variances), the pooled variance estimator S_p² is a weighted average of:",
+            qDE: "Beim Zwei-Stichproben-t-Test (gleiche Varianzen) ist der gepoolte Varianzschätzer S_p² ein gewichteter Durchschnitt aus:",
+            opts: ["S_X² and S_Y², weighted by their respective degrees of freedom", "X̄ and Ȳ", "m and n only", "The F-statistic and the t-statistic"],
+            optsDE: ["S_X² und S_Y², gewichtet nach ihren jeweiligen Freiheitsgraden", "X̄ und Ȳ", "Nur m und n", "Der F-Statistik und der t-Statistik"],
+            correct: 0
+        },
+        {
+            q: "The test statistic for the two-sample t-test with pooled variance S_p² is:",
+            qDE: "Die Teststatistik des Zwei-Stichproben-t-Tests mit gepoolter Varianz S_p² lautet:",
+            opts: ["T = (X̄ − Ȳ) / (S_p · √(1/m + 1/n))", "T = (X̄ − Ȳ) / S_p", "T = (X̄ − Ȳ) · √(m+n)", "T = (X̄ − Ȳ) / (S_X + S_Y)"],
+            optsDE: ["T = (X̄ − Ȳ) / (S_p · √(1/m + 1/n))", "T = (X̄ − Ȳ) / S_p", "T = (X̄ − Ȳ) · √(m+n)", "T = (X̄ − Ȳ) / (S_X + S_Y)"],
+            correct: 0
+        },
+        {
+            q: "Under H₀: μ_X = μ_Y, the two-sample t-test statistic (equal variances) follows a t-distribution with how many degrees of freedom?",
+            qDE: "Unter H₀: μ_X = μ_Y folgt die Zwei-Stichproben-t-Teststatistik (gleiche Varianzen) einer t-Verteilung mit wie vielen Freiheitsgraden?",
+            opts: ["m + n − 2", "m + n − 1", "m − 1", "min(m, n) − 1"],
+            optsDE: ["m + n − 2", "m + n − 1", "m − 1", "min(m, n) − 1"],
+            correct: 0
+        },
+
+        // --- Welch-Test ---
+        {
+            q: "The Welch test is used instead of the standard two-sample t-test when:",
+            qDE: "Der Welch-Test wird anstelle des Standard-Zwei-Stichproben-t-Tests verwendet, wenn:",
+            opts: ["The two population variances cannot be assumed equal", "The two samples are paired", "The sample sizes are equal", "The variances are known exactly"],
+            optsDE: ["Die Varianzen der beiden Grundgesamtheiten nicht als gleich angenommen werden können", "Die beiden Stichproben verbunden sind", "Die Stichprobenumfänge gleich sind", "Die Varianzen exakt bekannt sind"],
+            correct: 0
+        },
+        {
+            q: "The Welch test statistic for μ_X − μ_Y is:",
+            qDE: "Die Welch-Teststatistik für μ_X − μ_Y lautet:",
+            opts: ["T = (X̄ − Ȳ) / √(S_X²/m + S_Y²/n)", "T = (X̄ − Ȳ) / S_p", "T = (X̄ − Ȳ) · √(m·n)", "T = (X̄ − Ȳ) / (S_X² + S_Y²)"],
+            optsDE: ["T = (X̄ − Ȳ) / √(S_X²/m + S_Y²/n)", "T = (X̄ − Ȳ) / S_p", "T = (X̄ − Ȳ) · √(m·n)", "T = (X̄ − Ȳ) / (S_X² + S_Y²)"],
+            correct: 0
+        },
+        {
+            q: "Unlike the standard two-sample t-test, the Welch test uses degrees of freedom that are:",
+            qDE: "Im Gegensatz zum Standard-Zwei-Stichproben-t-Test verwendet der Welch-Test Freiheitsgrade, die:",
+            opts: ["Estimated from the data via the Welch–Satterthwaite equation, and generally not an integer", "Always equal to m + n − 2", "Always equal to min(m, n) − 1", "Not needed at all"],
+            optsDE: ["Über die Welch-Satterthwaite-Gleichung aus den Daten geschätzt werden und in der Regel keine ganze Zahl sind", "Immer gleich m + n − 2", "Immer gleich min(m, n) − 1", "Überhaupt nicht benötigt werden"],
+            correct: 0
+        },
+        {
+            q: "A key advantage of the Welch test over the pooled-variance t-test is that it remains valid when:",
+            qDE: "Ein wesentlicher Vorteil des Welch-Tests gegenüber dem gepoolten t-Test besteht darin, dass er gültig bleibt, wenn:",
+            opts: ["The two groups have unequal variances and/or unequal sample sizes", "The two groups have equal variances only", "The data are not normally distributed at all", "The sample sizes must both be small"],
+            optsDE: ["Die beiden Gruppen ungleiche Varianzen und/oder ungleiche Stichprobenumfänge haben", "Die beiden Gruppen nur gleiche Varianzen haben", "Die Daten überhaupt nicht normalverteilt sind", "Beide Stichprobenumfänge klein sein müssen"],
+            correct: 0
+        },
+
+        // --- 2-Stichproben-Binomialtest ---
+        {
+            q: "The two-sample binomial test compares:",
+            qDE: "Der Zwei-Stichproben-Binomialtest vergleicht:",
+            opts: ["Two proportions p_X and p_Y from two independent binomial samples", "Two variances from two normal samples", "Two paired means", "A single proportion against a fixed value"],
+            optsDE: ["Zwei Anteile p_X und p_Y aus zwei unabhängigen Binomialstichproben", "Zwei Varianzen aus zwei Normalstichproben", "Zwei verbundene Mittelwerte", "Einen einzelnen Anteil gegen einen festen Wert"],
+            correct: 0
+        },
+        {
+            q: "For the two-sample binomial test of H₀: p_X = p_Y, the pooled proportion estimator p̂ is computed as:",
+            qDE: "Für den Zwei-Stichproben-Binomialtest von H₀: p_X = p_Y wird der gepoolte Anteilsschätzer p̂ berechnet als:",
+            opts: ["(Xₛᵤᵤₘ + Yₛᵤₘ) / (m + n), i.e. total successes over total observations", "(p̂_X + p̂_Y) / 2 only", "p̂_X · p̂_Y", "max(p̂_X, p̂_Y)"],
+            optsDE: ["(Summe der Erfolge in X + Y) / (m + n), also Gesamterfolge über Gesamtbeobachtungen", "Nur (p̂_X + p̂_Y) / 2", "p̂_X · p̂_Y", "max(p̂_X, p̂_Y)"],
+            correct: 0
+        },
+        {
+            q: "The (asymptotic) test statistic for the two-sample binomial test under H₀: p_X = p_Y is approximately:",
+            qDE: "Die (asymptotische) Teststatistik des Zwei-Stichproben-Binomialtests unter H₀: p_X = p_Y ist näherungsweise:",
+            opts: ["Z = (p̂_X − p̂_Y) / √(p̂(1−p̂)(1/m + 1/n))", "Z = (p̂_X − p̂_Y) / (p̂_X + p̂_Y)", "Z = p̂_X / p̂_Y", "Z = (p̂_X − p̂_Y) · m · n"],
+            optsDE: ["Z = (p̂_X − p̂_Y) / √(p̂(1−p̂)(1/m + 1/n))", "Z = (p̂_X − p̂_Y) / (p̂_X + p̂_Y)", "Z = p̂_X / p̂_Y", "Z = (p̂_X − p̂_Y) · m · n"],
+            correct: 0
+        },
+        {
+            q: "Under H₀, the two-sample binomial test statistic is approximately distributed as:",
+            qDE: "Unter H₀ ist die Teststatistik des Zwei-Stichproben-Binomialtests näherungsweise verteilt als:",
+            opts: ["N(0, 1)", "t-distribution with m+n−2 degrees of freedom", "Chi-squared distribution", "F-distribution"],
+            optsDE: ["N(0, 1)", "t-Verteilung mit m+n−2 Freiheitsgraden", "Chi-Quadrat-Verteilung", "F-Verteilung"],
+            correct: 0
+        },
+
+    ],
 
 
 
@@ -2612,7 +2825,12 @@ const BONUS_QUIZ_POOLS = {
 
 
 
-    11: [], 12: [],
+
+
+
+
+
+    12: [],
 
 
 
