@@ -222,6 +222,13 @@ function _buildPuzzleRows(rowClues, maxRowWidth, sol, cellSize, fontSize, isAdjM
 // Toggle to move row clues from left side to right side of the grid
 let _rowCluesOnRight = false;
 
+// Column-width bookkeeping so the <colgroup> can be rebuilt to match
+// whichever side the clue cells currently live on. Set inside buildGrid().
+let _clueColCount = 0;   // how many narrow (clue/corner) columns exist
+let _puzzleColCount = 0; // how many wide (puzzle) columns exist
+let _clueColWidth = 0;   // px width of a clue/corner column
+let _puzzleColWidth = 0; // px width of a puzzle column
+
 function _buildRowClueToggle() {
     const existing = document.getElementById('row-clue-toggle-btn');
     if (existing) existing.remove();
@@ -236,7 +243,8 @@ function _buildRowClueToggle() {
     btn.style.cssText = `
         position: absolute;
         bottom: -28px;
-        left: 0;
+        left: 50%;
+        transform: translateX(-50%);
         z-index: 50;
         font-family: var(--PX);
         font-size: 9px;
@@ -258,6 +266,19 @@ function _toggleRowCluesSide() {
     const table = document.querySelector('table.ptable');
     if (!table) return;
 
+    const colgroup = table.querySelector('colgroup');
+    if (colgroup && _clueColCount) {
+        let colHtml = '';
+        if (_rowCluesOnRight) {
+            colHtml += Array(_puzzleColCount).fill(`<col style="width:${_puzzleColWidth}px">`).join('');
+            colHtml += Array(_clueColCount).fill(`<col style="width:${_clueColWidth}px">`).join('');
+        } else {
+            colHtml += Array(_clueColCount).fill(`<col style="width:${_clueColWidth}px">`).join('');
+            colHtml += Array(_puzzleColCount).fill(`<col style="width:${_puzzleColWidth}px">`).join('');
+        }
+        colgroup.innerHTML = colHtml;
+    }
+
     if (_rowCluesOnRight) {
         // Move all rct cells to the end of their row, reverse clue order
         table.querySelectorAll('tr').forEach(tr => {
@@ -266,16 +287,16 @@ function _toggleRowCluesSide() {
             rcts.forEach(td => tr.removeChild(td));
             rcts.reverse().forEach(td => tr.appendChild(td));
         });
-        if (btn) { btn.textContent = '◀  CLUES'; btn.style.left = ''; btn.style.right = '0'; }
+        if (btn) btn.textContent = '◀ CLUES';
     } else {
         // Move them back to the start of their row
         table.querySelectorAll('tr').forEach(tr => {
             const rcts = [...tr.querySelectorAll('td.rct, td.corner')];
             if (!rcts.length) return;
             rcts.forEach(td => tr.removeChild(td));
-            rcts.reverse().forEach(td => tr.insertBefore(td, tr.firstChild));
+            rcts.forEach(td => tr.insertBefore(td, tr.firstChild));
         });
-        if (btn) { btn.textContent = 'CLUES ▶'; btn.style.right = ''; btn.style.left = '0'; }
+        if (btn) btn.textContent = 'CLUES ▶';
     }
 }
 
@@ -312,6 +333,13 @@ function buildGrid() {
     const maxRowWidth = Math.max(...rowClues.map(r => r.length));
 
     const isAdjMatrix = ptHasSkill('adjacency_matrix');
+
+    // Remember column dimensions so the toggle button can rebuild
+    // the <colgroup> correctly when clues move sides.
+    _clueColCount = maxRowWidth;
+    _puzzleColCount = cols;
+    _clueColWidth = fontSize + 7;
+    _puzzleColWidth = cellSize;
 
     // Assemble full table HTML
     let html = _buildColgroup(maxRowWidth, cols, cellSize, fontSize, isAdjMatrix);
