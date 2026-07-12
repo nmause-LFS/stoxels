@@ -159,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
         safeCall('clearActiveRandomWalkers');
         safeCall('_bayesTrapsCleanup', false);
         safeCall('_endBlackSwan', false);
+        safeCall('_fxShieldBorderRemove');
     }
 
     /**

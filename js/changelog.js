@@ -39,6 +39,7 @@ const CHANGELOG_DATA = [
                 items: [
                     "Fixed a bug that made characters move faster on the world map when resizing the game window mid-walking.",
                     "Fixed a bug that made Level 8-5 only have 5 minutes duration instead of 30 minutes.",
+                    "Fixed a bug that caused the glowing border effect around the grid applied by Shield items to remain on screen when leaving a level through the LEVELS button.",
                 ],
 
             },

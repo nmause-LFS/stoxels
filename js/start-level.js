@@ -89,6 +89,8 @@ function _cleanupPreviousLevel() {
     // Stop any active endgame encounter from the previous level
     if (typeof _egStopEncounter === 'function') _egStopEncounter();
 
+    if (typeof _fxShieldBorderRemove === 'function') _fxShieldBorderRemove();
+
     // Hide the completion glimpse bar if it was still visible
     const cgBar = document.getElementById('completion-glimpse-bar');
     if (cgBar) cgBar.classList.add('hidden');
