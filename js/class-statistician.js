@@ -134,34 +134,22 @@ function _dataStrikeOverlayHTML(count) {
     const prompt = LANG === 'de'
         ? `Wähle: ${count} zufällige Zeile(n) oder Spalte(n) sofort lösen?`
         : `Choose: solve ${count} random row(s) or column(s)?`;
-    const rowLabel = LANG === 'de' ? '▶ ZEILEN' : '▶ ROWS';
-    const colLabel = LANG === 'de' ? '▶ SPALTEN' : '▶ COLS';
+    const rowLabel = LANG === 'de' ? 'ZEILEN' : 'ROWS';
+    const colLabel = LANG === 'de' ? 'SPALTEN' : 'COLS';
     const cancelLabel = LANG === 'de' ? 'ABBRECHEN' : 'CANCEL';
 
     return `
-        <div class="modal-box" style="text-align:center; border-left: 4px solid #e74c3c; max-width: 320px;">
-            <div style="font-family:var(--PX); font-size:13px; color:#e74c3c; letter-spacing:2px; margin-bottom:12px;">
-                ⚔️ ${title}
+        <div class="ds-panel">
+            <div class="ds-icon"></div>
+            <div class="ds-title-plaque">
+                <span class="ds-title-text">${title}</span>
             </div>
-            <div style="font-family:var(--PX); font-size:10px; color:var(--accent2); margin-bottom:18px; line-height:1.8;">
-                ${prompt}
+            <div class="ds-prompt">${prompt}</div>
+            <div class="ds-btn-row">
+                <button class="ds-btn ds-btn-rows" onclick="_dataStrikeResolve('rows')">${rowLabel}</button>
+                <button class="ds-btn ds-btn-cols" onclick="_dataStrikeResolve('cols')">${colLabel}</button>
             </div>
-            <div style="display:flex; gap:12px; justify-content:center;">
-                <button onclick="_dataStrikeResolve('rows')"
-                    style="font-family:var(--PX); font-size:10px; background:transparent; border:1px solid #e74c3c; color:#e74c3c; padding:8px 18px; cursor:pointer; letter-spacing:1px;">
-                    ${rowLabel}
-                </button>
-                <button onclick="_dataStrikeResolve('cols')"
-                    style="font-family:var(--PX); font-size:10px; background:transparent; border:1px solid #e74c3c; color:#e74c3c; padding:8px 18px; cursor:pointer; letter-spacing:1px;">
-                    ${colLabel}
-                </button>
-            </div>
-            <div style="margin-top:12px;">
-                <button onclick="_dataStrikeCancel()"
-                    style="font-family:var(--PX); font-size:9px; background:transparent; border:1px solid #444; color:#555; padding:5px 14px; cursor:pointer; letter-spacing:1px;">
-                    ${cancelLabel}
-                </button>
-            </div>
+            <button class="ds-cancel-btn" onclick="_dataStrikeCancel()">${cancelLabel}</button>
         </div>`;
 }
 
