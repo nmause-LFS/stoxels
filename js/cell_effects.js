@@ -1,7 +1,7 @@
 ﻿// ============================================================
 // ----------------------- CONSTANTS --------------------------
 // ============================================================
-//
+
 // How long each cell-level effect class stays active (ms).
 // Must stay in sync with the matching CSS animation durations.
 const CELL_FX_DURATION = {
