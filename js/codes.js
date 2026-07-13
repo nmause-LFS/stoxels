@@ -250,17 +250,19 @@ function _mcBuildRow(wc, total, achPct, totalAchTiers, unlockedAchTiers) {
         achBlock = _mcBuildReqBlock(achLabel, unlockedAchTiers, achRequired, achMet, 'ach');
     }
 
-
     const codeReveal = unlocked
         ? `<div class="mc-code-reveal mc-unlock-anim">${wc.code}</div>` : '';
 
-    // wc is the world code object — use its index from WORLD_CODES
     const rowIndex = WORLD_CODES.indexOf(wc) + 1;
+
     return `
     <div class="mc-row mc-row--${rowIndex}${unlocked ? ' mc-row--unlocked' : ''}">
-        <div class="mc-row-title">${tierName}${codeReveal}</div>
-        ${scoreBlock}
-        ${achBlock}
+        <img class="mc-icon" src="images/Moodle_Codes_Screen/icon_${rowIndex}.png" alt="">
+        <div class="mc-row-content">
+            <div class="mc-row-title">${tierName}${codeReveal}</div>
+            ${scoreBlock}
+            ${achBlock}
+        </div>
     </div>`;
 }
 

@@ -99,41 +99,60 @@
 
 .mc-row {
     position: absolute;
-    /* left edge: just right of the icon, right edge: right side of parchment */
-    left: 40%;
-    right: 26%;
-    height: 9%; /* matches each parchment slot height */
+    left: 30%;
+    height: 13%;
+    width: 49%;
+    background: url('../images/Moodle_Codes_Screen/codes_ribbon.png') center / 100% 100% no-repeat;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 2px;
-    padding: 0 1%;
+    align-items: center;
+    gap: 12px;
+    padding: 0 3% 0 9%; /* left padding makes room for the icon */
 }
 
 .mc-row--1 {
-    top: 13.5%;
-    left: 35.5%;
+    top: 15.5%;
+    left: 25.5%;
 }
 
 .mc-row--2 {
     top: 27.5%;
-    left: 35.5%;
+    left: 25.5%;
 }
 
 .mc-row--3 {
     top: 39.5%;
-    left: 35.5%;
+    left: 25.5%;
 }
 
 .mc-row--4 {
-    top: 52.5%;
-    left: 35.5%;
+    top: 51.5%;
+    left: 25.5%;
 }
 
 .mc-row--5 {
-    top: 64.5%;
-    left: 35.5%;
+    top: 63.5%;
+    left: 25.5%;
 }
+
+.mc-icon {
+    position: absolute;
+    left: 1%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14%;
+    height: auto;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+
+.mc-row-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    width: 100%;
+}
+
 
 /* ── Row title ("Code 1", "Code 2" …) ── */
 .mc-row-title {
